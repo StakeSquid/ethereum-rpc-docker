@@ -39,7 +39,7 @@ services:
     build: *ref_0              
     volumes:                    
       - "heimdall_data:/root/.heimdalld"                                                              
-    ports:                 
+    expose:
       - "1317"
     depends_on:                                                                                       
       - heimdalld                                                                                     
