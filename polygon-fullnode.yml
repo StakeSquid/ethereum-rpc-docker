@@ -6,8 +6,11 @@ services:
       args:                
         UPSTREAM_VERSION: v0.2.14
       context: ./polygon/bor                       
-      dockerfile: Dockerfile                                                                                                                                                                                
-    environment:                                   
+      dockerfile: Dockerfile
+    sysctls:
+      net.ipv4.tcp_slow_start_after_idle: 0
+      net.ipv4.tcp_no_metrics_save: 1
+    environment:
       - SNAPSHOT_URL=https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/bor-fullnode-snapshot-2022-02-20.tar.gz
       - BOOTSTRAP=1
       - ARCHIVE=0                                                                              
