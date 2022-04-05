@@ -3,7 +3,7 @@ version: '3.1'
 services:
   harmony-mainnet:
     build: ./harmony/build
-    command: bash -c "/harmony.sh && /binary --log.dir /harmony/log --run.shard 1 --dns.zone t.hmny.io --http.ip 0.0.0.0 --datadir /harmony"
+    command: bash -c "/harmony.sh && /binary -c /harmony.conf --log.dir /harmony/log --run.shard 1 --dns.zone t.hmny.io --http.ip 0.0.0.0 --datadir /harmony"
     sysctls:
       net.core.somaxconn: 1024
       # net.core.netdev_max_backlog: 65536
@@ -28,6 +28,7 @@ services:
       - harmony_data:/harmony/
       - ./harmony/keyfiles:/.hmy/blskeys
       - ./harmony/log:/harmony/log
+      - ./harmony/harmony.conf:/harmony.conf
       - ./bootstrap_skript/harmony.sh:/harmony.sh
     restart: unless-stopped
 
