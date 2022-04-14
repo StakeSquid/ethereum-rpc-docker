@@ -162,5 +162,6 @@ services:
 ### VOLUMES
 volumes:
   pocket-testnet:
+  pocket-mainnet:
   prometheus_data:
 
