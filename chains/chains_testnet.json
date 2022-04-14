@@ -1,18 +1,18 @@
 [
     {
         "id": "0020",
-        "url": "https://bsc-1.stakesquid-db.ml/goerli"
+        "url": "http://haproxy/goerli"
     },
     {
         "id": "0022",
-        "url": "https://bsc-1.stakesquid-db.ml/rinkeby"
+        "url": "http://haproxy/rinkeby"
     },
     {
         "id": "0023",
-        "url": "https://bsc-1.stakesquid-db.ml/ropsten"
+        "url": "http://haproxy/ropsten"
     },
     {
         "id": "0002",
-        "url": "https://bsc-1.stakesquid-db.ml/pokttest"
+        "url": "http://haproxy/pokttest"
     }
 ]

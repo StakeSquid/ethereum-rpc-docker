@@ -65,6 +65,8 @@ services:
     command:  pocket start --seeds=$POCKET_TEST_SEEDS --mainnet
     #command: pocket start --simulateRelay
     environment:
+      - ./bootstrap_skript/pokt_mainnet.sh:/home/app/.pocket/pokt_mainnet.sh
+      - ./pokt/config.json:/home/app/.pocket/config/config.json
       - POCKET_CORE_KEY=$POCKET_CORE_KEY_MAINNET
       - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE_MAINNET
     volumes:
