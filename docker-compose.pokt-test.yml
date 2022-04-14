@@ -51,7 +51,32 @@ services:
       - "traefik.http.services.pocket-testnet.loadbalancer.server.port=8081"
       - "traefik.http.routers.pocket-testnet.entrypoints=websecure"
       - "traefik.http.routers.pocket-testnet.tls.certresolver=myresolver"
-      - "traefik.http.routers.pocket-testnet.rule=Host(`$RELAYDOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
+      - "traefik.http.routers.pocket-testnet.rule=Host(`$TEST_DOMAIN_1`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
+
+  pocket-mainnet:
+    image: poktnetwork/pocket-core:stagenet-latest
+    ports:
+      - "127.0.0.1:8082:8081"
+      - "26656:26656"
+    expose:
+      - 26656
+      - 8081
+      - 8083
+    command:  pocket start --seeds=$POCKET_TEST_SEEDS --mainnet
+    #command: pocket start --simulateRelay
+    environment:
+      - POCKET_CORE_KEY=$POCKET_CORE_KEY_MAINNET
+      - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE_MAINNET
+    volumes:
+      - ./chains/chains_mainnet.json:/home/app/.pocket/config/chains.json
+      - pocket-mainnet:/home/app/.pocket
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.pocket-mainnet.loadbalancer.server.port=8081"
+      - "traefik.http.routers.pocket-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.pocket-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.pocket-mainnet.rule=Host(`$TEST_DOMAIN_2`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
 
 ### MONITORING
 ### WIREGUARD
