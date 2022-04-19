@@ -2,27 +2,54 @@ version: '3.1'
 
 services:
 
+  #pocket-mainnet:
+  #  image: poktnetwork/pocket-core:stagenet-latest
+  #  ports:
+  #    #- "127.0.0.1:8081:8081"
+  #    - "26656:26656"
+  #  expose:
+  #    - 26656
+  #    - 8081
+  #  command: /home/app/.pocket/pokt_mainnet.sh && pocket start --seeds=$POCKET_MAIN_SEEDS --mainnet
+  #  #command: pocket start --simulateRelay
+  #  environment:
+  #    - POCKET_CORE_KEY=$POCKET_CORE_KEY
+  #    - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE
+  #    - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
+  #  volumes:
+  #    - ./bootstrap_skript/pokt_mainnet.sh:/home/app/.pocket/pokt_mainnet.sh
+  #    - ./chains/chains_mainnet.json:/home/app/.pocket/config/chains.json
+  #    - ./pokt/config.json:/home/app/.pocket/config/config.json
+  #    - pocket-mainnet:/home/app/.pocket
+  #  networks:
+  #    - chains
+  #  labels:
+  #    - "traefik.enable=true"
+  #    - "traefik.http.middlewares.pocket-mainnet-stripprefix.stripprefix.prefixes=/pokt"
+  #    - "traefik.http.services.pocket-mainner.loadbalancer.server.port=8081"
+  #    - "traefik.http.routers.pocket-mainnet.entrypoints=websecure"
+  #    - "traefik.http.routers.pocket-mainnet.tls.certresolver=myresolver"
+  #    - "traefik.http.routers.pocket-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/pokt`)"
+  #    - "traefik.http.routers.pocket-mainnet.middlewares=pocket-mainnet-stripprefix, ipwhitelist"
+  #  restart: unless-stopped
+
   pocket-mainnet:
-    image: poktnetwork/pocket-core:stagenet-latest
+    build: pokt
     ports:
-      #- "127.0.0.1:8081:8081"
-      - "26656:26656"
+      - "127.0.0.1:8081:8081"
+      - "26657:26656"
     expose:
       - 26656
+      - 26660
       - 8081
-    command: /home/app/.pocket/pokt_mainnet.sh && pocket start --seeds=$POCKET_MAIN_SEEDS --mainnet
-    #command: pocket start --simulateRelay
+      - 8083
     environment:
       - POCKET_CORE_KEY=$POCKET_CORE_KEY
       - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
-      - ./bootstrap_skript/pokt_mainnet.sh:/home/app/.pocket/pokt_mainnet.sh
-      - ./chains/chains_mainnet.json:/home/app/.pocket/config/chains.json
-      - ./pokt/config.json:/home/app/.pocket/config/config.json
-      - pocket-mainnet:/home/app/.pocket
-    networks:
-      - chains
+      - pocket-mainnet:/home/app/.pocket/data
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.pocket-mainnet-stripprefix.stripprefix.prefixes=/pokt"
@@ -31,7 +58,6 @@ services:
       - "traefik.http.routers.pocket-mainnet.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/pokt`)"
       - "traefik.http.routers.pocket-mainnet.middlewares=pocket-mainnet-stripprefix, ipwhitelist"
-    restart: unless-stopped
-
+    
 volumes:
   pocket-mainnet:
