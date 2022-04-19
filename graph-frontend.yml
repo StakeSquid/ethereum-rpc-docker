@@ -54,11 +54,11 @@ services:
       - "prometheus-scrape.job_name=haproxy"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.services.harmony-mainnet.loadbalancer.server.port=80"
-      - "traefik.http.routers.harmony-mainnet.entrypoints=websecure"
-      - "traefik.http.routers.harmony-mainnet.tls.certresolver=myresolver"
-      - "traefik.http.routers.harmony-mainnet.rule=Host(`$DOMAIN`)"
-      - "traefik.http.routers.harmony-mainnet.middlewares=ipwhitelist"
+      - "traefik.http.services.haproxy.loadbalancer.server.port=80"
+      - "traefik.http.routers.haproxy.entrypoints=websecure"
+      - "traefik.http.routers.haproxy.tls.certresolver=myresolver"
+      - "traefik.http.routers.haproxy.rule=Host(`$DOMAIN`)"
+      - "traefik.http.routers.haproxy.middlewares=ipwhitelist"
 
 networks:
   chains:
