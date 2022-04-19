@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+  haproxy:
+    build: haproxy
+    volumes:
+      - ./haproxy:/usr/local/etc/haproxy
+    expose:
+      - "8404"
+      - "80"
+    ports:
+      - "80:80"
+    restart: always
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8404"
+      - "prometheus-scrape.job_name=haproxy"
+      - "prometheus-scrape.metrics_path=/metrics"
+
