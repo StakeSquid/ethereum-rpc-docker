@@ -1,6 +1,45 @@
 version: '3.1'
 
 services:
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: always
+    expose:
+      - "8082"
+    ports:
+      - "443:443"
+      - "127.0.0.1:8080:8080"
+    command:
+      - "--api=true"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--log.level=DEBUG"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.filename=/dynamic_config.yml"
+      - "--entrypoints.websecure.address=:443"
+      - "--entryPoints.metrics.address=:8082"
+      - "--metrics.prometheus.entryPoint=metrics"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      # TESTING
+      # - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=$MAIL"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    volumes:
+      - "./traefik/letsencrypt:/letsencrypt"
+      - "./traefik/config/dynamic_config.yml:/dynamic_config.yml"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - chains
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=$WHITELIST"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8082"
+      - "prometheus-scrape.job_name=traefik"
+
   haproxy:
     build: haproxy
     volumes:
@@ -8,12 +47,16 @@ services:
     expose:
       - "8404"
       - "80"
-    ports:
-      - "80:80"
     restart: always
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8404"
       - "prometheus-scrape.job_name=haproxy"
       - "prometheus-scrape.metrics_path=/metrics"
+      - "traefik.enable=true"
+      - "traefik.http.services.harmony-mainnet.loadbalancer.server.port=80"
+      - "traefik.http.routers.harmony-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.harmony-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.harmony-mainnet.rule=Host(`$DOMAIN`)"
+      - "traefik.http.routers.harmony-mainnet.middlewares=ipwhitelist"
 
