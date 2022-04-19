@@ -18,7 +18,6 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=$WHITELIST"
       - "traefik.http.middlewares.avalanche-replacepath.replacepath.path=/ext/bc/C/rpc"
       - "traefik.http.middlewares.avalanche-stripprefix.stripprefix.prefixes=/avalanche"
       - "traefik.http.services.avalanche.loadbalancer.server.port=9650"
