@@ -60,3 +60,9 @@ services:
       - "traefik.http.routers.harmony-mainnet.rule=Host(`$DOMAIN`)"
       - "traefik.http.routers.harmony-mainnet.middlewares=ipwhitelist"
 
+networks:
+  chains:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 192.168.0.1/27
