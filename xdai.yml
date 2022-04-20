@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   xdai:
-    image: nethermind/nethermind:1.12.5
+    image: nethermind/nethermind:1.12.7
     expose:
       - "8545"
       - "40444"
