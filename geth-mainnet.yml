@@ -36,7 +36,8 @@ services:
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
-      - "geth-mainnet_data:/root/.ethereum" 
+      - "geth-mainnet_data:/root/.ethereum"
+    restart: unless-stopped
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.mainnet-stripprefix.stripprefix.prefixes=/mainnet"                  
