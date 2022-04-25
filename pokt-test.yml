@@ -64,7 +64,7 @@ services:
       - POCKET_CORE_KEY=$POCKET_CORE_KEY_MAINNET
       - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE_MAINNET
     volumes:
-      - pocket-mainnet:/home/app/.pocket
+      - pocket-mainnet:/home/app/.pocket/data
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
