@@ -43,7 +43,6 @@ services:
       - POCKET_CORE_KEY=$POCKET_CORE_KEY_TEST
       - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE_TEST
     volumes:
-      - ./chains/chains_testnet.json:/home/app/.pocket/config/chains.json
       - pocket-testnet:/home/app/.pocket
     restart: unless-stopped
     labels:
@@ -69,9 +68,6 @@ services:
       - POCKET_CORE_KEY=$POCKET_CORE_KEY_MAINNET
       - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE_MAINNET
     volumes:
-      - ./bootstrap_skript/pokt_mainnet.sh:/home/app/.pocket/pokt_mainnet.sh
-      - ./pokt/config.json:/home/app/.pocket/config/config.json
-      - ./chains/chains_mainnet.json:/home/app/.pocket/config/chains.json
       - pocket-mainnet:/home/app/.pocket
     restart: unless-stopped
     labels:
