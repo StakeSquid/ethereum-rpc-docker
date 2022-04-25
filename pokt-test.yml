@@ -41,7 +41,7 @@ services:
       - POCKET_CORE_KEY=$POCKET_CORE_KEY_TEST
       - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE_TEST
     volumes:
-      - pocket-testnet:/home/app/.pocket
+      - pocket-testnet:/home/app/.pocket/data
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
