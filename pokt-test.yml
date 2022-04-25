@@ -37,8 +37,6 @@ services:
       - 26656
       - 8081
       - 8083
-    command:  pocket start --seeds=$POCKET_TEST_SEEDS --testnet
-    #command: pocket start --simulateRelay
     environment:
       - POCKET_CORE_KEY=$POCKET_CORE_KEY_TEST
       - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE_TEST
@@ -61,8 +59,6 @@ services:
       - 26656
       - 8081
       - 8083
-    command:  /home/app/.pocket/pokt_mainnet.sh && pocket start --seeds=$POCKET_MAIN_SEEDS --mainnet
-    #command: pocket start --simulateRelay
     environment:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
       - POCKET_CORE_KEY=$POCKET_CORE_KEY_MAINNET
