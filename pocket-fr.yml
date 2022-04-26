@@ -1,0 +1,178 @@
+version: '3.1'
+
+services:
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: always
+    ports:
+      - "443:443"
+      - "127.0.0.1:8080:8080"
+    expose:
+      - "8082"
+    command:
+      - "--api=true"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--log.level=DEBUG"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--entryPoints.metrics.address=:8082"
+      - "--metrics.prometheus.entryPoint=metrics"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      # TESTING
+      # - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=$MAIL"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    volumes:
+      - "./traefik/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+
+### WIREGUARD
+  wireguard:
+    image: lscr.io/linuxserver/wireguard
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+    volumes:
+      - ./wireguard/config/wg0.conf:/config/wg0.conf
+      - /lib/modules:/lib/modules
+    # Expose prometheus port
+    expose:
+      - 9090
+    ports:
+      - $SERVERPORT:$SERVERPORT/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
+### MONITORING
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    network_mode: "service:wireguard"
+    labels:
+      org.label-schema.group: "monitoring"
+    depends_on:
+      - wireguard
+
+  nodeexporter:
+    image: prom/node-exporter:v1.2.2
+    container_name: nodeexporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    expose:
+      - 9100
+    labels:
+      org.label-schema.group: "monitoring"
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.42.0
+    container_name: cadvisor
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      #- /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
+    restart: unless-stopped
+    expose:
+      - 8080
+    labels:
+      org.label-schema.group: "monitoring"
+
+  pushgateway:
+    image: prom/pushgateway:v1.4.2
+    container_name: pushgateway
+    restart: unless-stopped
+    expose:
+      - 9091
+    labels:
+      org.label-schema.group: "monitoring"
+
+### POKT
+  pocket-fr-1:
+    build: pokt
+    ports:
+      - "127.0.0.1:8081:8081"
+      - "26656:26656"
+    expose:
+      - 26656
+      - 26660
+      - 8081
+      - 8083
+    #command: pocket start --simulateRelay
+    environment:
+      - POCKET_CORE_KEY=$POKT_FR_1_POCKET_CORE_KEY
+      - POCKET_CORE_PASSPHRASE=$POKT_FR_1_POCKET_CORE_PASSPHRASE
+      - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
+    volumes:
+      - pocket-mainnet:/home/app/.pocket/data
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.pocket-fr-1.loadbalancer.server.port=8081"
+      - "traefik.http.routers.pocket-fr-1.entrypoints=websecure"
+      - "traefik.http.routers.pocket-fr-1.tls.certresolver=myresolver"
+      - "traefik.http.routers.pocket-fr-1.rule=Host(`$POKT_FR_1_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
+
+  pocket-fr-2:
+    build: pokt
+    ports:
+      - "127.0.0.1:8082:8081"
+      - "26657:26656"
+    expose:
+      - 26656
+      - 26660
+      - 8081
+      - 8083
+    #command: pocket start --simulateRelay
+    environment:
+      - POCKET_CORE_KEY=$POKT_FR_2_POCKET_CORE_KEY
+      - POCKET_CORE_PASSPHRASE=$POKT_FR_2_POCKET_CORE_PASSPHRASE
+      - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
+    volumes:
+      - pocket-fr-2:/home/app/.pocket/data
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.pocket-fr-2.loadbalancer.server.port=8081"
+      - "traefik.http.routers.pocket-fr-2.entrypoints=websecure"
+      - "traefik.http.routers.pocket-fr-2.tls.certresolver=myresolver"
+      - "traefik.http.routers.pocket-fr-2.rule=Host(`$POKT_FR_2_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
+
+### VOLUMES
+volumes:
+  pocket-mainnet:
+  pocket-fr-2:
+  prometheus_data:
