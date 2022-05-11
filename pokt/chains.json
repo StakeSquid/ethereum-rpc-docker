@@ -46,5 +46,9 @@
     {
         "id": "0040",
         "url": "http://haproxy/harmony"
+    },
+    {
+        "id": "0006",
+        "url": "http://haproxy/solana"
     }
 ]
