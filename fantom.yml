@@ -11,7 +11,7 @@ services:
     volumes:
       - "fantom:/datadir"
     expose:
-      - "18545:18545"
+      - "18545"
 
     restart: unless-stopped
     labels:
