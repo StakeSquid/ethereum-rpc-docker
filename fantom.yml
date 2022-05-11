@@ -11,11 +11,8 @@ services:
     volumes:
       - "fantom:/datadir"
     expose:
-#      API PORTS https://github.com/Fantom-foundation/go-opera/wiki/API
-#      - "18545:18545"
-#      - "18546:18546"
-#      RPC-PORT
-      - "5050"
+      - "18545:18545"
+
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
