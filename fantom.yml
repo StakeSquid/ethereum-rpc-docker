@@ -1,0 +1,30 @@
+version: "3.4"
+services:
+  fantom:
+    build:
+      args:
+        VERSION: release/1.1.0-rc.4
+      context: ./fantom
+      dockerfile: Dockerfile
+    environment:
+      - SNAPSHOT_URL=https://download.fantom.network/opera_5may22.tgz
+    volumes:
+      - "fantom:/datadir"
+    expose:
+#      API PORTS https://github.com/Fantom-foundation/go-opera/wiki/API
+#      - "18545:18545"
+#      - "18546:18546"
+#      RPC-PORT
+      - "5050"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.fantom-stripprefix.stripprefix.prefixes=/fantom"
+      - "traefik.http.services.fantom.loadbalancer.server.port=8545"
+      - "traefik.http.routers.fantom.entrypoints=websecure"
+      - "traefik.http.routers.fantom.tls.certresolver=myresolver"
+      - "traefik.http.routers.fantom.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom`)"
+      - "traefik.http.routers.fantom.middlewares=fantom-stripprefix, ipwhitelist"
+
+volumes:
+  fantom:
