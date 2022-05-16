@@ -12,7 +12,8 @@ services:
       - "fantom:/datadir"
     expose:
       - "18545"
-
+    networks:
+      - chains
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
