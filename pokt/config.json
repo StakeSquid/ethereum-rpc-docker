@@ -130,7 +130,6 @@
         "data_dir": "/home/app/.pocket",
         "genesis_file": "genesis.json",
         "chains_name": "chains.json",
-        "session_db_name": "session",
         "evidence_db_name": "pocket_evidence",
         "tendermint_uri": "tcp://localhost:26657",
         "keybase_name": "pocket-keybase",
@@ -141,7 +140,7 @@
         "json_sort_relay_responses": true,
         "remote_cli_url": "http://localhost:8081",
         "user_agent": "",
-        "validator_cache_size": 10000,
+        "validator_cache_size": 40000,
         "application_cache_size": 10000,
         "rpc_timeout": 30000,
         "pocket_prometheus_port": "8083",
@@ -151,6 +150,8 @@
         "ctx_cache_size": 20,
         "abci_logging": false,
         "show_relay_errors": true,
-        "disable_tx_events": true
+        "disable_tx_events": true,
+        "iavl_cache_size": 5000000,
+        "chains_hot_reload": false
     }
 }
