@@ -65,6 +65,7 @@ services:
       - POCKET_CORE_PASSPHRASE=$POCKET_CORE_PASSPHRASE_MAINNET
     volumes:
       - pocket-mainnet:/home/app/.pocket/data
+      - pocket-mainnet-config:/home/app/.pocket/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -156,5 +157,6 @@ services:
 volumes:
   pocket-testnet:
   pocket-mainnet:
+  pocket-mainnet-config:
   prometheus_data:
 

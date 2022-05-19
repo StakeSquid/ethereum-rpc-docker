@@ -138,6 +138,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-lt-1:/home/app/.pocket/data
+      - pocket-lt-1-config:/home/app/.pocket/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -163,6 +164,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-lt-2:/home/app/.pocket/data
+      - pocket-lt-2-config:/home/app/.pocket/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -188,6 +190,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-lt-3:/home/app/.pocket/data
+      - pocket-lt-3-config:/home/app/.pocket/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -213,6 +216,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-lt-4:/home/app/.pocket/data
+      - pocket-lt-4-config:/home/app/.pocket/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -240,7 +244,11 @@ services:
 ### VOLUMES
 volumes:
   pocket-lt-1:
+  pocket-lt-1-config:
   pocket-lt-2:
+  pocket-lt-2-config:
   pocket-lt-3:
+  pocket-lt-3-config:
   pocket-lt-4:
+  pocket-lt-4-config:
   prometheus_data:

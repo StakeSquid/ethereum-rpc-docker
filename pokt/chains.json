@@ -48,6 +48,10 @@
         "url": "http://haproxy/harmony"
     },
     {
+        "id": "0049",
+        "url": "http://haproxy/fantom"
+    },
+    {
         "id": "0006",
         "url": "http://haproxy/solana"
     }

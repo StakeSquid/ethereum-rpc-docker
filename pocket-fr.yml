@@ -138,6 +138,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-mainnet:/home/app/.pocket/data
+      - pocket-mainnet-config:/home/app/.pocket/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -163,6 +164,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-fr-2:/home/app/.pocket/data
+      - pocket-fr-2:/home/app/.pocket/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -190,5 +192,7 @@ services:
 ### VOLUMES
 volumes:
   pocket-mainnet:
+  pocket-mainnet-config:
   pocket-fr-2:
+  pocket-fr-2-config:
   prometheus_data:

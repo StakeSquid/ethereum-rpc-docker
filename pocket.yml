@@ -49,6 +49,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-mainnet:/home/app/.pocket/data
+      - pocket-mainnet-config:/home/app/.pocket/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -61,3 +62,4 @@ services:
     
 volumes:
   pocket-mainnet:
+  pocket-mainnet-config:
