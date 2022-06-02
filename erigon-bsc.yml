@@ -23,8 +23,8 @@ services:
     pid: service:erigon-bsc # Use erigon's PID namespace. It's required to open Erigon's DB from another process (RPCDaemon local-mode)
     volumes:
       - erigon-bsc-volume:/home/erigon/.local/share/erigon
-    ports:
-      - "8545:8545"
+    expose:
+      - "8545"
     networks:
       - chains
     restart: unless-stopped
