@@ -28,6 +28,7 @@ services:
     networks:
       - chains
     restart: unless-stopped
+    labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.rpcdaemon-bsc-stripprefix.stripprefix.prefixes=/erigon-bsc"
       - "traefik.http.services.rpcdaemon-bsc.loadbalancer.server.port=8545"
