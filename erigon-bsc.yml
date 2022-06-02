@@ -9,8 +9,8 @@ services:
     volumes:
       - erigon-bsc-volume:/home/erigon/.local/share/erigon
     ports:
-      - "30303:30303/tcp"
-      - "30303:30303/udp"
+      - "30333:30303/tcp"
+      - "30333:30303/udp"
       - "30304:30304/tcp"
       - "30304:30304/udp"
     networks:
