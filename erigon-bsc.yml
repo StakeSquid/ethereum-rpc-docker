@@ -13,7 +13,7 @@ services:
       - "30303:30303/udp"
       - "30304:30304/tcp"
       - "30304:30304/udp"
-    network: chains
+    networks: chains
     restart: unless-stopped
 
   rpcdaemon-bsc:
@@ -24,7 +24,7 @@ services:
       - erigon-bsc-volume:/home/erigon/.local/share/erigon
     ports:
       - "8545:8545"
-    network: chains
+    networks: chains
     restart: unless-stopped
       - "traefik.enable=true"
       - "traefik.http.middlewares.rpcdaemon-bsc-stripprefix.stripprefix.prefixes=/erigon-bsc"
