@@ -1,7 +1,7 @@
 [
     {
         "id": "0001",
-        "url": "http://haproxy/pokt"
+        "url": "http://localhost:8081"
     },
     {
         "id": "0004",
