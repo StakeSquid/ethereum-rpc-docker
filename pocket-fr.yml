@@ -164,10 +164,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-fr-2:/home/app/.pocket/data
-#      - pocket-fr-2-config:/home/app/.pocket/config
-      - type: bind
-        source: ./pocket-fr-2-adressbook.json
-        target: /home/app/.pocket/config/addrbook.json
+      - pocket-fr-2-config:/home/app/.pocket/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
