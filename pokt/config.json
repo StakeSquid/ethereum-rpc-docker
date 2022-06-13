@@ -59,7 +59,7 @@
             "Seeds": "",
             "PersistentPeers": "",
             "UPNP": false,
-            "AddrBook": "config/addrbook.json",
+            "AddrBook": "addrbook/addrbook.json",
             "AddrBookStrict": false,
             "MaxNumInboundPeers": 14,
             "MaxNumOutboundPeers": 7,
