@@ -192,7 +192,7 @@ services:
 ### VOLUMES
 volumes:
   pocket-mainnet:
-  pocket-mainnet-config:
+  pocket-mainnet-addrbook:
   pocket-fr-2:
-  pocket-fr-2-config:
+  pocket-fr-2-addrbook:
   prometheus_data:
