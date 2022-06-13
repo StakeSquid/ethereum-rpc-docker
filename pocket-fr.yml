@@ -138,7 +138,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-mainnet:/home/app/.pocket/data
-      - pocket-mainnet-config:/home/app/.pocket/config
+      - pocket-mainnet-addrbook:/home/app/.pocket/addrbook
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -164,7 +164,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket-fr-2:/home/app/.pocket/data
-      - pocket-fr-2-config:/home/app/.pocket/config
+      - pocket-fr-2-addrbook:/home/app/.pocket/addrbook
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
