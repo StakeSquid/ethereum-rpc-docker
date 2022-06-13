@@ -63,7 +63,7 @@ services:
       - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
     volumes:
       - pocket:/home/app/.pocket/data
-      - pocket-config:/home/app/.pocket/config/
+      - pocket-addrbook:/home/app/.pocket/addrbook
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -75,4 +75,4 @@ services:
 ### VOLUMES
 volumes:
   pocket:
-  pocket-config:
+  pocket-addrbook:
