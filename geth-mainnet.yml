@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   geth-mainnet:                         
-    image: ethereum/client-go:v1.10.16
+    image: ethereum/client-go:v1.10.19
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
