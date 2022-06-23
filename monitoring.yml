@@ -53,7 +53,7 @@ services:
     ports:
       - 127.0.0.1:9090:9090
     labels:
-      org.label-schema.group: "monitoring"
+      - "org.label-schema.group='monitoring'"
     depends_on:
       - prometheus-docker-sd
 
@@ -84,7 +84,7 @@ services:
     expose:
       - 9100
     labels:
-      - org.label-schema.group: "monitoring"
+      - "org.label-schema.group='monitoring'"
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=9100"
       - "prometheus-scrape.job_name=nodeexporter"
@@ -105,7 +105,7 @@ services:
     expose:
       - 8080
     labels:
-      - org.label-schema.group: "monitoring"
+      - "org.label-schema.group='monitoring'"
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8080"
       - "prometheus-scrape.job_name=cadvisor"
