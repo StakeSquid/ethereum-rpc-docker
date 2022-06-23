@@ -52,8 +52,6 @@ services:
       - 9090
     ports:
       - 127.0.0.1:9090:9090
-    networks:
-      - chains
     labels:
       org.label-schema.group: "monitoring"
     depends_on:
@@ -87,6 +85,9 @@ services:
       - 9100
     labels:
       org.label-schema.group: "monitoring"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9100"
+      - "prometheus-scrape.job_name=nodeexporter"
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.42.0
@@ -105,6 +106,9 @@ services:
       - 8080
     labels:
       org.label-schema.group: "monitoring"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8080"
+      - "prometheus-scrape.job_name=cadvisor"
 
 ### VOLUMES
 
