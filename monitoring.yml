@@ -48,8 +48,8 @@ services:
       - '--storage.tsdb.retention.time=200h'
       - '--web.enable-lifecycle'
     restart: unless-stopped
-    expose:
-      - 9090
+#    expose:
+#      - 9090
     network_mode: "service:wireguard"
 #    ports:
 #      - 127.0.0.1:9090:9090
