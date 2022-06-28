@@ -50,12 +50,14 @@ services:
     restart: unless-stopped
     expose:
       - 9090
+    network_mode: "service:wireguard"
     ports:
       - 127.0.0.1:9090:9090
     labels:
       - "org.label-schema.group='monitoring'"
     depends_on:
       - prometheus-docker-sd
+      - wireguard
 
 #    network_mode: "service:wireguard"
 #    depends_on:
