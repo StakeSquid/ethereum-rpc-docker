@@ -62,7 +62,7 @@ services:
 #      - wireguard
 
   prometheus-docker-sd:
-    image: "stucky/prometheus-docker-sd:latest"
+    image: "cventastic/prometheus-docker-sd:latest"
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
