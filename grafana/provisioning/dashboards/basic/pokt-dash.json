@@ -22,7 +22,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 4,
-  "iteration": 1656673291043,
+  "iteration": 1656678179037,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -1577,11 +1577,6 @@
           },
           {
             "selected": false,
-            "text": "pocket-lt-4",
-            "value": "pocket-lt-4"
-          },
-          {
-            "selected": false,
             "text": "pocket-de-1",
             "value": "pocket-de-1"
           },
@@ -1606,14 +1601,14 @@
             "value": "pocket-de-6"
           }
         ],
-        "query": "pocket-fr-1,pocket-fr-2,pocket-lt-1,pocket-lt-2,pocket-lt-3,pocket-lt-4,pocket-lt-4,pocket-de-1,pocket-de-2,pocket-de-4,pocket-de-5,pocket-de-6",
+        "query": "pocket-fr-1,pocket-fr-2,pocket-lt-1,pocket-lt-2,pocket-lt-3,pocket-lt-4,pocket-de-1,pocket-de-2,pocket-de-4,pocket-de-5,pocket-de-6",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "pokt-fr-1",
           "value": "pokt-fr-1"
         },
@@ -1640,6 +1635,6 @@
   "timezone": "",
   "title": "Pokt Dashboard",
   "uid": "PPoaArJnz",
-  "version": 9,
+  "version": 10,
   "weekStart": ""
 }
