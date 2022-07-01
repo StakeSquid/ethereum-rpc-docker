@@ -43,6 +43,7 @@ services:
     labels:
       org.label-schema.group: "monitoring"
     network_mode: "service:wireguard"
+    depends_on: wireguard
 
       # DEBUG container wireguard
       #  alpine:
