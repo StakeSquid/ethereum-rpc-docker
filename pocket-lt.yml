@@ -58,6 +58,10 @@ services:
       - "traefik.http.routers.pocket-lt-1.entrypoints=websecure"
       - "traefik.http.routers.pocket-lt-1.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-lt-1.rule=Host(`$POKT_LT_1_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.job_name=pocket-lt-1"
+
 
   pocket-lt-2:
     build: pokt
@@ -84,6 +88,10 @@ services:
       - "traefik.http.routers.pocket-lt-2.entrypoints=websecure"
       - "traefik.http.routers.pocket-lt-2.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-lt-2.rule=Host(`$POKT_LT_2_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.job_name=pocket-lt-2"
+
 
   pocket-lt-3:
     build: pokt
@@ -110,6 +118,10 @@ services:
       - "traefik.http.routers.pocket-lt-3.entrypoints=websecure"
       - "traefik.http.routers.pocket-lt-3.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-lt-3.rule=Host(`$POKT_LT_3_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.job_name=pocket-lt-3"
+
 
   pocket-lt-4:
     build: pokt
@@ -136,6 +148,9 @@ services:
       - "traefik.http.routers.pocket-lt-4.entrypoints=websecure"
       - "traefik.http.routers.pocket-lt-4.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-lt-4.rule=Host(`$POKT_LT_4_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.job_name=pocket-lt-4"
 
   haproxy:
     build: haproxy
