@@ -59,7 +59,7 @@ services:
     image: prom/prometheus:v2.30.3
     container_name: prometheus
     volumes:
-      - ./prometheus/prometheus-lt-1.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus-autodiscover.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
