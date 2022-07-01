@@ -10,24 +10,6 @@ datasources:
     isDefault: false
     editable: true
 
-  - name: rpc-de-02
-    type: prometheus
-    access: proxy
-    orgId: 1
-    url: http://10.13.13.6:9090
-    basicAuth: false
-    isDefault: false
-    editable: true
-
-  - name: rpc-fi-01
-    type: prometheus
-    access: proxy
-    orgId: 1
-    url: http://10.13.13.5:9090
-    basicAuth: false
-    isDefault: false
-    editable: true
-
   - name: rpc-fi-01
     type: prometheus
     access: proxy
@@ -51,24 +33,6 @@ datasources:
     access: proxy
     orgId: 1
     url: http://10.13.13.3:9090
-    basicAuth: false
-    isDefault: false
-    editable: true
-
-  - name: harmony-fr-1
-    type: prometheus
-    access: proxy
-    orgId: 1
-    url: http://10.13.13.11:9090
-    basicAuth: false
-    isDefault: false
-    editable: true
-
-  - name: moonbeam-lt-01
-    type: prometheus
-    access: proxy
-    orgId: 1
-    url: http://10.13.13.2:9090
     basicAuth: false
     isDefault: false
     editable: true
