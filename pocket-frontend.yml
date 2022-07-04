@@ -71,6 +71,9 @@ services:
       - "traefik.http.routers.pocket.entrypoints=websecure"
       - "traefik.http.routers.pocket.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket.rule=Host(`$DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.job_name=pocket"
 
 ### VOLUMES
 volumes:
