@@ -59,7 +59,7 @@ services:
       - "traefik.http.routers.pocket-lt-1.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-lt-1.rule=Host(`$POKT_LT_1_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.port=8083"
       - "prometheus-scrape.job_name=pocket-lt-1"
 
 
@@ -89,7 +89,7 @@ services:
       - "traefik.http.routers.pocket-lt-2.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-lt-2.rule=Host(`$POKT_LT_2_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.port=8083"
       - "prometheus-scrape.job_name=pocket-lt-2"
 
 
@@ -119,7 +119,7 @@ services:
       - "traefik.http.routers.pocket-lt-3.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-lt-3.rule=Host(`$POKT_LT_3_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.port=8083"
       - "prometheus-scrape.job_name=pocket-lt-3"
 
 
@@ -149,7 +149,7 @@ services:
       - "traefik.http.routers.pocket-lt-4.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-lt-4.rule=Host(`$POKT_LT_4_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.port=8083"
       - "prometheus-scrape.job_name=pocket-lt-4"
 
   haproxy:

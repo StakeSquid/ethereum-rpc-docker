@@ -59,7 +59,7 @@ services:
       - "traefik.http.routers.pocket-fr-1.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-fr-1.rule=Host(`$POKT_DE_1_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.port=8083"
       - "prometheus-scrape.job_name=pocket-de-1"
 
   pocket-de-2:
@@ -88,7 +88,7 @@ services:
       - "traefik.http.routers.pocket-fr-2.tls.certresolver=myresolver"
       - "traefik.http.routers.pocket-fr-2.rule=Host(`$POKT_DE_2_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8083,26660"
+      - "prometheus-scrape.port=8083"
       - "prometheus-scrape.job_name=pocket-de-2"
 
   haproxy:
