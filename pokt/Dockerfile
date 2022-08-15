@@ -1,4 +1,4 @@
-FROM poktnetwork/pocket-core:RC-0.8.2
+FROM poktnetwork/pocket-core:BETA-0.9.0
 
 COPY --chown=1005:1001 config.json /home/app/.pocket/config/config.json
 COPY --chown=1005:1001 chains.json /home/app/.pocket/config/chains.json
