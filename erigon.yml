@@ -65,7 +65,7 @@ services:
       lighthouse beacon_node
       --eth1-endpoints http://erigon-trace:8545
       --execution-endpoint http://erigon-trace:8551
-      --execution-jwt /jwtsecret"
+      --execution-jwt /jwtsecret
     networks:
       - chains
 
