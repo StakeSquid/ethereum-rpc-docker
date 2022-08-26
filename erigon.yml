@@ -9,6 +9,7 @@ services:
     - "9090"
     volumes:
       - erigon-trace:/home/erigon/.local/share/erigon
+      - .jwtsecret:/jwtsecret
     networks:
       - chains
     command: >
@@ -18,6 +19,9 @@ services:
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
+      --authrpc.addr=0.0.0.0
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
     restart: unless-stopped
 
   rpcdaemon:
@@ -50,5 +54,21 @@ services:
       - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon`)"
       - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
 
+  lighthouse:
+    image: sigp/lighthouse:latest-modern
+    ports:
+      - "9000:9000"
+      - "127.0.0.1:5052:5052"
+    volumes:
+      - .jwtsecret:/jwtsecret
+    command: >
+      lighthouse beacon_node
+      --eth1-endpoints http://erigon-trace:8545
+      --execution-endpoint http://erigon-trace:8551
+      --execution-jwt /jwtsecret"
+    networks:
+      - chains
+
 volumes:
-    erigon-trace:  
+    erigon-trace:
+    lighthouse_data:
