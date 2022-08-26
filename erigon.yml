@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-trace:
-    image: thorax/erigon:2022.08.02-alpha
+    image: thorax/erigon:v2022.08.02
     expose:
     - "30303"
     - "30304"
@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   rpcdaemon:
-    image: thorax/erigon:2022.08.02-alpha
+    image: thorax/erigon:v2022.08.02
     command: >
       rpcdaemon --datadir=/home/erigon/.local/share/erigon
       --private.api.addr=erigon-trace:9090
