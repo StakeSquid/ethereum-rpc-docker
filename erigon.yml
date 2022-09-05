@@ -67,7 +67,7 @@ services:
       --execution-endpoint http://erigon-trace:8551
       --execution-jwt /jwtsecret
       --http
-      --http-address=*
+      --http-address=0.0.0.0
     networks:
       - chains
     labels:
