@@ -73,7 +73,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.lighthouse-stripprefix.stripprefix.prefixes=/lighthouse"
-      - "traefik.http.services.lighthouse.loadbalancer.server.port=8545"
+      - "traefik.http.services.lighthouse.loadbalancer.server.port=5052"
       - "traefik.http.routers.lighthouse.entrypoints=websecure"
       - "traefik.http.routers.lighthouse.tls.certresolver=myresolver"
       - "traefik.http.routers.lighthouse.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse`)"
