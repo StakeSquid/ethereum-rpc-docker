@@ -31,7 +31,7 @@ services:
         # Ethereum mainnet
         "--mainnet",                                                                                  
         # Maximum number of network peers (network disabled if set to 0) (default: 50)                
-        "--maxpeers=30"                   
+        "--maxpeers=30"
       ]                                                                                               
     networks:                            
       - chains                                                                                        

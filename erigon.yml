@@ -66,8 +66,18 @@ services:
       --eth1-endpoints http://erigon-trace:8545
       --execution-endpoint http://erigon-trace:8551
       --execution-jwt /jwtsecret
+      --http
+      --http-address=*
     networks:
       - chains
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.lighthouse-stripprefix.stripprefix.prefixes=/lighthouse"
+      - "traefik.http.services.lighthouse.loadbalancer.server.port=8545"
+      - "traefik.http.routers.lighthouse.entrypoints=websecure"
+      - "traefik.http.routers.lighthouse.tls.certresolver=myresolver"
+      - "traefik.http.routers.lighthouse.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse`)"
+      - "traefik.http.routers.lighthouse.middlewares=lighthouse-stripprefix, ipwhitelist"
 
 volumes:
     erigon-trace:
