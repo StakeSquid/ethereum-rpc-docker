@@ -29,7 +29,8 @@ services:
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
-
+    networks:
+      - chains
 
 ### MONITORING
 
@@ -48,23 +49,15 @@ services:
       - '--storage.tsdb.retention.time=200h'
       - '--web.enable-lifecycle'
     restart: unless-stopped
-#    expose:
-#      - 9090
-    network_mode: "service:wireguard"
-#    ports:
-#      - 127.0.0.1:9090:9090
     labels:
-      - "org.label-schema.group='monitoring'"
+      org.label-schema.group: "monitoring"
     depends_on:
       - prometheus-docker-sd
       - wireguard
-
-#    network_mode: "service:wireguard"
-#    depends_on:
-#      - wireguard
+    network_mode: "service:wireguard"
 
   prometheus-docker-sd:
-    image: "cventastic/prometheus-docker-sd:latest"
+    image: "stucky/prometheus-docker-sd:latest"
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -86,10 +79,7 @@ services:
     expose:
       - 9100
     labels:
-      - "org.label-schema.group='monitoring'"
-      - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=9100"
-      - "prometheus-scrape.job_name=nodeexporter"
+      org.label-schema.group: "monitoring"
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.42.0
@@ -107,10 +97,7 @@ services:
     expose:
       - 8080
     labels:
-      - "org.label-schema.group='monitoring'"
-      - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8080"
-      - "prometheus-scrape.job_name=cadvisor"
+      org.label-schema.group: "monitoring"
 
 ### VOLUMES
 
