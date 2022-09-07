@@ -80,7 +80,10 @@ services:
     expose:
       - 9100
     labels:
-      org.label-schema.group: "monitoring"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=3000"
+      - "prometheus-scrape.job_name=nodeexporter"
+      - "org.label-schema.group=monitoring"
     networks:
       - monitoring
 
@@ -100,7 +103,10 @@ services:
     expose:
       - 8080
     labels:
-      org.label-schema.group: "monitoring"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=3000"
+      - "prometheus-scrape.job_name=cadvisor"
+      - "org.label-schema.group=monitoring"
     networks:
       - monitoring
 

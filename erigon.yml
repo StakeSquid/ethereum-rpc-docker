@@ -23,6 +23,10 @@ services:
       --authrpc.vhosts=*
       --authrpc.jwtsecret=/jwtsecret
     restart: unless-stopped
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=3000"
+      - "prometheus-scrape.job_name=erigon"
 
   rpcdaemon:
     image: thorax/erigon:v2022.08.03
