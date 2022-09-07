@@ -31,6 +31,7 @@ services:
     restart: unless-stopped
     networks:
       - chains
+      - monitoring
 
 ### MONITORING
 
@@ -80,6 +81,8 @@ services:
       - 9100
     labels:
       org.label-schema.group: "monitoring"
+    networks:
+      - monitoring
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.42.0
@@ -98,9 +101,17 @@ services:
       - 8080
     labels:
       org.label-schema.group: "monitoring"
+    networks:
+      - monitoring
 
 ### VOLUMES
 
 volumes:
   prometheus_data:
   prometheus-docker-sd:
+
+### NETWORK
+
+networks:
+  monitoring:
+    driver: bridge
