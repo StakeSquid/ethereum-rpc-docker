@@ -23,6 +23,7 @@ services:
       --authrpc.vhosts=*
       --authrpc.jwtsecret=/jwtsecret
     restart: unless-stopped
+    stop_grace_period: 1m
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=6060"
@@ -74,6 +75,8 @@ services:
       --execution-jwt /jwtsecret
       --http
       --http-address=0.0.0.0
+    restart: unless-stopped
+    stop_grace_period: 1m
     networks:
       - chains
     labels:
