@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
     labels:
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=3000"
+      - "prometheus-scrape.port=6060"
       - "prometheus-scrape.job_name=erigon"
 
   rpcdaemon:

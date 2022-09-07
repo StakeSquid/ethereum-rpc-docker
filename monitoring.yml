@@ -81,7 +81,7 @@ services:
       - 9100
     labels:
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=3000"
+      - "prometheus-scrape.port=9100"
       - "prometheus-scrape.job_name=nodeexporter"
       - "org.label-schema.group=monitoring"
     networks:
@@ -104,7 +104,7 @@ services:
       - 8080
     labels:
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=3000"
+      - "prometheus-scrape.port=8080"
       - "prometheus-scrape.job_name=cadvisor"
       - "org.label-schema.group=monitoring"
     networks:
