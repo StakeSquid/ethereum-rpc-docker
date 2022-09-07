@@ -27,6 +27,7 @@ services:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=6060"
       - "prometheus-scrape.job_name=erigon"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
 
   rpcdaemon:
     image: thorax/erigon:v2022.08.03
