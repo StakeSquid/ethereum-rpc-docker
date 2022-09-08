@@ -6393,7 +6393,7 @@
     ]
   },
   "timezone": "",
-  "title": "Erigon Prometheus",
+  "title": "erigon metrics",
   "uid": "FPpjH6Hik",
   "version": 3,
   "weekStart": ""
