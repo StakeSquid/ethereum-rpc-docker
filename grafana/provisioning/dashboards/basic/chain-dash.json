@@ -23,7 +23,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": 3,
-  "iteration": 1643017584439,
+  "iteration": 1662643544733,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -814,6 +814,7 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
         "uid": "$DS_PROMETHEUS"
       },
       "fieldConfig": {
@@ -893,7 +894,13 @@
       "pluginVersion": "8.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P5A05DE9151B5EC1A"
+          },
+          "exemplar": true,
           "expr": "sum by (name) (rate(container_cpu_usage_seconds_total{image!=\"\",container_label_org_label_schema_group=\"\"}[1m])) / scalar(count(node_cpu_seconds_total{mode=\"user\"})) * 100",
+          "interval": "",
           "intervalFactor": 10,
           "legendFormat": "{{ name }}",
           "metric": "container_cpu_user_seconds_total",
@@ -1076,16 +1083,14 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PECBB1E6D5756C6D7"
+            "uid": "$DS_PROMETHEUS"
           },
           "exemplar": true,
-          "expr": "sum by (name)(container_memory_usage_bytes{image!=\"\",container_label_org_label_schema_group=\"\"})",
+          "expr": "sum by (name) (container_memory_usage_bytes{image!=\"\",container_label_org_label_schema_group=\"\"})",
+          "hide": false,
           "interval": "",
-          "intervalFactor": 1,
           "legendFormat": "{{ name }}",
-          "metric": "container_memory_usage",
-          "refId": "A",
-          "step": 1
+          "refId": "A"
         }
       ],
       "title": "Container Memory Usage",
@@ -1378,9 +1383,9 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "rpc-node",
-          "value": "rpc-node"
+          "selected": true,
+          "text": "rpc-de-01",
+          "value": "rpc-de-01"
         },
         "hide": 0,
         "includeAll": false,
@@ -1398,7 +1403,7 @@
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -1429,6 +1434,6 @@
   "timezone": "browser",
   "title": "chain container metrics",
   "uid": "vbznma07k",
-  "version": 25,
+  "version": 3,
   "weekStart": ""
 }
