@@ -5,7 +5,7 @@ datasources:
     type: prometheus
     access: proxy
     orgId: 1
-    url: http://10.13.13.4:9090
+    url: http://10.13.13.5:9090
     basicAuth: false
     isDefault: false
     editable: true
@@ -14,7 +14,7 @@ datasources:
     type: prometheus
     access: proxy
     orgId: 1
-    url: http://10.13.13.5:9090
+    url: http://10.13.13.6:9090
     basicAuth: false
     isDefault: false
     editable: true
