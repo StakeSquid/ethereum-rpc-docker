@@ -25,6 +25,5 @@ services:
     restart: unless-stopped
     stop_grace_period: 1m
 
-
 volumes:
     prysm_data:
