@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   geth-mainnet:                         
-    image: ethereum/client-go:v1.10.19
+    image: ethereum/client-go:v1.10.23
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
@@ -31,12 +31,17 @@ services:
         # Ethereum mainnet
         "--mainnet",                                                                                  
         # Maximum number of network peers (network disabled if set to 0) (default: 50)                
-        "--maxpeers=30"
+        "--maxpeers=30",
+        # The Merge
+        "--authrpc.jwtsecret=/jwtsecret"
+        "--authrpc.addr=0.0.0.0"
+        "--authrpc.vhosts=*"
       ]                                                                                               
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
       - "geth-mainnet_data:/root/.ethereum"
+      - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     labels:                     
       - "traefik.enable=true"
