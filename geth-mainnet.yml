@@ -43,6 +43,7 @@ services:
       - "geth-mainnet_data:/root/.ethereum"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
+    stop_grace_period: 1m
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.mainnet-stripprefix.stripprefix.prefixes=/mainnet"                  
