@@ -14,7 +14,7 @@ services:
         "--rpc-host=0.0.0.0",
         "--grpc-gateway-host=0.0.0.0",
         "--monitoring-host=0.0.0.0",
-        "--execution-endpoint=$EXECUTION_CLIENT:8551",
+        "--execution-endpoint=http://$EXECUTION_CLIENT:8551",
         "--accept-terms-of-use"
       ]                                                                                               
     networks:                            
