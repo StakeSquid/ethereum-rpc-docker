@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang = "en">
+   <head>
+         <link rel="stylesheet" href="/static/main.css">
+   </head>
+   <body>
+      <table>
+         <thead>
+            <tr>
+               <td>Name</td>
+               <td>IP</td>
+            </tr>
+         </thead>
+         <tbody>
+            {% for value in db_entries %}
+               <tr>
+                  <td>{{ value.name }}</td>
+                  <td>{{ value.ip }}</td>
+<!--                  <td><a href="{{ url_for('delete', name=value.name) }}">Delete</a></td>-->
+               </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+   </body>
+</html>

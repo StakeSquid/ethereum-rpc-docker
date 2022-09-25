@@ -46,11 +46,14 @@ services:
     depends_on:
       - wireguard
 
-      # DEBUG container wireguard
-      #  alpine:
-      #image: alpine
-      #command: sleep infinity
-      #network_mode: "service:wireguard"
+  dynaconf:
+    build: ./dynaconf
+    restart: unless-stopped
+    volumes:
+      - database:/src/database
+    network_mode: "service:wireguard"
+
 
 volumes:
+  database:
   grafana_data:
