@@ -23,6 +23,7 @@ services:
     ports:
       - $SERVERPORT:$SERVERPORT/udp
       - 127.0.0.1:3000:3000
+      - 127.0.0.1:5050:5000
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
