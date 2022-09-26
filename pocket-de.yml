@@ -83,5 +83,4 @@ services:
 volumes:
   pocket-de-1:
   pocket-de-1-addrbook:
-  pocket-de-2:
-  pocket-de-2-addrbook:
+
