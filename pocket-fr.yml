@@ -62,34 +62,6 @@ services:
       - "prometheus-scrape.port=8083"
       - "prometheus-scrape.job_name=pocket-fr-1"
 
-  pocket-fr-2:
-    build: pokt
-    ports:
-      - "127.0.0.1:8082:8081"
-      - "26657:26656"
-    expose:
-      - 26656
-      - 26660
-      - 8081
-      - 8083
-    #command: pocket start --simulateRelay
-    environment:
-      - POCKET_CORE_KEY=$POKT_FR_2_POCKET_CORE_KEY
-      - POCKET_CORE_PASSPHRASE=$POKT_FR_2_POCKET_CORE_PASSPHRASE
-      - POCKET_SNAPSHOT=$POCKET_SNAPSHOT
-    volumes:
-      - pocket-fr-2:/home/app/.pocket/data
-      - pocket-fr-2-addrbook:/home/app/.pocket/addrbook
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.pocket-fr-2.loadbalancer.server.port=8081"
-      - "traefik.http.routers.pocket-fr-2.entrypoints=websecure"
-      - "traefik.http.routers.pocket-fr-2.tls.certresolver=myresolver"
-      - "traefik.http.routers.pocket-fr-2.rule=Host(`$POKT_FR_2_DOMAIN`) && Path(`/v1`, `/v1/client/{dispatch|relay|challenge|sim}`)"
-      - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8083"
-      - "prometheus-scrape.job_name=pocket-fr-2"
 
   haproxy:
     build: haproxy
@@ -111,5 +83,3 @@ services:
 volumes:
   pocket-mainnet:
   pocket-mainnet-addrbook:
-  pocket-fr-2:
-  pocket-fr-2-addrbook:
