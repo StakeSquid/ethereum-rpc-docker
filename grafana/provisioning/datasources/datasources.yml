@@ -10,11 +10,29 @@ datasources:
     isDefault: false
     editable: true
 
+  - name: rpc-de-04
+    type: prometheus
+    access: proxy
+    orgId: 1
+    url: http://10.13.13.7:9090
+    basicAuth: false
+    isDefault: false
+    editable: true
+
   - name: rpc-fi-01
     type: prometheus
     access: proxy
     orgId: 1
     url: http://10.13.13.6:9090
+    basicAuth: false
+    isDefault: false
+    editable: true
+
+  - name: rpc-fi-04
+    type: prometheus
+    access: proxy
+    orgId: 1
+    url: http://10.13.13.8:9090
     basicAuth: false
     isDefault: false
     editable: true
