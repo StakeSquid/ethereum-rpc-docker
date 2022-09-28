@@ -22,7 +22,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 6,
-  "iteration": 1656686026130,
+  "iteration": 1664378997957,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -1539,9 +1539,9 @@
     "list": [
       {
         "current": {
-          "selected": true,
-          "text": "pocket-fr-1",
-          "value": "pocket-fr-1"
+          "selected": false,
+          "text": "pocket-lt-1",
+          "value": "pocket-lt-1"
         },
         "hide": 0,
         "includeAll": false,
@@ -1551,16 +1551,6 @@
         "options": [
           {
             "selected": true,
-            "text": "pocket-fr-1",
-            "value": "pocket-fr-1"
-          },
-          {
-            "selected": false,
-            "text": "pocket-fr-2",
-            "value": "pocket-fr-2"
-          },
-          {
-            "selected": false,
             "text": "pocket-lt-1",
             "value": "pocket-lt-1"
           },
@@ -1571,50 +1561,25 @@
           },
           {
             "selected": false,
-            "text": "pocket-lt-3",
-            "value": "pocket-lt-3"
-          },
-          {
-            "selected": false,
-            "text": "pocket-lt-4",
-            "value": "pocket-lt-4"
-          },
-          {
-            "selected": false,
             "text": "pocket-de-1",
             "value": "pocket-de-1"
           },
           {
             "selected": false,
-            "text": "pocket-de-2",
-            "value": "pocket-de-2"
-          },
-          {
-            "selected": false,
-            "text": "pocket-de-4",
-            "value": "pocket-de-4"
-          },
-          {
-            "selected": false,
-            "text": "pocket-de-5",
-            "value": "pocket-de-5"
-          },
-          {
-            "selected": false,
-            "text": "pocket-de-6",
-            "value": "pocket-de-6"
+            "text": "pocket",
+            "value": "pocket"
           }
         ],
-        "query": "pocket-fr-1,pocket-fr-2,pocket-lt-1,pocket-lt-2,pocket-lt-3,pocket-lt-4,pocket-de-1,pocket-de-2,pocket-de-4,pocket-de-5,pocket-de-6",
+        "query": "pocket-lt-1,pocket-lt-2,pocket-de-1,pocket",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
       },
       {
         "current": {
-          "selected": true,
-          "text": "pokt-fr-1",
-          "value": "pokt-fr-1"
+          "selected": false,
+          "text": "pokt-lt-1",
+          "value": "pokt-lt-1"
         },
         "hide": 0,
         "includeAll": false,
@@ -1639,6 +1604,6 @@
   "timezone": "",
   "title": "pocket metrics",
   "uid": "PPoaArJnz",
-  "version": 1,
+  "version": 12,
   "weekStart": ""
 }
