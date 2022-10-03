@@ -6,10 +6,6 @@ services:
     image: traefik:latest
     container_name: traefik
     restart: always
-    ulimits:
-      nofile:
-        soft: "40000"
-        hard: "50000"
     expose:
       - "8082"
     ports:
