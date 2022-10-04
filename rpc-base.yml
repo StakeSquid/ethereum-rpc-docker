@@ -15,7 +15,7 @@ services:
       - "--api=true"
       - "--api.insecure=true"
       - "--api.dashboard=true"
-      - "--log.level=ERROR"
+      - "--log.level=DEBUG"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.filename=/dynamic_config.yml"
