@@ -7,10 +7,6 @@ services:
     - "30303"
     - "30304"
     - "9090"
-    ulimits:
-      nofile:
-        soft: "40000"
-        hard: "50000"
     volumes:
       - erigon-trace:/home/erigon/.local/share/erigon
       - .jwtsecret:/jwtsecret
@@ -52,10 +48,6 @@ services:
       - chains
     expose:
       - "8545"
-    ulimits:
-      nofile:
-        soft: "40000"
-        hard: "50000"
     restart: unless-stopped
     depends_on:
       - "erigon-trace"
