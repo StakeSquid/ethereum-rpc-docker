@@ -11,7 +11,7 @@ services:
       net.ipv4.tcp_slow_start_after_idle: 0
       net.ipv4.tcp_no_metrics_save: 1
     environment:
-      - SNAPSHOT_URL=https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/bor-fullnode-snapshot-2022-02-20.tar.gz
+      - SNAPSHOT_URL=https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/bor-fullnode-snapshot-2022-10-10.tar.gz
       - BOOTSTRAP=1
       - ARCHIVE=0                                                                              
     volumes:                  

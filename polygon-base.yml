@@ -25,7 +25,7 @@ services:
       - geth-mainnet                                                                                  
     environment:                                                                                      
       - MONIKER=StakeSquid                                                                            
-      - SNAPSHOT_URL=https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/heimdall-snapshot-2022-03-13.tar.gz
+      - SNAPSHOT_URL=https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/heimdall-snapshot-2022-10-17.tar.gz
       - BOOTSTRAP=1                                                                                   
       - "ETH1_RPC_URL=http://geth-mainnet:8545/"                                                      
     restart: unless-stopped                                                                           
