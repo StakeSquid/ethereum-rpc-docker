@@ -1,0 +1,31 @@
+upstreams:
+  - id: coinbase
+    chain: ethereum
+    role: secondary
+    priority: 30
+    labels:
+      provider: geth
+      archive: false
+    options:
+      disable-validation: false
+      validate-peers: false
+      validate-syncing: true
+    methods:
+      enabled:
+        # Manually Enabled
+        - name: coinbaseCloud_getBalances
+        - name: coinbaseCloud_getSingleBalance
+        - name: coinbaseCloud_getTokenAllowances
+        - name: coinbaseCloud_getTransactionByHash
+        - name: coinbaseCloud_getTransactionsByAddress
+        - name: coinbaseCloud_getTokenTransfersByAddress
+        - name: coinbaseCloud_getTokenMetadata
+        - name: coinbaseCloud_getTokenStandardEvents
+    connection:
+      ethereum:
+        rpc:
+          url: "https://mainnet.ethereum.coinbasecloud.net"
+          basic-auth:
+            username: ${COINBASE_USERNAME}
+            password: ${COINBASE_PASSWORD}
+

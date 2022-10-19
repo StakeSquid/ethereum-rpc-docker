@@ -1,0 +1,16 @@
+upstreams:
+  - id: rivet
+    chain: ethereum
+    role: fallback
+    priority: 10
+    options:
+      disable-validation: false
+      validate-peers: false
+      validate-syncing: true
+    connection:
+      ethereum:
+        rpc:
+          url: "https://${RIVET_KEY}.eth.rpc.rivet.cloud"
+        ws:
+          url: "wss://${RIVET_KEY}.eth.ws.rivet.cloud"
+
