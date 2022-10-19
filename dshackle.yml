@@ -8,10 +8,15 @@ services:
     restart: unless-stopped
     volumes:
       - ./dshackle/config:/etc/dshackle # This should hold all your yaml files
+    expose:
+      - 8080
+      - 8081
+      - 8082
+      - 2449
     ports:
       - "8080:8080"
       - "8081:8081"
-      - "8082:8082"
+      - "127.0.0.1:8082:8082"
     environment:
       - ALCHEMY_KEY=${ALCHEMY_KEY}
       - ANYBLOCK_KEY=${ANYBLOCK_KEY}
@@ -24,6 +29,18 @@ services:
       - RIVET_KEY=${RIVET_KEY}
       - QUICKNODE_HTTP=${QUICKNODE_HTTP}
       - QUICKNODE_WSS=${QUICKNODE_WSS}
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8081"
+      - "prometheus-scrape.job_name=dshackle"
+      - "prometheus-scrape.metrics_path=/metrics"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.rpcdaemon-stripprefix.stripprefix.prefixes=/dshackle"
+      - "traefik.http.services.rpcdaemon.loadbalancer.server.port=8080"
+      - "traefik.http.routers.rpcdaemon.entrypoints=websecure"
+      - "traefik.http.routers.rpcdaemon.tls.certresolver=myresolver"
+      - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/dshackle`)"
+      - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
 
     redis:
       container_name: redis
