@@ -12,6 +12,8 @@ services:
       - 8081 # /metrics
       - 8082 # healthcheck
       - 2449 # grpc
+    networks:
+      - chains
     ports:
       - "127.0.0.1:8082:8082" # healthcheck
     environment:
@@ -44,6 +46,8 @@ services:
   redis:
     image: healthcheck/redis:alpine
     restart: unless-stopped
+    networks:
+      - chains
     environment:
       - REDIS_RAM=${REDIS_RAM}
     command:
