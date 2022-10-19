@@ -39,16 +39,16 @@ services:
       - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/dshackle`)"
       - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
 
-    redis:
-      image: healthcheck/redis:alpine
-      restart: unless-stopped
-      environment:
-        - REDIS_RAM=${REDIS_RAM}
-      command:
-        - "redis-server"
-        - "--maxmemory ${REDIS_RAM}"
-        - "--maxmemory-policy allkeys-lru"
-        - '--save ""'
+  redis:
+    image: healthcheck/redis:alpine
+    restart: unless-stopped
+    environment:
+      - REDIS_RAM=${REDIS_RAM}
+    command:
+      - "redis-server"
+      - "--maxmemory ${REDIS_RAM}"
+      - "--maxmemory-policy allkeys-lru"
+      - '--save ""'
 
 
 
