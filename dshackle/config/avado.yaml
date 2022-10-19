@@ -1,0 +1,14 @@
+upstreams:
+  - id: avado
+    chain: ethereum
+    role: fallback
+    priority: 60
+    options:
+      disable-validation: false
+      validate-peers: false
+      validate-syncing: true
+    connection:
+      ethereum:
+        rpc:
+          url: "https://mainnet.eth.cloud.ava.do"
+

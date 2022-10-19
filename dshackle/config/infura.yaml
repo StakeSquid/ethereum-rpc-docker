@@ -1,0 +1,16 @@
+upstreams:
+  - id: infura
+    chain: ethereum
+    role: fallback
+    priority: 20
+    options:
+      disable-validation: false
+      validate-peers: false
+      validate-syncing: true
+    connection:
+      ethereum:
+        rpc:
+          url: "https://mainnet.infura.io/v3/${INFURA_KEY}"
+        ws:
+          url: "wss://mainnet.infura.io/ws/v3/${INFURA_KEY}"
+
