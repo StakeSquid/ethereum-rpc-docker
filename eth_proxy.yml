@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+
+  eth_proxy:
+    image: stakesquid/eth-proxy:latest
+    expose:
+      - "8080"
+      - "12449"
+    ports:
+      - "127.0.0.1:12449:12449"
+    environment:
+      - DSHACKLE_GRPC=http://dshackle:2449
+      - ETH_PROXY_UPSTREAM_RPCS=${ETH_PROXY_UPSTREAM_RPCS}
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.eth_proxy-stripprefix.stripprefix.prefixes=/eth-proxy"
+      - "traefik.http.services.eth_proxy.loadbalancer.server.port=8080"
+      - "traefik.http.routers.eth_proxy.entrypoints=websecure"
+      - "traefik.http.routers.eth_proxy.tls.certresolver=myresolver"
+      - "traefik.http.routers.eth_proxy.rule=Host(`$DOMAIN`) && PathPrefix(`/eth-proxy`)"
+      - "traefik.http.routers.eth_proxy.middlewares=eth_proxy-stripprefix, ipwhitelist"
