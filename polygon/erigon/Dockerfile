@@ -22,7 +22,7 @@ RUN make erigon
 # Pull Bor into a second stage deploy alpine container
 FROM alpine:latest
 
-RUN apk add --no-cache ca-certificates curl jq
+RUN apk add --no-cache ca-certificates curl jq libstdc++ libgcc
 COPY --from=builder /go/erigon/build/bin/erigon /usr/local/bin/
 
 # Set entrypoint
