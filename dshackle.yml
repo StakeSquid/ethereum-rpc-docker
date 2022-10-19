@@ -32,12 +32,13 @@ services:
       - "prometheus-scrape.job_name=dshackle"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.rpcdaemon-stripprefix.stripprefix.prefixes=/dshackle"
-      - "traefik.http.services.rpcdaemon.loadbalancer.server.port=8080"
-      - "traefik.http.routers.rpcdaemon.entrypoints=websecure"
-      - "traefik.http.routers.rpcdaemon.tls.certresolver=myresolver"
-      - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/dshackle`)"
-      - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.dshackle-stripprefix.stripprefix.prefixes=/dshackle"
+      - "traefik.http.middlewares.shackle-replacepath.replacepath.path=/eth"
+      - "traefik.http.services.dshackle.loadbalancer.server.port=8080"
+      - "traefik.http.routers.dshackle.entrypoints=websecure"
+      - "traefik.http.routers.dshackle.tls.certresolver=myresolver"
+      - "traefik.http.routers.dshackle.rule=Host(`$DOMAIN`) && PathPrefix(`/dshackle`)"
+      - "traefik.http.routers.dshackle.middlewares=dshackle-stripprefix, dshackle-replacepath, ipwhitelist"
 
   redis:
     image: healthcheck/redis:alpine
