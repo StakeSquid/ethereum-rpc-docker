@@ -21,12 +21,12 @@ services:
     stop_grace_period: 1m
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.bor-stripprefix.stripprefix.prefixes=/polygon-archive"
-      - "traefik.http.services.bor.loadbalancer.server.port=8545"
-      - "traefik.http.routers.bor.entrypoints=websecure"
-      - "traefik.http.routers.bor.tls.certresolver=myresolver"
-      - "traefik.http.routers.bor.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-archive`)"
-      - "traefik.http.routers.bor.middlewares=bor-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.erigon-polygon-stripprefix.stripprefix.prefixes=/polygon-archive"
+      - "traefik.http.services.erigon-polygon.loadbalancer.server.port=8545"
+      - "traefik.http.routers.erigon-polygon.entrypoints=websecure"
+      - "traefik.http.routers.erigon-polygon.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-polygon.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-archive`)"
+      - "traefik.http.routers.erigon-polygon.middlewares=erigon-polygon-stripprefix, ipwhitelist"
     networks:
       - chains
 
