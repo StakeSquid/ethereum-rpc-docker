@@ -11,7 +11,9 @@ services:
       - "127.0.0.1:12449:12449"
     environment:
       - DSHACKLE_GRPC=http://dshackle:2449
-      - ETH_PROXY_UPSTREAM_RPCS=${ETH_PROXY_UPSTREAM_RPCS}
+      - UPSTREAM_RPCS=${ETH_PROXY_UPSTREAM_RPCS}
+    networks:
+      - chains
     restart: always
     labels:
       - "traefik.enable=true"
