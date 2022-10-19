@@ -28,6 +28,9 @@ exec erigon \
       --chain=bor-mainnet \
       --bor.heimdall=http://heimdallr:1317 \
       --datadir=${ERIGON_HOME} \
+      --http --http.addr="0.0.0.0" --http.port="8545" --http.compression --http.vhosts="*" --http.corsdomain="*" --http.api="eth,debug,net,trace,web3,erigon,bor" \
+      --ws --ws.compression \
       --snap.keepblocks=true \
+      --snapshots="true" \
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 \
       --pprof --pprof.addr=0.0.0.0 --pprof.port=6061
