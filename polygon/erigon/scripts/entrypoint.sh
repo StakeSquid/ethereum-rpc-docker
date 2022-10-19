@@ -32,5 +32,6 @@ exec erigon \
       --ws --ws.compression \
       --snap.keepblocks=true \
       --snapshots="true" \
+      --torrent.upload.rate="1250mb" --torrent.download.rate="1250mb" \
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 \
       --pprof --pprof.addr=0.0.0.0 --pprof.port=6061
