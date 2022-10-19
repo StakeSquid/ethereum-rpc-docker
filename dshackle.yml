@@ -3,20 +3,17 @@ version: '3.1'
 services:
 
   dshackle:
-    container_name: dshackle
     image: emeraldpay/dshackle:0.13.1
     restart: unless-stopped
     volumes:
       - ./dshackle/config:/etc/dshackle # This should hold all your yaml files
     expose:
-      - 8080
-      - 8081
-      - 8082
-      - 2449
+      - 8080 # /eth
+      - 8081 # /metrics
+      - 8082 # healthcheck
+      - 2449 # grpc
     ports:
-      - "8080:8080"
-      - "8081:8081"
-      - "127.0.0.1:8082:8082"
+      - "127.0.0.1:8082:8082" # healthcheck
     environment:
       - ALCHEMY_KEY=${ALCHEMY_KEY}
       - ANYBLOCK_KEY=${ANYBLOCK_KEY}
@@ -43,7 +40,6 @@ services:
       - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
 
     redis:
-      container_name: redis
       image: healthcheck/redis:alpine
       restart: unless-stopped
       environment:
