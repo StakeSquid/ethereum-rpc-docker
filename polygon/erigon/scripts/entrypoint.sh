@@ -10,8 +10,8 @@ ERIGON_HOME=/datadir
 if [ "${BOOTSTRAP}" == 1 ] && [ -n "${SNAPSHOT_URL}" ] && [ ! -f "${ERIGON_HOME}/bootstrapped" ];
 then
   echo "downloading snapshot from ${SNAPSHOT_URL}"
-  mkdir -p ${ERIGON_HOME}/bor/chaindata
-  wget --tries=0 -O - "${SNAPSHOT_URL}" | tar -xz -C ${ERIGON_HOME}/bor/chaindata && touch ${ERIGON_HOME}/bootstrapped
+  mkdir -p ${ERIGON_HOME}
+  wget --tries=0 -O - "${SNAPSHOT_URL}" | tar -xz -C ${ERIGON_HOME} && touch ${ERIGON_HOME}/bootstrapped
 fi
 
 READY=$(curl -s http://heimdalld:26657/status | jq '.result.sync_info.catching_up')
