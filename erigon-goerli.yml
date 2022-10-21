@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-trace:
-    image: thorax/erigon:v2022.08.03
+    image: thorax/erigon:v2.28.0
     expose:
     - "30303"
     - "30304"
