@@ -91,6 +91,7 @@ services:
       - "traefik.http.routers.lighthouse.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse`)"
       - "traefik.http.routers.lighthouse.middlewares=lighthouse-stripprefix, ipwhitelist"
 
+
 volumes:
     erigon-trace:
     lighthouse_data:
