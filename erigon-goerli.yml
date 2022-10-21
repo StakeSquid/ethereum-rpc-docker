@@ -1,0 +1,96 @@
+version: '3.1'
+
+services:
+  erigon-trace:
+    image: thorax/erigon:v2022.08.03
+    expose:
+    - "30303"
+    - "30304"
+    - "9090"
+    volumes:
+      - erigon-trace:/home/erigon/.local/share/erigon
+      - .jwtsecret:/jwtsecret
+    networks:
+      - chains
+    command: >
+      erigon --chain goerli
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --authrpc.addr=0.0.0.0
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
+      --snapshots=true
+      --torrent.download.rate=1250mb
+      --torrent.upload.rate=1250mb
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=erigon"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+
+  rpcdaemon:
+    image: thorax/erigon:v2022.08.03
+    command: >
+      rpcdaemon --datadir=/home/erigon/.local/share/erigon
+      --private.api.addr=erigon-trace:9090
+      --txpool.api.addr=erigon-trace:9090
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --ws
+    pid: service:erigon-trace # Use erigon's PID namespace. It's required to open Erigon's DB from another process (RPCDaemon local-mode)
+    volumes:
+      - erigon-trace:/home/erigon/.local/share/erigon
+    networks:
+      - chains
+    expose:
+      - "8545"
+    restart: unless-stopped
+    depends_on:
+      - "erigon-trace"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.rpcdaemon-stripprefix.stripprefix.prefixes=/erigon"
+      - "traefik.http.services.rpcdaemon.loadbalancer.server.port=8545"
+      - "traefik.http.routers.rpcdaemon.entrypoints=websecure"
+      - "traefik.http.routers.rpcdaemon.tls.certresolver=myresolver"
+      - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon`)"
+      - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
+
+  lighthouse:
+    image: sigp/lighthouse:latest-modern
+    ports:
+      - "9000:9000"
+      - "127.0.0.1:5052:5052"
+    volumes:
+      - .jwtsecret:/jwtsecret
+      - lighthouse_data:/root/.lighthouse
+    command: >
+      lighthouse beacon_node
+      --eth1-endpoints http://erigon-trace:8545
+      --execution-endpoint http://erigon-trace:8551
+      --execution-jwt /jwtsecret
+      --http
+      --http-address=0.0.0.0
+    restart: unless-stopped
+    stop_grace_period: 1m
+    networks:
+      - chains
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.lighthouse-stripprefix.stripprefix.prefixes=/lighthouse"
+      - "traefik.http.services.lighthouse.loadbalancer.server.port=5052"
+      - "traefik.http.routers.lighthouse.entrypoints=websecure"
+      - "traefik.http.routers.lighthouse.tls.certresolver=myresolver"
+      - "traefik.http.routers.lighthouse.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse`)"
+      - "traefik.http.routers.lighthouse.middlewares=lighthouse-stripprefix, ipwhitelist"
+
+volumes:
+    erigon-trace:
+    lighthouse_data:
