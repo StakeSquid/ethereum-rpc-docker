@@ -36,7 +36,7 @@ services:
   rpcdaemon:
     image: thorax/erigon:v2.28.0
     command: >
-      rpcdaemon --datadir=/home/erigon/.local/share/erigon
+      rpcdaemon --datadir=/home/erigon/.local/share/erigon/goerli/
       --private.api.addr=erigon-trace:9090
       --txpool.api.addr=erigon-trace:9090
       --http.addr=0.0.0.0
