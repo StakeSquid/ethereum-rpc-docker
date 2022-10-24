@@ -56,11 +56,11 @@ services:
       - "erigon-trace"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.rpcdaemon-stripprefix.stripprefix.prefixes=/erigon"
+      - "traefik.http.middlewares.rpcdaemon-stripprefix.stripprefix.prefixes=/erigon-goerli"
       - "traefik.http.services.rpcdaemon.loadbalancer.server.port=8545"
       - "traefik.http.routers.rpcdaemon.entrypoints=websecure"
       - "traefik.http.routers.rpcdaemon.tls.certresolver=myresolver"
-      - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon`)"
+      - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-goerli`)"
       - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
 
   lighthouse:
