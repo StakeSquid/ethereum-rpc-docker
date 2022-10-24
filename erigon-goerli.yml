@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-trace:
-    image: thorax/erigon:2022.10.01
+    image: thorax/erigon:v2022.10.01
     expose:
     - "30303"
     - "30304"
@@ -34,7 +34,7 @@ services:
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
 
   rpcdaemon:
-    image: thorax/erigon:2022.10.01
+    image: thorax/erigon:v2022.10.01
     command: >
       rpcdaemon --datadir=/home/erigon/.local/share/erigon/goerli
       --private.api.addr=erigon-trace:9090
