@@ -36,7 +36,7 @@ services:
   rpcdaemon:
     image: thorax/erigon:2022.10.01
     command: >
-      rpcdaemon --datadir=/home/erigon/.local/share/erigon/goerli/
+      rpcdaemon --datadir=/home/erigon/.local/share/erigon/goerli
       --private.api.addr=erigon-trace:9090
       --txpool.api.addr=erigon-trace:9090
       --http.addr=0.0.0.0
@@ -74,7 +74,7 @@ services:
     command: >
       lighthouse beacon_node
       --network prater
-      --eth1-endpoints http://erigon-trace:8545
+      --reconstruct-historic-states
       --execution-endpoint http://erigon-trace:8551
       --execution-jwt /jwtsecret
       --http
