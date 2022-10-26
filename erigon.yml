@@ -16,6 +16,8 @@ services:
       erigon --chain mainnet
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
