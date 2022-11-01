@@ -15,8 +15,8 @@ services:
     ports:
       - '30303:30303/tcp' # p2p
       - '30303:30303/udp' # p2p
-      - '8545:8545'
-      - '9091:9091'
+      - '127.0.0.1:8545:8545'
+      - '127.0.0.1:9091:9091'
     volumes:
       - nethermind_db:/nethermind/nethermind_db
       - nethermind_keystore:/nethermind/keystore
@@ -62,6 +62,9 @@ services:
       --metrics-allow-origin *
       --debug-level info
     ports:
+#     HTTPPORT
+#      - 5052
+#     P2P
       - '12000:12000/udp'
       - '13000:13000'
     volumes:
