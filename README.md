@@ -4,7 +4,7 @@
 
 xdai:
 ```
-XDAI_RPC_URL=http://gnosis-archive:8545
+XDAI_RPC_URL=http://xdai-archive:8545
 PUBLIC_IP=
 TARGET_PEERS=80
 ```
