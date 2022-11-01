@@ -8,7 +8,7 @@ services:
   xdai-archive:
     hostname: xdai-archive
     container_name: xdai-archive
-    image: nethermind/nethermind:1.14.5
+    image: nethermindeth/nethermind:TracesDB
     restart: always
     stop_grace_period: 1m
     command: '--JsonRpc.Enabled true --JsonRpc.Host 0.0.0.0 --Metrics.Enabled true'
