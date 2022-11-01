@@ -1,0 +1,79 @@
+version: '3.1'
+
+# Client https://github.com/NethermindEth/nethermind
+# Nethermind container as in https://github.com/gnosischain/documentation/blob/a46e0964c7e4f75bed0ff02f7ae157c4417f60bd/docs/node/execution-layer-validator.md
+# Beaconchain container as in https://github.com/gnosischain/lighthouse-launch
+
+services:
+  xdai-archive:
+    hostname: xdai-archive
+    container_name: xdai-archive
+    image: nethermind/nethermind:1.14.5
+    restart: always
+    stop_grace_period: 1m
+    command: '--JsonRpc.Enabled true --JsonRpc.Host 0.0.0.0 --Metrics.Enabled true'
+    ports:
+      - '30303:30303/tcp' # p2p
+      - '30303:30303/udp' # p2p
+      - '8545:8545'
+      - '9091:9091'
+    volumes:
+      - nethermind_db:/nethermind/nethermind_db
+      - nethermind_keystore:/nethermind/keystore
+      - nethermind_logs:/nethermind/logs
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - NETHERMIND_CONFIG=xdai_archive
+      - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,AccountAbstraction,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Trace]
+      - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
+    logging:
+      options:
+        max-size: "1000m"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.xdai-archive-stripprefix.stripprefix.prefixes=/xdai-archive"
+      - "traefik.http.services.xdai-archive.loadbalancer.server.port=8545"
+      - "traefik.http.routers.xdai-archive.entrypoints=websecure"
+      - "traefik.http.routers.xdai-archive.tls.certresolver=myresolver"
+      - "traefik.http.routers.xdai-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/xdai-archive`)"
+      - "traefik.http.routers.xdai-archive.middlewares=xdai-archive-stripprefix, ipwhitelist"
+
+  xdai-beacon:
+    image: sigp/lighthouse:v3.2.1
+    hostname: lighthouse-xdai
+    restart: always
+    stop_grace_period: 1m
+    command: |
+      lighthouse beacon_node
+      --network gnosis
+      --checkpoint-sync-url https://rpc-gbc.gnosischain.com/
+      --discovery-port 12000
+      --port 13000
+      --eth1-endpoints $XDAI_RPC_URL
+      --datadir /home/.eth2/beaconchaindata
+      --http-address 0.0.0.0
+      --http
+      --enr-address $PUBLIC_IP
+      --enr-udp-port 12000
+      --target-peers $TARGET_PEERS
+      --metrics
+      --metrics-address 0.0.0.0
+      --metrics-allow-origin *
+      --debug-level info
+    ports:
+      - '12000:12000/udp'
+      - '13000:13000'
+    volumes:
+      - lighthouse_xdai:/home/.eth2/beaconchaindata
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "1"
+
+volumes:
+  nethermind_db:
+  nethermind_keystore:
+  nethermind_logs:
+  lighthouse_xdai:
