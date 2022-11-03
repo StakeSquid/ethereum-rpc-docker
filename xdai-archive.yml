@@ -11,7 +11,7 @@ services:
     image: nethermindeth/nethermind:TracesDB
     restart: always
     stop_grace_period: 1m
-    command: |
+    command: >
       --JsonRpc.Enabled true \
       --JsonRpc.Host 0.0.0.0 \
       --Metrics.Enabled true \
