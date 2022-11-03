@@ -11,13 +11,12 @@ services:
     image: nethermindeth/nethermind:TracesDB
     restart: always
     stop_grace_period: 1m
-    command: >
-      --JsonRpc.Enabled true \
+    command: ' --JsonRpc.Enabled true \
       --JsonRpc.Host 0.0.0.0 \
       --Metrics.Enabled true \
       --TraceStore.Enabled true \
       --TraceStore.BlocksToKeep 0 \
-      --TraceStore.TraceTypes Trace,Rewards,VmTrace,StateDiff
+      --TraceStore.TraceTypes Trace,Rewards,VmTrace,StateDiff'
     ports:
       - '30303:30303/tcp' # p2p
       - '30303:30303/udp' # p2p
