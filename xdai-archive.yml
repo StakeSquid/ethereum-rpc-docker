@@ -26,6 +26,9 @@ services:
     environment:
       - NETHERMIND_CONFIG=xdai_archive
       - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,AccountAbstraction,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Trace]
+      - NETHERMIND_TRACESTORE_ENABLED=[True]
+      - NETHERMIND_TRACESTORE_BLOCKSTOKEEP=[0]
+      - NETHERMIND_TRACESTORE_TRACETYPES=[Trace,Rewards,VmTrace,StateDiff]
       - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
     logging:
       options:
