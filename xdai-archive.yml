@@ -1,7 +1,7 @@
 version: '3.1'
 
 # Client https://github.com/NethermindEth/nethermind
-# Nethermind container as in https://github.com/gnosischain/documentation/blob/a46e0964c7e4f75bed0ff02f7ae157c4417f60bd/docs/node/execution-layer-validator.md
+# Nethermind container as in https://github.com/gnosischain/documentation/blob/a46e0964c7e4f75bed0ff02f7ae157c4417f60bd/docs/node/execution-layer-validator.md#setup-as-archive-node
 # Beaconchain container as in https://github.com/gnosischain/lighthouse-launch
 
 services:
