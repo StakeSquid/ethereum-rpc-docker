@@ -27,7 +27,7 @@ services:
       - NETHERMIND_CONFIG=xdai_archive
       - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,AccountAbstraction,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Trace]
       - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
-      - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=150
+      - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=500
     logging:
       options:
         max-size: "1000m"
