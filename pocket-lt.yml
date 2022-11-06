@@ -143,5 +143,5 @@ volumes:
   pocket-lt-1-addrbook:
   pocket-lt-2:
   pocket-lt-2-addrbook:
-  pocket-lt-3:
-  pocket-lt-3-addrbook:
+#  pocket-lt-3:
+#  pocket-lt-3-addrbook:
