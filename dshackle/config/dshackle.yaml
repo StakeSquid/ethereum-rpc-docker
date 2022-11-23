@@ -37,6 +37,11 @@ proxy:
     - id: eth
       blockchain: ethereum
 
+accessLog:
+  enabled: true
+  include-messages: true
+  filename: /logs/access_log.jsonl
+
 cluster:
   defaults:
     - chains:
@@ -49,16 +54,19 @@ cluster:
     #- "geth.yaml"
     #- "nethermind.yaml"
     #- "erigon.yaml"
+    - "de-1-erigon.yaml"
+    - "fi-1-erigon.yaml"
+    #- "de-4-mainnet.yaml"
     # Freemium Nodes
-    - "alchemy.yaml"
-    - "anyblock.yaml"
-    - "chainstack.yaml"
-    - "coinbase.yaml"
+    #- "alchemy.yaml"
+    #- "anyblock.yaml"
+    #- "chainstack.yaml"
+    #- "coinbase.yaml"
     - "infura.yaml"
-    - "quicknode.yaml"
-    - "rivet.yaml"
+    #- "quicknode.yaml"
+    #- "rivet.yaml"
     # Public Nodes
-    - "cloudflare.yaml"
-    - "avado.yaml"
-    - "ankr.yaml"
+    #- "cloudflare.yaml"
+    #- "avado.yaml"
+    #- "ankr.yaml"
 

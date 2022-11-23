@@ -1,0 +1,27 @@
+upstreams:
+  - id: de-1-erigon
+    chain: ethereum
+    labels:
+        provider: stakesquid-de-1-erigon
+    priority: 100
+    methods:
+      enabled:
+        # Manually Enabled
+        - name: trace_block
+        - name: trace_call
+        - name: trace_callMany
+        - name: trace_filter
+        - name: trace_get
+        - name: trace_transaction
+      disabled:
+        - name: eth_chainId
+        - name: eth_chainID
+        - name: eth_chainid
+    connection:
+      ethereum:
+        rpc:
+          url: "https://rpc-de-1.stakesquid.eu/erigon"
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: "wss://rpc-de-1.stakesquid.eu/erigon"

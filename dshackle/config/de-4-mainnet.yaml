@@ -1,0 +1,44 @@
+upstreams:
+  - id: de-4-mainnet
+    chain: ethereum
+    labels:
+        provider: stakesquid-de-4-mainnet
+    priority: 120
+    methods:
+      enabled:
+        # Manually Enabled
+        - name: eth_chainid
+        - name: eth_chainId
+        - name: eth_chainID
+      disabled:
+        - name: eth_blockNumber
+        - name: eth_call
+        - name: eth_estimateGas
+        - name: eth_feeHistory
+        - name: eth_gasPrice
+        - name: eth_getBalance
+        - name: eth_getBlockByHash
+        - name: eth_getBlockByNumber
+        - name: eth_getBlockTransactionCountByHash
+        - name: eth_getBlockTransactionCountByNumber
+        - name: eth_getCode
+        - name: eth_getLogs
+        - name: eth_getStorageAt
+        - name: eth_getTransactionByBlockHashAndIndex
+        - name: eth_getTransactionByBlockNumberAndIndex
+        - name: eth_getTransactionByHash
+        - name: eth_getTransactionCount
+        - name: eth_getTransactionReceipt
+        - name: eth_getUncleByBlockHashAndIndex
+        - name: eth_getUncleByBlockNumberAndIndex
+        - name: eth_getUncleCountByBlockHash
+        - name: eth_getUncleCountByBlockNumber
+        - name: eth_sendRawTransaction
+    connection:
+      ethereum:
+        rpc:
+          url: "https://rpc-de-4.stakesquid.eu/mainnet"
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: "wss://rpc-de-4.stakesquid.eu/mainnet"
