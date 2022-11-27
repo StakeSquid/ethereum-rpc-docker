@@ -1,14 +1,11 @@
 
 ### Docs
 
-.envs:
+erigon.yml
+xdai.yml
+xdai-archive.yml
 
-xdai:
-```
-XDAI_RPC_URL=http://xdai-archive:8545
-PUBLIC_IP=
-TARGET_PEERS=80
-```
+all need a .jwtsecret file inside POKT_DOKT folder
 
 TODO:
 
