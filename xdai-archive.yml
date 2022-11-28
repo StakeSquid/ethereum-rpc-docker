@@ -95,4 +95,4 @@ volumes:
   nethermind_db:
   nethermind_keystore:
   nethermind_logs:
-  lighthouse_xdai:
+  xdai_consensus:
