@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-trace:
-    image: thorax/erigon:v2022.08.03
+    image: thorax/erigon:v2.30.0
     expose:
     - "30303"
     - "30304"
@@ -14,6 +14,7 @@ services:
       - chains
     command: >
       erigon --chain mainnet
+      --externalcl
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
       --torrent.upload.rate="1250mb"
@@ -33,7 +34,7 @@ services:
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
 
   rpcdaemon:
-    image: thorax/erigon:v2022.08.03
+    image: thorax/erigon:v2.30.0
     command: >
       rpcdaemon --datadir=/home/erigon/.local/share/erigon
       --private.api.addr=erigon-trace:9090

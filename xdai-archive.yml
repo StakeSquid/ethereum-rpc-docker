@@ -8,7 +8,7 @@ services:
   xdai-archive:
     hostname: xdai-archive
     container_name: xdai-archive
-    image: nethermindeth/nethermind:trace-db
+    image: nethermindeth/nethermind:db-traces
     restart: always
     stop_grace_period: 1m
     command: |
@@ -21,6 +21,7 @@ services:
       --TraceStore.Enabled=true
       --TraceStore.BlocksToKeep=0
       --TraceStore.TraceTypes=Trace,Rewards
+      --Sync.FastSync=false
     ports:
       - '30303:30303/tcp' # p2p
       - '30303:30303/udp' # p2p
