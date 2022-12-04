@@ -1,12 +1,15 @@
 version: '3.1'
 
 services:
-  erigon-trace:
+  erigon-goerli:
     image: thorax/erigon:v2022.10.01
     expose:
-    - "30303"
-    - "30304"
-    - "9090"
+      - "21766"
+      - "9090"
+      - "8545"
+    ports:
+      - "21766:21766"
+      - "21766:21766/udp"
     volumes:
       - erigon-trace:/home/erigon/.local/share/erigon
       - .jwtsecret:/jwtsecret
@@ -19,42 +22,25 @@ services:
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
+      --port=21766
       --authrpc.addr=0.0.0.0
       --authrpc.vhosts=*
       --authrpc.jwtsecret=/jwtsecret
       --snapshots=true
       --torrent.download.rate=1250mb
       --torrent.upload.rate=1250mb
-    restart: unless-stopped
-    stop_grace_period: 1m
-    labels:
-      - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=6060"
-      - "prometheus-scrape.job_name=erigon"
-      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
-
-  rpcdaemon:
-    image: thorax/erigon:v2022.10.01
-    command: >
-      rpcdaemon --datadir=/home/erigon/.local/share/erigon/goerli
-      --private.api.addr=erigon-trace:9090
-      --txpool.api.addr=erigon-trace:9090
       --http.addr=0.0.0.0
       --http.vhosts=*
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
       --ws
-    pid: service:erigon-trace # Use erigon's PID namespace. It's required to open Erigon's DB from another process (RPCDaemon local-mode)
-    volumes:
-      - erigon-trace:/home/erigon/.local/share/erigon
-    networks:
-      - chains
-    expose:
-      - "8545"
     restart: unless-stopped
-    depends_on:
-      - "erigon-trace"
+    stop_grace_period: 1m
     labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=erigon-goerli"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
       - "traefik.http.middlewares.rpcdaemon-stripprefix.stripprefix.prefixes=/erigon-goerli"
       - "traefik.http.services.rpcdaemon.loadbalancer.server.port=8545"
@@ -63,11 +49,15 @@ services:
       - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-goerli`)"
       - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
 
-  lighthouse:
+  lighthouse-goerli:
     image: sigp/lighthouse:latest-modern
+    expose:
+      - "5054" #metrics
+      - "4000" #http
+      - "63550" #p2p
     ports:
-      - "9000:9000"
-      - "127.0.0.1:5052:5052"
+      - "63550:63550"
+      - "63550:63550/udp"
     volumes:
       - .jwtsecret:/jwtsecret
       - lighthouse_data:/root/.lighthouse
@@ -75,21 +65,31 @@ services:
       lighthouse beacon_node
       --network prater
       --reconstruct-historic-states
-      --execution-endpoint http://erigon-trace:8551
+      --execution-endpoint http://erigon-goerli:8551
       --execution-jwt /jwtsecret
+      --port 63550
       --http
       --http-address=0.0.0.0
+      --http-port=4000
+      --metrics
+      --metrics-port=5054
+      --metrics-address=0.0.0.0
+      --checkpoint-sync-url https://prater.checkpoint.sigp.io
     restart: unless-stopped
     stop_grace_period: 1m
     networks:
       - chains
     labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=5054"
+      - "prometheus-scrape.job_name=lighthouse-goerli"
+      - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.lighthouse-stripprefix.stripprefix.prefixes=/lighthouse"
-      - "traefik.http.services.lighthouse.loadbalancer.server.port=5052"
+      - "traefik.http.middlewares.lighthouse-stripprefix.stripprefix.prefixes=/lighthouse-goerli"
+      - "traefik.http.services.lighthouse.loadbalancer.server.port=4000"
       - "traefik.http.routers.lighthouse.entrypoints=websecure"
       - "traefik.http.routers.lighthouse.tls.certresolver=myresolver"
-      - "traefik.http.routers.lighthouse.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse`)"
+      - "traefik.http.routers.lighthouse.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-goerli`)"
       - "traefik.http.routers.lighthouse.middlewares=lighthouse-stripprefix, ipwhitelist"
 
 

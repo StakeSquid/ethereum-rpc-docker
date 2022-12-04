@@ -7,7 +7,6 @@ version: '3.1'
 services:
   xdai-archive:
     hostname: xdai-archive
-    container_name: xdai-archive
     image: nethermindeth/nethermind:db-traces
     restart: always
     stop_grace_period: 1m
@@ -23,10 +22,8 @@ services:
       --TraceStore.TraceTypes=Trace,Rewards
       --Sync.FastSync=false
     ports:
-      - '30303:30303/tcp' # p2p
-      - '30303:30303/udp' # p2p
-      - '127.0.0.1:8545:8545'
-      - '127.0.0.1:9091:9091'
+      - '10652:10652/tcp' # p2p
+      - '10652:10652/udp' # p2p
     networks:
       - chains
     volumes:
@@ -40,31 +37,36 @@ services:
       - NETHERMIND_CONFIG=xdai_archive
       - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,AccountAbstraction,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Trace]
       - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
+      - NETHERMIND_NETWORKCONFIG_P2PPORT=10652
       - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=150
     logging:
       options:
         max-size: "1000m"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.xdai-archive-stripprefix.stripprefix.prefixes=/xdai-archive"
+      - "traefik.http.middlewares.xdai-archive-stripprefix.stripprefix.prefixes=/gnosis-archive"
       - "traefik.http.services.xdai-archive.loadbalancer.server.port=8545"
       - "traefik.http.routers.xdai-archive.entrypoints=websecure"
       - "traefik.http.routers.xdai-archive.tls.certresolver=myresolver"
-      - "traefik.http.routers.xdai-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/xdai-archive`)"
+      - "traefik.http.routers.xdai-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-archive`)"
       - "traefik.http.routers.xdai-archive.middlewares=xdai-archive-stripprefix, ipwhitelist"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9091"
+      - "prometheus-scrape.job_name=nethermind-xdai"
+      
 
-  xdai_consensus:
-    container_name: xdai_consensus
+  lighthouse-gnosis:
     image: sigp/lighthouse:latest-modern
     restart: unless-stopped
     networks:
       - chains
     ports:
-      - 9001:9001/tcp # p2p
-      - 9001:9001/udp # p2p
+      - 46763:46763/tcp # p2p
+      - 46763:46763/udp # p2p
     expose:
       - 5054 # metrics
       - 4000 # http
+      - 46763 # p2p
     volumes:
       - xdai_consensus:/data
       - .jwtsecret:/jwt.hex
@@ -76,7 +78,7 @@ services:
       --network=gnosis
       --disable-upnp
       --datadir=/data
-      --port=9001
+      --port=46763
       --http
       --http-address=0.0.0.0
       --http-port=4000
@@ -91,6 +93,19 @@ services:
       --metrics-port=5054
       --metrics-address=0.0.0.0
       --checkpoint-sync-url=https://checkpoint.gnosischain.com/
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=5054"
+      - "prometheus-scrape.job_name=lighthouse-gnosis"
+      - "prometheus-scrape.metrics_path=/metrics"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.lighthouse-gnosis-stripprefix.stripprefix.prefixes=/lighthouse-gnosis"
+      - "traefik.http.services.lighthouse-gnosis.loadbalancer.server.port=4000"
+      - "traefik.http.routers.lighthouse-gnosis.entrypoints=websecure"
+      - "traefik.http.routers.lighthouse-gnosis.tls.certresolver=myresolver"
+      - "traefik.http.routers.lighthouse-gnosis.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-gnosis`)"
+      - "traefik.http.routers.lighthouse-gnosis.middlewares=lighthouse-gnosis-stripprefix, ipwhitelist"
+
 
 volumes:
   nethermind_db:
