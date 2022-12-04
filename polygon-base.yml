@@ -22,12 +22,11 @@ services:
       - "127.0.0.1:26657:26657" 
     depends_on:              
       - rabbitmq                                                                                      
-      - geth-mainnet                                                                                  
     environment:                                                                                      
       - MONIKER=StakeSquid                                                                            
-      - SNAPSHOT_URL=https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/heimdall-snapshot-2022-10-17.tar.gz
-      - BOOTSTRAP=1                                                                                   
-      - "ETH1_RPC_URL=http://geth-mainnet:8545/"                                                      
+      - SNAPSHOT_URL=https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/heimdall-snapshot-2022-11-30.tar.gz
+      - BOOTSTRAP=1
+      - "ETH1_RPC_URL=https://cloudflare-eth.com"                                                      
     restart: unless-stopped                                                                           
     networks: 
       - chains
@@ -35,15 +34,14 @@ services:
   heimdallr:                            
     environment:                    
       - REST_SERVER=1
-      - "ETH1_RPC_URL=http://geth-mainnet:8545/"
+      - "ETH1_RPC_URL=https://cloudflare-eth.com"
     build: *ref_0              
     volumes:                    
-      - "heimdall_data:/root/.heimdalld"                                                              
+      - "heimdall_data:/root/.heimdalld"                                                      
     expose:
       - "1317"
     depends_on:                                                                                       
       - heimdalld                                                                                     
-      - geth-mainnet                      
     restart: unless-stopped                                                                           
     networks:          
       - chains                             

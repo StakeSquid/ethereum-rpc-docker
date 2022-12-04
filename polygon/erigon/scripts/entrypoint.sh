@@ -5,7 +5,7 @@ set -e
 
 # Set Bor Home Directory
 ERIGON_HOME=/datadir
-
+HEIMDALL_RPC=heimdall:26657
 
 if [ "${BOOTSTRAP}" == 1 ] && [ -n "${SNAPSHOT_URL}" ] && [ ! -f "${ERIGON_HOME}/bootstrapped" ];
 then
