@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  erigon-trace:
+  erigon-mainnet:
     image: thorax/erigon:v2.30.0
     expose:
       - "16630"
