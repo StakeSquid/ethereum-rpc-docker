@@ -4,11 +4,13 @@ services:
   erigon-trace:
     image: thorax/erigon:v2.30.0
     expose:
-    - "30303"
-    - "30304"
-    - "9090"
+      - "16630"
+      - "9090"
+    ports:
+      - "16630:16630"
+      - "16630:16630/udp"
     volumes:
-      - erigon-trace:/home/erigon/.local/share/erigon
+      - erigon-mainnet:/home/erigon/.local/share/erigon
       - .jwtsecret:/jwtsecret
     networks:
       - chains
@@ -25,6 +27,11 @@ services:
       --authrpc.addr=0.0.0.0
       --authrpc.vhosts=*
       --authrpc.jwtsecret=/jwtsecret
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool                                                                                                                             
+      --ws 
     restart: unless-stopped
     stop_grace_period: 1m
     labels:
@@ -32,38 +39,15 @@ services:
       - "prometheus-scrape.port=6060"
       - "prometheus-scrape.job_name=erigon"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
-
-  rpcdaemon:
-    image: thorax/erigon:v2.30.0
-    command: >
-      rpcdaemon --datadir=/home/erigon/.local/share/erigon
-      --private.api.addr=erigon-trace:9090
-      --txpool.api.addr=erigon-trace:9090
-      --http.addr=0.0.0.0
-      --http.vhosts=*
-      --http.corsdomain=*
-      --http.api=eth,erigon,web3,net,debug,trace,txpool
-      --ws
-    pid: service:erigon-trace # Use erigon's PID namespace. It's required to open Erigon's DB from another process (RPCDaemon local-mode)
-    volumes:
-      - erigon-trace:/home/erigon/.local/share/erigon
-    networks:
-      - chains
-    expose:
-      - "8545"
-    restart: unless-stopped
-    depends_on:
-      - "erigon-trace"
-    labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.rpcdaemon-stripprefix.stripprefix.prefixes=/erigon"
-      - "traefik.http.services.rpcdaemon.loadbalancer.server.port=8545"
-      - "traefik.http.routers.rpcdaemon.entrypoints=websecure"
-      - "traefik.http.routers.rpcdaemon.tls.certresolver=myresolver"
-      - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon`)"
-      - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
-
-  lighthouse:
+      - "traefik.http.middlewares.erigon-mainnet-stripprefix.stripprefix.prefixes=/erigon"
+      - "traefik.http.services.erigon-mainnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.erigon-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.erigon-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon`)"
+      - "traefik.http.routers.erigon-mainnet.middlewares=erigon-mainnet-stripprefix, ipwhitelist"
+      
+  lighthouse-mainnet:
     image: sigp/lighthouse:latest-modern
     ports:
       - "9000:9000"
@@ -85,13 +69,13 @@ services:
       - chains
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.lighthouse-stripprefix.stripprefix.prefixes=/lighthouse"
-      - "traefik.http.services.lighthouse.loadbalancer.server.port=5052"
-      - "traefik.http.routers.lighthouse.entrypoints=websecure"
-      - "traefik.http.routers.lighthouse.tls.certresolver=myresolver"
-      - "traefik.http.routers.lighthouse.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse`)"
-      - "traefik.http.routers.lighthouse.middlewares=lighthouse-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.lighthouse-mainnet-stripprefix.stripprefix.prefixes=/lighthouse-mainnet"
+      - "traefik.http.services.lighthouse-mainnet.loadbalancer.server.port=5052"
+      - "traefik.http.routers.lighthouse-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.lighthouse-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.lighthouse-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-mainnet`)"
+      - "traefik.http.routers.lighthouse-mainnet.middlewares=lighthouse-mainnet-stripprefix, ipwhitelist"
 
 volumes:
-    erigon-trace:
-    lighthouse_data:
+    erigon-mainnet:
+    lighthouse-mainnet_data:
