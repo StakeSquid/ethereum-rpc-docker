@@ -56,12 +56,12 @@ services:
     networks:
       - chains
     ports:
-      - 46763:46763/tcp # p2p
-      - 46763:46763/udp # p2p
+      - 20506:20506/tcp # p2p
+      - 20506:20506/udp # p2p
     expose:
       - 5054 # metrics
       - 4000 # http
-      - 46763 # p2p
+      - 20506 # p2p
     volumes:
       - mainnet_consensus:/data
       - .jwtsecret:/jwt.hex
@@ -70,10 +70,10 @@ services:
     command: |
       lighthouse
       beacon_node
-      --network=gnosis
+      --network=mainnet
       --disable-upnp
       --datadir=/data
-      --port=46763
+      --port=20506
       --http
       --http-address=0.0.0.0
       --http-port=4000
@@ -91,10 +91,10 @@ services:
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=5054"
-      - "prometheus-scrape.job_name=lighthouse-gnosis"
+      - "prometheus-scrape.job_name=lighthouse-mainnet"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.lighthouse-gnosis-stripprefix.stripprefix.prefixes=/lighthouse-mainnet"
+      - "traefik.http.middlewares.lighthouse-mainnet-stripprefix.stripprefix.prefixes=/lighthouse-mainnet"
       - "traefik.http.services.lighthouse-mainnet.loadbalancer.server.port=4000"
       - "traefik.http.routers.lighthouse-mainnet.entrypoints=websecure"
       - "traefik.http.routers.lighthouse-mainnet.tls.certresolver=myresolver"
