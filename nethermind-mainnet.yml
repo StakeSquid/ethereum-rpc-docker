@@ -7,15 +7,8 @@ services:
     stop_grace_period: 1m
     command: |
       --JsonRpc.Enabled=true
-      --JsonRpc.Host=0.0.0.0
       --JsonRpc.JwtSecretFile=/jwt.hex
-      --JsonRpc.EngineHost=0.0.0.0
-      --JsonRpc.EnginePort=8551
       --Metrics.Enabled=true
-      --TraceStore.Enabled=true
-      --TraceStore.BlocksToKeep=0
-      --TraceStore.TraceTypes=Trace,Rewards
-      --Sync.FastSync=false
     ports:
       - '34896:34896/tcp' # p2p
       - '34896:34896/udp' # p2p
@@ -29,11 +22,18 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - NETHERMIND_CONFIG=xdai_archive
+      - NETHERMIND_CONFIG=mainnet
       - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,AccountAbstraction,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health]
+      - NETHERMIND_JSONRPCCONFIG_ENGINEHOST=0.0.0.0
+      - NETHERMIND_JSONRPCCONFIG_ENGINEPORT=8551
+      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
       - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
       - NETHERMIND_NETWORKCONFIG_P2PPORT=34896
       - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=150
+      - NETHERMIND_SYNCCONFIG_FASTSYNC=true
+      - NETHERMIND_SYNCCONFIG_FASTBLOCKS=true
+      - NETHERMIND_SYNCCONFIG_DOWNLOADBODIESINFASTSYNC=true
+      - NETHERMIND_SYNCCONFIG_DOWNLOADRECEIPTSINFASTSYNC=true
     logging:
       options:
         max-size: "1000m"
