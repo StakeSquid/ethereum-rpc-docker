@@ -46,10 +46,11 @@ services:
       - "traefik.http.routers.nethermind-mainnet.entrypoints=websecure"
       - "traefik.http.routers.nethermind-mainnet.tls.certresolver=myresolver"
       - "traefik.http.routers.nethermind-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/nethermind-mainnet`)"
-      - "traefik.http.routers.nethermind-mainnet.middlewares=nathermin-mainnet-stripprefix, ipwhitelist"
+      - "traefik.http.routers.nethermind-mainnet.middlewares=nethermind-mainnet-stripprefix, ipwhitelist"
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=9091"
       - "prometheus-scrape.job_name=nethermind-mainnet"
+      
       
 
   lighthouse-mainnet:
