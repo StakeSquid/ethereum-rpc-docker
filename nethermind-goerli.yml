@@ -46,7 +46,7 @@ services:
       - "traefik.http.routers.nethermind-goerli.entrypoints=websecure"
       - "traefik.http.routers.nethermind-goerli.tls.certresolver=myresolver"
       - "traefik.http.routers.nethermind-goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/nethermind-goerli`)"
-      - "traefik.http.routers.nethermind-goerli.middlewares=xdai-archive-stripprefix, ipwhitelist"
+      - "traefik.http.routers.nethermind-goerli.middlewares=nethermind-goerli-stripprefix, ipwhitelist"
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=9091"
       - "prometheus-scrape.job_name=nethermind-goerli"
