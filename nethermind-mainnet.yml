@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   nethermind-mainnet:
-    image: nethermindeth/nethermind:latest
+    image: nethermind/nethermind:latest
     restart: always
     stop_grace_period: 1m
     command: |
@@ -32,7 +32,7 @@ services:
       - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=34896
       - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=250
       - NETHERMIND_SYNCCONFIG_FASTSYNC=true
-      - NETHERMIND_SYNCCONFIG_SNAPSYNC=false
+      - NETHERMIND_SYNCCONFIG_SNAPSYNC=true
       - NETHERMIND_SYNCCONFIG_FASTBLOCKS=true
       - NETHERMIND_SYNCCONFIG_DOWNLOADBODIESINFASTSYNC=true
       - NETHERMIND_SYNCCONFIG_DOWNLOADRECEIPTSINFASTSYNC=true
