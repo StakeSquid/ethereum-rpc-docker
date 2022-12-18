@@ -30,7 +30,7 @@ exec erigon \
       --bor.heimdall=${HEIMDALLR:-http://heimdallr:1317} \
       --datadir=${ERIGON_HOME} \
       --http --http.addr="0.0.0.0" --http.port="8545" --http.compression --http.vhosts="*" --http.corsdomain="*" --http.api="eth,debug,net,trace,web3,erigon,bor" \
-      --ws --ws.compression --ws.port="8545" \
+      --ws --ws.compression \
       --port=27113
       --snap.keepblocks=true \
       --snapshots="true" \
