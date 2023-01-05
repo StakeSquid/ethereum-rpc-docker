@@ -6,7 +6,7 @@ services:
     restart: always
     stop_grace_period: 30s
     volumes:
-      - 'arbitrum-archive_data:/arbitrum-node/data/'
+      - 'arbitrum-archive_data:/arbitrum-node'
     expose:
       - 8547
       - 8548
