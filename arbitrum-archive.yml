@@ -5,6 +5,7 @@ services:
     image: 'offchainlabs/nitro-node:v2.0.10-rc.1-687c381-slim-amd64'
     restart: always
     stop_grace_period: 30s
+    user: root
     volumes:
       - 'arbitrum-archive_data:/arbitrum-node'
     expose:
@@ -14,7 +15,7 @@ services:
       - '0.0.0.0:8547:8547'
       - '0.0.0.0:8548:8548'
     command:
-      - --init.url="https://snapshot.arbitrum.io/mainnet/nitro.tar"
+      - --init.url=https://snapshot.arbitrum.io/mainnet/nitro.tar
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
       - --l1.url=${ARBITRUM_L1_URL}
