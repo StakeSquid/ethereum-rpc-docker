@@ -29,7 +29,7 @@ services:
       - -c
       - "/scripts/l2geth-init.sh && /scripts/l2geth-start.sh"
     env_file:
-      - ./omptimism/env/l2geth.env
+      - ./optimism/env/l2geth.env
       - .env
     volumes:
       - optimism-geth:/geth
