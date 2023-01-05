@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+  arbitrum-nitro:
+    image: 'offchainlabs/nitro-node:v2.0.10-rc.1-687c381-slim-amd64'
+    restart: always
+    stop_grace_period: 30s
+    volumes:
+      - 'arbitrum-archive_data:/arbitrum-node/data/'
+    expose:
+      - 8547
+      - 8548
+    ports:
+      - '0.0.0.0:8547:8547'
+      - '0.0.0.0:8548:8548'
+    command:
+      - --init.url="https://snapshot.arbitrum.io/mainnet/nitro.tar"
+      - --persistent.chain=/arbitrum-node/data/
+      - --persistent.global-config=/arbitrum-node/
+      - --l1.url=${ARBITRUM_L1_URL}
+      - --l2.chain-id=42161
+      - --http.api=net,web3,eth,debug 
+      - --http.corsdomain=* 
+      - --http.addr=0.0.0.0 
+      - --http.vhosts=*
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.arbitrum-stripprefix.stripprefix.prefixes=/arbitrum"                      
+      - "traefik.http.services.arbitrum.loadbalancer.server.port=8545"                                     
+      - "traefik.http.routers.arbitrum.entrypoints=websecure"                                              
+      - "traefik.http.routers.arbitrum.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.arbitrum.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum`)"                     
+      - "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+        
+volumes:  
+    arbitrum-archive_data:
