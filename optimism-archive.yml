@@ -4,6 +4,7 @@ services:
   optimism-dtl:
     image: ethereumoptimism/data-transport-layer:${IMAGE_TAG__DTL:-latest}
     restart: unless-stopped
+    user: root
     entrypoint:
       - /bin/sh
       - -c
@@ -24,6 +25,7 @@ services:
     image: ethereumoptimism/l2geth:${IMAGE_TAG__L2GETH:-latest}
     restart: unless-stopped
     stop_grace_period: 3m
+    user: root
     entrypoint:
       - /bin/sh
       - -c
