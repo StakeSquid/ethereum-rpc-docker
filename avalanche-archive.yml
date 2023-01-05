@@ -1,0 +1,34 @@
+version: '3.1'
+
+services:
+  avalanche:
+    image: avaplatform/avalanchego:v1.9.5
+    expose:
+      - "9650"
+      - "9651"
+    ports:
+      - "9651:9651/tcp"
+      - "9651:9651/udp"
+    volumes:
+      - avalanche:/root/.avalanchego
+      - ./avalanche/configs/chains/C/archive-config.json:/root/.avalanchego/configs/chains/C/config.json
+    networks:
+      - chains
+    command: "/avalanchego/build/avalanchego --http-host="
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.avalanche-replacepath.replacepath.path=/ext/bc/C/rpc"
+      - "traefik.http.middlewares.avalanche-stripprefix.stripprefix.prefixes=/avalanche-archive"
+      - "traefik.http.services.avalanche.loadbalancer.server.port=9650"
+      - "traefik.http.routers.avalanche.entrypoints=websecure"
+      - "traefik.http.routers.avalanche.tls.certresolver=myresolver"
+      - "traefik.http.routers.avalanche.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-archive`)"
+      - "traefik.http.routers.avalanche.middlewares=avalanche-stripprefix, avalanche-replacepath, ipwhitelist"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9650"
+      - "prometheus-scrape.job_name=avalanche-archive"
+      - "prometheus-scrape.metrics_path=/ext/metrics"
+
+volumes:
+  avalanche:
