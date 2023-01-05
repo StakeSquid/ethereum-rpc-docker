@@ -15,10 +15,6 @@ services:
       --http
       --http.addr 0.0.0.0
       --http.api eth,net,web3,debug,admin,personal
-      #--light.serve 90
-      #--light.maxpeers 1000
-      #--maxpeers 1100
-      #--etherbase $CELO_ACCOUNT_ADDRESS
       --datadir /root/.celo
     expose:
       - 8545
