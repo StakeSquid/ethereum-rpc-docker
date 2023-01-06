@@ -58,7 +58,7 @@ services:
       - "127.0.0.1:5052:5052"
     volumes:
       - .jwtsecret:/jwtsecret
-      - lighthouse_data:/root/.lighthouse
+      - lighthouse-mainnet_data:/root/.lighthouse
     command: >
       lighthouse beacon_node
       --eth1-endpoints http://erigon-mainnet:8545
