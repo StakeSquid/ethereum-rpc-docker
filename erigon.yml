@@ -67,7 +67,7 @@ services:
       --checkpoint-sync-url https://mainnet.checkpoint.sigp.io
       --http
       --http-address 0.0.0.0
-      --p2p-port 18719
+      --port 18719
     restart: unless-stopped
     stop_grace_period: 1m
     networks:
