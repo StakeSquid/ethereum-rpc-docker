@@ -2,13 +2,17 @@ version: '3.1'
 
 services:
   nethermind-mainnet:
-    image: nethermind/nethermind:latest
+    image: nethermind/nethermind:1.15.0
     restart: always
     stop_grace_period: 1m
     command: |
       --JsonRpc.Enabled=true
       --JsonRpc.JwtSecretFile=/jwt.hex
       --Metrics.Enabled=true
+      --TraceStore.Enabled=true
+      --TraceStore.BlocksToKeep=0
+      --TraceStore.TraceTypes=Trace,Rewards
+      --Sync.FastSync=false
     ports:
       - '34896:34896/tcp' # p2p
       - '34896:34896/udp' # p2p
@@ -23,7 +27,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       - NETHERMIND_CONFIG=mainnet
-      - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,AccountAbstraction,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health]
+      - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,AccountAbstraction,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Trace]
       - NETHERMIND_JSONRPCCONFIG_ENGINEHOST=0.0.0.0
       - NETHERMIND_JSONRPCCONFIG_ENGINEPORT=8551
       - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
