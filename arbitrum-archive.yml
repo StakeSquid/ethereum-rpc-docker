@@ -54,10 +54,7 @@ services:
       - --core.checkpoint-pruning-mode=off
       - --node.cache.allow-slow-lookup
       - --core.checkpoint-gas-frequency=156250000
-      - --http.api=net,web3,eth,debug 
-      - --http.corsdomain=* 
-      - --http.addr=0.0.0.0 
-      - --http.vhosts=*
+      - --node.rpc.addr=0.0.0.0 
     restart: unless-stopped         
     networks:                                                                                         
       - chains
