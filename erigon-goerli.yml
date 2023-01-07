@@ -17,6 +17,7 @@ services:
       - chains
     command: >
       erigon --chain goerli
+      --externalcl
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
       --pprof
@@ -42,12 +43,12 @@ services:
       - "prometheus-scrape.job_name=erigon-goerli"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.rpcdaemon-stripprefix.stripprefix.prefixes=/erigon-goerli"
-      - "traefik.http.services.rpcdaemon.loadbalancer.server.port=8545"
-      - "traefik.http.routers.rpcdaemon.entrypoints=websecure"
-      - "traefik.http.routers.rpcdaemon.tls.certresolver=myresolver"
-      - "traefik.http.routers.rpcdaemon.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-goerli`)"
-      - "traefik.http.routers.rpcdaemon.middlewares=rpcdaemon-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.erigon-goerli-stripprefix.stripprefix.prefixes=/erigon-goerli"
+      - "traefik.http.services.erigon-goerli.loadbalancer.server.port=8545"
+      - "traefik.http.routers.erigon-goerli.entrypoints=websecure"
+      - "traefik.http.routers.erigon-goerli.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-goerli`)"
+      - "traefik.http.routers.erigon-goerli.middlewares=erigon-goerli-stripprefix, ipwhitelist"
 
   lighthouse-goerli:
     image: sigp/lighthouse:latest-modern
@@ -60,7 +61,7 @@ services:
       - "63550:63550/udp"
     volumes:
       - .jwtsecret:/jwtsecret
-      - lighthouse_data:/root/.lighthouse
+      - lighthouse-goerli_data:/root/.lighthouse
     command: >
       lighthouse beacon_node
       --network prater
@@ -85,14 +86,14 @@ services:
       - "prometheus-scrape.job_name=lighthouse-goerli"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.lighthouse-stripprefix.stripprefix.prefixes=/lighthouse-goerli"
-      - "traefik.http.services.lighthouse.loadbalancer.server.port=4000"
-      - "traefik.http.routers.lighthouse.entrypoints=websecure"
-      - "traefik.http.routers.lighthouse.tls.certresolver=myresolver"
-      - "traefik.http.routers.lighthouse.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-goerli`)"
-      - "traefik.http.routers.lighthouse.middlewares=lighthouse-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.lighthouse-goerli-stripprefix.stripprefix.prefixes=/lighthouse-goerli"
+      - "traefik.http.services.lighthouse-goerli.loadbalancer.server.port=4000"
+      - "traefik.http.routers.lighthouse-goerli.entrypoints=websecure"
+      - "traefik.http.routers.lighthouse-goerli.tls.certresolver=myresolver"
+      - "traefik.http.routers.lighthouse-goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-goerli`)"
+      - "traefik.http.routers.lighthouse-goerli.middlewares=lighthouse-goerli-stripprefix, ipwhitelist"
 
 
 volumes:
     erigon-trace:
-    lighthouse_data:
+    lighthouse-goerli_data:
