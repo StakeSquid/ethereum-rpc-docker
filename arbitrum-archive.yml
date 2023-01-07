@@ -15,7 +15,8 @@ services:
       - '0.0.0.0:8547:8547'
       - '0.0.0.0:8548:8548'
     command:
-      - --init.url=https://snapshot.arbitrum.io/mainnet/nitro.tar
+      - --init.url=empty
+      - --node.caching.archive
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
       - --l1.url=${ARBITRUM_L1_URL}
@@ -35,6 +36,38 @@ services:
       - "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
-        
+
+  arbitrum-classic:
+    image: 'offchainlabs/arb-node:v1.4.5-e97c1a4'
+    restart: always
+    stop_grace_period: 30s
+    user: root
+    volumes:
+      - 'arbitrum-classic-archive_data:/home/user/.arbitrum/mainnet'
+    expose:
+      - 8547
+      - 8548
+    ports:
+      - '0.0.0.0:8547:8547'
+      - '0.0.0.0:8548:8548'
+    command:
+      - --init.empty
+      - --l1.url=${ARBITRUM_L1_URL}
+      - --l2.chain-id=42161
+      - --l2.disable-upstream
+      - --node.rpc.tracing.enable
+      - --node.rpc.tracing.namespace trace
+      - --core.checkpoint-pruning-mode off
+      - --node.cache.allow-slow-lookup
+      - --core.checkpoint-gas-frequency=156250000
+      - --http.api=net,web3,eth,debug 
+      - --http.corsdomain=* 
+      - --http.addr=0.0.0.0 
+      - --http.vhosts=*
+    restart: unless-stopped         
+    networks:                                                                                         
+      - chains
+
+      
 volumes:  
     arbitrum-archive_data:
