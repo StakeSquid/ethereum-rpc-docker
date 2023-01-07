@@ -11,9 +11,6 @@ services:
     expose:
       - 8547
       - 8548
-    ports:
-      - '0.0.0.0:8547:8547'
-      - '0.0.0.0:8548:8548'
     command:
       - --init.url=empty
       - --node.caching.archive
@@ -48,9 +45,6 @@ services:
     expose:
       - 8547
       - 8548
-    ports:
-      - '0.0.0.0:8547:8547'
-      - '0.0.0.0:8548:8548'
     command:
       - --init.empty
       - --l1.url=${ARBITRUM_L1_URL}
