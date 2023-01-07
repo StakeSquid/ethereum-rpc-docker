@@ -19,6 +19,7 @@ services:
       - --node.caching.archive
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
+      - --node.rpc.classic-redirect=http://arbitrum-classic:8547/
       - --l1.url=${ARBITRUM_L1_URL}
       - --l2.chain-id=42161
       - --http.api=net,web3,eth,debug 
@@ -71,3 +72,4 @@ services:
       
 volumes:  
     arbitrum-archive_data:
+    arbitrum-classic-archive_data:
