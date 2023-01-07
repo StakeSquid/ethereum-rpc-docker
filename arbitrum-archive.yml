@@ -50,8 +50,8 @@ services:
       - --l2.disable-upstream
       - --node.chain-id=42161
       - --node.rpc.tracing.enable
-      - --node.rpc.tracing.namespace trace
-      - --core.checkpoint-pruning-mode off
+      - --node.rpc.tracing.namespace=trace
+      - --core.checkpoint-pruning-mode=off
       - --node.cache.allow-slow-lookup
       - --core.checkpoint-gas-frequency=156250000
       - --http.api=net,web3,eth,debug 
