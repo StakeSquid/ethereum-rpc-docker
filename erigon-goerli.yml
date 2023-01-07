@@ -94,5 +94,5 @@ services:
 
 
 volumes:
-    erigon-goerli:
+    erigon-trace:
     lighthouse_data:
