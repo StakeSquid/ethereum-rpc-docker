@@ -46,10 +46,9 @@ services:
       - 8547
       - 8548
     command:
-      - --init.empty
       - --l1.url=${ARBITRUM_L1_URL}
-      - --l2.chain-id=42161
       - --l2.disable-upstream
+      - --node.chain-id=42161
       - --node.rpc.tracing.enable
       - --node.rpc.tracing.namespace trace
       - --core.checkpoint-pruning-mode off
