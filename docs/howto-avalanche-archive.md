@@ -111,13 +111,13 @@ To check if your node is happily syncing you can have a look at the logs by issu
 
 	docker-compose logs -f avalanche
 
-In the following please replace ${DOMAIN} with your actual domain. Your rpc endpoint will be reachable under the url https://${DOMAIN}/avalanche-archive
+In the following please replace {DOMAIN} with your actual domain. Your rpc endpoint will be reachable under the url https://{DOMAIN}/avalanche-archive
 	
 Alternatively to the logs you can check the nodes status via rpc from the indexer machine using the following curl command.
 
-	curl --data '{"method":"eth_synching","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST http://${DOMAIN}/avalanche-archive
+	curl --data '{"method":"eth_synching","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST http://{DOMAIN}/avalanche-archive
 	
 To trouble shoot it's also interesting to know which block your node is currently synced up to. you can query that with the following curl command.
 
-	curl --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST http://${DOMAIN}/avalanche-archive
+	curl --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST http://{DOMAIN}/avalanche-archive
 
