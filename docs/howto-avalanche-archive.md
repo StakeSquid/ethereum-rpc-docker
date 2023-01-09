@@ -111,7 +111,9 @@ To check if your node is happily syncing you can have a look at the logs by issu
 
 	docker-compose logs -f avalanche
 
-In the following please replace {DOMAIN} with your actual domain. Your rpc endpoint will be reachable under the url https://{DOMAIN}/avalanche-archive
+In the following please replace {DOMAIN} with your actual domain. Your rpc endpoint will be reachable under the url 
+
+	https://{DOMAIN}/avalanche-archive
 	
 Alternatively to the logs you can check the nodes status via rpc from the indexer machine using the following curl command.
 
