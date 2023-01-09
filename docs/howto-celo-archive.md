@@ -1,4 +1,4 @@
-How to bootstrap a Avalanche archive node with Docker
+How to bootstrap a Celo archive node with Docker
 ====
 
 
