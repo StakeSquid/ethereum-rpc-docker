@@ -1,4 +1,4 @@
-How to bootstrap a Optimism archive node with Docker
+How to bootstrap a Arbitrum archive node with Docker
 ====
 
 
