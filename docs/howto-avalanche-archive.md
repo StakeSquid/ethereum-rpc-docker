@@ -20,7 +20,7 @@ Sync times are reported to be in the range of 3 weeks on dedicated hardware.
 Install Required Software
 ===
 
-	sudo apt-get install docker.io docker-compose
+	sudo apt-get install docker.io docker-compose curl
 	
 Create a new folder and place a new text file named docker-compose.yml into it.
 
