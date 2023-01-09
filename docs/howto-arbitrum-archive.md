@@ -86,27 +86,27 @@ Copy paste the following content to the file and save it by closing it with crtl
 				- "traefik.http.routers.arbitrum.tls.certresolver=myresolver"                                        
 				- "traefik.http.routers.arbitrum.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-archive`)"                     
 				- "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"                           	  			
-	  arbitrum-classic:
-		  image: 'offchainlabs/arb-node:v1.4.5-e97c1a4'
-		  restart: always
-		  stop_grace_period: 30s
-		  user: root
-		  volumes:
-			  - 'arbitrum-classic:/home/user/.arbitrum/mainnet'
-		  expose:
-			  - 8547
-			  - 8548
-		  command:
-			  - --l1.url=${ARBITRUM_L1_URL}
-			  - --l2.disable-upstream
-			  - --node.chain-id=42161
-			  - --node.rpc.tracing.enable
-			  - --node.rpc.tracing.namespace=trace
-			  - --core.checkpoint-pruning-mode=off
-			  - --node.cache.allow-slow-lookup
-			  - --core.checkpoint-gas-frequency=156250000
-			  - --node.rpc.addr=0.0.0.0 
-		  restart: unless-stopped         
+	    arbitrum-classic:
+			image: 'offchainlabs/arb-node:v1.4.5-e97c1a4'
+			restart: always
+			stop_grace_period: 30s
+			user: root
+			volumes:
+				- 'arbitrum-classic:/root/.arbitrum/mainnet'
+			expose:
+				- 8547
+				- 8548
+			command:
+				- --l1.url=${ARBITRUM_L1_URL}
+				- --l2.disable-upstream
+				- --node.chain-id=42161
+				- --node.rpc.tracing.enable
+				- --node.rpc.tracing.namespace=trace
+				- --core.checkpoint-pruning-mode=off
+				- --node.cache.allow-slow-lookup
+				- --core.checkpoint-gas-frequency=156250000
+				- --node.rpc.addr=0.0.0.0 
+			restart: unless-stopped        
 	     
 	volumes:
 		arbitrum-nitro:
