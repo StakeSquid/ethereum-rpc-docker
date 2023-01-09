@@ -67,7 +67,7 @@ Copy paste the following content to the file and save it by closing it with crtl
 				- "9651:9651/udp"
 			volumes:
 				- avalanche:/root/.avalanchego
-				- ./avalanche/configs/chains/C/archive-config.json:/root/.avalanchego/configs/chains/C/config.json
+				- ./archive-config.json:/root/.avalanchego/configs/chains/C/config.json
 			command: "/avalanchego/build/avalanchego --http-host="
 			restart: unless-stopped
 			labels:
@@ -101,6 +101,13 @@ create a file .env in the same folder with the following content and save the fi
 	DOMAIN={YOUR_DOMAIN}
 	WHITELIST={YOUR_INDEXER_MACHINE_IP}
 	
+Also create a file named archive-config.json with the following content.
+
+	{
+		"state-sync-enabled": false,
+		"pruning-enabled": false
+	}
+
 The last step is to run the node using docker-compose. Enter the following on the command line.
 
 	docker-compose up -d
