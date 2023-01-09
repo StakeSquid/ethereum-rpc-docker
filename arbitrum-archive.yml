@@ -41,7 +41,7 @@ services:
     stop_grace_period: 30s
     user: root
     volumes:
-      - 'arbitrum-classic-archive_data:/home/user/.arbitrum/mainnet'
+      - 'arbitrum-classic-archive_data:/root/.arbitrum/mainnet'
     expose:
       - 8547
       - 8548
