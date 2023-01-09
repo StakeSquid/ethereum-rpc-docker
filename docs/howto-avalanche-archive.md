@@ -95,7 +95,7 @@ You need a domain for the ssl certificate that wil be generated for you. You can
 
 you also need a email address for the registration of the ssl certificates. you might not want your private email address to be that public.
 
-create a file .env in the same folder with the following content and save the file.
+create a file .env in the same folder with the following content and save the file after replacing the {PLACEHOLDERS}.
 
 	EMAIL={YOUR_EMAIL}
 	DOMAIN={YOUR_DOMAIN}
@@ -107,4 +107,17 @@ The last step is to run the node using docker-compose. Enter the following on th
 	
 In case you want to whitelist more IPs you can simply edit the .env file and run the above command again to pick up the changes.
 
-Happy synching!
+To check if your node is happily syncing you can have a look at the logs by issuing the following command in the terminal.
+
+	docker-compose logs -f avalanche
+
+In the following please replace ${DOMAIN} with your actual domain. Your rpc endpoint will be reachable under the url https://${DOMAIN}/avalanche-archive
+	
+Alternatively to the logs you can check the nodes status via rpc from the indexer machine using the following curl command.
+
+	curl --data '{"method":"eth_synching","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST http://${DOMAIN}/avalanche-archive
+	
+To trouble shoot it's also interesting to know which block your node is currently synced up to. you can query that with the following curl command.
+
+	curl --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST http://${DOMAIN}/avalanche-archive
+
