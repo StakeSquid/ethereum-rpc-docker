@@ -12,7 +12,7 @@ Prerequisites
 
 There are currently no snapshots available for download and therefore the syncing process will take considerable amount of time on slow disks, e.g. attached network storage form cloud providers is a no go. Also the CPU should feature a higth single core speed. 
 
-Sync times are reported to be in the range of 2 weeks on dedicated hardware. The node consists of 2 parts, the classic part and the nitro hardfork. The classic part is only required to request archive data for blocks before the hardfork and takes the aformentioned 2 weeks to sync from scratch. The nitro histroy is shorter and can be quickly synced within 3 days.
+Sync times are reported to be in the range of 1 week on dedicated hardware. The node consists of 2 parts, the classic part and the nitro hardfork. The classic part is only required to request archive data for blocks before the hardfork and takes the aformentioned 1 weeks to sync from scratch. The nitro history is shorter and can be quickly synced within 3 days.
 
 
 Install Required Software
