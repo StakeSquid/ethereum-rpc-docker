@@ -12,7 +12,7 @@ services:
       - 8547
       - 8548
     command:
-      - --init.url=empty
+      - --init.url=https://snapshot.arbitrum.io/mainnet/nitro.tar
       - --node.caching.archive
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
