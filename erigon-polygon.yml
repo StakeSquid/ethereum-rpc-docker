@@ -4,7 +4,7 @@ services:
   erigon-polygon:
     build:
       args:
-        ERIGON_VERSION: v0.0.4
+        ERIGON_VERSION: v0.0.5
       context: ./polygon/erigon
       dockerfile: Dockerfile
     environment:
