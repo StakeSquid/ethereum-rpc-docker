@@ -1,4 +1,4 @@
-How to bootstrap a Optimism archive node with Docker
+EASY: How to bootstrap a Optimism archive node with Docker in 3 steps
 ====
 
 Also EASY
@@ -195,7 +195,9 @@ Also create a folder for initialization scripts, make it the active directory an
 	
 	cd ..
 
-The last step is to run the node using docker-compose. Enter the following on the command line.
+**You made it!**
+
+Try to run the node using docker-compose. Enter the following on the command line.
 
 	docker-compose up -d
 	
@@ -219,6 +221,6 @@ To trouble shoot it's also interesting to know which block your node is currentl
 
 **Sit back, relax, you've earned it.**
 
-Did I tell you that I already verified that everything works for you? That's nice of me right? 
+Did I tell you that I already verified that everything works for you? Out of the box! That's nice of me right? 
 
-**Come back in a week to proove me wrong.**
+**Come back in a week to prove me wrong.**
