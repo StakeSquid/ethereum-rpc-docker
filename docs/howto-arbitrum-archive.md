@@ -111,10 +111,10 @@ services:
     - --node.rpc.addr=0.0.0.0
     restart: unless-stopped
 
-  volumes:
-    arbitrum-nitro:
-    arbitrum-classic:
-    traefik_letsencrypt:
+volumes:
+  arbitrum-nitro:
+  arbitrum-classic:
+  traefik_letsencrypt:
 ```
 
 Next you'd need the ip address of the machine that your indexer runs on. you can query it using curl by entering the following in the terminal.
