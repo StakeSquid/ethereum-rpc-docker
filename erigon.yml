@@ -64,7 +64,7 @@ services:
       --eth1-endpoints http://erigon-mainnet:8545
       --execution-endpoint http://erigon-mainnet:8551
       --execution-jwt /jwtsecret
-      --checkpoint-sync-url https://mainnet.checkpoint.sigp.io
+      --checkpoint-sync-url https://sync.invis.tools
       --http
       --http-address 0.0.0.0
       --port 18719
