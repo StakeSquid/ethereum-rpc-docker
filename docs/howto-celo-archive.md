@@ -1,4 +1,4 @@
-How to bootstrap a Celo archive node with Docker
+EASY: How to bootstrap a Celo archive node in 3 steps
 ====
 
 
@@ -10,7 +10,7 @@ Prerequisites
 * Storage: 1.5 TiB NVMe SSD
 * OS: Ubuntu 22.04
 
-There are currently no snapshots available for download and therefore the syncing process will take considerable amount of time on slow disks, e.g. attached network storage form cloud providers is a no go. Also the CPU should feature a higth single core speed. 
+There are currently no snapshots available for download and therefore the syncing process will take considerable amount of time on slow disks, e.g. attached network storage from cloud providers is a no go. Also the CPU should feature a higth single core speed. 
 
 Sync times are reported to be in the range of 4 days on dedicated hardware.
 
@@ -28,87 +28,90 @@ Create a new folder and place a new text file named docker-compose.yml into it.
 	
 Copy paste the following content to the file and save it by closing it with crtl-x and answering with "y" in the next prompt.
 
-	version: '3.1'
+```
+version: '3.1'
 
-	services:
-		traefik:
-			image: traefik:latest
-			container_name: traefik
-			restart: always
-			ports:
-				- "443:443"
-			command:
-				- "--api=true"
-				- "--api.insecure=true"
-				- "--api.dashboard=true"
-				- "--log.level=DEBUG"
-				- "--providers.docker=true"
-				- "--providers.docker.exposedbydefault=false"
-				- "--entrypoints.websecure.address=:443"
-				- "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-				- "--certificatesresolvers.myresolver.acme.email=$MAIL"
-				- "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-			volumes:
-				- "traefik_letsencrypt:/letsencrypt"
-				- "/var/run/docker.sock:/var/run/docker.sock:ro"
-			labels:
-				- "traefik.enable=true"
-				- "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=$WHITELIST"
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: always
+    ports:
+    - "443:443"
+    command:
+    - "--api=true"
+    - "--api.insecure=true"
+    - "--api.dashboard=true"
+    - "--log.level=DEBUG"
+    - "--providers.docker=true"
+    - "--providers.docker.exposedbydefault=false"
+    - "--entrypoints.websecure.address=:443"
+    - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+    - "--certificatesresolvers.myresolver.acme.email=$MAIL"
+    - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    volumes:
+    - "traefik_letsencrypt:/letsencrypt"
+    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=$WHITELIST"
 
-		celo-archive:
-			image: us.gcr.io/celo-org/geth:mainnet
-			restart: unless-stopped
-			stop_grace_period: 1m
-			command: |
-				--verbosity 3
-				--syncmode full
-				--gcmode archive
-				--txlookuplimit=0
-				--cache.preimages
-				--port 58395
-				--http
-				--http.addr 0.0.0.0
-				--ws
-				--ws.addr 0.0.0.0
-				--ws.port 8545
-				--http.api eth,net,web3,debug,admin,personal
-				--datadir /root/.celo
-			expose:
-				- 8545
-			ports:
-				- '58395:58395/tcp' # p2p
-				- '58395:58395/udp' # p2p
-			volumes:
-				- celo:/root/.celo
-			labels:
-				- "traefik.enable=true"
-				- "traefik.http.middlewares.celo-stripprefix.stripprefix.prefixes=/celo-archive"
-				- "traefik.http.services.celo.loadbalancer.server.port=8545"
-				- "traefik.http.routers.celo.entrypoints=websecure"
-				- "traefik.http.routers.celo.tls.certresolver=myresolver"
-				- "traefik.http.routers.celo.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-archive`)"
-				- "traefik.http.routers.celo.middlewares=celo-stripprefix, ipwhitelist"
+  celo-archive:
+    image: us.gcr.io/celo-org/geth:mainnet
+    restart: unless-stopped
+    stop_grace_period: 1m
+    command: |
+      --verbosity 3
+      --syncmode full
+      --gcmode archive
+      --txlookuplimit=0
+      --cache.preimages
+      --port 58395
+      --http
+      --http.addr 0.0.0.0
+      --ws
+      --ws.addr 0.0.0.0
+      --ws.port 8545
+      --http.api eth,net,web3,debug,admin,personal
+      --datadir /root/.celo
+    expose:
+    - 8545
+    ports:
+    - '58395:58395/tcp' # p2p
+    - '58395:58395/udp' # p2p
+    volumes:
+    - celo:/root/.celo
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.middlewares.celo-stripprefix.stripprefix.prefixes=/celo-archive"
+    - "traefik.http.services.celo.loadbalancer.server.port=8545"
+    - "traefik.http.routers.celo.entrypoints=websecure"
+    - "traefik.http.routers.celo.tls.certresolver=myresolver"
+    - "traefik.http.routers.celo.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-archive`)"
+    - "traefik.http.routers.celo.middlewares=celo-stripprefix, ipwhitelist"
 
-	volumes:
-		celo:
-		traefik_letsencrypt:
-
+  volumes:
+    celo:
+    traefik_letsencrypt:
+```
 
 Next you'd need the ip address of the machine that your indexer runs on. you can query it using curl by entering the following in the terminal.
 
 	curl ifconfig.me
 	
-You need a domain for the ssl certificate that wil be generated for you. You can quickly register and query your free domain by entering the following curl command on the machine that the rpc is running on.
+You also need a domain for the SSL certificate that wil be generated for you. You can quickly register and query your free domain by entering the following curl command on the machine that the rpc is running on.
 
 	curl -X PUT bash-st.art
 
-you also need a email address for the registration of the ssl certificates. you might not want your private email address to be that public.
+You need some fake ameil address. It can be anything. You shouldn't receive emails on it, at least not before a year passed and you already dropped this server because it ran out of space.
 
-create a file .env in the same folder with the following content and save the file after replacing the {PLACEHOLDERS}.
+	bla@blubb.io
+
+All this goes into a file called .env taht you create in the same folder with the following format with your data instead of those {PLACEHOLDERS}.
 
 	EMAIL={YOUR_EMAIL}
 	DOMAIN={YOUR_DOMAIN}
-	WHITELIST={YOUR_INDEXER_MACHINE_IP}
+	WHITELIST={YOUR__MACHINE_IP}
 	
 The last step is to run the node using docker-compose. Enter the following on the command line.
 
@@ -124,7 +127,7 @@ In the following please replace {DOMAIN} with your actual domain. Your rpc endpo
 
 	https://{DOMAIN}/celo-archive
 	
-Alternatively to the logs you can check the nodes status via rpc from the indexer machine using the following curl command.
+Alternatively to the logs you can check the nodes status via rpc from any whitelisted machine using the following curl command.
 
 	curl --data '{"method":"eth_synching","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST http://{DOMAIN}/celo-archive
 	
@@ -132,3 +135,19 @@ To trouble shoot it's also interesting to know which block your node is currentl
 
 	curl --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST http://{DOMAIN}/celo-archive
 
+
+You are running late?
+------
+
+I have snapshots on request.
+
+	goldberg@stakesquid.com
+
+
+Also in the EASY series
+------
+
+[Celo archive](howto-celo-archive.md)
+[Optimism archive](howto-optimism-archive.md)
+[Avalanche archive](howto-avalanche-archive.md)
+[Arbitrum archive](howto-arbitrum-archive.md)
