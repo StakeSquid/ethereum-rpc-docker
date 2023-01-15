@@ -5,11 +5,15 @@ EASY: How to bootstrap a Arbitrum archive node in 3 steps
 Do you need one of those too?
 ------
 
-* [Celo archive](howto-celo-archive.md)
-* [Optimism archive](howto-optimism-archive.md)
-* [Avalanche archive](howto-avalanche-archive.md)
-* [Arbitrum archive](howto-arbitrum-archive.md)
-* [All of them](http://rpc.bash-st.art)
+* [All](http://rpc.bash-st.art)
+* [Celo](howto-celo-archive.md)
+* [Optimism](howto-optimism-archive.md)
+* [Avalanche](howto-avalanche-archive.md)
+* [Arbitrum](howto-arbitrum-archive.md)
+* [Gnosis](http://rpc.bash-st.art)
+* [Polygon]((http://rpc.bash-st.art))
+* [Ethereum]((http://rpc.bash-st.art))
+
 
 
 Prerequisites
