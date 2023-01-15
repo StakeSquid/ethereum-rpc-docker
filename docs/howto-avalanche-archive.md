@@ -1,4 +1,4 @@
-How to bootstrap a Avalanche archive node with Docker
+EASY: How to bootstrap a Avalanche archive node in 3 steps
 ====
 
 Also EASY

@@ -1,4 +1,4 @@
-EASY: How to bootstrap a Optimism archive node with Docker in 3 steps
+EASY: How to bootstrap a Optimism archive node in 3 steps
 ====
 
 Also EASY
