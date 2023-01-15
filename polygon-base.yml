@@ -18,7 +18,8 @@ services:
     volumes:                             
       - "heimdall_data:/root/.heimdalld"                                                              
     ports:                                                                                            
-      - "26656:26656"                       
+      - "26656:26656"
+      - "26656:26656/udp"                             
       - "127.0.0.1:26657:26657" 
     depends_on:              
       - rabbitmq                                                                                      
