@@ -70,7 +70,7 @@ services:
     - "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=$WHITELIST"
 
   avalanche:
-    image: avaplatform/avalanchego:v1.9.5
+    image: avaplatform/avalanchego:v1.9.7
     expose:
     - "9650"
     - "9651"
