@@ -86,7 +86,7 @@ services:
     - "traefik.http.services.arbitrum.loadbalancer.server.port=8547"
     - "traefik.http.routers.arbitrum.entrypoints=websecure"
     - "traefik.http.routers.arbitrum.tls.certresolver=myresolver"
-    - "traefik.http.routers.arbitrum.rule=Host(\`$DOMAIN\`) && PathPrefix(\`/arbitrum-archive\`)"
+    - "traefik.http.routers.arbitrum.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-archive`)"
     - "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"
 
   arbitrum-classic:
