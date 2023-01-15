@@ -161,19 +161,19 @@ services:
     - --node.rpc.classic-redirect=http://arbitrum-classic:8547/
     - --l1.url=${ARBITRUM_L1_URL}
     - --l2.chain-id=42161
-    - --http.api=net,web3,eth,debug 
-    - --http.corsdomain=* 
-    - --http.addr=0.0.0.0 
+    - --http.api=net,web3,eth,debug
+    - --http.corsdomain=*
+    - --http.addr=0.0.0.0
     - --http.vhosts=*
-    restart: unless-stopped             
-    labels:                     
+    restart: unless-stopped
+    labels:
     - "traefik.enable=true"
-    - "traefik.http.middlewares.arbitrum-stripprefix.stripprefix.prefixes=/arbitrum-archive"                      
-    - "traefik.http.services.arbitrum.loadbalancer.server.port=8547"                                     
-    - "traefik.http.routers.arbitrum.entrypoints=websecure"                                              
-    - "traefik.http.routers.arbitrum.tls.certresolver=myresolver"                                        
-    - "traefik.http.routers.arbitrum.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-archive`)"                     
-    - "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"                           	  			
+    - "traefik.http.middlewares.arbitrum-stripprefix.stripprefix.prefixes=/arbitrum-archive"
+    - "traefik.http.services.arbitrum.loadbalancer.server.port=8547"
+    - "traefik.http.routers.arbitrum.entrypoints=websecure"
+    - "traefik.http.routers.arbitrum.tls.certresolver=myresolver"
+    - "traefik.http.routers.arbitrum.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-archive`)"
+    - "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"
 
   arbitrum-classic:
     image: 'offchainlabs/arb-node:v1.4.5-e97c1a4'
@@ -194,8 +194,8 @@ services:
     - --core.checkpoint-pruning-mode=off
     - --node.cache.allow-slow-lookup
     - --core.checkpoint-gas-frequency=156250000
-    - --node.rpc.addr=0.0.0.0 
-    restart: unless-stopped        
+    - --node.rpc.addr=0.0.0.0
+    restart: unless-stopped
         
   volumes:
     arbitrum-nitro:
