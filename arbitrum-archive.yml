@@ -42,9 +42,11 @@ services:
     user: root
     volumes:
       - 'arbitrum-classic-archive_data:/root/.arbitrum/mainnet'
+      - 'arbitrum/classic-entrypoint.sh:/entrypoint.sh'
     expose:
       - 8547
       - 8548
+    entrypoint: /entrypoint.sh
     command:
       - --l1.url=${ARBITRUM_L1_URL}
       - --l2.disable-upstream
