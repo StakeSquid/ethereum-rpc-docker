@@ -93,9 +93,10 @@ services:
     - "DATA_TRANSPORT_LAYER__SERVER_HOSTNAME=0.0.0.0"
     - "DATA_TRANSPORT_LAYER__SERVER_PORT=7878"
     - "DATA_TRANSPORT_LAYER__TRANSACTIONS_PER_POLLING_INTERVAL=1000"
+	- "DATA_TRANSPORT_LAYER__RPC_ENDPOINT=${DATA_TRANSPORT_LAYER__RPC_ENDPOINT}"
     volumes:
     - optimism-dtl:/db
-    - ./optimism/scripts/:/scripts/
+    - ./scripts/:/scripts/
   
   optimism-l2geth:
     image: ethereumoptimism/l2geth:${IMAGE_TAG__L2GETH:-latest}
@@ -141,7 +142,7 @@ services:
     - "WS=true"
     volumes:
     - optimism-geth:/geth
-    - ./optimism/scripts/:/scripts/
+    - ./scripts/:/scripts/
     expose:
     - 9991 # http
     - 9992 # ws
