@@ -10,9 +10,7 @@ Prerequisites
 * Storage: 2.5 TiB NVMe SSD
 * OS: Ubuntu 22.04
 
-There are currently no snapshots available for download and therefore the syncing process will take considerable amount of time on slow disks, e.g. attached network storage form cloud providers is a no go. Also the CPU should feature a higth single core speed. 
-
-Sync times are reported to be in the range of 1 week on dedicated hardware. The node consists of 2 parts, the classic part and the nitro hardfork. The classic part is only required to request archive data for blocks before the hardfork and takes the aformentioned 1 weeks to sync from scratch. The nitro history is shorter and can be quickly synced within 3 days.
+You will be ready to leave the computer alone in 10 minutes and synced up in 10 hours from now.
 
 
 Install Required Software
