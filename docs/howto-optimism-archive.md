@@ -41,7 +41,7 @@ Copy pasta the following content to the file and save it by closing it with crtl
 
 ```
 version: '3.1'
-      
+
 services:
   traefik:
     image: traefik:latest
@@ -65,8 +65,8 @@ services:
     - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
     - "traefik.enable=true"
-    - "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=$WHITELIST"	
-    
+    - "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=$WHITELIST"
+  
   optimism-dtl:
     image: ethereumoptimism/data-transport-layer:${IMAGE_TAG__DTL:-latest}
     restart: unless-stopped
@@ -96,10 +96,10 @@ services:
     volumes:
     - optimism-dtl:/db
     - ./optimism/scripts/:/scripts/
-      
+  
   optimism-l2geth:
     image: ethereumoptimism/l2geth:${IMAGE_TAG__L2GETH:-latest}
-    restart: unless-stopped			
+    restart: unless-stopped
     stop_grace_period: 3m
     user: root
     entrypoint:
