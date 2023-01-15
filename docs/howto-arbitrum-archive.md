@@ -117,7 +117,7 @@ volumes:
   traefik_letsencrypt:
 ```
 
-Also create this helper script tow download download a snapshot on first start. save it into a file named arbitrum-class-entrypoint.sh
+Also create this helper script tow download download a snapshot on first start. save it into a file named arbitrum-classic-entrypoint.sh
 
 ```
 #!/bin/bash
