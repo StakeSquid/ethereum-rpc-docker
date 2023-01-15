@@ -5,7 +5,8 @@ EASY: How to bootstrap a Arbitrum archive node in 3 steps
 Do you need one of those too?
 ------
 
-* [All](http://rpc.bash-st.art)
+[All of them](http://rpc.bash-st.art)
+
 * [Celo](howto-celo-archive.md)
 * [Optimism](howto-optimism-archive.md)
 * [Avalanche](howto-avalanche-archive.md)
