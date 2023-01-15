@@ -2,6 +2,16 @@ EASY: How to bootstrap a Arbitrum archive node in 3 steps
 ====
 
 
+Do you need one of those too?
+------
+
+* [Celo archive](howto-celo-archive.md)
+* [Optimism archive](howto-optimism-archive.md)
+* [Avalanche archive](howto-avalanche-archive.md)
+* [Arbitrum archive](howto-arbitrum-archive.md)
+* [All of them](http://rpc.bash-st.art)
+
+
 Prerequisites
 ====
 
@@ -193,14 +203,3 @@ The classic nodes rpc endpoint is not exposed in the setup as the nitro node act
 
 
 Happy Googling!
-
-
-
-Do you need one of those too?
-------
-
-* [Celo archive](howto-celo-archive.md)
-* [Optimism archive](howto-optimism-archive.md)
-* [Avalanche archive](howto-avalanche-archive.md)
-* [Arbitrum archive](howto-arbitrum-archive.md)
-* [All of them](http://rpc.bash-st.art)
