@@ -136,14 +136,8 @@ echo "LFG!!!"
 
 ```
 
-Next make our new file executable.
-
-```
-chmod +x arbitrum-classic-entrypoint.sh
-
-```
-
 Well done!
+
 
 Now you'd need the ip address of the machine that you are running on. Thewre is a ip filter in place which allows only whitelisted IPs to connect to your new RPC. 
 You can query your global IP using curl by entering the following in the terminal.
