@@ -28,95 +28,9 @@ Create a new folder and place a new text file named docker-compose.yml into it.
 	
 Copy paste the following content to the file and save it by closing it with crtl-x and answering with "y" in the next prompt.
 
-	version: '3.1'
-
-	services:
-		traefik:
-			image: traefik:latest
-			container_name: traefik
-			restart: always
-			ports:
-				- "443:443"
-			command:
-				- "--api=true"
-				- "--api.insecure=true"
-				- "--api.dashboard=true"
-				- "--log.level=DEBUG"
-				- "--providers.docker=true"
-				- "--providers.docker.exposedbydefault=false"
-				- "--entrypoints.websecure.address=:443"
-				- "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-				- "--certificatesresolvers.myresolver.acme.email=$EMAIL"
-				- "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-			volumes:
-				- "traefik_letsencrypt:/letsencrypt"
-				- "/var/run/docker.sock:/var/run/docker.sock:ro"
-			labels:
-				- "traefik.enable=true"
-				- "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=$WHITELIST"
-				
-		arbitrum-nitro:
-			image: 'offchainlabs/nitro-node:v2.0.10-rc.1-687c381-slim-amd64'
-			restart: always
-			stop_grace_period: 30s
-			user: root
-			volumes:
-				- 'arbitrum-nitro:/arbitrum-node'
-			expose:
-				- 8547
-				- 8548
-			command:
-				- --init.empty
-				- --node.caching.archive
-				- --persistent.chain=/arbitrum-node/data/
-				- --persistent.global-config=/arbitrum-node/
-				- --node.rpc.classic-redirect=http://arbitrum-classic:8547/
-				- --l1.url=${ARBITRUM_L1_URL}
-				- --l2.chain-id=42161
-				- --http.api=net,web3,eth,debug 
-				- --http.corsdomain=* 
-				- --http.addr=0.0.0.0 
-				- --http.vhosts=*
-			restart: unless-stopped             
-			labels:                     
-				- "traefik.enable=true"
-				- "traefik.http.middlewares.arbitrum-stripprefix.stripprefix.prefixes=/arbitrum-archive"                      
-				- "traefik.http.services.arbitrum.loadbalancer.server.port=8547"                                     
-				- "traefik.http.routers.arbitrum.entrypoints=websecure"                                              
-				- "traefik.http.routers.arbitrum.tls.certresolver=myresolver"                                        
-				- "traefik.http.routers.arbitrum.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-archive`)"                     
-				- "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"                           	  			
-	    arbitrum-classic:
-			image: 'offchainlabs/arb-node:v1.4.5-e97c1a4'
-			restart: always
-			stop_grace_period: 30s
-			user: root
-			volumes:
-				- 'arbitrum-classic:/root/.arbitrum/mainnet'
-			expose:
-				- 8547
-				- 8548
-			command:
-				- --l1.url=${ARBITRUM_L1_URL}
-				- --l2.disable-upstream
-				- --node.chain-id=42161
-				- --node.rpc.tracing.enable
-				- --node.rpc.tracing.namespace=trace
-				- --core.checkpoint-pruning-mode=off
-				- --node.cache.allow-slow-lookup
-				- --core.checkpoint-gas-frequency=156250000
-				- --node.rpc.addr=0.0.0.0 
-			restart: unless-stopped        
-	     
-	volumes:
-		arbitrum-nitro:
-		arbitrum-classic:
-		traefik_letsencrypt:
-
-	version: '3.1'
-
-
 ```
+version: '3.1'
+
 services:
 
   traefik:
@@ -142,7 +56,7 @@ services:
     labels:
     - "traefik.enable=true"
     - "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=$WHITELIST"
-    
+
   arbitrum-nitro:
     image: 'offchainlabs/nitro-node:v2.0.10-rc.1-687c381-slim-amd64'
     restart: always
@@ -172,7 +86,7 @@ services:
     - "traefik.http.services.arbitrum.loadbalancer.server.port=8547"
     - "traefik.http.routers.arbitrum.entrypoints=websecure"
     - "traefik.http.routers.arbitrum.tls.certresolver=myresolver"
-    - "traefik.http.routers.arbitrum.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-archive`)"
+    - "traefik.http.routers.arbitrum.rule=Host(\`$DOMAIN\`) && PathPrefix(\`/arbitrum-archive\`)"
     - "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"
 
   arbitrum-classic:
@@ -196,7 +110,7 @@ services:
     - --core.checkpoint-gas-frequency=156250000
     - --node.rpc.addr=0.0.0.0
     restart: unless-stopped
-        
+
   volumes:
     arbitrum-nitro:
     arbitrum-classic:
