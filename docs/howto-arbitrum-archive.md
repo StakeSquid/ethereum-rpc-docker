@@ -11,8 +11,8 @@ Do you need one of those too?
 * [Avalanche](howto-avalanche-archive.md)
 * [Arbitrum](howto-arbitrum-archive.md)
 * [Gnosis](http://rpc.bash-st.art)
-* [Polygon]((http://rpc.bash-st.art))
-* [Ethereum]((http://rpc.bash-st.art))
+* [Polygon](http://rpc.bash-st.art)
+* [Ethereum](http://rpc.bash-st.art)
 
 
 
