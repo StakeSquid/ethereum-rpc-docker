@@ -205,8 +205,8 @@ Happy Googling!
 Do you need one of those too?
 ------
 
-[Celo archive](howto-celo-archive.md)
-[Optimism archive](howto-optimism-archive.md)
-[Avalanche archive](howto-avalanche-archive.md)
-[Arbitrum archive](howto-arbitrum-archive.md)
-
+* [Celo archive](howto-celo-archive.md)
+* [Optimism archive](howto-optimism-archive.md)
+* [Avalanche archive](howto-avalanche-archive.md)
+* [Arbitrum archive](howto-arbitrum-archive.md)
+* [All of them](http://rpc.bash-st.art)
