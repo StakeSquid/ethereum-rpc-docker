@@ -1,4 +1,4 @@
-How to bootstrap a Arbitrum archive node with Docker
+EASY: How to bootstrap a Arbitrum archive node in 3 steps
 ====
 
 
