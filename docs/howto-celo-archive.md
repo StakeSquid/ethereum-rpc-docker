@@ -17,9 +17,16 @@ Prerequisites
 * Storage: 1.5 TiB NVMe SSD
 * OS: Ubuntu 22.04
 
-There are currently no snapshots available for download and therefore the syncing process will take considerable amount of time on slow disks, e.g. attached network storage from cloud providers is a no go. Also the CPU should feature a higth single core speed. 
+There are currently no public snapshots available for download and therefore the syncing process will take considerable amount of time on slow disks, e.g. attached network storage from cloud providers is a no go. Also the CPU should feature a higth single core speed. 
 
 Sync times are reported to be in the range of 4 days on dedicated hardware.
+
+Running late?
+------
+
+I have private snapshots.
+
+	goldberg@stakesquid.com
 
 
 Install Required Software
@@ -128,7 +135,7 @@ In case you want to whitelist more IPs you can simply edit the .env file and run
 
 To check if your node is happily syncing you can have a look at the logs by issuing the following command in the terminal.
 
-	docker-compose logs -f celo
+	docker-compose logs -f celo-archive
 
 In the following please replace {DOMAIN} with your actual domain. Your rpc endpoint will be reachable under the url 
 
@@ -141,20 +148,3 @@ Alternatively to the logs you can check the nodes status via rpc from any whitel
 To trouble shoot it's also interesting to know which block your node is currently synced up to. you can query that with the following curl command.
 
 	curl --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' -H "Content-Type: application/json" -X POST http://{DOMAIN}/celo-archive
-
-
-You are running late?
-------
-
-I have snapshots on request.
-
-	goldberg@stakesquid.com
-
-
-Also in the EASY series
-------
-
-[Celo archive](howto-celo-archive.md)
-[Optimism archive](howto-optimism-archive.md)
-[Avalanche archive](howto-avalanche-archive.md)
-[Arbitrum archive](howto-arbitrum-archive.md)
