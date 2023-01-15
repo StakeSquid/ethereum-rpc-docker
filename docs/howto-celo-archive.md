@@ -1,6 +1,13 @@
 EASY: How to bootstrap a Celo archive node in 3 steps
 ====
 
+Also EASY
+------
+
+[Celo](howto-celo-archive.md) | [Optimism](howto-optimism-archive.md) | [Avalanche](howto-avalanche-archive.md) | [Arbitrum](howto-arbitrum-archive.md) | [Gnosis](http://rpc.bash-st.art) | [Polygon](http://rpc.bash-st.art) | [Ethereum](http://rpc.bash-st.art)
+
+[Very EASY](http://rpc.bash-st.art)
+
 
 Prerequisites
 ====
@@ -90,9 +97,9 @@ services:
     - "traefik.http.routers.celo.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-archive`)"
     - "traefik.http.routers.celo.middlewares=celo-stripprefix, ipwhitelist"
 
-  volumes:
-    celo:
-    traefik_letsencrypt:
+volumes:
+  celo:
+  traefik_letsencrypt:
 ```
 
 Next you'd need the ip address of the machine that your indexer runs on. you can query it using curl by entering the following in the terminal.
