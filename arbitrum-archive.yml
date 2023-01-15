@@ -42,7 +42,7 @@ services:
     user: root
     volumes:
       - 'arbitrum-classic-archive_data:/root/.arbitrum/mainnet'
-      - 'arbitrum/classic-entrypoint.sh:/entrypoint.sh'
+      - './arbitrum/classic-entrypoint.sh:/entrypoint.sh'
     expose:
       - 8547
       - 8548
