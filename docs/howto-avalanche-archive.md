@@ -17,7 +17,7 @@ Prerequisites
 * Storage: 4 TiB NVMe SSD
 * OS: Ubuntu 22.04
 
-The main requirement here is the storage. 
+**The main requirement here is the storage.**
 
 * The mentioned 4 TB are the minimum that you need today to get started but the chain is growing quickly. 
 * Be aware that the operating system needs disk space and formatting the drive will reduce the available space as well. A typical 4 TB drive comes actually with 3.84 TB disk space from which after formatting 3.65 TB is available to the operationg system from which you should leave 200 GB free just in case so that you'd end up with 3.45 TB for the nodes datdir. 
@@ -91,7 +91,7 @@ services:
     - "traefik.http.routers.avalanche.tls.certresolver=myresolver"
     - "traefik.http.routers.avalanche.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-archive`)"
     - "traefik.http.routers.avalanche.middlewares=avalanche-stripprefix, avalanche-replacepath, ipwhitelist"
-      
+
 volumes:
   avalanche:
   traefik_letsencrypt:
