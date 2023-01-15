@@ -199,3 +199,14 @@ The classic nodes rpc endpoint is not exposed in the setup as the nitro node act
 
 
 Happy Googling!
+
+
+
+Do you need one of those too?
+------
+
+[Celo archive](howto-celo-archive.md)
+[Optimism archive](howto-optimism-archive.md)
+[Avalanche archive](howto-avalanche-archive.md)
+[Arbitrum archive](howto-arbitrum-archive.md)
+
