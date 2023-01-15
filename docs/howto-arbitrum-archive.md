@@ -98,7 +98,7 @@ services:
     expose:
     - 8547
     - 8548
-	entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
     command:
     - --l1.url=${ARBITRUM_L1_URL}
     - --l2.disable-upstream
