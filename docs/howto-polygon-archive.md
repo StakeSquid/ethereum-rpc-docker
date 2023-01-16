@@ -74,25 +74,25 @@ services:
       context: ./erigon-polygon
       dockerfile: Dockerfile
     environment:
-	- SNAPSHOT_URL=${SNAPSHOT_URL:-https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/erigon-archive-snapshot-2023-01-12.tar.gz}
-	- BOOTSTRAP=1
-	- HEIMDALLD=${HEIMDALLD:-http://heimdalld:26657}
-	- HEIMDALLR=${HEIMDALLR:-http://heimdallr:1317}
+    - SNAPSHOT_URL=${SNAPSHOT_URL:-https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/erigon-archive-snapshot-2023-01-12.tar.gz}
+    - BOOTSTRAP=1
+    - HEIMDALLD=${HEIMDALLD:-http://heimdalld:26657}
+    - HEIMDALLR=${HEIMDALLR:-http://heimdallr:1317}
     volumes:
-	- "polygon-archive_data:/datadir"
+    - "polygon-archive_data:/datadir"
     ports:
-	- "27113:27113"
-	- "27113:27113/udp"
+    - "27113:27113"
+    - "27113:27113/udp"
     restart: unless-stopped
     stop_grace_period: 1m
     labels:
-	- "traefik.enable=true"
-	- "traefik.http.middlewares.erigon-polygon-stripprefix.stripprefix.prefixes=/polygon-archive"
-	- "traefik.http.services.erigon-polygon.loadbalancer.server.port=8545"
-	- "traefik.http.routers.erigon-polygon.entrypoints=websecure"
-	- "traefik.http.routers.erigon-polygon.tls.certresolver=myresolver"
-	- "traefik.http.routers.erigon-polygon.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-archive`)"
-	- "traefik.http.routers.erigon-polygon.middlewares=erigon-polygon-stripprefix, ipwhitelist"
+    - "traefik.enable=true"
+    - "traefik.http.middlewares.erigon-polygon-stripprefix.stripprefix.prefixes=/polygon-archive"
+    - "traefik.http.services.erigon-polygon.loadbalancer.server.port=8545"
+    - "traefik.http.routers.erigon-polygon.entrypoints=websecure"
+    - "traefik.http.routers.erigon-polygon.tls.certresolver=myresolver"
+    - "traefik.http.routers.erigon-polygon.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-archive`)"
+    - "traefik.http.routers.erigon-polygon.middlewares=erigon-polygon-stripprefix, ipwhitelist"
 
 volumes:
     polygon-archive_data:
