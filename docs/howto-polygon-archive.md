@@ -96,6 +96,7 @@ services:
 
 volumes:
     polygon-archive_data:
+    traefik_letsencrypt:
 ```
 
 Make a Dockerfile in a subfolder. First create a folder and open a new file.
