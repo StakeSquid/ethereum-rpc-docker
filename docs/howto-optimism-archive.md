@@ -4,7 +4,7 @@ EASY: How to bootstrap a Optimism archive node in 3 steps
 Also EASY
 ------
 
-[Celo](howto-celo-archive.md) | [Optimism](howto-optimism-archive.md) | [Avalanche](howto-avalanche-archive.md) | [Arbitrum](howto-arbitrum-archive.md) | [Gnosis](http://rpc.bash-st.art) | [Polygon](http://rpc.bash-st.art) | [Ethereum](http://rpc.bash-st.art)
+[Celo](howto-celo-archive.md) | [Optimism](howto-optimism-archive.md) | [Avalanche](howto-avalanche-archive.md) | [Arbitrum](howto-arbitrum-archive.md) | [Gnosis](http://rpc.bash-st.art) | [Polygon](howto-polygon-archive.md) | [Ethereum](http://rpc.bash-st.art)
 
 [Very EASY](http://rpc.bash-st.art)
 
