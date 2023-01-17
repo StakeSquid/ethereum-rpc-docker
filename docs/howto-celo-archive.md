@@ -61,7 +61,7 @@ services:
     - "--providers.docker.exposedbydefault=false"
     - "--entrypoints.websecure.address=:443"
     - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-    - "--certificatesresolvers.myresolver.acme.email=$MAIL"
+    - "--certificatesresolvers.myresolver.acme.email=$EMAIL"
     - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     volumes:
     - "traefik_letsencrypt:/letsencrypt"

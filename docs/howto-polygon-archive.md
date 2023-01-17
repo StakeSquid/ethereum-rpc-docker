@@ -58,7 +58,7 @@ services:
     - "--providers.docker.exposedbydefault=false"
     - "--entrypoints.websecure.address=:443"
     - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-    - "--certificatesresolvers.myresolver.acme.email=$MAIL"
+    - "--certificatesresolvers.myresolver.acme.email=$EMAIL"
     - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     volumes:
     - "traefik_letsencrypt:/letsencrypt"
@@ -124,8 +124,8 @@ FROM alpine:latest
 RUN apk add --no-cache ca-certificates curl jq libstdc++ libgcc
 COPY --from=builder /go/erigon/build/bin/erigon /usr/local/bin/
 
-ENV HEIMDALLD=https://polygon-mainnet-rpc.allthatnode.com:26657
-ENV HEIMDALLR=https://polygon-mainnet-rpc.allthatnode.com:1317
+ENV HEIMDALLD=http://heimdalld:26657
+ENV HEIMDALLR=https://heimdallr:1317
 
 EXPOSE 27113
 EXPOSE 8545
@@ -200,9 +200,9 @@ create a file .env in the same folder with the following content and save the fi
 	DOMAIN={YOUR_DOMAIN}
 	WHITELIST={YOUR_MACHINE_IP}
 
-In case you want to whitelist more IPs just add them separated by a comma.
+In case you want to whitelist more IPs just add them separated by a comma to the WHITELIST variable..
 
-To save some disk space and the requirement for a Ethereum RPC endpoint we used a shady trick here. Polygon has another part called Heimdall that is important for consensus. The configuration hardcoded a public endpoint to connect our erigon to. you can configure it right in the .env file by adding the following 2 variables if you ever need to.
+To save some disk space and the requirement for a Ethereum RPC endpoint we will use a shady trick here. Polygon has another part called Heimdall that is important for consensus. For our purposes it's sufficent to use a public endpoint to connect our erigon to. You can configure it right in the .env file by adding the following 2 variables.
 
 	HEIMDALLD=https://polygon-mainnet-rpc.allthatnode.com:26657
 	HEIMDALLR=https://polygon-mainnet-rpc.allthatnode.com:1317
@@ -215,7 +215,8 @@ You might also want to use a more current snapshot to bootstrap your node. You c
 	
 Replace the URL with the current snapshots that you find [here](https://snapshot.polygon.technology/)
 
-You read a lot. Well done!
+You read a lot. Well done! 
+Don't forget to save the .env file to finish up!
 
 
 Ready to find out if wverything works? I invite you to run the whole thing using docker-compose. Enter the following on the command line.
