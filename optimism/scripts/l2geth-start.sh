@@ -16,7 +16,7 @@ exec geth \
   --gcmode=$NODE_TYPE \
   --metrics \
   --metrics.addr=0.0.0.0 \
-  --metric.port=6060 \
+  --metrics.port=6060 \
 #  --metrics.influxdb \
 #  --metrics.influxdb.endpoint=http://influxdb:8086 \
 #  --metrics.influxdb.database=l2geth \

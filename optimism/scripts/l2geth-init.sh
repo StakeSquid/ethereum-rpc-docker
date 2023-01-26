@@ -25,5 +25,5 @@ if [ ! -d "$GETH_CHAINDATA_DIR" ]; then
 else
     echo "$GETH_CHAINDATA_DIR exists, checking for hardfork."
     echo "Chain config:"
-    geth dump-chain-cfg --datadir="$GETH_DATA_DIR"
+#    geth dump-chain-cfg --datadir="$GETH_DATA_DIR"
 fi
