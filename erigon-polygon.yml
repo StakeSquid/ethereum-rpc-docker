@@ -15,6 +15,11 @@ services:
       - HEIMDALLR=${HEIMDALLR:-http://heimdallr:1317}
     volumes:
       - "polygon-archive_data:/datadir"
+    expose:
+      - "16630"
+      - "9090"
+      - "8545"
+      - "8551"
     ports:
       - "27113:27113"
       - "27113:27113/udp"
