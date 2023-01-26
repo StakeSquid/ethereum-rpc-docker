@@ -5,8 +5,6 @@ set -e
 
 # Set Bor Home Directory
 ERIGON_HOME=/datadir
-#HEIMDALLD=http://heimdalld:26657
-#HEIMDALLR=http://heimdallr:1317
 
 if [ "${BOOTSTRAP}" == 1 ] && [ -n "${SNAPSHOT_URL}" ] && [ ! -f "${ERIGON_HOME}/bootstrapped" ];
 then
@@ -31,7 +29,7 @@ exec erigon \
       --datadir=${ERIGON_HOME} \
       --http --http.addr="0.0.0.0" --http.port="8545" --http.compression --http.vhosts="*" --http.corsdomain="*" --http.api="eth,debug,net,trace,web3,erigon,bor" \
       --ws --ws.compression \
-      --port=27113
+      --port=27113 \
       --snap.keepblocks=true \
       --snapshots="true" \
       --torrent.upload.rate="1250mb" --torrent.download.rate="1250mb" \
