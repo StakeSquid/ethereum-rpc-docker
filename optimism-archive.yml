@@ -44,6 +44,18 @@ services:
       - "SYNC_SOURCE=l1"
     networks:                                                                                         
       - chains
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=optimism"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.optimism-archive-stripprefix.stripprefix.prefixes=/optimism-archive"
+      - "traefik.http.services.optimism-archive.loadbalancer.server.port=9991"
+      - "traefik.http.routers.optimism-archive.entrypoints=websecure"
+      - "traefik.http.routers.optimism-archive.tls.certresolver=myresolver"
+      - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-archive`)"
+      - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
 
 volumes:
   optimism-dtl:
