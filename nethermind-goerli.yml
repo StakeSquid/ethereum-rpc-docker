@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   nethermind-goerli:
-    image: nethermind/nethermind:latest
+    image: nethermind/nethermind:1.15.0
     restart: always
     stop_grace_period: 1m
     command: |
