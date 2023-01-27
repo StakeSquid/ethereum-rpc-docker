@@ -1,0 +1,8 @@
+version: '3.1'
+
+networks:
+  chains:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 192.168.0.1/27
