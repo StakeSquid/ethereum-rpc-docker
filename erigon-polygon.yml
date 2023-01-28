@@ -4,8 +4,8 @@ services:
   erigon-polygon:
     build:
       args:
-        ERIGON_VERSION: v2.36.1
-        ERIGON_REPOSITORY: https://github.com/ledgerwatch/erigon.git
+        ERIGON_VERSION: frankenstein
+        ERIGON_REPOSITORY: https://github.com/StakeSquid/erigon.git
       context: ./polygon/erigon
       dockerfile: Dockerfile
     environment:
