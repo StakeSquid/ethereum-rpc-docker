@@ -13,6 +13,7 @@ services:
       --cache.preimages
       --port 58395
       --http
+      --http.vhosts=*
       --http.addr 0.0.0.0
       --http.api eth,net,web3,debug,admin,personal
       --datadir /root/.celo
