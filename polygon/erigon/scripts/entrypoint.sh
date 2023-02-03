@@ -22,6 +22,7 @@ do
 done
 
 # add snap.keepblocks=true as mentioned on https://snapshot.polygon.technology/
+# add rpc.returndata.limit=1000000 to unstuck subgraphs due to "call retuned result on length 104704 exceeding limit 100000"
 
 exec erigon \
       --chain=bor-mainnet \
@@ -31,6 +32,7 @@ exec erigon \
       --ws --ws.compression \
       --port=27113 \
       --snap.keepblocks=true \
+      --rpc.returndata.limit=1000000 \
       --snapshots="true" \
       --torrent.upload.rate="1250mb" --torrent.download.rate="1250mb" \
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 \
