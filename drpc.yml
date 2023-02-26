@@ -1,0 +1,26 @@
+version: '3.1'
+services:
+  dshackle:
+    image: drpcorg/dshackle:0.26.0-SNAPSHOT
+    restart: unless-stopped
+    volumes:
+      - ./main_configs:/etc/dshackle
+    ports:
+#      - "8080:8080"
+      - "8081:8081"
+#      - "8082:8082"
+      - "2449:2449"
+  label:
+    - "prometheus-scrape.enabled=true"
+    - "prometheus-scrape.port=8081"
+    - "prometheus-scrape.job_name=drpc-dshackle"
+    - "prometheus-scrape.metrics_path=/metrics"
+
+  redis:
+    image: healthcheck/redis:alpine
+    restart: unless-stopped
+    command:
+      - "redis-server"
+      - "--maxmemory ${REDIS_RAM}"
+      - "--maxmemory-policy allkeys-lru"
+      - '--save ""'
