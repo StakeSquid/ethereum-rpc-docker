@@ -7,7 +7,7 @@ services:
       - ./main_configs:/etc/dshackle
     ports:
 #      - "8080:8080"
-      - "8081:8081"
+#      - "8081:8081"
 #      - "8082:8082"
       - "2449:2449"
     labels:
@@ -15,7 +15,9 @@ services:
       - "prometheus-scrape.port=8081"
       - "prometheus-scrape.job_name=drpc-dshackle"
       - "prometheus-scrape.metrics_path=/metrics"
-
+    networks:
+      - chains
+      
   redis:
     image: healthcheck/redis:alpine
     restart: unless-stopped
@@ -24,3 +26,5 @@ services:
       - "--maxmemory ${REDIS_RAM}"
       - "--maxmemory-policy allkeys-lru"
       - '--save ""'
+    networks:
+      - chains
