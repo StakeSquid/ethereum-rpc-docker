@@ -10,7 +10,7 @@ services:
       - "8081:8081"
 #      - "8082:8082"
       - "2449:2449"
-  label:
+  labels:
     - "prometheus-scrape.enabled=true"
     - "prometheus-scrape.port=8081"
     - "prometheus-scrape.job_name=drpc-dshackle"
