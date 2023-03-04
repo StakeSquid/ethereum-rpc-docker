@@ -9,7 +9,7 @@ services:
     environment:
       - SNAPSHOT_URL_DISABLED=https://download.fantom.network/opera_5may22.tgz
     volumes:
-      - "fantom:/datadir"
+      - "fantom-archive:/datadir"
     expose:
       - "18545"
     networks:
