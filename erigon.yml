@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-mainnet:
-    image: thorax/erigon:v2.40.0
+    image: thorax/erigon:v2.34.0
     expose:
       - "16630"
       - "9090"
