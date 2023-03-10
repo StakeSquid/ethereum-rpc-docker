@@ -23,6 +23,9 @@ services:
       - --http.corsdomain=* 
       - --http.addr=0.0.0.0 
       - --http.vhosts=*
+      - --ws.port=8547
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
     restart: unless-stopped                 
     labels:                     
       - "traefik.enable=true"
