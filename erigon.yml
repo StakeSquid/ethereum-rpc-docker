@@ -17,7 +17,7 @@ services:
     networks:
       - chains
     command: >
-      erigon --chain mainnet
+      --chain mainnet
       --externalcl
       --port=16630
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
