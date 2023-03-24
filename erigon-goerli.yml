@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-goerli:
-    image: thorax/erigon:v2.39.0
+    image: thorax/erigon:v2.40.1
     expose:
       - "21766"
       - "9090"
@@ -16,7 +16,7 @@ services:
     networks:
       - chains
     command: >
-      erigon --chain goerli
+      --chain goerli
       --externalcl
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
