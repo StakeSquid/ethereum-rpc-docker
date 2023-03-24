@@ -51,7 +51,7 @@ services:
       - "traefik.http.routers.erigon-goerli.middlewares=erigon-goerli-stripprefix, ipwhitelist"
 
   lighthouse-goerli:
-    image: sigp/lighthouse:latest-modern
+    image: sigp/lighthouse:v4.0.1-rc.0-modern
     expose:
       - "5054" #metrics
       - "4000" #http

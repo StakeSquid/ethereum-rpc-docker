@@ -53,7 +53,7 @@ services:
       
 
   lighthouse-goerli:
-    image: sigp/lighthouse:latest-modern
+    image: sigp/lighthouse:v4.0.1-rc.0-modern
     restart: unless-stopped
     networks:
       - chains
