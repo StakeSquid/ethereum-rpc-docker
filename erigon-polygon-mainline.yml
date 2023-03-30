@@ -2,27 +2,38 @@ version: '3.1'
 
 services:
   erigon-polygon:
-    image: thorax/erigon:v2.31.0
+    image: thorax/erigon:v2.42.0
     volumes:
       - "polygon-archive_data:/datadir"
     ports:
-      - "40303:40303"
-      - "40303:40303/udp"
+      - "61044:61044"
+      - "61044:61044/udp"
     restart: unless-stopped
     command: >
-      erigon
       --chain=bor-mainnet \
+      --datadir=/datadir \
+      --ethash.dagdir=/datadir/ethash \
+      --snapshots=false \
+      --snap.stop \
+      --bor.heimdall=http://localhost:1317 \
       --bor.heimdall=https://heimdall.stakesystems.io \
-      --datadir=${ERIGON_HOME} \
-      --http --http.addr="0.0.0.0" --http.port="8545" --http.compression --http.vhosts="*" --http.corsdomain="*" --http.api="eth,debug,net,trace,web3,erigon,bor" \
+      --http --http.addr=0.0.0.0 --http.port=8545 \
+      --http.compression --http.vhosts=* --http.corsdomain=* \
+      --http.api=eth,debug,net,trace,web3,erigon,bor \
       --ws --ws.compression \
-      --snap.keepblocks=true \
-      --snapshots="true" \
-      --torrent.upload.rate="1250mb" --torrent.download.rate="1250mb" \
+      --rpc.gascap=300000000 \
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 \
-      --pprof --pprof.addr=0.0.0.0 --pprof.port=6061
+      --bodies.cache=5G --rpc.batch.limit=200000 \
+      --db.pagesize=16k \
+      --batchSize=2048MB \
+      --port=61044
+      --p2p.protocol=66
     stop_grace_period: 1m
     labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=erigon"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
       - "traefik.http.middlewares.erigon-polygon-stripprefix.stripprefix.prefixes=/polygon-archive"
       - "traefik.http.services.erigon-polygon.loadbalancer.server.port=8545"
