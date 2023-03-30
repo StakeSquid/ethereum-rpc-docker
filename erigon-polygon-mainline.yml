@@ -13,7 +13,6 @@ services:
       --chain=bor-mainnet \
       --datadir=/datadir \
       --ethash.dagdir=/datadir/ethash \
-      --snapshots=false \
       --snap.stop \
       --bor.heimdall=http://localhost:1317 \
       --bor.heimdall=https://heimdall.stakesystems.io \
