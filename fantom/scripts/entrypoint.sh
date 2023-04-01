@@ -12,7 +12,7 @@ then
   wget --tries=0 -O - "${SNAPSHOT_URL}" | tar -xz --strip-components=1 -C ${FANTOM_HOME}/ && touch ${FANTOM_HOME}/bootstrapped
 fi
 
-if [ ! -f "$FANTOM_HOME/mainnet.g" ];
+if [ ! -f "$FANTOM_HOME/mainnet-5577-full-mpt.g" ];
 then
     cd $FANTOM_HOME
     echo "downloading launch genesis file"
@@ -20,10 +20,10 @@ then
 fi
 
 opera \
-    --genesis=/datadir/mainnet-5577-full-mpt.g \
+    --genesis=$FANTOM_HOME/mainnet-5577-full-mpt.g \
     --port=5050 \
     --maxpeers=200 \
-    --datadir=/datadir \
+    --datadir=$FANTOM_HOME \
     --http \
     --http.addr=0.0.0.0 \
     --http.port=18545 \
