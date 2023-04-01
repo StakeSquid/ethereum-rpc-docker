@@ -38,4 +38,5 @@ opera \
     --nousb \
     --db.migration.mode reformat \
     --db.preset pbl-1 \
+    --cache=${CACHE_SIZE:-16000} \
     --tracenode
