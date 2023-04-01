@@ -27,16 +27,15 @@ opera \
     --http \
     --http.addr=0.0.0.0 \
     --http.port=18545 \
-#    --http.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc \
+    --http.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc,trace \
     --http.corsdomain="*" \
     --http.vhosts="*" \
     --ws \
     --ws.addr=0.0.0.0 \
     --ws.port=18546 \
-#    --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc \
+    --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc \
     --ws.origins="*" \
     --nousb \
-#    --db.migration.mode reformat \
+    --db.migration.mode reformat \
     --db.preset pbl-1 \
-    --tracenode \
-    --http.api=eth,web3,net,ftm,trace
+    --tracenode
