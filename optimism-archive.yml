@@ -16,9 +16,9 @@ services:
       - optimism-dtl:/db
       - ./optimism/scripts/:/scripts/
     environment:
-      - "SYNC_SOURCE=l1"
-      - "DATA_TRANSPORT_LAYER__RPC_ENDPOINT=${OPTIMISM_L1_URL}"
-    networks:                                                                                         
+      - "SYNC_SOURCE=l2"
+      - "DATA_TRANSPORT_LAYER__RPC_ENDPOINT=${OPTIMISM_L2_URL}"
+    networks:                                                                                        
       - chains
 
   optimism-l2geth:
@@ -41,7 +41,7 @@ services:
       - 9992 # ws
     environment:
       - "NODE_TYPE=archive"
-      - "SYNC_SOURCE=l1"
+      - "SYNC_SOURCE=l2"
     networks:                                                                                         
       - chains
     labels:
