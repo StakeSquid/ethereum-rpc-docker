@@ -37,7 +37,8 @@ services:
       - optimism-geth:/geth
       - ./optimism/scripts/:/scripts/
     expose:
-      - 8545 # http, ws
+      - 8545 # http
+      - 8546 # ws
       - 33289 # P2P
     ports:
       - "33289:33289"
@@ -45,7 +46,7 @@ services:
     environment:
       - "NODE_TYPE=archive"
       - "SYNC_SOURCE=l2"
-      - "WS_PORT=8545"
+      - "WS_PORT=8546"
     networks:                                                                                         
       - chains
     labels:
