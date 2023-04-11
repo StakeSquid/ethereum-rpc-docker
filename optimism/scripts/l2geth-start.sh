@@ -14,6 +14,7 @@ exec geth \
   --mine \
   --miner.etherbase=$BLOCK_SIGNER_ADDRESS \
   --gcmode=$NODE_TYPE \
+  --ws.port=8545 \
 #  --metrics \
 #  --metrics.influxdb \
 #  --metrics.influxdb.endpoint=http://influxdb:8086 \

@@ -37,8 +37,7 @@ services:
       - optimism-geth:/geth
       - ./optimism/scripts/:/scripts/
     expose:
-      - 9991 # http
-      - 9992 # ws
+      - 8545 # http, ws
     environment:
       - "NODE_TYPE=archive"
       - "SYNC_SOURCE=l2"
@@ -51,7 +50,7 @@ services:
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
       - "traefik.http.middlewares.optimism-archive-stripprefix.stripprefix.prefixes=/optimism-archive"
-      - "traefik.http.services.optimism-archive.loadbalancer.server.port=9991"
+      - "traefik.http.services.optimism-archive.loadbalancer.server.port=8545"
       - "traefik.http.routers.optimism-archive.entrypoints=websecure"
       - "traefik.http.routers.optimism-archive.tls.certresolver=myresolver"
       - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-archive`)"
