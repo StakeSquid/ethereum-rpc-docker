@@ -38,9 +38,14 @@ services:
       - ./optimism/scripts/:/scripts/
     expose:
       - 8545 # http, ws
+      - 33289 # P2P
+    ports:
+      - "33289:33289"
+      - "33289:33289/udp"
     environment:
       - "NODE_TYPE=archive"
       - "SYNC_SOURCE=l2"
+      - "WS_PORT=8545"
     networks:                                                                                         
       - chains
     labels:
