@@ -60,7 +60,7 @@ services:
       
 
   lighthouse-mainnet:
-    image: sigp/lighthouse:latest-modern
+    image: sigp/lighthouse:v4.0.1-modern
     restart: unless-stopped
     networks:
       - chains

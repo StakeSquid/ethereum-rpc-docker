@@ -52,7 +52,7 @@ services:
       - "traefik.http.routers.erigon-mainnet.middlewares=erigon-mainnet-stripprefix, ipwhitelist"
       
   lighthouse-mainnet:
-    image: sigp/lighthouse:latest-modern
+    image: sigp/lighthouse:v4.0.1-modern
     ports:
       - "18719:18719"
       - "18719:18719/udp"      
