@@ -33,8 +33,9 @@ services:
       --http.addr=0.0.0.0
       --http.vhosts=*
       --http.corsdomain=*
-      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --http.api=eth,erigon,web3,net,deb`ug,trace,txpool
       --rpc.returndata.limit=1000000
+      --rpc.gascap=150000000
       --ws 
     restart: unless-stopped
     stop_grace_period: 1m
