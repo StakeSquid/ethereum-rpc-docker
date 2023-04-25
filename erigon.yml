@@ -35,7 +35,7 @@ services:
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
       --rpc.returndata.limit=1000000
-      --rpc.gascap=150000000
+      --rpc.gascap=5000000000
       --ws 
     restart: unless-stopped
     stop_grace_period: 1m
