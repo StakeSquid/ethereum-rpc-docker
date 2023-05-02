@@ -4,7 +4,7 @@ services:
   avalanche:
     image: avaplatform/avalanchego:v1.10.0
     ulimits:
-      nofile: 1000000
+      nofile: 1048576
     expose:
       - "9650"
       - "9651"
