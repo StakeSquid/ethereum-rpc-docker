@@ -11,7 +11,7 @@ services:
       - "21766:21766"
       - "21766:21766/udp"
     volumes:
-      - erigon-trace:/home/erigon/.local/share/erigon
+      - erigon-goerli:/home/erigon/.local/share/erigon
       - .jwtsecret:/jwtsecret
     networks:
       - chains
@@ -95,5 +95,5 @@ services:
 
 
 volumes:
-    erigon-trace:
+    erigon-goerli:
     lighthouse-goerli_data:
