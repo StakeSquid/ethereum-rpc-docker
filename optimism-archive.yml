@@ -23,8 +23,6 @@ services:
 
   optimism-l2geth:
     image: ethereumoptimism/l2geth:${IMAGE_TAG__L2GETH:-latest}
-    ulimits:
-      nofile: 2048576
     restart: unless-stopped
     stop_grace_period: 3m
     user: root
