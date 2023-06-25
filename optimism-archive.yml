@@ -130,7 +130,7 @@ services:
     stop_grace_period: 5m
     environment:
       - OPTIMISM_L1_URL=${OPTIMISM_L1_URL}
-      - OP_NODE__RPC_TYPE=${OP_NODE__RPC_TYPE:-basic}
+      - OPTIMISM_L1_TYPE=${OPTIMISM_L1_TYPE:-basic}
     command: >
       op-node
       --l1=$OPTIMISM_L1_URL
