@@ -82,21 +82,6 @@ services:
   #     - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
   
       
-  op-node:
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.0
-    restart: unless-stopped
-    stop_grace_period: 5m
-    environment:
-      - OPTIMISM_L1_URL=${OPTIMISM_L1_URL}
-      - OP_NODE__RPC_TYPE=${OP_NODE__RPC_TYPE:-basic}
-    entrypoint: /scripts/op-node-start.sh
-    networks:
-      - chains
-    volumes:
-      - ./optimism/scripts/:/scripts
-      - .jwtsecret:/jwtsecret
-
-
   op-erigon:
     image: testinprod/op-erigon
     restart: unless-stopped
@@ -137,6 +122,33 @@ services:
       - "traefik.http.routers.optimism-archive.tls.certresolver=myresolver"
       - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-archive`)"
       - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
+
+
+  op-node:
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.0
+    restart: unless-stopped
+    stop_grace_period: 5m
+    environment:
+      - OPTIMISM_L1_URL=${OPTIMISM_L1_URL}
+      - OP_NODE__RPC_TYPE=${OP_NODE__RPC_TYPE:-basic}
+    command: >
+      op-node
+      --l1=$OPTIMISM_L1_URL
+      --l2=http://op-erigon:8551
+      --network=mainnet
+      --rpc.addr=0.0.0.0
+      --rpc.port=9545
+      --l2.jwt-secret=/jwtsecret
+      --l1.trustrpc
+      --l1.rpckind=$OP_NODE__RPC_TYPE
+      --metrics.enabled
+      --metrics.addr=0.0.0.0
+      --metrics.port=7300    
+    networks:
+      - chains
+    volumes:
+      - .jwtsecret:/jwtsecret
+
 
       
 volumes:
