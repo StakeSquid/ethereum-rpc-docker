@@ -90,6 +90,8 @@ services:
       - OPTIMISM_L1_URL=${OPTIMISM_L1_URL}
       - OP_NODE__RPC_TYPE=${OP_NODE__RPC_TYPE:-basic}
     entrypoint: /scripts/op-node-start.sh
+    networks:
+      - chains
     volumes:
       - ./optimism/scripts/:/scripts
       - .jwtsecret:/jwtsecret
