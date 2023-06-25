@@ -8,7 +8,7 @@ echo $OP_NODE__RPC_TYPE
 exec op-node \
   --l1=$OPTIMISM_L1_URL \
   --l2=http://op-erigon:8551 \
-  --rollup.config=/scripts/mainnet.json \
+  --network=mainnet \
   --rpc.addr=0.0.0.0 \
   --rpc.port=9545 \
   --l2.jwt-secret=/jwtsecret \
