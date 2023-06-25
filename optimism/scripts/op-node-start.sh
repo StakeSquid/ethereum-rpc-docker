@@ -1,5 +1,8 @@
 #!/bin/sh
-set -eou
+set -eoux
+
+echo $OPTIMISM_L1_URL
+echo $OP_NODE__RPC_TYPE
 
 # Start op-node.
 exec op-node \
