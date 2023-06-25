@@ -87,8 +87,6 @@ services:
     restart: unless-stopped
     stop_grace_period: 5m
     entrypoint: /scripts/op-node-start.sh
-    env_file:
-      - .env
     volumes:
       - ./optimism/scripts/:/scripts
       - .jwtsecret:/jwtsecret
@@ -99,7 +97,6 @@ services:
     restart: unless-stopped
     stop_grace_period: 5m
     command: >
-      --datadir=$DATA_DIR
       --private.api.addr=localhost:9090
       --http.addr=0.0.0.0
       --http.port=8545
@@ -135,4 +132,5 @@ services:
       
 volumes:
   optimism-dtl:
-  optimism-geth:  
+  optimism-geth:
+  erigon-optimism-bedrock:
