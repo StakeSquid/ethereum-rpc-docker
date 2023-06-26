@@ -72,7 +72,7 @@ services:
       --ws.port=8545
       --ws.origins="*"
       --ws.api=debug,eth,txpool,net,engine,web3
-      --syncmode=file
+      --syncmode=full
       --gcmode="archive"
       --nodiscover
       --maxpeers=0
