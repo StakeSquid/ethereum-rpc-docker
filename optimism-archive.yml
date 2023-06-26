@@ -60,8 +60,7 @@ services:
       - "8545"
       - "8551"
     command: >
-      geth
-      --datadir="/datadir"
+       --datadir="/datadir"
       --http
       --http.corsdomain="*"
       --http.vhosts="*"
