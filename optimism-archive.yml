@@ -155,7 +155,7 @@ services:
     command: >
       op-node
       --l1=$OPTIMISM_L1_URL
-      --l2=http://optimism-op-erigion:8551
+      --l2=http://optimism-op-erigon:8551
       --network=mainnet
       --rpc.addr=0.0.0.0
       --rpc.port=9545
