@@ -51,60 +51,8 @@ services:
       - chains
 
     
-  op-geth:
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.11.2-13ee9ab
-    restart: unless-stopped
-    stop_grace_period: 5m
-    expose:
-      - "9090"
-      - "8545"
-      - "8551"
-    command: >
-      --datadir="/datadir"
-      --http
-      --http.corsdomain="*"
-      --http.vhosts="*"
-      --http.addr=0.0.0.0
-      --http.port=8545
-      --http.api=web3,debug,eth,txpool,net,engine
-      --ws
-      --ws.addr=0.0.0.0
-      --ws.port=8545
-      --ws.origins="*"
-      --ws.api=debug,eth,txpool,net,engine,web3
-      --syncmode=full
-      --gcmode="archive"
-      --nodiscover
-      --maxpeers=0
-      --networkid=420
-      --authrpc.vhosts="*"
-      --authrpc.addr=0.0.0.0
-      --authrpc.port=8551
-      --authrpc.jwtsecret=/jwtsecret
-      --rollup.sequencerhttp="https://mainnet-sequencer.optimism.io"
-      --rollup.disabletxpoolgossip=true
-      --rollup.historicalrpc=http://optimism-l2geth:8545
-    volumes:
-      - optimism-op-geth:/datadir
-      - .jwtsecret:/jwtsecret
-    networks:
-      - chains
-    labels:
-      - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=6060"
-      - "prometheus-scrape.job_name=optimism"
-      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.optimism-archive-stripprefix.stripprefix.prefixes=/optimism-archive"
-      - "traefik.http.services.optimism-archive.loadbalancer.server.port=8545"
-      - "traefik.http.routers.optimism-archive.entrypoints=websecure"
-      - "traefik.http.routers.optimism-archive.tls.certresolver=myresolver"
-      - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-archive`)"
-      - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
-  
-      
-  # op-erigon:
-  #   image: testinprod/op-erigon
+  # optimism-op-geth:
+  #   image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.11.2-13ee9ab
   #   restart: unless-stopped
   #   stop_grace_period: 5m
   #   expose:
@@ -112,22 +60,32 @@ services:
   #     - "8545"
   #     - "8551"
   #   command: >
-  #     --private.api.addr=localhost:9090
-  #     --http.addr=0.0.0.0
-  #     --http.port=8545
+  #     --datadir="/datadir"
+  #     --http
   #     --http.corsdomain="*"
   #     --http.vhosts="*"
+  #     --http.addr=0.0.0.0
+  #     --http.port=8545
+  #     --http.api=web3,debug,eth,txpool,net,engine
+  #     --ws
+  #     --ws.addr=0.0.0.0
+  #     --ws.port=8545
+  #     --ws.origins="*"
+  #     --ws.api=debug,eth,txpool,net,engine,web3
+  #     --syncmode=full
+  #     --gcmode="archive"
+  #     --nodiscover
+  #     --maxpeers=0
+  #     --networkid=420
+  #     --authrpc.vhosts="*"
   #     --authrpc.addr=0.0.0.0
   #     --authrpc.port=8551
-  #     --authrpc.vhosts="*"
-  #     --authrpc.jwtsecret=/jwtsecret      
+  #     --authrpc.jwtsecret=/jwtsecret
   #     --rollup.sequencerhttp="https://mainnet-sequencer.optimism.io"
-  #     --rollup.historicalrpc="http://optimism-l2geth:8545"
-  #     --chain=optimism-mainnet
-  #     --ws
-  #     --nodiscover
+  #     --rollup.disabletxpoolgossip=true
+  #     --rollup.historicalrpc=http://optimism-l2geth:8545
   #   volumes:
-  #     - erigon-optimism-bedrock:/home/erigon/.local/share/erigon
+  #     - optimism-op-geth:/datadir
   #     - .jwtsecret:/jwtsecret
   #   networks:
   #     - chains
@@ -143,9 +101,51 @@ services:
   #     - "traefik.http.routers.optimism-archive.tls.certresolver=myresolver"
   #     - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-archive`)"
   #     - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
+  
+      
+  optimism-op-erigon:
+    image: testinprod/op-erigon
+    restart: unless-stopped
+    stop_grace_period: 5m
+    expose:
+      - "9090"
+      - "8545"
+      - "8551"
+    command: >
+      --private.api.addr=localhost:9090
+      --http.addr=0.0.0.0
+      --http.port=8545
+      --http.corsdomain="*"
+      --http.vhosts="*"
+      --authrpc.addr=0.0.0.0
+      --authrpc.port=8551
+      --authrpc.vhosts="*"
+      --authrpc.jwtsecret=/jwtsecret      
+      --rollup.sequencerhttp="https://mainnet-sequencer.optimism.io"
+      --rollup.historicalrpc="http://optimism-l2geth:8545"
+      --chain=optimism-mainnet
+      --ws
+      --nodiscover
+    volumes:
+      - erigon-optimism-bedrock:/home/erigon/.local/share/erigon
+      - .jwtsecret:/jwtsecret
+    networks:
+      - chains
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=optimism"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.optimism-archive-stripprefix.stripprefix.prefixes=/optimism-archive"
+      - "traefik.http.services.optimism-archive.loadbalancer.server.port=8545"
+      - "traefik.http.routers.optimism-archive.entrypoints=websecure"
+      - "traefik.http.routers.optimism-archive.tls.certresolver=myresolver"
+      - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-archive`)"
+      - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
 
 
-  op-node:
+  optimism-op-node:
     image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.0
     restart: unless-stopped
     stop_grace_period: 5m
@@ -155,7 +155,7 @@ services:
     command: >
       op-node
       --l1=$OPTIMISM_L1_URL
-      --l2=http://op-geth:8551
+      --l2=http://optimism-op-erigion:8551
       --network=mainnet
       --rpc.addr=0.0.0.0
       --rpc.port=9545
