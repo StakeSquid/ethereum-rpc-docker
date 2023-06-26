@@ -60,7 +60,7 @@ services:
       - "8545"
       - "8551"
     command: >
-       --datadir="/datadir"
+      --datadir="/datadir"
       --http
       --http.corsdomain="*"
       --http.vhosts="*"
