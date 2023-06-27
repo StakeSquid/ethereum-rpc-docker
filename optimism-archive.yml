@@ -141,7 +141,7 @@ services:
       - "traefik.http.services.optimism-archive.loadbalancer.server.port=8545"
       - "traefik.http.routers.optimism-archive.entrypoints=websecure"
       - "traefik.http.routers.optimism-archive.tls.certresolver=myresolver"
-      - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-rigon`)"
+      - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-erigon`)"
       - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
 
 
