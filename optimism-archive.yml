@@ -127,7 +127,7 @@ services:
       --ws
       --nodiscover
     volumes:
-      - erigon-optimism-bedrock:/home/erigon/.local/share/erigon
+      - erigon-optimism-bedrock:/root/.local/share/erigon
       - .jwtsecret:/jwtsecret
     networks:
       - chains
