@@ -134,15 +134,15 @@ services:
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=6060"
-      - "prometheus-scrape.job_name=optimism"
+      - "prometheus-scrape.job_name=optimism-erigon"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.optimism-archive-stripprefix.stripprefix.prefixes=/optimism-erigon"
-      - "traefik.http.services.optimism-archive.loadbalancer.server.port=8545"
-      - "traefik.http.routers.optimism-archive.entrypoints=websecure"
-      - "traefik.http.routers.optimism-archive.tls.certresolver=myresolver"
-      - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-erigon`)"
-      - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.optimism-erigon-stripprefix.stripprefix.prefixes=/optimism-erigon"
+      - "traefik.http.services.optimism-erigon.loadbalancer.server.port=8545"
+      - "traefik.http.routers.optimism-erigon.entrypoints=websecure"
+      - "traefik.http.routers.optimism-erigon.tls.certresolver=myresolver"
+      - "traefik.http.routers.optimism-erigon.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-erigon`)"
+      - "traefik.http.routers.optimism-erigon.middlewares=optimism-erigon-stripprefix, ipwhitelist"
 
 
   optimism-op-node:
