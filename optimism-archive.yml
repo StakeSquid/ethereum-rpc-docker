@@ -137,11 +137,11 @@ services:
       - "prometheus-scrape.job_name=optimism"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.optimism-archive-stripprefix.stripprefix.prefixes=/optimism-archive"
+      - "traefik.http.middlewares.optimism-archive-stripprefix.stripprefix.prefixes=/optimism-erigon"
       - "traefik.http.services.optimism-archive.loadbalancer.server.port=8545"
       - "traefik.http.routers.optimism-archive.entrypoints=websecure"
       - "traefik.http.routers.optimism-archive.tls.certresolver=myresolver"
-      - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-archive`)"
+      - "traefik.http.routers.optimism-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-rigon`)"
       - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
 
 
