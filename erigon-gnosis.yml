@@ -62,7 +62,7 @@ services:
       --http-address=0.0.0.0
       --http-port=4000
       --target-peers=50
-      --execution-endpoint=http://gnosis-archive:8551
+      --execution-endpoint=http://erigon-gnosis:8551
       --execution-jwt=/jwt.hex
       --debug-level=info
       --validator-monitor-auto
