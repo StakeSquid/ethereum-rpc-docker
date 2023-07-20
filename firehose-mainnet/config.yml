@@ -1,0 +1,23 @@
+start:
+  args:
+  - merger
+  - firehose
+  - reader-node
+  - relayer
+  - combined-index-builder
+  flags:
+    data-dir: /var/lib/firehose
+    common-chain-id: "1"
+    common-network-id: "1"
+    reader-node-path: /usr/bin/geth
+    substreams-rpc-endpoints: $ETHEREUM_ARCHIVE_RPC
+    substreams-enabled: true
+    substreams-request-stats-enabled: true
+    reader-node-arguments: "--mainnet --datadir=/var/lib/geth
+             --ipcpath=/var/lib/firehose/reader/ipc
+             --http --http.api=eth,net,web3
+             --authrpc.jwtsecret=/jwtsecret
+             --authrpc.addr=0.0.0.0
+             --authrpc.vhosts=*
+             --http.port=8545 --http.addr=0.0.0.0 --http.vhosts=*
+             --firehose-enabled --port=24465 --cache=2048"

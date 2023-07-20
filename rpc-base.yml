@@ -11,6 +11,7 @@ services:
     ports:
       - "443:443"
       - "127.0.0.1:8080:8080"
+      - "3042:3042"
     command:
       - "--api=true"
       - "--api.insecure=true"
@@ -21,6 +22,7 @@ services:
       - "--providers.file.filename=/dynamic_config.yml"
       - "--entrypoints.websecure.address=:443"
       - "--entryPoints.metrics.address=:8082"
+      - "--entryPoints.grpc.address=:3042"
       - "--metrics.prometheus.entryPoint=metrics"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       # TESTING
