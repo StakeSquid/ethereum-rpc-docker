@@ -17,7 +17,7 @@ services:
       - "20947:20947"
       - "20947:20947/udp"
     restart: unless-stopped
-    command: --chain=gnosis --snapshots=false --authrpc.addr=0.0.0.0 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --snap.stop --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,trace,web3,erigon --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=20947 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1000000
+    command: --chain=gnosis --authrpc.addr=0.0.0.0 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,trace,web3,erigon --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=20947 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1000000
     stop_grace_period: 1m
     labels:
       - "prometheus-scrape.enabled=true"
