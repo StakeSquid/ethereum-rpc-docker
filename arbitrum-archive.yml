@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   arbitrum-nitro:
-    image: 'offchainlabs/nitro-node:v2.0.10-rc.1-687c381-slim-amd64'
+    image: 'offchainlabs/nitro-node:v2.0.14-2baa834'
     restart: always
     stop_grace_period: 30s
     user: root
