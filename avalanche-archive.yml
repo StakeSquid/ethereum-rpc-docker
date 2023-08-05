@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  avalanche:
+  avalanche7
     image: avaplatform/avalanchego:v1.10.5
     ulimits:
       nofile: 1048576
@@ -16,7 +16,7 @@ services:
       - ./avalanche/configs/chains/C/archive-config.json:/root/.avalanchego/configs/chains/C/config.json
     networks:
       - chains
-    command: "/avalanchego/build/avalanchego --http-host="
+    command: "/avalanchego/build/avalanchego --http-host= --http-allowed-hosts=*"
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
