@@ -17,7 +17,7 @@ services:
       - "22057:22057"
       - "51555:51555"
     restart: unless-stopped
-    command: --base-path=/data --chain moonriver --state-pruning archive --trie-cache-size 0 --db-cache ${MOONRIVER_CACHE_MB:-2000} --ethapi=debug,trace,txpool --wasm-runtime-overrides=/moonbeam/moonriver-substitutes-tracing --runtime-cache-size 64 --port 22057 -- --execution wasm --database paritydb --state-pruning 3600 --blocks-pruning 3600 --no-private-ip --no-mdns --port 51555
+    command: --unsafe-ws-external --unsafe-rpc-external --base-path=/data --chain moonriver --state-pruning archive --trie-cache-size 0 --db-cache ${MOONRIVER_CACHE_MB:-2000} --ethapi=debug,trace,txpool --wasm-runtime-overrides=/moonbeam/moonriver-substitutes-tracing --runtime-cache-size 64 --port 22057 -- --execution wasm --database paritydb --state-pruning 3600 --blocks-pruning 3600 --no-private-ip --no-mdns --port 51555
     stop_grace_period: 1m
     labels:
       - "prometheus-scrape.enabled=true"
