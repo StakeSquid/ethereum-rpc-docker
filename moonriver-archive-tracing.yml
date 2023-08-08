@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+  moonriver:
+    image: purestake/moonbeam-tracing:v0.32.1-2403-latest
+    user: root
+    volumes:
+      - "moonriver-archive_data:/data"
+    expose:
+      - 9944 # rpc + ws para
+      - 9945 # rpc + ws relay
+      - 22057 # p2p para
+      - 51555 # p2p relay
+      - 9615 # prometheus para
+      - 9616 # prometheus relay 
+    ports:
+      - "22057:22057"
+      - "51555:51555"
+    restart: unless-stopped
+    command: --base-path=/data --chain moonriver --name="${DOMAIN}" --state-pruning archive --trie-cache-size 0 --db-cache ${MOONRIVER_CACHE_MB:-2000} --ethapi=debug,trace,txpool --wasm-runtime-overrides=/moonbeam/moonriver-substitutes-tracing --runtime-cache-size 64 --port 22057 -- --execution wasm --name="${DOMAIN} (Embedded Relay)" --database paritydb --state-pruning 3600 --blocks-pruning 3600 --no-private-ip --no-mdns --port 51555
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9615"
+      - "prometheus-scrape.job_name=moonriver"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.moonriver-stripprefix.stripprefix.prefixes=/moonriver-archive"
+      - "traefik.http.services.moonriver.loadbalancer.server.port=9944"
+      - "traefik.http.routers.moonriver.entrypoints=websecure"
+      - "traefik.http.routers.moonriver.tls.certresolver=myresolver"
+      - "traefik.http.routers.moonriver.rule=Host(`$DOMAIN`) && PathPrefix(`/moonriver-archive`)"
+      - "traefik.http.routers.moonriver.middlewares=moonriver-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+volumes:
+    moonriver-archive_data:
