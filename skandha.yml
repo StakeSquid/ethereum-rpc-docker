@@ -46,7 +46,7 @@ services:
       #        source: ./skandha/config.json
       #        target: /usr/app/config.json
       #        read_only: true
-    command: start
+    command: start --redirectRpc
     expose:
       - "14337"
     ports:
