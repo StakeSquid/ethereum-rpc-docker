@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+  skandha-goerli:
+    build: https://github.com/etherspot/skandha.git#3019f70b61fb409625a1a74abf3153391a232356
+    environment:
+      - SKANDHA_NETWORKS=goerli
+      - SKANDHA_GOERLI_RELAYER=${SKANDHA_GOERLI_RELAYER:-}
+      - SKANDHA_GOERLI_BENEFICIARY=${SKANDHA_GOERLI_BENEFICIARY:-}
+      - SKANDHA_GOERLI_RPC=${SKANDHA_GOERLI_RPC:-}
+      - SKANDHA_GOERLI_ENTRYPOINTS=${SKANDHA_GOERLI_ENTRYPOINTS:-}
+    command: start --redirectRpc
+    expose:
+      - "14337"
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.http.middlewares.skandha-goerli-replacepath.replacepath.path=/1"
+      - "traefik.http.middlewares.skandha-goerli-stripprefix.stripprefix.prefixes=/skandha-goerli"
+      - "traefik.http.services.skandha-goerli.loadbalancer.server.port=14337"
+      - "traefik.http.routers.skandha-goerli.entrypoints=websecure"
+      - "traefik.http.routers.skandha-goerli.tls.certresolver=myresolver"
+      - "traefik.http.routers.skandha-goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/skandha-goerli`)"
+      - "traefik.http.routers.skandha-goerli.middlewares=skandha-goerli-stripprefix, skandha-goerli-replacepath, ipwhitelist"
+    networks:
+      - chains
+
