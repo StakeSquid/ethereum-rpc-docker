@@ -15,6 +15,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 1m
     labels:
+      - "traefik.enable=true"      
       - "traefik.http.middlewares.skandha-mainnet-replacepath.replacepath.path=/1"
       - "traefik.http.middlewares.skandha-mainnet-stripprefix.stripprefix.prefixes=/skandha-mainnet"
       - "traefik.http.services.skandha-mainnet.loadbalancer.server.port=14337"
