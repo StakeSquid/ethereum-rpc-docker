@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 1m
     labels:
-      - "traefik.http.middlewares.skandha-goerli-replacepath.replacepath.path=/1"
+      - "traefik.http.middlewares.skandha-goerli-replacepath.replacepath.path=/5"
       - "traefik.http.middlewares.skandha-goerli-stripprefix.stripprefix.prefixes=/skandha-goerli"
       - "traefik.http.services.skandha-goerli.loadbalancer.server.port=14337"
       - "traefik.http.routers.skandha-goerli.entrypoints=websecure"
