@@ -2,7 +2,8 @@ version: '3.1'
 
 services:
   skandha-mainnet:
-    build: https://github.com/etherspot/skandha.git#3019f70b61fb409625a1a74abf3153391a232356
+#    build: https://github.com/etherspot/skandha.git#3019f70b61fb409625a1a74abf3153391a232356
+    image: etherspot/skandha:0.0.31
     environment:
       - SKANDHA_NETWORKS=mainnet
       - SKANDHA_MAINNET_RELAYER=${SKANDHA_MAINNET_RELAYER:-}
