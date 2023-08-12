@@ -21,7 +21,7 @@ services:
       --networkid=42
       --miner.gaslimit=42000000
       --snapshots=false
-      --bootnodes enode://c2bb19ce658cfdf1fecb45da599ee6c7bf36e5292efb3fb61303a0b2cd07f96c20ac9b376a464d687ac456675a2e4a44aec39a0509bcb4b6d8221eedec25aca2@34.147.73.193:30303 enode://276f14e4049840a0f5aa5e568b772ab6639251149a52ba244647277175b83f47b135f3b3d8d846cf81a8e681684e37e9fc10ec205a9841d3ae219aa08aa9717b@34.32.192.211:30303
+      --bootnodes=enode://c2bb19ce658cfdf1fecb45da599ee6c7bf36e5292efb3fb61303a0b2cd07f96c20ac9b376a464d687ac456675a2e4a44aec39a0509bcb4b6d8221eedec25aca2@34.147.73.193:30303,enode://276f14e4049840a0f5aa5e568b772ab6639251149a52ba244647277175b83f47b135f3b3d8d846cf81a8e681684e37e9fc10ec205a9841d3ae219aa08aa9717b@34.32.192.211:30303
       --port=51262
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
@@ -55,10 +55,11 @@ services:
       
   lighthouse-lukso:
     image: sigp/lighthouse:v4.0.1-modern
+    expose:
+      - 17765
     ports:
       - "17765:17765"
       - "17765:17765/udp"      
-      - "127.0.0.1:5052:5052"
     volumes:
       - .jwtsecret:/jwtsecret
       - lighthouse-lukso_data:/root/.lighthouse
@@ -69,12 +70,11 @@ services:
       --eth1-endpoints http://erigon-lukso:8545      
       --execution-endpoint http://erigon-lukso:8551
       --execution-jwt /jwtsecret
-      --subscribe-all-subnets true
-      --boot-nodes enr:-MK4QJ-Bt9HATy4GQawPbDDTArtnt_phuWiVVoWKhS7-DSNjVzmGKBI9xKzpyRtpeCWd3qA9737FTdkKGDgtHfF4N-6GAYlzJCVRh2F0dG5ldHOIAAAAAAAAAACEZXRoMpA2ulfbQgAABP__________gmlkgnY0gmlwhCKTScGJc2VjcDI1NmsxoQJNpNUERqKhA8eDDC4tovG3a59NXVOW16JDFAWXoFFTEYhzeW5jbmV0cwCDdGNwgjLIg3VkcIIu4A enr:-MK4QHcS3JeTtVjOuJyVXvO1E6XJWqiwmhLfodel6vARPI8ve_2q9vVn8LpIL964qBId7zGpSVKw6oOPAaRm2H7ywYiGAYmHDeBbh2F0dG5ldHOIAAAAAAAAAACEZXRoMpA2ulfbQgAABP__________gmlkgnY0gmlwhCIgwNOJc2VjcDI1NmsxoQNGVC8JPcsqsZPoohLP1ujAYpBfS0dBwiz4LeoUQ-k5OohzeW5jbmV0cwCDdGNwgjLIg3VkcIIu4A
-#      --checkpoint-sync-url https://sync.invis.tools
+      --subscribe-all-subnets
+      --boot-nodes=enr:-MK4QJ-Bt9HATy4GQawPbDDTArtnt_phuWiVVoWKhS7-DSNjVzmGKBI9xKzpyRtpeCWd3qA9737FTdkKGDgtHfF4N-6GAYlzJCVRh2F0dG5ldHOIAAAAAAAAAACEZXRoMpA2ulfbQgAABP__________gmlkgnY0gmlwhCKTScGJc2VjcDI1NmsxoQJNpNUERqKhA8eDDC4tovG3a59NXVOW16JDFAWXoFFTEYhzeW5jbmV0cwCDdGNwgjLIg3VkcIIu4A,enr:-MK4QHcS3JeTtVjOuJyVXvO1E6XJWqiwmhLfodel6vARPI8ve_2q9vVn8LpIL964qBId7zGpSVKw6oOPAaRm2H7ywYiGAYmHDeBbh2F0dG5ldHOIAAAAAAAAAACEZXRoMpA2ulfbQgAABP__________gmlkgnY0gmlwhCIgwNOJc2VjcDI1NmsxoQNGVC8JPcsqsZPoohLP1ujAYpBfS0dBwiz4LeoUQ-k5OohzeW5jbmV0cwCDdGNwgjLIg3VkcIIu4A
       --http
       --http-address 0.0.0.0
-      --port 18719
+      --port 17765
     restart: unless-stopped
     stop_grace_period: 1m
     networks:
