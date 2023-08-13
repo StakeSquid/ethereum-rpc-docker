@@ -3,13 +3,13 @@
 # exit script on any error
 set -e
 
-ERIGON_HOME=/datadir
+ERIGON_HOME=/root/.local/share/erigon
 
-if [ "${BOOTSTRAP}" == 1 ] && [ -n "${SNAPSHOT_URL}" ] && [ ! -f "${ERIGON_HOME}/bootstrapped" ];
+if [ ! -f "${ERIGON_HOME}/bootstrapped" ];
 then
-  echo "downloading snapshot from ${SNAPSHOT_URL}"
-  mkdir -p ${ERIGON_HOME:-/datadir}
-  erigon init --datadir $ERIGON_HOME /configs/mainnet/shared/genesis_42.json
+  echo "write the custom genesis block"
+  mkdir -p ${ERIGON_HOME:-/root/.local/share/erigon}
+  erigon init --datadir ${ERIGON_HOME:-/root/.local/share/erigon} /configs/mainnet/shared/genesis_42.json
 fi
 
 exec erigon $@

@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-lukso:
-    build: ./lukso/erigon/Dockerfile
+    build: ./lukso/erigon
     expose:
       - "51262"
       - "9090"
@@ -12,7 +12,7 @@ services:
       - "51262:51262"
       - "51262:51262/udp"
     volumes:
-      - erigon-lukso:/home/erigon/.local/share/erigon
+      - erigon-lukso:/root/.local/share/erigon
       - ./lukso/shared:/configs/mainnet/shared
       - .jwtsecret:/jwtsecret
     networks:
@@ -54,67 +54,6 @@ services:
       - "traefik.http.routers.erigon-lukso.rule=Host(`$DOMAIN`) && PathPrefix(`/lukso`)"
       - "traefik.http.routers.erigon-lukso.middlewares=erigon-lukso-stripprefix, ipwhitelist"
 
-  geth-lukso:
-    image: ethereum/client-go:v1.12.2
-    ports:
-      - "5820:5820"
-      - "5820:5820/udp"
-    expose:
-      - 8545
-      - 5820
-    command:
-      [                                                                                               
-        # Blockchain sync mode ("snap", "full" or "light")                                            
-        "--bootnodes=enode://c2bb19ce658cfdf1fecb45da599ee6c7bf36e5292efb3fb61303a0b2cd07f96c20ac9b376a464d687ac456675a2e4a44aec39a0509bcb4b6d8221eedec25aca2@34.147.73.193:30303,enode://276f14e4049840a0f5aa5e568b772ab6639251149a52ba244647277175b83f47b135f3b3d8d846cf81a8e681684e37e9fc10ec205a9841d3ae219aa08aa9717b@34.32.192.211:30303",
-        "--networkid=42",
-        "--miner.gaslimit=42000000",
-        "--miner.gasprice=4200000000",
-        "--port=5820",
-        # Megabytes of memory allocated to internal caching                                           
-        "--cache=8192",
-        # Enable the WS-RPC server         
-        "--ws",
-        "--ws.port=8545",
-        "--ws.addr=0.0.0.0",
-        # Enable the HTTP-RPC server      
-        "--http",
-        "--http.port=8545",
-        "--http.addr=0.0.0.0",                     
-        "--http.vhosts=*",                         
-        # Enable GraphQL on the HTTP-RPC server. Note that GraphQL can only be started if an HTTP server is started as well.                                                                               
-        "--graphql",                               
-        "--graphql.vhosts=*",             
-        # Enable metrics collection and reporting                                                     
-        "--metrics",
-        "--metrics.addr=0.0.0.0",
-        # Maximum number of network peers (network disabled if set to 0) (default: 50)                
-        "--maxpeers=50",
-        # The Merge
-        "--authrpc.jwtsecret=/jwtsecret",
-        "--authrpc.addr=0.0.0.0",
-        "--authrpc.vhosts=*"
-      ]                                                                                               
-    networks:                            
-      - chains                                                                                        
-    volumes:                                                                                          
-      - "geth-lukso_data:/root/.ethereum"
-      - ".jwtsecret:/jwtsecret"
-    restart: unless-stopped
-    stop_grace_period: 1m
-    labels:                     
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.lukso-stripprefix.stripprefix.prefixes=/lukso"                  
-      - "traefik.http.services.lukso.loadbalancer.server.port=8545"                                 
-      - "traefik.http.routers.lukso.entrypoints=websecure"                                          
-      - "traefik.http.routers.lukso.tls.certresolver=myresolver"                                    
-      - "traefik.http.routers.lukso.rule=Host(`$DOMAIN`) && PathPrefix(`/lukso`)"                 
-      - "traefik.http.routers.lukso.middlewares=lukso-stripprefix, ipwhitelist"
-      - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=6060"
-      - "prometheus-scrape.job_name=geth-lukso"
-      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
-    
-      
   lighthouse-lukso:
     image: sigp/lighthouse:v4.3.0-modern
     expose:
