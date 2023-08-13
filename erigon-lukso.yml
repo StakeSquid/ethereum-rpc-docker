@@ -17,7 +17,7 @@ services:
     networks:
       - chains
     command: >
-      --chain=mainnet
+#      --chain=mainnet
       --networkid=42
       --miner.gaslimit=42000000
       --snapshots=false
@@ -129,7 +129,7 @@ services:
       lighthouse beacon_node
       --testnet-dir /configs/mainnet/shared
       --eth1
-      --execution-endpoint http://geth-lukso:8551
+      --execution-endpoint http://erigon-lukso:8551
       --execution-jwt /jwtsecret
       --subscribe-all-subnets
       --boot-nodes=enr:-MK4QJ-Bt9HATy4GQawPbDDTArtnt_phuWiVVoWKhS7-DSNjVzmGKBI9xKzpyRtpeCWd3qA9737FTdkKGDgtHfF4N-6GAYlzJCVRh2F0dG5ldHOIAAAAAAAAAACEZXRoMpA2ulfbQgAABP__________gmlkgnY0gmlwhCKTScGJc2VjcDI1NmsxoQJNpNUERqKhA8eDDC4tovG3a59NXVOW16JDFAWXoFFTEYhzeW5jbmV0cwCDdGNwgjLIg3VkcIIu4A,enr:-MK4QHcS3JeTtVjOuJyVXvO1E6XJWqiwmhLfodel6vARPI8ve_2q9vVn8LpIL964qBId7zGpSVKw6oOPAaRm2H7ywYiGAYmHDeBbh2F0dG5ldHOIAAAAAAAAAACEZXRoMpA2ulfbQgAABP__________gmlkgnY0gmlwhCIgwNOJc2VjcDI1NmsxoQNGVC8JPcsqsZPoohLP1ujAYpBfS0dBwiz4LeoUQ-k5OohzeW5jbmV0cwCDdGNwgjLIg3VkcIIu4A
