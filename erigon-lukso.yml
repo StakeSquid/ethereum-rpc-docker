@@ -151,5 +151,5 @@ services:
 
 volumes:
     erigon-lukso:
-    geth-lukso:
+    geth-lukso_data:
     lighthouse-lukso_data:
