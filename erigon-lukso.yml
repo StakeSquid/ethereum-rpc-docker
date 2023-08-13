@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-lukso:
-    image: thorax/erigon:v2.45.1
+    build: ./lukso/erigon/Dockerfile
     expose:
       - "51262"
       - "9090"
@@ -13,11 +13,12 @@ services:
       - "51262:51262/udp"
     volumes:
       - erigon-lukso:/home/erigon/.local/share/erigon
+      - ./lukso/shared:/configs/mainnet/shared
       - .jwtsecret:/jwtsecret
     networks:
       - chains
     command: >
-#      --chain=mainnet
+      --chain=mainnet
       --networkid=42
       --miner.gaslimit=42000000
       --snapshots=false
@@ -136,6 +137,7 @@ services:
       --http
       --http-address 0.0.0.0
       --port 17765
+      --checkpoint-sync-url=https://checkpoints.mainnet.lukso.network
     restart: unless-stopped
     stop_grace_period: 1m
     networks:
