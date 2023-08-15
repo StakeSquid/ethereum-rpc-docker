@@ -14,6 +14,8 @@ services:
     expose:
       - "14337"
     restart: unless-stopped
+    volumes:
+      - "skandha-mainnet-db:/usr/app/db"
     stop_grace_period: 1m
     labels:
       - "traefik.enable=true"      
@@ -27,3 +29,5 @@ services:
     networks:
       - chains
 
+volumes:
+  skandha-mainnet-db:
