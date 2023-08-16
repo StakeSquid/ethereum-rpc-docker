@@ -17,6 +17,7 @@ services:
       - "prometheus-scrape.metrics_path=/metrics"
     networks:
       - chains
+    logging: *default-logging
       
   redis:
     image: healthcheck/redis:alpine
@@ -28,3 +29,4 @@ services:
       - '--save ""'
     networks:
       - chains
+    logging: *default-logging

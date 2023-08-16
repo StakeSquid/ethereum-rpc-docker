@@ -1,0 +1,16 @@
+version: '3.1'
+
+x-logging:
+  &default-logging
+  options:
+    max-file: '1'
+    compress: 'false'
+  driver: local
+
+
+networks:
+  chains:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 192.168.0.1/27
