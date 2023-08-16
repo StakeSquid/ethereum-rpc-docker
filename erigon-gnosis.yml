@@ -1,13 +1,5 @@
 version: '3.1'
 
-x-logging:
-  &default-logging
-  options:
-    max-file: '1'
-    compress: 'false'
-  driver: local
-
-
 services:
 
   erigon-gnosis:
@@ -41,7 +33,11 @@ services:
       - "traefik.http.routers.erigon-gnosis.middlewares=erigon-gnosis-stripprefix, ipwhitelist"
     networks:
       - chains
-    logging: *default-logging      
+    logging:
+      options:
+        max-file: '1'
+        compress: 'false'
+      driver: local
 
       
   lighthouse-gnosis:
@@ -94,7 +90,12 @@ services:
       - "traefik.http.routers.lighthouse-gnosis.tls.certresolver=myresolver"
       - "traefik.http.routers.lighthouse-gnosis.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-gnosis`)"
       - "traefik.http.routers.lighthouse-gnosis.middlewares=lighthouse-gnosis-stripprefix, ipwhitelist"
-    logging: *default-logging
+    logging:
+      options:
+        max-file: '1'
+        compress: 'false'
+      driver: local
+
       
 volumes:
   gnosis-archive_data:

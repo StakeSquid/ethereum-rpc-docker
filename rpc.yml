@@ -1,15 +1,6 @@
 version: '3.1'
 
-x-logging:
-  &default-logging
-  options:
-    max-file: '1'
-    compress: 'false'
-  driver: local
-
-
 services:
-
   traefik:
     image: traefik:latest
     container_name: traefik
@@ -49,4 +40,8 @@ services:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8082"
       - "prometheus-scrape.job_name=traefik"
-    logging: *default-logging
+    logging:
+      options:
+        max-file: '1'
+        compress: 'false'
+      driver: local
