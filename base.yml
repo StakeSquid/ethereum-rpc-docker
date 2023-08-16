@@ -7,7 +7,6 @@ x-logging:
     compress: 'false'
   driver: local
 
-
 networks:
   chains:
     driver: bridge
