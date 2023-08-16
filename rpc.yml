@@ -1,5 +1,13 @@
 version: '3.1'
 
+x-logging:
+  &default-logging
+  options:
+    max-file: '1'
+    compress: 'false'
+  driver: local
+
+
 services:
 
   traefik:
