@@ -104,7 +104,7 @@ services:
   
       
   optimism-op-erigon:
-    image: testinprod/op-erigon
+    image: testinprod/op-erigon:2.48.1-0.1.10-amd64
     restart: unless-stopped
     stop_grace_period: 5m
     expose:
