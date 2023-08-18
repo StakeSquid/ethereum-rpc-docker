@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   geth-linea:                         
-    image: ethereum/client-go:v1.12.2
+    build: ./linea/geth
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
