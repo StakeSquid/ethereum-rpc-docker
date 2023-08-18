@@ -7,7 +7,7 @@ services:
       # HTTP server / GraphQL API 
       - 9545                   
     environment:
-      - "PATHFINDER_ETHEREUM_API_URL=${PATHFINDER_ETHEREUM_RPC}
+      - "PATHFINDER_ETHEREUM_API_URL=${PATHFINDER_ETHEREUM_RPC}"
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
