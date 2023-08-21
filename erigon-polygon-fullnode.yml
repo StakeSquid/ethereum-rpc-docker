@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+  erigon-polygon-fullnode:
+    image: thorax/erigon:v2.48.1
+    user: root
+    volumes:
+      - "polygon-erigon-fullnode:/datadir"
+    ports:
+      - "14199:14199"
+      - "14199:14199/udp"
+    restart: unless-stopped
+    command: --chain=bor-mainnet --prune=hrtc --bor.heimdall=https://heimdall.stakesystems.io --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,web3,erigon,bor --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=14199 --p2p.protocol=66 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1000000
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=erigon"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.erigon-polygon-fullnode-stripprefix.stripprefix.prefixes=/polygon"
+      - "traefik.http.services.erigon-polygon-fullnode.loadbalancer.server.port=8545"
+      - "traefik.http.routers.erigon-polygon-fullnode.entrypoints=websecure"
+      - "traefik.http.routers.erigon-polygon-fullnode.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-polygon-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon`)"
+      - "traefik.http.routers.erigon-polygon-fullnode.middlewares=erigon-polygon-fullnode-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+volumes:
+    polygon-erigon-fullnode:
