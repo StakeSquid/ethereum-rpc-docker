@@ -1,0 +1,136 @@
+version: "3.1"                                     
+
+services:                                                                                             
+  zkevm-rpc:                                                                                         
+    restart: unless-stopped   
+    depends_on:                       
+      zkevm-pool-db:      
+        condition: service_healthy
+      zkevm-state-db:
+        condition: service_healthy
+      zkevm-sync:                                                                                     
+        condition: service_started                                                                    
+    image: hermeznetwork/zkevm-node:v0.2.1                                                                                                                                                                  
+    deploy:                     
+      resources:                
+        limits:                             
+          memory: 1G        
+        reservations:
+          memory: 512M            
+    expose:  
+      - 8545       
+      - 9091 # needed if metrics enabled
+    environment:                          
+      - ZKEVM_NODE_ETHERMAN_URL=${ZKEVM_ETHEREUM_ENDPOINT}                                                                                                                                                 
+    volumes:    
+      - ./zkevm/public.node.config.toml:/app/config.toml
+    command:                          
+      - "/bin/sh"
+      - "-c"
+      - "/app/zkevm-node run --network ${ZKEVM_NETWORK} --cfg /app/config.toml --components rpc"
+
+  zkevm-sync:
+    restart: unless-stopped
+    depends_on:
+      zkevm-state-db:
+        condition: service_healthy
+    image: hermeznetwork/zkevm-node:v0.2.1
+    expose:
+      - 9091 # needed if metrics enabled
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    environment:
+      - ZKEVM_NODE_ETHERMAN_URL=${ZKEVM_ETHEREUM_ENDPOINT}
+    volumes:
+      - ./zkevm/public.node.config.toml:/app/config.toml
+    command:
+      - "/bin/sh"
+      - "-c"
+      - "/app/zkevm-node run --network ${ZKEVM_NETWORK} --cfg /app/config.toml --components synchronizer"
+
+  zkevm-state-db:
+    restart: unless-stopped
+    image: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose:
+      - 5432
+    volumes:
+      - ./zkevm/init_prover_db.sql:/docker-entrypoint-initdb.d/init.sql
+      - zkevm-node-statedb:/var/lib/postgresql/data
+      - ./zkevm/postgresql.conf:/etc/postgresql.conf
+    environment:
+      - POSTGRES_USER=state_user
+      - POSTGRES_PASSWORD=state_password
+      - POSTGRES_DB=state_db
+    command:
+      - "postgres"
+      - "-N"
+      - "500"
+      - "-c"
+      - "config_file=/etc/postgresql.conf"
+
+  zkevm-pool-db:
+    restart: unless-stopped
+    image: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose:
+      - 5432
+    volumes:
+      - zkevm-node-pooldb:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=pool_user
+      - POSTGRES_PASSWORD=pool_password
+      - POSTGRES_DB=pool_db
+    command:
+      - "postgres"
+      - "-N"
+      - "500"
+
+  zkevm-log-db:
+    restart: unless-stopped
+    image: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose:
+      - 5434
+    volumes:
+      - ./zkevm/init_event_db.sql:/docker-entrypoint-initdb.d/init.sql
+      - zkevm-node-logdb:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=log_user
+      - POSTGRES_PASSWORD=log_password
+      - POSTGRES_DB=log_db
+    command:
+      - "postgres"
+      - "-N"
+      - "500"
+
+
+  zkevm-prover:
+    restart: unless-stopped
+    image: hermeznetwork/zkevm-prover:v2.0.1
+    depends_on:
+      zkevm-state-db:
+        condition: service_healthy
+    expose:
+      - 50061 # MT
+      - 50071 # Executor
+    volumes:
+      - ./zkevm/public.prover.config.json:/usr/src/app/config.json
+    command: >
+      zkProver -c /usr/src/app/config.json
