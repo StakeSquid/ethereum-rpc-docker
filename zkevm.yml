@@ -28,6 +28,8 @@ services:
       - "/bin/sh"
       - "-c"
       - "/app/zkevm-node run --network mainnet --cfg /app/config.toml --components rpc"
+    network:
+      - chains
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.zkevm-stripprefix.stripprefix.prefixes=/zkevm"
@@ -83,6 +85,8 @@ services:
       - POSTGRES_USER=state_user
       - POSTGRES_PASSWORD=state_password
       - POSTGRES_DB=state_db
+    network:
+      - chains
     command:
       - "postgres"
       - "-N"
@@ -106,6 +110,8 @@ services:
       - POSTGRES_USER=pool_user
       - POSTGRES_PASSWORD=pool_password
       - POSTGRES_DB=pool_db
+    network:
+      - chains
     command:
       - "postgres"
       - "-N"
@@ -128,6 +134,8 @@ services:
       - POSTGRES_USER=log_user
       - POSTGRES_PASSWORD=log_password
       - POSTGRES_DB=log_db
+    network:
+      - chains
     command:
       - "postgres"
       - "-N"
@@ -145,6 +153,8 @@ services:
       - 50071 # Executor
     volumes:
       - ./zkevm/public.prover.config.json:/usr/src/app/config.json
+    network:
+      - chains
     command: >
       zkProver -c /usr/src/app/config.json
 
