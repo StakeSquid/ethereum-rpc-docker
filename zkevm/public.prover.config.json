@@ -1,6 +1,6 @@
-{                                      
-    "runProverServer": false,     
-    "runProverServerMock": false,                                                                     
+{
+    "runProverServer": false,
+    "runProverServerMock": false,
     "runProverClient": false,
 
     "runExecutorServer": true,
@@ -39,13 +39,13 @@
     "loadDBToMemCache": true,
     "opcodeTracer": false,
     "logRemoteDbReads": false,
-    "logExecutorServerResponses": false,                                                                                                                                                                   
+    "logExecutorServerResponses": false,
 
     "proverServerPort": 50051,
     "proverServerMockPort": 50052,
     "proverServerMockTimeout": 10000000,
     "proverClientPort": 50051,
-    "proverClientHost": "127.0.0.1",                                                                
+    "proverClientHost": "127.0.0.1",
 
     "executorServerPort": 50071,
     "executorROMLineTraces": false,
@@ -62,7 +62,7 @@
     "inputFile": "input_executor.json",
     "outputPath": "output",
     "cmPolsFile_disabled": "zkevm.commit",
-    "cmPolsFileC12a_disabled": "zkevm.c12a.commit", 
+    "cmPolsFileC12a_disabled": "zkevm.c12a.commit",
     "cmPolsFileRecursive1_disabled": "zkevm.recursive1.commit",
     "constPolsFile": "zkevm.const",
     "constPolsC12aFile": "zkevm.c12a.const",
@@ -108,7 +108,6 @@
     "cleanerPollingPeriod": 600,
     "requestsPersistence": 3600,
     "maxExecutorThreads": 20,
-
     "maxProverThreads": 8,
     "maxHashDBThreads": 8,
     "ECRecoverPrecalc": true,

@@ -1,41 +1,47 @@
-[Log]         
-Environment = "production" # "production" or "development"
-Level = "info"     
-Outputs = ["stderr"]                                                                                  
+[Log]
+Environment = "development" # "production" or "development"
+Level = "info"
+Outputs = ["stderr"]
 
-[StateDB] 
-User = "state_user"       
+[StateDB]
+User = "state_user"
 Password = "state_password"
 Name = "state_db"
-Host = "zkevm-state-db"   
-Port = "5432"                   
-EnableLog = false              
-MaxConns = 200                
+Host = "zkevm-state-db"
+Port = "5432"
+EnableLog = false
+MaxConns = 200
 
-[Pool]   
+[Pool]
 MaxTxBytesSize=100132
 MaxTxDataBytesSize=100000
 DefaultMinGasPriceAllowed = 1000000000
 MinAllowedGasPriceInterval = "5m"
 PollMinAllowedGasPriceInterval = "15s"
-        [Pool.DB]       
-        User = "pool_user"
-        Password = "pool_password"
-        Name = "pool_db"
-        Host = "zkevm-pool-db"
-        Port = "5432"
-        EnableLog = false
-        MaxConns = 200
-                                                    
-[EventLog]                                                                                            
-        [EventLog.DB]
-        User = "log_user"
-        Password = "log_password"
-        Name = "log_db"
-        Host = "zkevm-log-db"
-        Port = "5432"
-        EnableLog = false
-        MaxConns = 200
+	[Pool.DB]
+	User = "pool_user"
+	Password = "pool_password"
+	Name = "pool_db"
+	Host = "zkevm-pool-db"
+	Port = "5432"
+	EnableLog = false
+	MaxConns = 200
+
+[EventLog]
+	[EventLog.DB]
+	User = "log_user"
+	Password = "log_password"
+	Name = "log_db"
+	Host = "zkevm-log-db"
+	Port = "5432"
+	EnableLog = false
+	MaxConns = 200
+
+[Etherman]
+URL = "http://your.L1node.url"
+MultiGasProvider = false
+	[Etherman.Etherscan]
+		ApiKey = ""
 
 [RPC]
 Host = "0.0.0.0"
@@ -45,9 +51,9 @@ WriteTimeout = "60s"
 MaxRequestsPerIPAndSecond = 5000
 SequencerNodeURI = "https://zkevm-rpc.com"
 EnableL2SuggestedGasPricePolling = false
-        [RPC.WebSockets]
-                Enabled = true
-                Port = 8545
+	[RPC.WebSockets]
+		Enabled = true
+		Port = 8545
 
 [Synchronizer]
 SyncInterval = "2s"
