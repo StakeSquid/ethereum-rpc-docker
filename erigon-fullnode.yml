@@ -1,0 +1,88 @@
+version: '3.1'
+
+services:
+  erigon-mainnet:
+    image: thorax/erigon:v2.48.1
+    expose:
+      - "16630"
+      - "9090"
+      - "8545"
+      - "8551"
+    ports:
+      - "44081:44081"
+      - "44081:44081/udp"
+    volumes:
+      - erigon-mainnet-fullnode:/home/erigon/.local/share/erigon
+      - .jwtsecret:/jwtsecret
+    networks:
+      - chains
+    command: >
+      --chain mainnet
+      --prune=hrtc
+      --externalcl
+      --port=44081
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --authrpc.addr=0.0.0.0
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1000000
+      --rpc.gascap=5000000000
+      --ws 
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=erigon"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.erigon-mainnet-fullnode-stripprefix.stripprefix.prefixes=/erigon-fullnode"
+      - "traefik.http.services.erigon-mainnet-fullnode.loadbalancer.server.port=8545"
+      - "traefik.http.routers.erigon-mainnet-fullnode.entrypoints=websecure"
+      - "traefik.http.routers.erigon-mainnet-fullnode.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-mainnet-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-fullnode`)"
+      - "traefik.http.routers.erigon-mainnet-fullnode.middlewares=erigon-mainnet-fullnode-stripprefix, ipwhitelist"
+      
+  lighthouse-mainnet-fullnode:
+    image: sigp/lighthouse:v4.0.1-modern
+    ports:
+      - "57462:57462"
+      - "57462:57462/udp"      
+    volumes:
+      - .jwtsecret:/jwtsecret
+      - lighthouse-mainnet-fullnode_data:/root/.lighthouse
+    command: >
+      lighthouse beacon_node
+      --eth1-endpoints http://erigon-mainnet-fullnode:8545
+      --execution-endpoint http://erigon-mainnet-fullnode:8551
+      --execution-jwt /jwtsecret
+      --checkpoint-sync-url https://sync.invis.tools
+      --http
+      --http-address 0.0.0.0
+      --port 57462
+    restart: unless-stopped
+    stop_grace_period: 1m
+    networks:
+      - chains
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.lighthouse-mainnet-fullnode-stripprefix.stripprefix.prefixes=/lighthouse-mainnet-fullnode"
+      - "traefik.http.services.lighthouse-mainnet-fullnode.loadbalancer.server.port=5052"
+      - "traefik.http.routers.lighthouse-mainnet-fullnode.entrypoints=websecure"
+      - "traefik.http.routers.lighthouse-mainnet-fullnode.tls.certresolver=myresolver"
+      - "traefik.http.routers.lighthouse-mainnet-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-mainnet-fullnode`)"
+      - "traefik.http.routers.lighthouse-mainnet-fullnode.middlewares=lighthouse-mainnet-fullnode-stripprefix, ipwhitelist"
+
+volumes:
+    erigon-mainnet-fullnode:
+    lighthouse-mainnet-fullnode_data:
