@@ -52,7 +52,7 @@ services:
 
     
   optimism-op-geth:
-    image: ghcr.io/base-org/node:v0.3.1-rc.1
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.11.2-13ee9ab
     restart: unless-stopped
     stop_grace_period: 5m
     expose:
