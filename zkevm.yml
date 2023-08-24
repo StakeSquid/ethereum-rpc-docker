@@ -63,7 +63,7 @@ services:
     command:
       - "/bin/sh"
       - "-c"
-      - "/app/zkevm-node run --network ${ZKEVM_NETWORK} --cfg /app/config.toml --components synchronizer"
+      - "/app/zkevm-node run --network mainnet --cfg /app/config.toml --components synchronizer"
 
   zkevm-state-db:
     restart: unless-stopped
