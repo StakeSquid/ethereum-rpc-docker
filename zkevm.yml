@@ -20,7 +20,8 @@ services:
     expose:  
       - 8545       
       - 9091 # needed if metrics enabled
-    environment:                          
+    environment:
+      - ZKEVM_NETWORK="mainnet"
       - ZKEVM_NODE_ETHERMAN_URL=${ZKEVM_ETHEREUM_ENDPOINT}                                                                                                                                                 
     volumes:    
       - ./zkevm/public.node.config.toml:/app/config.toml
