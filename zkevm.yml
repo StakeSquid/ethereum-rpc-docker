@@ -21,14 +21,13 @@ services:
       - 8545       
       - 9091 # needed if metrics enabled
     environment:
-      - ZKEVM_NETWORK="mainnet"
       - ZKEVM_NODE_ETHERMAN_URL=${ZKEVM_ETHEREUM_ENDPOINT}                                                                                                                                                 
     volumes:    
       - ./zkevm/public.node.config.toml:/app/config.toml
     command:                          
       - "/bin/sh"
       - "-c"
-      - "/app/zkevm-node run --network ${ZKEVM_NETWORK} --cfg /app/config.toml --components rpc"
+      - "/app/zkevm-node run --network mainnet --cfg /app/config.toml --components rpc"
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.zkevm-stripprefix.stripprefix.prefixes=/zkevm"
@@ -148,3 +147,8 @@ services:
       - ./zkevm/public.prover.config.json:/usr/src/app/config.json
     command: >
       zkProver -c /usr/src/app/config.json
+
+volumes:
+  zkevm-node-statedb:
+  zkevm-node-pooldb:
+  zkevm-node-logdb:
