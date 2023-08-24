@@ -7,7 +7,7 @@ services:
     volumes:
       - mantle:/root/.ethereum/geth/
     environment:
-      ETH1_HTTP: https://rpc-fi-1.stakesquid.eu/erigon
+      ETH1_HTTP: ${MANTLE_ETHEREUM_ENDPOINT}
       SEQUENCER_CLIENT_HTTP: https://rpc.mantle.xyz
       ROLLUP_STATE_DUMP_PATH: https://mantlenetworkio.github.io/networks/mainnet/genesis.json
       ROLLUP_CLIENT_HTTP: https://dtl.mantle.xyz
@@ -34,7 +34,7 @@ services:
       RPC_VHOSTS: '*'
       WS: 'true'
       WS_ADDR: 0.0.0.0
-      WS_PORT: 8545
+      WS_PORT: 8546
       WS_API: eth,net,rollup,web3,debug
       WS_ORIGINS: '*'
       CHAIN_ID: 5000
