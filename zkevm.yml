@@ -28,7 +28,20 @@ services:
       - "/bin/sh"
       - "-c"
       - "/app/zkevm-node run --network ${ZKEVM_NETWORK} --cfg /app/config.toml --components rpc"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.zkevm-stripprefix.stripprefix.prefixes=/zkevm"
+      - "traefik.http.services.zkevm.loadbalancer.server.port=8545"
+      - "traefik.http.routers.zkevm.entrypoints=websecure"
+      - "traefik.http.routers.zkevm.tls.certresolver=myresolver"
+      - "traefik.http.routers.zkevm.rule=Host(`$DOMAIN`) && PathPrefix(`/zkevm`)"
+      - "traefik.http.routers.zkevm.middlewares=zkevm-stripprefix, ipwhitelist"
+      #- "prometheus-scrape.enabled=true"
+      #- "prometheus-scrape.port=6060"
+      #- "prometheus-scrape.job_name=zkevm"
+      #- "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
 
+      
   zkevm-sync:
     restart: unless-stopped
     depends_on:
