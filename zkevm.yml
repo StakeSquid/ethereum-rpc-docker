@@ -28,7 +28,7 @@ services:
       - "/bin/sh"
       - "-c"
       - "/app/zkevm-node run --network mainnet --cfg /app/config.toml --components rpc"
-    network:
+    networks:
       - chains
     labels:
       - "traefik.enable=true"
@@ -62,6 +62,8 @@ services:
       - ZKEVM_NODE_ETHERMAN_URL=${ZKEVM_ETHEREUM_ENDPOINT}
     volumes:
       - ./zkevm/public.node.config.toml:/app/config.toml
+    networks:
+      - chains
     command:
       - "/bin/sh"
       - "-c"
@@ -85,7 +87,7 @@ services:
       - POSTGRES_USER=state_user
       - POSTGRES_PASSWORD=state_password
       - POSTGRES_DB=state_db
-    network:
+    networks:
       - chains
     command:
       - "postgres"
@@ -110,7 +112,7 @@ services:
       - POSTGRES_USER=pool_user
       - POSTGRES_PASSWORD=pool_password
       - POSTGRES_DB=pool_db
-    network:
+    networks:
       - chains
     command:
       - "postgres"
@@ -134,7 +136,7 @@ services:
       - POSTGRES_USER=log_user
       - POSTGRES_PASSWORD=log_password
       - POSTGRES_DB=log_db
-    network:
+    networks:
       - chains
     command:
       - "postgres"
@@ -153,7 +155,7 @@ services:
       - 50071 # Executor
     volumes:
       - ./zkevm/public.prover.config.json:/usr/src/app/config.json
-    network:
+    networks:
       - chains
     command: >
       zkProver -c /usr/src/app/config.json
