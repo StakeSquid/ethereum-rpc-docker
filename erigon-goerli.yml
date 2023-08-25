@@ -44,11 +44,11 @@ services:
       - "prometheus-scrape.job_name=erigon-goerli"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.erigon-goerli-stripprefix.stripprefix.prefixes=/erigon-goerli"
+      - "traefik.http.middlewares.erigon-goerli-stripprefix.stripprefix.prefixes=/goerli-archive"
       - "traefik.http.services.erigon-goerli.loadbalancer.server.port=8545"
       - "traefik.http.routers.erigon-goerli.entrypoints=websecure"
       - "traefik.http.routers.erigon-goerli.tls.certresolver=myresolver"
-      - "traefik.http.routers.erigon-goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-goerli`)"
+      - "traefik.http.routers.erigon-goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/goerli-archive`)"
       - "traefik.http.routers.erigon-goerli.middlewares=erigon-goerli-stripprefix, ipwhitelist"
 
   lighthouse-goerli:
