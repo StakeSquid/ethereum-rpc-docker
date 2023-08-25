@@ -32,7 +32,7 @@ opera \
     --http.vhosts="*" \
     --ws \
     --ws.addr=0.0.0.0 \
-    --ws.port=18546 \
+    --ws.port=18545 \
     --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc \
     --ws.origins="*" \
     --nousb \
