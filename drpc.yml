@@ -19,10 +19,7 @@ services:
     networks:
       - chains
     logging: 
-      options:
-        max-file: '1'
-        compress: 'false'
-      driver: local
+      driver: journald
       
   redis:
     image: healthcheck/redis:alpine
@@ -34,8 +31,4 @@ services:
       - '--save ""'
     networks:
       - chains
-    logging:
-      options:
-        max-file: '1'
-        compress: 'false'
-      driver: local
+
