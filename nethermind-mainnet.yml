@@ -100,4 +100,7 @@ services:
 
 
 volumes:
+  nethermind_mainnet_db:
+  nethermind_mainnet_keystore:
+  nethermind_mainnet_logs:
   nimbus-mainnet:
