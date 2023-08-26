@@ -27,9 +27,9 @@ services:
       "--data-path=/var/lib/besu",
       "--sync-mode=X_CHECKPOINT",
       "--rpc-http-max-active-connections=170",
-      "--p2p-port=7791"
+      "--p2p-port=7791",
       ]
-      restart: unless-stopped
+    restart: unless-stopped
     security_opt:
       - "seccomp:unconfined"
     labels:                     
