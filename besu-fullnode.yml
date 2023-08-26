@@ -16,9 +16,9 @@ services:
     command:
       [
       "--rpc-ws-host='0.0.0.0'",
-      "--rpc-ws-enabled=true",
+      #"--rpc-ws-enabled=true",
       "--rpc-http-host='0.0.0.0'",
-      "--rpc-http-enabled=true",
+      #"--rpc-http-enabled=true",
       "--host-allowlist=*",
       "--rpc-http-cors-origins=*",
       "--engine-rpc-port=8551",
