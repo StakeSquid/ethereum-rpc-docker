@@ -25,6 +25,8 @@ services:
       - "traefik.http.services.avalanche.loadbalancer.server.port=9650"
       - "traefik.http.routers.avalanche.entrypoints=websecure"
       - "traefik.http.routers.avalanche.tls.certresolver=myresolver"
+      - "traefik.http.routers.avalanche.service=avalanche"
+      - "traefik.http.routers.avalanche-ws.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-archive`)"      
       - "traefik.http.routers.avalanche.middlewares=avalanche-stripprefix, avalanche-replacepath, ipwhitelist"
 
       - "traefik.http.middlewares.avalanche-ws-replacepath.replacepath.path=/ext/bc/C/ws"
@@ -32,7 +34,8 @@ services:
       - "traefik.http.services.avalanche-ws.loadbalancer.server.port=9650"
       - "traefik.http.routers.avalanche-ws.entrypoints=websecure"
       - "traefik.http.routers.avalanche-ws.tls.certresolver=myresolver"
-      - "traefik.http.routers.avalanche-ws.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-archive/ws`)"
+      - "traefik.http.routers.avalanche-ws.service=avalanche"
+      - "traefik.http.routers.avalanche-ws.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-archive-ws`)"
       - "traefik.http.routers.avalanche-ws.middlewares=avalanche-ws-stripprefix, avalanche-ws-replacepath, ipwhitelist"
 
       - "prometheus-scrape.enabled=true"

@@ -10,7 +10,7 @@ services:
         condition: service_healthy
       zkevm-sync:                                                                                     
         condition: service_started                                                                    
-    image: hermeznetwork/zkevm-node:v0.2.1                                                                                                                                                                  
+    image: hermeznetwork/zkevm-node:v0.2.5                                                                                                                                                                 
     deploy:                     
       resources:                
         limits:                             
@@ -49,7 +49,7 @@ services:
     depends_on:
       zkevm-state-db:
         condition: service_healthy
-    image: hermeznetwork/zkevm-node:v0.2.1
+    image: hermeznetwork/zkevm-node:v0.2.5
     expose:
       - 9091 # needed if metrics enabled
     deploy:
@@ -146,7 +146,7 @@ services:
 
   zkevm-prover:
     restart: unless-stopped
-    image: hermeznetwork/zkevm-prover:v2.0.1
+    image: hermeznetwork/zkevm-prover:v2.0.1-hotfix.1
     depends_on:
       zkevm-state-db:
         condition: service_healthy
