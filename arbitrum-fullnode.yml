@@ -12,7 +12,7 @@ services:
       - 8547
       - 8548
     command:
-      - --init.url="https://snapshot.arbitrum.foundation/arb1/nitro-pruned.tar"
+      - --init.url=https://snapshot.arbitrum.foundation/arb1/nitro-pruned.tar
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
       - --l1.url=${ARBITRUM_L1_URL}
