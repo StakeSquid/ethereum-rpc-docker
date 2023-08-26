@@ -14,6 +14,7 @@ services:
     command:
       - --init.url=https://snapshot.arbitrum.foundation/nova/nitro-pruned.tar
       - --init.prune=full
+      - --node.staker.enable=false
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
       - --l1.url=${ARBITRUM_L1_URL}
