@@ -56,63 +56,48 @@ services:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=9091"
       - "prometheus-scrape.job_name=nethermind-mainnet"
-      
-      
 
-  lighthouse-mainnet:
-    image: sigp/lighthouse:v4.3.0-modern
+      
+  nimbus-mainnet:
+    build:
+      context: ./nimbus
+      args:
+        UPSTREAM_VERSION: v23.8.0
     restart: unless-stopped
+    stop_grace_period: 1m
+    environment:
+      LOG_TYPE: INFO
+      P2P_TCP_PORT: 23079
+      P2P_UDP_PORT: 23079
+      CHECKPOINT_SYNC_URL: "https://mainnet-checkpoint-sync.attestant.io"
+      EXTRA_OPTS: ""
+      FEE_RECIPIENT_ADDRESS: ""
+      EXECUTION_ENDPOINT: "http://nethermind-mainnet:8551"
+    volumes:
+      - nimbus-mainnet:/home/user/nimbus-eth2/build/data
+      - .jwtsecret:/jwt.hex      
     networks:
       - chains
     ports:
-      - 20506:20506/tcp # p2p
-      - 20506:20506/udp # p2p
+      - 23079:23079/tcp # p2p
+      - 23079:23079/udp # p2p
     expose:
-      - 5054 # metrics
-      - 4000 # http
-      - 20506 # p2p
-    volumes:
-      - mainnet_consensus:/data
-      - .jwtsecret:/jwt.hex
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    command: |
-      lighthouse
-      beacon_node
-      --network=mainnet
-      --disable-upnp
-      --datadir=/data
-      --port=20506
-      --http
-      --http-address=0.0.0.0
-      --http-port=4000
-      --target-peers=50
-      --execution-endpoint=http://nethermind-mainnet:8551
-      --execution-jwt=/jwt.hex
-      --debug-level=info
-      --validator-monitor-auto
-      --subscribe-all-subnets
-      --import-all-attestations
-      --metrics
-      --metrics-port=5054
-      --metrics-address=0.0.0.0
-      --checkpoint-sync-url=https://mainnet-checkpoint-sync.attestant.io
+      - 8008 # metrics
+      - 4500 # http
+      - 23079 # p2p
     labels:
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=5054"
-      - "prometheus-scrape.job_name=lighthouse-mainnet"
+      - "prometheus-scrape.port=8008"
+      - "prometheus-scrape.job_name=nimbus-mainnet"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.lighthouse-mainnet-stripprefix.stripprefix.prefixes=/lighthouse-mainnet"
-      - "traefik.http.services.lighthouse-mainnet.loadbalancer.server.port=4000"
-      - "traefik.http.routers.lighthouse-mainnet.entrypoints=websecure"
-      - "traefik.http.routers.lighthouse-mainnet.tls.certresolver=myresolver"
-      - "traefik.http.routers.lighthouse-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-mainnet`)"
-      - "traefik.http.routers.lighthouse-mainnet.middlewares=lighthouse-mainnet-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.nimbus-mainnet-stripprefix.stripprefix.prefixes=/nimbus-mainnet"
+      - "traefik.http.services.nimbus-mainnet.loadbalancer.server.port=4500"
+      - "traefik.http.routers.nimbus-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.nimbus-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.nimbus-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/nimbus-mainnet`)"
+      - "traefik.http.routers.nimbus-mainnet.middlewares=nimbus-mainnet-stripprefix, ipwhitelist"
 
 
 volumes:
-  nethermind_mainnet_db:
-  nethermind_mainnet_keystore:
-  nethermind_mainnet_logs:
-  mainnet_consensus:
+  nimbus-mainnet:
