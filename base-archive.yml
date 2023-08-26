@@ -4,8 +4,7 @@ services:
   base-archive: # this is Optimism's geth client
     build: ./base
     expose:
-      - 8545       # RPC
-      - 8545       # websocket
+      - 8545       # RPC / Websocket
       - 48554     # P2P TCP (currently unused)
       - 48554/udp # P2P UDP (currently unused)
       - 6060       # metrics
@@ -23,6 +22,7 @@ services:
       - "OP_GETH_GENESIS_FILE_PATH=mainnet/genesis-l2.json"
       - "OP_GETH_SEQUENCER_HTTP=https://mainnet-sequencer.base.org"
       - "P2P_PORT=48554"
+      - "WS_PORT=8545"
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.base-archive-stripprefix.stripprefix.prefixes=/base-archive"                      
