@@ -1,0 +1,41 @@
+version: '3.1'
+
+services:
+  arbitrum-nova-fullnode:
+    image: 'offchainlabs/nitro-node:v2.0.14-2baa834'
+    restart: always
+    stop_grace_period: 30s
+    user: root
+    volumes:
+      - 'arbitrum-nova-fullnode_data:/arbitrum-node'
+    expose:
+      - 8547
+      - 8548
+    command:
+      - --init.url=https://snapshot.arbitrum.foundation/nova/nitro-pruned.tar
+      - --init.prune=full
+      - --persistent.chain=/arbitrum-node/data/
+      - --persistent.global-config=/arbitrum-node/
+      - --l1.url=${ARBITRUM_L1_URL}
+      - --l2.chain-id=42161
+      - --http.api=net,web3,eth,debug 
+      - --http.corsdomain=* 
+      - --http.addr=0.0.0.0 
+      - --http.vhosts=*
+      - --ws.port=8547
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.arbitrum-nova-stripprefix.stripprefix.prefixes=/arbitrum-nova-fullnode"                      
+      - "traefik.http.services.arbitrum-nova.loadbalancer.server.port=8547"
+      - "traefik.http.routers.arbitrum-nova.entrypoints=websecure"                                              
+      - "traefik.http.routers.arbitrum-nova.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.arbitrum-nova.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-nova-fullnode`)"                     
+      - "traefik.http.routers.arbitrum-nova.middlewares=arbitrum-nova-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:  
+    arbitrum-nova-fullnode_data:
