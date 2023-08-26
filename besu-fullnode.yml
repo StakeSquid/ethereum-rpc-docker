@@ -2,8 +2,10 @@ version: '3.1'
 
 services:
   mainnet-besu:
-    image: hyperledger/besu:23.4.4
-    user: root
+    build:
+      context: besu
+      args:
+        UPSTREAM_VERSION: 23.4.4
     expose:
       - 8545
       - 8551
@@ -16,9 +18,9 @@ services:
     command:
       [
       "--rpc-ws-host='0.0.0.0'",
-      #"--rpc-ws-enabled=true",
+      "--rpc-ws-enabled=true",
       "--rpc-http-host='0.0.0.0'",
-      #"--rpc-http-enabled=true",
+      "--rpc-http-enabled=true",
       "--host-allowlist=*",
       "--rpc-http-cors-origins=*",
       "--engine-rpc-port=8551",
@@ -99,5 +101,5 @@ services:
 
       
 volumes:
-    mainnet-besu-fullnode:      
+    mainnet-besu-fullnode: {}
     mainnet_consensus:
