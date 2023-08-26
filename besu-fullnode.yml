@@ -3,6 +3,7 @@ version: '3.1'
 services:
   mainnet-besu:
     image: hyperledger/besu:23.4.4
+    user: root
     ports:
       - "7791:7791/tcp"
       - "7791:7791/udp"
