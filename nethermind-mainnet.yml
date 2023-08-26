@@ -66,6 +66,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 1m
     environment:
+      NETWORK: mainnet
       LOG_TYPE: INFO
       P2P_TCP_PORT: 23079
       P2P_UDP_PORT: 23079

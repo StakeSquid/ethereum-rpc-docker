@@ -39,64 +39,49 @@ services:
         compress: 'false'
       driver: local
 
-      
-  lighthouse-gnosis:
-    image: sigp/lighthouse:v4.3.0-modern
+
+  nimbus-gnosis:
+    build:
+      context: ./nimbus
+      args:
+        UPSTREAM_VERSION: v23.8.0
     restart: unless-stopped
+    stop_grace_period: 1m
+    environment:
+      NETWORK: gnosis
+      LOG_TYPE: INFO
+      P2P_TCP_PORT: 20419
+      P2P_UDP_PORT: 20419
+      CHECKPOINT_SYNC_URL: "https://checkpoint.gnosischain.com/"
+      EXTRA_OPTS: ""
+      FEE_RECIPIENT_ADDRESS: ""
+      EXECUTION_ENDPOINT: "http://erigon-gnosis:8551"
+    volumes:
+      - nimbus-gnosis:/home/user/nimbus-eth2/build/data
+      - .jwtsecret:/jwt.hex      
     networks:
       - chains
     ports:
-      - 46763:46763/tcp # p2p
-      - 46763:46763/udp # p2p
+      - 20419:20419/tcp # p2p
+      - 20419:20419/udp # p2p
     expose:
-      - 5054 # metrics
-      - 4000 # http
-      - 46763 # p2p
-    volumes:
-      - gnosis_consensus:/data
-      - .jwtsecret:/jwt.hex
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    command: |
-      lighthouse
-      beacon_node
-      --network=gnosis
-      --disable-upnp
-      --datadir=/data
-      --port=46763
-      --http
-      --http-address=0.0.0.0
-      --http-port=4000
-      --target-peers=50
-      --execution-endpoint=http://erigon-gnosis:8551
-      --execution-jwt=/jwt.hex
-      --debug-level=info
-      --validator-monitor-auto
-      --subscribe-all-subnets
-      --import-all-attestations
-      --metrics
-      --metrics-port=5054
-      --metrics-address=0.0.0.0
-      --checkpoint-sync-url=https://checkpoint.gnosischain.com/
+      - 8008 # metrics
+      - 4500 # http
+      - 20419 # p2p
     labels:
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=5054"
-      - "prometheus-scrape.job_name=lighthouse-gnosis"
+      - "prometheus-scrape.port=8008"
+      - "prometheus-scrape.job_name=nimbus-gnosis"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.lighthouse-gnosis-stripprefix.stripprefix.prefixes=/lighthouse-gnosis"
-      - "traefik.http.services.lighthouse-gnosis.loadbalancer.server.port=4000"
-      - "traefik.http.routers.lighthouse-gnosis.entrypoints=websecure"
-      - "traefik.http.routers.lighthouse-gnosis.tls.certresolver=myresolver"
-      - "traefik.http.routers.lighthouse-gnosis.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-gnosis`)"
-      - "traefik.http.routers.lighthouse-gnosis.middlewares=lighthouse-gnosis-stripprefix, ipwhitelist"
-    logging:
-      options:
-        max-file: '1'
-        compress: 'false'
-      driver: local
+      - "traefik.http.middlewares.nimbus-gnosis-stripprefix.stripprefix.prefixes=/nimbus-gnosis"
+      - "traefik.http.services.nimbus-gnosis.loadbalancer.server.port=4500"
+      - "traefik.http.routers.nimbus-gnosis.entrypoints=websecure"
+      - "traefik.http.routers.nimbus-gnosis.tls.certresolver=myresolver"
+      - "traefik.http.routers.nimbus-gnosis.rule=Host(`$DOMAIN`) && PathPrefix(`/nimbus-gnosis`)"
+      - "traefik.http.routers.nimbus-gnosis.middlewares=nimbus-gnosis-stripprefix, ipwhitelist"
 
       
 volumes:
   gnosis-archive_data:
-  gnosis_consensus:
+  nimbus-gnosis:

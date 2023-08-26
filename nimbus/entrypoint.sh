@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NETWORK="mainnet"
+NETWORK="${{NETWORK}"
 VALIDATOR_PORT=3500
 
 DATA_DIR="/home/user/nimbus-eth2/build/data"
