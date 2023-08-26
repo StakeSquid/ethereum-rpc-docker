@@ -4,6 +4,9 @@ services:
   mainnet-besu:
     image: hyperledger/besu:23.4.4
     user: root
+    expose:
+      - 8545
+      - 8551
     ports:
       - "7791:7791/tcp"
       - "7791:7791/udp"
@@ -29,8 +32,6 @@ services:
       "--p2p-port=7791",
       ]
     restart: unless-stopped
-    security_opt:
-      - "seccomp:unconfined"
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.mainnet-besu-stripprefix.stripprefix.prefixes=/mainnet-besu"                  
