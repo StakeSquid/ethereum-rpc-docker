@@ -57,7 +57,8 @@ services:
       context: ./firehose-mainnet/
     command: -c /etc/firehose/config.yml start
     environment:
-      - "ETHEREUM_ARCHIVE_RPC=http://erigon-mainnet:8545"
+      - "ETHEREUM_ARCHIVE_RPC=${FIREHOSE_ETHEREUM_ARCHIVE_RPC:-https://rpc-fi-1.stakesquid.eu/erigon}"
+      - "S3_BLOCKS_STORE_URL=${FIREHOSE_S3_BLOCKS_STORE_URL:-s3://162.55.135.148:8333/eth-blocks?insecure=true}"
     expose:
       - 8545 # geth rpc
       - 8551 # consensus client
@@ -65,7 +66,7 @@ services:
     ports:
       - "24465:24465"
       - "24465:24465/udp"
-      #- "13042:13042"
+      - "13042:13042"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.firehose-mainnet.loadbalancer.server.scheme=h2c"
