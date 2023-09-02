@@ -3,7 +3,7 @@ services:
   fantom-archive:
     build:
       args:
-        VERSION: release/txtracing/1.1.2-rc.5
+        VERSION: release/txtracing/1.1.2-rc.6
       context: ./fantom
       dockerfile: Dockerfile
     environment:

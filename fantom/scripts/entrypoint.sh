@@ -19,6 +19,9 @@ then
     wget --quiet https://download.fantom.network/mainnet-5577-full-mpt.g
 fi
 
+# uncomment the next line and do docker-compose build in case you have to try to fix the db after unclean shutdown etc.
+# opera --db.preset pbl-1 --datadir=$FANTOM_HOME db heal --experimental
+
 opera \
     --genesis=$FANTOM_HOME/mainnet-5577-full-mpt.g \
     --port=5050 \
@@ -26,13 +29,13 @@ opera \
     --datadir=$FANTOM_HOME \
     --http \
     --http.addr=0.0.0.0 \
-    --http.port=18545 \
+    --http.port=18544 \
     --http.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc,trace \
     --http.corsdomain="*" \
     --http.vhosts="*" \
     --ws \
     --ws.addr=0.0.0.0 \
-    --ws.port=18545 \
+    --ws.port=18544 \
     --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc \
     --ws.origins="*" \
     --nousb \
