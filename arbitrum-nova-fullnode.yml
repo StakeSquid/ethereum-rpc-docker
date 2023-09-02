@@ -9,16 +9,16 @@ services:
     volumes:
       - 'arbitrum-nova-fullnode_data:/arbitrum-node'
     expose:
-      - 8547
-      - 8548
+      - 8547 # http + ws
     command:
-      - --init.url=https://snapshot.arbitrum.foundation/nova/nitro-pruned.tar
-      - --init.prune=full
+      - --init.url=https://snapshot.arbitrum.foundation/nova/nitro-archive.tar
+      - --node.caching.archive
+      - --node.data-availability.enable
       - --node.staker.enable=false
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
       - --l1.url=${ARBITRUM_L1_URL}
-      - --l2.chain-id=42161
+      - --l2.chain-id=42170
       - --http.api=net,web3,eth,debug 
       - --http.corsdomain=* 
       - --http.addr=0.0.0.0 
