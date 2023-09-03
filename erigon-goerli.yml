@@ -51,50 +51,48 @@ services:
       - "traefik.http.routers.erigon-goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/goerli-archive`)"
       - "traefik.http.routers.erigon-goerli.middlewares=erigon-goerli-stripprefix, ipwhitelist"
 
-  lighthouse-goerli:
-    image: sigp/lighthouse:v4.0.1-rc.0-modern
-    expose:
-      - "5054" #metrics
-      - "4000" #http
-      - "63550" #p2p
-    ports:
-      - "63550:63550"
-      - "63550:63550/udp"
-    volumes:
-      - .jwtsecret:/jwtsecret
-      - lighthouse-goerli_data:/root/.lighthouse
-    command: >
-      lighthouse beacon_node
-      --network prater
-      --reconstruct-historic-states
-      --execution-endpoint http://erigon-goerli:8551
-      --execution-jwt /jwtsecret
-      --port 63550
-      --http
-      --http-address=0.0.0.0
-      --http-port=4000
-      --metrics
-      --metrics-port=5054
-      --metrics-address=0.0.0.0
-      --checkpoint-sync-url https://prater.checkpoint.sigp.io
+
+  nimbus-goerli:
+    build:
+      context: ./nimbus
+      args:
+        UPSTREAM_VERSION: v23.8.0
     restart: unless-stopped
     stop_grace_period: 1m
+    environment:
+      NETWORK: goerli
+      LOG_TYPE: INFO
+      P2P_TCP_PORT: 63550
+      P2P_UDP_PORT: 63550
+      CHECKPOINT_SYNC_URL: "https://prater.checkpoint.sigp.io"
+      EXTRA_OPTS: ""
+      FEE_RECIPIENT_ADDRESS: ""
+      EXECUTION_ENDPOINT: "http://erigon-goerli:8551"
+    volumes:
+      - nimbus-goerli:/home/user/nimbus-eth2/build/data
+      - .jwtsecret:/jwt.hex      
     networks:
       - chains
+    ports:
+      - 63550:63550/tcp # p2p
+      - 63550:63550/udp # p2p
+    expose:
+      - 8008 # metrics
+      - 4500 # http
+      - 63550 # p2p
     labels:
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=5054"
-      - "prometheus-scrape.job_name=lighthouse-goerli"
+      - "prometheus-scrape.port=8008"
+      - "prometheus-scrape.job_name=nimbus-goerli"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.lighthouse-goerli-stripprefix.stripprefix.prefixes=/lighthouse-goerli"
-      - "traefik.http.services.lighthouse-goerli.loadbalancer.server.port=4000"
-      - "traefik.http.routers.lighthouse-goerli.entrypoints=websecure"
-      - "traefik.http.routers.lighthouse-goerli.tls.certresolver=myresolver"
-      - "traefik.http.routers.lighthouse-goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-goerli`)"
-      - "traefik.http.routers.lighthouse-goerli.middlewares=lighthouse-goerli-stripprefix, ipwhitelist"
-
+      - "traefik.http.middlewares.nimbus-goerli-stripprefix.stripprefix.prefixes=/nimbus-goerli"
+      - "traefik.http.services.nimbus-goerli.loadbalancer.server.port=4500"
+      - "traefik.http.routers.nimbus-goerli.entrypoints=websecure"
+      - "traefik.http.routers.nimbus-goerli.tls.certresolver=myresolver"
+      - "traefik.http.routers.nimbus-goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/nimbus-goerli`)"
+      - "traefik.http.routers.nimbus-goerli.middlewares=nimbus-goerli-stripprefix, ipwhitelist"    
 
 volumes:
     erigon-goerli:
-    lighthouse-goerli_data:
+    nimbus-goerli:
