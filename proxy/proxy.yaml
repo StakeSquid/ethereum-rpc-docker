@@ -1,0 +1,10 @@
+upstreams:
+  - id: proxy
+    chain: ethereum
+    priority: 100
+    options:
+      disable-validation: true
+    connection:
+      ethereum:
+        rpc:
+          url: "http://proxy:8545/1"

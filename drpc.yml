@@ -6,6 +6,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./main_configs:/etc/dshackle
+    expose:
+      - 8080
     ports:
 #      - "8080:8080"
 #      - "8081:8081"

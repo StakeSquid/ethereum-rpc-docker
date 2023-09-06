@@ -1,0 +1,45 @@
+version: "3.1"
+
+services:
+  proxy:
+    image: stakesquid/eth-proxy:latest
+    restart: always
+    expose:
+      - "8545"
+      - "3000"      
+    #ports:
+    #  - "127.0.0.1:10545:8545"
+    #  - "127.0.0.1:4000:3000"
+    environment:
+      - "ETH_PROXY_MANAGEMENT_API_HOST=0.0.0.0"
+      - "UPSTREAM_RPCS"
+
+  feeder:
+    image: stakesquid/eth-proxy-feeder:latest
+    restart: always
+    environment:
+      - "WSS_ENDPOINT"
+    command:
+      - "$WSS_ENDPOINT"
+
+  dispatcher:
+    image: emeraldpay/dshackle:0.13.1
+    restart: unless-stopped
+    volumes:
+      - ./proxy:/etc/dshackle
+    expose:
+      - 8081
+      - 8082
+    ports:
+      - "33333:8080"
+      
+  redis:
+    image: healthcheck/redis:alpine
+    restart: unless-stopped
+    environment:
+      - REDIS_RAM
+    command: 
+      - "redis-server"
+      - "--maxmemory ${REDIS_RAM}"
+      - "--maxmemory-policy allkeys-lru"
+      - '--save ""'
