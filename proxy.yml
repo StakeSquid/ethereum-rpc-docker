@@ -33,7 +33,7 @@ services:
     ports:
       - "33333:8080"
       
-  redis:
+  cache:
     image: healthcheck/redis:alpine
     restart: unless-stopped
     environment:

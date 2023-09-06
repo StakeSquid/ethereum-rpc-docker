@@ -25,7 +25,7 @@ health:
 cache:
   redis:
     enabled: true
-    host: redis
+    host: cache
     password: ""
 
 proxy:
