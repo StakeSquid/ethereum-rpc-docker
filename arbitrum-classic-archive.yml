@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+  arbitrum-classic:
+    image: 'offchainlabs/arb-node:v1.4.5-e97c1a4'
+    restart: always
+    stop_grace_period: 30s
+    user: root
+    volumes:
+      - 'arbitrum-classic-archive_data:/root/.arbitrum/mainnet'
+      - './arbitrum/classic-entrypoint.sh:/entrypoint.sh'
+    expose:
+      - 8547
+      - 8548
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    command:
+      - --l1.url=${ARBITRUM_L1_URL}
+      - --l2.disable-upstream
+      - --node.chain-id=42161
+      - --node.rpc.tracing.enable
+      - --node.rpc.tracing.namespace=trace
+      - --core.checkpoint-pruning-mode=off
+      - --node.cache.allow-slow-lookup
+      - --core.checkpoint-gas-frequency=156250000
+      - --node.rpc.addr=0.0.0.0 
+    restart: unless-stopped         
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.arbitrum-classic-stripprefix.stripprefix.prefixes=/arbitrum-classic"                      
+      - "traefik.http.services.arbitrum-classic.loadbalancer.server.port=8547"
+      - "traefik.http.routers.arbitrum-classic.entrypoints=websecure"                                              
+      - "traefik.http.routers.arbitrum-classic.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.arbitrum-classic.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-classic`)"                     
+      - "traefik.http.routers.arbitrum-classic.middlewares=arbitrum-classic-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+    arbitrum-classic-archive_data:

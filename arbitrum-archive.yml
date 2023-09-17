@@ -16,7 +16,7 @@ services:
       - --node.caching.archive
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
-      - --node.rpc.classic-redirect=http://arbitrum-classic:8547/
+      - --node.rpc.classic-redirect=${ARBITRUM_CLASSIC_URL:-http://arbitrum-classic:8547/}
       - --l1.url=${ARBITRUM_L1_URL}
       - --l2.chain-id=42161
       - --http.api=net,web3,eth,debug 
@@ -37,34 +37,6 @@ services:
       - "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
-
-  arbitrum-classic:
-    image: 'offchainlabs/arb-node:v1.4.5-e97c1a4'
-    restart: always
-    stop_grace_period: 30s
-    user: root
-    volumes:
-      - 'arbitrum-classic-archive_data:/root/.arbitrum/mainnet'
-      - './arbitrum/classic-entrypoint.sh:/entrypoint.sh'
-    expose:
-      - 8547
-      - 8548
-    entrypoint: ["/bin/bash", "/entrypoint.sh"]
-    command:
-      - --l1.url=${ARBITRUM_L1_URL}
-      - --l2.disable-upstream
-      - --node.chain-id=42161
-      - --node.rpc.tracing.enable
-      - --node.rpc.tracing.namespace=trace
-      - --core.checkpoint-pruning-mode=off
-      - --node.cache.allow-slow-lookup
-      - --core.checkpoint-gas-frequency=156250000
-      - --node.rpc.addr=0.0.0.0 
-    restart: unless-stopped         
-    networks:                                                                                         
-      - chains
-
       
 volumes:  
     arbitrum-archive_data:
-    arbitrum-classic-archive_data:
