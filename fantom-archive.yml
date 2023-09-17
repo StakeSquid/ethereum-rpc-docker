@@ -12,14 +12,15 @@ services:
     volumes:
       - "fantom-archive:/datadir"
     expose:
-      - "18545"
+      - "18544"
+      - "5050"
     networks:
       - chains
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.fantom-archive-stripprefix.stripprefix.prefixes=/fantom-archive"
-      - "traefik.http.services.fantom-archive.loadbalancer.server.port=18545"
+      - "traefik.http.services.fantom-archive.loadbalancer.server.port=18544"
       - "traefik.http.routers.fantom-archive.entrypoints=websecure"
       - "traefik.http.routers.fantom-archive.tls.certresolver=myresolver"
       - "traefik.http.routers.fantom-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-archive`)"
