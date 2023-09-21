@@ -15,8 +15,6 @@ services:
     restart: always
     stop_grace_period: 30s    
     volumes:
-      - 'arbitrum-nova-fullnode_data:/arbitrum-node'
-    volumes:
       - base-archive:/data
     environment:
       - "OP_GETH_GENESIS_FILE_PATH=mainnet/genesis-l2.json"
