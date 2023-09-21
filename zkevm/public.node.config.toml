@@ -53,7 +53,7 @@ SequencerNodeURI = "https://zkevm-rpc.com"
 EnableL2SuggestedGasPricePolling = false
 	[RPC.WebSockets]
 		Enabled = true
-		Port = 8545
+		Port = 8546
 
 [Synchronizer]
 SyncInterval = "2s"

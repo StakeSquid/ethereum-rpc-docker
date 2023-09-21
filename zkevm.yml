@@ -18,7 +18,8 @@ services:
         reservations:
           memory: 512M            
     expose:  
-      - 8545       
+      - 8545 # http
+      - 8546 # ws
       - 9091 # needed if metrics enabled
     environment:
       - ZKEVM_NODE_ETHERMAN_URL=${ZKEVM_ETHEREUM_ENDPOINT}                                                                                                                                                 
@@ -38,6 +39,14 @@ services:
       - "traefik.http.routers.zkevm.tls.certresolver=myresolver"
       - "traefik.http.routers.zkevm.rule=Host(`$DOMAIN`) && PathPrefix(`/zkevm`)"
       - "traefik.http.routers.zkevm.middlewares=zkevm-stripprefix, ipwhitelist"
+
+      - "traefik.http.middlewares.zkevm-ws-stripprefix.stripprefix.prefixes=/zkevm-ws"
+      - "traefik.http.services.zkevm-ws.loadbalancer.server.port=8546"
+      - "traefik.http.routers.zkevm-ws.entrypoints=websecure"
+      - "traefik.http.routers.zkevm-ws.tls.certresolver=myresolver"
+      - "traefik.http.routers.zkevm-ws.rule=Host(`$DOMAIN`) && PathPrefix(`/zkevm-ws`)"
+      - "traefik.http.routers.zkevm-ws.middlewares=zkevm-ws-stripprefix, ipwhitelist"      
+
       #- "prometheus-scrape.enabled=true"
       #- "prometheus-scrape.port=6060"
       #- "prometheus-scrape.job_name=zkevm"
