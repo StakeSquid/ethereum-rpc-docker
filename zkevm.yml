@@ -37,6 +37,7 @@ services:
       - "traefik.http.services.zkevm.loadbalancer.server.port=8545"
       - "traefik.http.routers.zkevm.entrypoints=websecure"
       - "traefik.http.routers.zkevm.tls.certresolver=myresolver"
+      - "traefik.http.routers.zkevm.service=zkevm"
       - "traefik.http.routers.zkevm.rule=Host(`$DOMAIN`) && PathPrefix(`/zkevm`)"
       - "traefik.http.routers.zkevm.middlewares=zkevm-stripprefix, ipwhitelist"
 
@@ -44,6 +45,7 @@ services:
       - "traefik.http.services.zkevm-ws.loadbalancer.server.port=8546"
       - "traefik.http.routers.zkevm-ws.entrypoints=websecure"
       - "traefik.http.routers.zkevm-ws.tls.certresolver=myresolver"
+      - "traefik.http.routers.zkevm-ws.service=zkevm"
       - "traefik.http.routers.zkevm-ws.rule=Host(`$DOMAIN`) && PathPrefix(`/zkevm-ws`)"
       - "traefik.http.routers.zkevm-ws.middlewares=zkevm-ws-stripprefix, ipwhitelist"      
 
