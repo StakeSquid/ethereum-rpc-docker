@@ -40,7 +40,7 @@ services:
       driver: local
 
       
-nimbus-gnosis:
+  nimbus-gnosis:
     build:
       context: ./gnosis/nimbus
     restart: unless-stopped
