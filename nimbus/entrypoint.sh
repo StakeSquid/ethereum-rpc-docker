@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NETWORK="${{NETWORK}"
+NETWORK="${NETWORK}"
 VALIDATOR_PORT=3500
 
 DATA_DIR="/home/user/nimbus-eth2/build/data"
@@ -18,8 +18,7 @@ HTTP_ENGINE=${EXECUTION_ENDPOINT}
         --trusted-node-url=${CHECKPOINT_SYNC_URL} \
         --backfill=false \
         --data-dir=//home/user/nimbus-eth2/build/data
-
-exec -c /home/user/nimbus_beacon_node \
+exec -c /home/user/nimbus-eth2/build/nimbus_beacon_node \
     --network=${NETWORK} \
     --data-dir=${DATA_DIR} \
     --tcp-port=$P2P_TCP_PORT \
