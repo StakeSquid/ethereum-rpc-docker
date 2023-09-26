@@ -10,7 +10,7 @@ services:
       - "14199:14199"
       - "14199:14199/udp"
     restart: unless-stopped
-    command: --chain=bor-mainnet --snapshots=false --snap.stop --prune=hrtc --bor.heimdall=https://heimdall.stakesystems.io --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,web3,erigon,bor --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=14199 --p2p.protocol=66 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1000000
+    command: --chain=bor-mainnet --snapshots=false --snap.stop --prune=hrtc --bor.heimdall=https://polygon-heimdall-rest.publicnode.com --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,web3,erigon,bor --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=14199 --p2p.protocol=66 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1100000
 
     stop_grace_period: 1m
     labels:
