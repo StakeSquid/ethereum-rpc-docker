@@ -4,7 +4,7 @@ services:
   base-archive: # this is Optimism's geth client
     build: ./base
     expose:
-      - 8545       # RPC / Websocket
+      - 8545       # RPC / Websocket      
       - 48554     # P2P TCP (currently unused)
       - 48554/udp # P2P UDP (currently unused)
       - 6060       # metrics
