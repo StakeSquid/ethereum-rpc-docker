@@ -56,13 +56,6 @@ services:
       - chains
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.mantle-stripprefix.stripprefix.prefixes=/mantle"
-      - "traefik.http.services.mantle.loadbalancer.server.port=8545"
-      - "traefik.http.routers.mantle.entrypoints=websecure"
-      - "traefik.http.routers.mantle.tls.certresolver=myresolver"
-      - "traefik.http.routers.mantle.service=mantle"
-      - "traefik.http.routers.mantle.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle`)"
-      - "traefik.http.routers.mantle.middlewares=mantle-stripprefix, ipwhitelist"
 
       - "traefik.http.middlewares.mantle-ws-stripprefix.stripprefix.prefixes=/mantle-ws"
       - "traefik.http.services.mantle-ws.loadbalancer.server.port=8546"
@@ -71,6 +64,14 @@ services:
       - "traefik.http.routers.mantle-ws.service=mantle"
       - "traefik.http.routers.mantle-ws.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle-ws`)"
       - "traefik.http.routers.mantle-ws.middlewares=mantle-ws-stripprefix, ipwhitelist"
+
+      - "traefik.http.middlewares.mantle-stripprefix.stripprefix.prefixes=/mantle"
+      - "traefik.http.services.mantle.loadbalancer.server.port=8545"
+      - "traefik.http.routers.mantle.entrypoints=websecure"
+      - "traefik.http.routers.mantle.tls.certresolver=myresolver"
+      - "traefik.http.routers.mantle.service=mantle"
+      - "traefik.http.routers.mantle.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle`)"
+      - "traefik.http.routers.mantle.middlewares=mantle-stripprefix, ipwhitelist"
 
       
 volumes:
