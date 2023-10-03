@@ -33,13 +33,6 @@ services:
       - chains
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.zkevm-stripprefix.stripprefix.prefixes=/zkevm"
-      - "traefik.http.services.zkevm.loadbalancer.server.port=8545"
-      - "traefik.http.routers.zkevm.entrypoints=websecure"
-      - "traefik.http.routers.zkevm.tls.certresolver=myresolver"
-      - "traefik.http.routers.zkevm.service=zkevm"
-      - "traefik.http.routers.zkevm.rule=Host(`$DOMAIN`) && PathPrefix(`/zkevm`)"
-      - "traefik.http.routers.zkevm.middlewares=zkevm-stripprefix, ipwhitelist"
 
       - "traefik.http.middlewares.zkevm-ws-stripprefix.stripprefix.prefixes=/zkevm-ws"
       - "traefik.http.services.zkevm-ws.loadbalancer.server.port=8546"
@@ -48,6 +41,14 @@ services:
       - "traefik.http.routers.zkevm-ws.service=zkevm"
       - "traefik.http.routers.zkevm-ws.rule=Host(`$DOMAIN`) && PathPrefix(`/zkevm-ws`)"
       - "traefik.http.routers.zkevm-ws.middlewares=zkevm-ws-stripprefix, ipwhitelist"      
+
+      - "traefik.http.middlewares.zkevm-stripprefix.stripprefix.prefixes=/zkevm"
+      - "traefik.http.services.zkevm.loadbalancer.server.port=8545"
+      - "traefik.http.routers.zkevm.entrypoints=websecure"
+      - "traefik.http.routers.zkevm.tls.certresolver=myresolver"
+      - "traefik.http.routers.zkevm.service=zkevm"
+      - "traefik.http.routers.zkevm.rule=Host(`$DOMAIN`) && PathPrefix(`/zkevm`)"
+      - "traefik.http.routers.zkevm.middlewares=zkevm-stripprefix, ipwhitelist"
 
       #- "prometheus-scrape.enabled=true"
       #- "prometheus-scrape.port=6060"
