@@ -1,0 +1,17 @@
+server {
+ listen 80;
+ server_name frontend;
+
+ location = / {
+   proxy_pass http://${PROXY_HOST}:${RPC_PORT};
+ }
+
+ location /ws {
+   proxy_pass http://${PROXY_HOST}:${WS_PORT};
+   proxy_http_version  1.1;
+   proxy_set_header    Upgrade $http_upgrade;
+   proxy_set_header    Connection "upgrade";
+   proxy_set_header    Host $http_host;
+   proxy_set_header    X-Real-IP $remote_addr;
+ }
+}
