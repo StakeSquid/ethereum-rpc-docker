@@ -1,8 +1,3 @@
-FROM ghcr.io/gnosischain/gnosis-nimbus-eth2:latest                                                                                                                                                         
-
-COPY entrypoint.sh /usr/bin/entrypoint.sh                                                                                                                                                                  
-
-ENTRYPOINT ["/usr/bin/entrypoint.sh"]root@rpc-fi-1 ~/rpc # cat gnosis/nimbus/entrypoint.sh
 #!/bin/bash
 
 # Run checkpoint sync script if provided
