@@ -12,6 +12,9 @@ services:
       --txlookuplimit=0
       --cache.preimages
       --port 58395
+      --ws
+      --ws.port 8545
+      --ws.addr 0.0.0.0
       --http
       --http.vhosts=*
       --http.addr 0.0.0.0
