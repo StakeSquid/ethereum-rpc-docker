@@ -10,7 +10,7 @@ services:
       ETH1_HTTP: ${MANTLE_ETHEREUM_ENDPOINT}
       SEQUENCER_CLIENT_HTTP: https://rpc.mantle.xyz
       ROLLUP_STATE_DUMP_PATH: https://mantlenetworkio.github.io/networks/mainnet/genesis.json
-      ROLLUP_CLIENT_HTTP: https://dtl.mantle.xyz
+      ROLLUP_CLIENT_HTTP: ${MANTLE_DTL_ENDPOINT:-https://dtl.mantle.xyz}
       ROLLUP_BACKEND: 'l2'
       ETH1_CTC_DEPLOYMENT_HEIGHT: 8
       RETRIES: 60
