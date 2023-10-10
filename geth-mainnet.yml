@@ -73,7 +73,7 @@ services:
         "--rpc-host=0.0.0.0",
         "--grpc-gateway-host=0.0.0.0",
         "--monitoring-host=0.0.0.0",
-        "--checkpoint-sync-url=https://mainnet-checkpoint-sync.stakely.io",
+        "--checkpoint-sync-url=https://sync-mainnet.beaconcha.in",
         "--execution-endpoint=http://geth-mainnet:8551",
         "--accept-terms-of-use"
       ]                                                                                               
