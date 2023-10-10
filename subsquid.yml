@@ -21,8 +21,7 @@ services:
 
   subsquid-worker:
     depends_on:
-      subsquid-node:
-        condition: service_healthy
+      - subsquid-node
     image: subsquid/p2p-worker:mirovia
     environment:
       PROXY_ADDR: subsquid-node:50051
