@@ -70,8 +70,8 @@ services:
       - "OP_NODE_RPC_PORT=8545"
       - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
       - "OP_NODE_VERIFIER_L1_CONFS=4"
-      - "OP_NODE_L1_RPC_KIND=erigon"
-      - "OP_NODE_L1_TRUST_RPC=${TRUST_BASE_ETHEREUM_ENPOINT:-false}"
+      - "OP_NODE_L1_RPC_KIND=${BASE_ETHEREUM_ENDPOINT_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${BASE_ETHEREUM_ENDPOINT_TRUST:-false}"
     networks:                                                                                         
       - chains
       
