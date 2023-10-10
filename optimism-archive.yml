@@ -52,7 +52,7 @@ services:
 
     
   optimism-op-geth:
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.11.2-13ee9ab
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.11.4
     restart: unless-stopped
     stop_grace_period: 5m
     expose:
@@ -104,7 +104,7 @@ services:
   
       
   optimism-op-erigon:
-    image: testinprod/op-erigon:2.48.1-0.1.10-amd64
+    image: testinprod/op-erigon:2.48.1-0.1.11-amd64
     restart: unless-stopped
     stop_grace_period: 5m
     expose:
@@ -147,7 +147,7 @@ services:
 
 
   optimism-op-node:
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.0
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.4
     restart: unless-stopped
     stop_grace_period: 5m
     environment:
@@ -173,7 +173,7 @@ services:
 
 
   optimism-op-node-erigon:
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.0
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.4
     restart: unless-stopped
     stop_grace_period: 5m
     environment:
