@@ -11,8 +11,7 @@ services:
     expose:
       - 8547 # http + ws
     command:
-      - --init.url=https://snapshot.arbitrum.foundation/nova/nitro-archive.tar
-      - --node.caching.archive
+      - --init.url=https://snapshot.arbitrum.foundation/nova/nitro-pruned.tar
       - --node.data-availability.enable
       - --node.staker.enable=false
       - --persistent.chain=/arbitrum-node/data/
