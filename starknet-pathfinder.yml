@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   starknet-pathfinder:                         
-    image: eqlabs/pathfinder:v0.7.2
+    image: eqlabs/pathfinder:v0.8.2
     expose: 
       # HTTP server / GraphQL API 
       - 9545                   
