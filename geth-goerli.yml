@@ -1,0 +1,92 @@
+version: '3.1'
+
+services:
+  geth-goerli:                         
+    image: ethereum/client-go:v1.13.2
+    expose: 
+      # HTTP server / GraphQL API 
+      - 8545                   
+    ports:                      
+      - "22075:22075"                                                                                 
+      - "22075:22075/udp"  
+    command:
+      [                                                                                               
+        # Blockchain sync mode ("snap", "full" or "light")                                            
+        "--syncmode=snap",
+        "--port=22075",
+        # Megabytes of memory allocated to internal caching                                           
+        "--cache=2192",
+        # Enable the WS-RPC server         
+        "--ws",
+        "--ws.port=8545",
+        "--ws.addr=0.0.0.0",
+        # Enable the HTTP-RPC server      
+        "--http",
+        "--http.port=8545",
+        "--http.addr=0.0.0.0",                     
+        "--http.vhosts=*",                         
+        # Enable GraphQL on the HTTP-RPC server. Note that GraphQL can only be started if an HTTP server is started as well.                                                                               
+        "--graphql",                               
+        "--graphql.vhosts=*",             
+        # Enable metrics collection and reporting                                                     
+        "--metrics",
+        "--metrics.addr=0.0.0.0",
+        # Ethereum goerli
+        "--goerli",                                                                                  
+        # Maximum number of network peers (network disabled if set to 0) (default: 50)                
+        "--maxpeers=30",
+        # The Merge
+        "--authrpc.jwtsecret=/jwtsecret",
+        "--authrpc.addr=0.0.0.0",
+        "--authrpc.vhosts=*"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "geth-goerli_data:/root/.ethereum"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.goerli-stripprefix.stripprefix.prefixes=/goerli"                  
+      - "traefik.http.services.goerli.loadbalancer.server.port=8545"                                 
+      - "traefik.http.routers.goerli.entrypoints=websecure"                                          
+      - "traefik.http.routers.goerli.tls.certresolver=myresolver"                                    
+      - "traefik.http.routers.goerli.rule=Host(`$DOMAIN`) && PathPrefix(`/goerli`)"                 
+      - "traefik.http.routers.goerli.middlewares=goerli-stripprefix, ipwhitelist"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=geth-goerli"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+
+  prysm-goerli:
+    image: prysmaticlabs/prysm-beacon-chain:stable
+    ports:
+      #- "127.0.0.1:3500:3500"
+      - "25460:25460"
+      - "25460:25460/udp"
+    command:
+      [                                                                                               
+        "--datadir=/data",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--p2p-tcp-port=25460",
+        "--p2p-udp-port=25460",
+        "--checkpoint-sync-url=https://sync-goerli.beaconcha.in",
+        "--execution-endpoint=http://geth-goerli:8551",
+        "--accept-terms-of-use"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "prysm-goerli_data:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m
+
+volumes:
+    prysm-goerli_data:
+    geth-goerli_data:
