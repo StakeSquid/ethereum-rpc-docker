@@ -5,6 +5,7 @@ services:
     build: ./linea/geth
     expose: 
       # HTTP server / GraphQL API 
+      - 63017
       - 8545                   
     ports:                      
       - "63017:63017"                                                                                 
