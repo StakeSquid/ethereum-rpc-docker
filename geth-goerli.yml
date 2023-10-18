@@ -5,7 +5,8 @@ services:
     image: ethereum/client-go:v1.13.2
     expose: 
       # HTTP server / GraphQL API 
-      - 8545                   
+      - 8545
+      - 22075
     ports:                      
       - "22075:22075"                                                                                 
       - "22075:22075/udp"  
