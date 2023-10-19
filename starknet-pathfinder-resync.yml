@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+  starknet-pathfinder:                         
+    image: eqlabs/pathfinder:v0.9.3
+    expose: 
+      # HTTP server / GraphQL API 
+      - 9545                   
+    environment:
+      - "PATHFINDER_ETHEREUM_API_URL=${PATHFINDER_ETHEREUM_RPC}"
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "starknet-pathfinder_data:/usr/share/pathfinder/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.starknet-pathfinder-stripprefix.stripprefix.prefixes=/starknet-pathfinder"                  
+      - "traefik.http.services.starknet-pathfinder.loadbalancer.server.port=9545"                                 
+      - "traefik.http.routers.starknet-pathfinder.entrypoints=websecure"                                          
+      - "traefik.http.routers.starknet-pathfinder.tls.certresolver=myresolver"                                    
+      - "traefik.http.routers.starknet-pathfinder.rule=Host(`$DOMAIN`) && PathPrefix(`/starknet-pathfinder`)"                 
+      - "traefik.http.routers.starknet-pathfinder.middlewares=starknet-pathfinder-stripprefix, ipwhitelist"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=starknet-pathfinder"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+
+volumes:
+    starknet-pathfinder_data:
