@@ -4,7 +4,7 @@ services:
     build:
       args:
         VERSION: release/1.1.3-rc.5
-        context: ./fantom
+      context: ./fantom
       dockerfile: Dockerfile-testnet
     environment:
       - CACHE_SIZE=${FANTOM_CACHE_SIZE:-16000}
