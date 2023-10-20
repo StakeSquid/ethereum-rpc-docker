@@ -3,15 +3,19 @@ services:
   fantom:
     build:
       args:
-        VERSION: release/1.1.0-rc.4
+        VERSION: release/1.1.3-rc.5
       context: ./fantom
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-fullnode
     environment:
-      - SNAPSHOT_URL=https://download.fantom.network/opera_5may22.tgz
+      - CACHE_SIZE=${FANTOM_CACHE_SIZE:-16000}
     volumes:
       - "fantom:/datadir"
     expose:
       - "18545"
+      - "19921"
+    ports:
+      - "19921:19921"
+      - "19921:19921/udp"
     networks:
       - chains
     restart: unless-stopped
