@@ -5,7 +5,7 @@ services:
     image: thorax/erigon:v2.52.4
     user: root
     volumes:
-      - "polygon-erigon-mumbai-fullnode:/datadir"
+      - "polygon-mumbai-erigon-fullnode:/datadir"
     expose:
       - 32011
       - 30248
