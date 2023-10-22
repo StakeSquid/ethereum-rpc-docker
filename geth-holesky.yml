@@ -69,7 +69,8 @@ services:
       - "24638:24638"
       - "24638:24638/udp"
     command:
-      [                                                                                               
+      [
+        "--holesky",
         "--datadir=/data",
         "--jwt-secret=/jwtsecret",
         "--rpc-host=0.0.0.0",
