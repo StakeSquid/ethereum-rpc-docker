@@ -13,6 +13,9 @@ services:
       --TraceStore.BlocksToKeep=0
       --TraceStore.TraceTypes=Trace,Rewards
       --Sync.FastSync=false
+    expose:
+      - 8551
+      - 7254
     ports:
       - '7254:7254/tcp' # p2p
       - '7254:7254/udp' # p2p
