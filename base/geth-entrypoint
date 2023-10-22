@@ -26,6 +26,14 @@ else
 	echo "$GETH_CHAINDATA_DIR exists."
 fi
 
+#wget https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/$(curl https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/latest)
+
+if [ ! -f "${GETH_DATA_DIR}/bootstrapped" ];
+then
+  echo "downloading snapshot"
+  wget --tries=0 -O - "https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/$(curl https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/latest)" | tar -xz -C ${GETH_DHAINDATA_DIR} && touch ${GETH_DATA_DIR}/bootstrapped
+fi
+
 echo "$OP_NODE_L2_ENGINE_AUTH_RAW" > "$OP_NODE_L2_ENGINE_AUTH"
 
 if [ "${OP_GETH_ETH_STATS+x}" = x ]; then
