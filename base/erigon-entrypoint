@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# exit script on any error
+set -e
+
+ERIGON_HOME=/root/.local/share/erigon
+OP_GETH_GENESIS_FILE_PATH="${OP_GETH_GENESIS_FILE_PATH:-/genesis.json}"
+CHAIN_ID=$(jq -r .config.chainId < "$OP_GETH_GENESIS_FILE_PATH")
+RPC_PORT="${RPC_PORT:-8545}"
+WS_PORT="${WS_PORT:-8546}"
+AUTHRPC_PORT="${AUTHRPC_PORT:-8551}"
+METRICS_PORT="${METRICS_PORT:-6060}"
+HOST_IP="0.0.0.0"
+P2P_PORT="${P2P_PORT:-30303}"
+
+
+if [ ! -f "${ERIGON_HOME}/bootstrapped" ];
+then
+  echo "write the custom genesis block"
+  mkdir -p ${ERIGON_HOME:-/root/.local/share/erigon}
+  erigon init --datadir ${ERIGON_HOME:-/root/.local/share/erigon} $OP_GETH_GENESIS_FILE_PATH
+fi
+
+echo "$OP_NODE_L2_ENGINE_AUTH_RAW" > "$OP_NODE_L2_ENGINE_AUTH"
+
+exec erigon \
+     --private.api.addr=localhost:9090 \
+     --port=$P2P_PORT
+      --http.api=eth,debug,net,trace,web3,erigon \
+      --http.addr=0.0.0.0 \
+      --http.port=8545 \
+      --http.corsdomain="*" \
+      --http.vhosts="*" \
+      --authrpc.addr=0.0.0.0 \
+      --authrpc.port=8551 \
+      --authrpc.vhosts="*" \
+      --authrpc.jwtsecret=${OP_NODE_L2_ENGINE_AUTH}      
+      --rollup.sequencerhttp="$OP_GETH_SEQUENCER_HTTP"
+      --rollup.historicalrpc="http://optimism-l2geth:8545"
+      --chain=optimism-mainnet
+      --networkid=$CHAIN_ID
+      --ws
+      --ws.port=8545
+      --nodiscover
+    volumes:
+      - erigon-optimism-bedrock:/root/.local/share/erigon
+      - .jwtsecret:/jwtsecret
+

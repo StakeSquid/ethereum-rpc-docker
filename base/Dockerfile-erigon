@@ -1,0 +1,31 @@
+FROM golang:1.19 as op
+
+RUN apk add --no-cache make g++ gcc musl-dev linux-headers git
+ARG ERIGON_VERSION=v2.48.1
+ARG ERIGON_REPOSITORY=https://github.com/ledgerwatch/erigon.git
+
+RUN git clone --recurse-submodules -j8 $ERIGON_REPOSITORY
+
+WORKDIR ./erigon
+
+RUN git checkout ${ERIGON_VERSION}
+
+RUN make erigon
+
+
+FROM golang:1.19
+
+RUN apt-get update && \
+    apt-get install -y jq curl && \
+    rm -rf /var/lib/apt/lists
+
+
+WORKDIR /app
+
+COPY --from=op /app/op-node/bin/op-node ./
+COPY --from=op-erigon /go/erigon/build/bin/erigon ./
+
+COPY erigon-entrypoint .
+COPY op-node-entrypoint .
+COPY goerli ./goerli
+COPY mainnet ./mainnet
