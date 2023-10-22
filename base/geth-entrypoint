@@ -14,25 +14,25 @@ HOST_IP="0.0.0.0"
 P2P_PORT="${P2P_PORT:-30303}"
 ADDITIONAL_ARGS=""
 
-mkdir -p $GETH_DATA_DIR
+#mkdir -p $GETH_DATA_DIR
 
-if [ ! -d "$GETH_CHAINDATA_DIR" ]; then
-	echo "$GETH_CHAINDATA_DIR missing, running init"
-	echo "Initializing genesis."
-	./geth --verbosity="$VERBOSITY" init \
-		--datadir="$GETH_DATA_DIR" \
-		"$OP_GETH_GENESIS_FILE_PATH"
-else
-	echo "$GETH_CHAINDATA_DIR exists."
-fi
+#if [ ! -d "$GETH_CHAINDATA_DIR" ]; then
+#	echo "$GETH_CHAINDATA_DIR missing, running init"
+#	echo "Initializing genesis."
+#	./geth --verbosity="$VERBOSITY" init \
+#		--datadir="$GETH_DATA_DIR" \
+#		"$OP_GETH_GENESIS_FILE_PATH"
+#else
+#	echo "$GETH_CHAINDATA_DIR exists."
+#fi
 
 #wget https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/$(curl https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/latest)
 
 if [ ! -f "${GETH_DATA_DIR}/bootstrapped" ];
 then
     echo "downloading snapshot"
-    rm -rf $GETH_CHAINDATA_DIR/*
-    wget --tries=0 -O - "https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/$(curl https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/latest)" | tar -xz -C ${GETH_CHAINDATA_DIR} && touch ${GETH_DATA_DIR}/bootstrapped
+    rm -rf $GETH_DATA_DIR/geth
+    wget --tries=0 -O - "https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/$(curl https://base-mainnet-archive-snapshots.s3.us-east-1.amazonaws.com/latest)" | tar -xz --strip-components=1 -C ${GETH_DATA_DIR} && touch ${GETH_DATA_DIR}/bootstrapped
 fi
 
 echo "$OP_NODE_L2_ENGINE_AUTH_RAW" > "$OP_NODE_L2_ENGINE_AUTH"
