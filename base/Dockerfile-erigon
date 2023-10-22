@@ -1,8 +1,25 @@
 FROM golang:1.19 as op
 
+WORKDIR /app
+
+ENV REPO=https://github.com/ethereum-optimism/optimism.git
+ENV VERSION=v1.1.4
+# for verification:
+ENV COMMIT=5877ee24cc9aaef5848c1372e0e196707fb336a0
+
+RUN git clone $REPO --branch op-node/$VERSION --single-branch . && \
+    git switch -c branch-$VERSION && \
+    bash -c '[ "$(git rev-parse HEAD)" = "$COMMIT" ]'
+
+RUN cd op-node && \
+    make op-node
+
+
+FROM docker.io/library/golang:1.20-alpine3.17 AS erigon
+
 RUN apk add --no-cache make g++ gcc musl-dev linux-headers git
-ARG ERIGON_VERSION=v2.48.1
-ARG ERIGON_REPOSITORY=https://github.com/ledgerwatch/erigon.git
+ARG ERIGON_VERSION=v2.48.1-0.1.11
+ARG ERIGON_REPOSITORY=https://github.com/testinprod-io/op-erigon.git
 
 RUN git clone --recurse-submodules -j8 $ERIGON_REPOSITORY
 
