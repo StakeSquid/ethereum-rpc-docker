@@ -13,6 +13,8 @@ services:
     volumes:
       - ./subsquid:/app/data
     user: "0:0"
+    networks:                            
+      - chains                                                                                        
     expose:
       - 12345
       - 50051
@@ -34,6 +36,8 @@ services:
     volumes:
       - subsquid-worker:/app/data
     user: "0:0"
+    networks:                            
+      - chains                                                                                        
 
 volumes:
   subsquid-node:
