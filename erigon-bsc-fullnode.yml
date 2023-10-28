@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-bsc-fullnode:
-    image: kazz3m/bsc-erigon:9b28205d4cdb
+    image: kazz3m/bsc-erigon
     user: root
     volumes:
       - "bsc-erigon-fullnode:/datadir"
