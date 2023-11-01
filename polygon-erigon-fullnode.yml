@@ -6,6 +6,7 @@ services:
     user: root
     volumes:
       - "polygon-erigon-fullnode:/datadir"
+      - "/slowdisk:/slowdisk"
     expose:
       - 36150
       - 14199
