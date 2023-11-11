@@ -20,4 +20,4 @@ services:
       - "traefik.http.routers.hagall.entrypoints=websecure"
       - "traefik.http.routers.hagall.tls.certresolver=myresolver"
       - "traefik.http.routers.hagall.rule=Host(`$DOMAIN`) && PathPrefix(`/hagall`)"
-      - "traefik.http.routers.hagall.middlewares=hagall-stripprefix, ipwhitelist"
+      - "traefik.http.routers.hagall.middlewares=hagall-stripprefix"
