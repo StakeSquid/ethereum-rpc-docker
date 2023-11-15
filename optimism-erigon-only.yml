@@ -72,5 +72,4 @@ services:
 
       
 volumes:
-  optimism-op-geth:
   erigon-optimism-bedrock:
