@@ -6,9 +6,9 @@ services:
     restart: unless-stopped
     expose:
       - 6700
-    command: /config
+    command: /config/tz3iTQcdoV6V.json
     volumes:
-      - "./main_configs/tz3iTQcdoV6V.json:/config"
+      - "./main_configs:/config"
     networks:
       - chains
     labels:
