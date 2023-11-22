@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+  reth-mainnet:
+    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.10
+    user: root
+    volumes:
+      - "reth-mainnet:/datadir"
+    expose:
+      - 44169
+      - 8545
+      - 9001
+    ports:
+      - "44169:44169"
+      - "44169:44169/udp"
+    restart: unless-stopped
+    command: node --metrics 0.0.0.0:9001 --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --port 44169 --discovery.port 44169 --chain mainnet
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9001"
+      - "prometheus-scrape.job_name=reth-mainnet"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.reth-mainnet-stripprefix.stripprefix.prefixes=/mainnet-reth"
+      - "traefik.http.services.reth-mainnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.reth-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.reth-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.reth-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-reth-fullnode`)"
+      - "traefik.http.routers.reth-mainnet.middlewares=reth-mainnet-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+volumes:
+    reth-mainnet:
