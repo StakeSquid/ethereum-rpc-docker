@@ -25,7 +25,7 @@ services:
       - "traefik.http.services.public.loadbalancer.server.port=25703"
       - "traefik.http.routers.public.entrypoints=websecure"
       - "traefik.http.routers.public.tls.certresolver=myresolver"
-      - "traefik.http.routers.public.rule=Host(`$DOMAIN`) && PathPrefix(`/public`)"
+      - "traefik.http.routers.public.rule=Host(`$GWDOMAIN`) && PathPrefix(`/public`)"
       - "traefik.http.routers.public.middlewares=public-stripprefix"
 
     networks:
