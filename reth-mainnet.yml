@@ -20,15 +20,15 @@ services:
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=9001"
-      - "prometheus-scrape.job_name=reth-mainnet"
+      - "prometheus-scrape.job_name=mainnet-reth"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.reth-mainnet-stripprefix.stripprefix.prefixes=/mainnet-reth"
-      - "traefik.http.services.reth-mainnet.loadbalancer.server.port=8545"
-      - "traefik.http.routers.reth-mainnet.entrypoints=websecure"
-      - "traefik.http.routers.reth-mainnet.tls.certresolver=myresolver"
-      - "traefik.http.routers.reth-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-reth-fullnode`)"
-      - "traefik.http.routers.reth-mainnet.middlewares=reth-mainnet-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.mainnet-reth-stripprefix.stripprefix.prefixes=/mainnet-reth"
+      - "traefik.http.services.mainnet-reth.loadbalancer.server.port=8545"
+      - "traefik.http.routers.mainnet-reth.entrypoints=websecure"
+      - "traefik.http.routers.mainnet-reth.tls.certresolver=myresolver"
+      - "traefik.http.routers.mainnet-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-reth`)"
+      - "traefik.http.routers.mainnet-reth.middlewares=mainnet-reth-stripprefix, ipwhitelist"
     networks:
       - chains
 
