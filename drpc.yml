@@ -20,6 +20,14 @@ services:
       - "prometheus-scrape.port=8081"
       - "prometheus-scrape.job_name=drpc-dshackle"
       - "prometheus-scrape.metrics_path=/metrics"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.public-stripprefix.stripprefix.prefixes=/public"
+      - "traefik.http.services.public.loadbalancer.server.port=25703"
+      - "traefik.http.routers.public.entrypoints=websecure"
+      - "traefik.http.routers.public.tls.certresolver=myresolver"
+      - "traefik.http.routers.public.rule=Host(`$DOMAIN`) && PathPrefix(`/public`)"
+      - "traefik.http.routers.public.middlewares=public-stripprefix"
+
     networks:
       - chains
     logging: 
