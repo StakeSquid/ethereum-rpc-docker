@@ -57,7 +57,9 @@ services:
 
   mantle-proxy:         
     restart: unless-stopped           
-    image: nginx          
+    image: nginx
+    depends_on:
+      - mantle
     expose:  
       - 80                                                                                            
     environment:                                                                                      
