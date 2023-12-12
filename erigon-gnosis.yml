@@ -45,53 +45,52 @@ services:
         compress: 'false'
       driver: local
 
-      
-  nimbus-gnosis:
-    build:
-      context: ./gnosis/nimbus
-    restart: unless-stopped
-    stop_grace_period: 1m
-    user: root
-    volumes:
-      - nimbus-gnosis:/data
-      - .jwtsecret:/jwt:ro
-    environment:
-      CHECKPOINT_SYNC_URL: "https://checkpoint.gnosischain.com/"
-    command: |
-        --data-dir=/data
-        --web3-url=http://erigon-gnosis:8551
-        --jwt-secret=/jwt
-        --light-client-data-serve=true
-        --light-client-data-import-mode=full
-        --tcp-port=20419
-        --udp-port=20419
-        --rest
-        --rest-address=0.0.0.0
-        --network=gnosis
-        --history=prune
+
+  lodestar-gnosis:
+    image: chainsafe/lodestar:v1.12.0
+    restart: always
     networks:
       - chains
     ports:
-      - 20419:20419/tcp # p2p
-      - 20419:20419/udp # p2p
+      - 8598:8598/tcp # p2p
+      - 8598:8598/udp # p2p
     expose:
-      - 8008 # metrics
-      - 4500 # http
-      - 20419 # p2p
+      - 4000
+      - 5054
+    volumes:
+      - lodestar-gnosis:/data
+      - .jwtsecret:/jwt.hex:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=6144
+    command: |
+      beacon
+      --network=gnosis
+      --dataDir=/data
+      --preset=gnosis
+      --eth1=true
+      --execution.urls=http://erigon-gnosis:8551
+      --jwt-secret=/jwt.hex
+      --logFile=/data/logs/beacon.log
+      --logFileLevel=info
+      --port=8598
+      --rest=true
+      --rest.address=0.0.0.0
+      --rest.port=4000
+      --rest.cors=*
+      --discv5=true
+      --targetPeers=50
+      --metrics=true
+      --metrics.port=5054
+      --checkpointSyncUrl=https://checkpoint.gnosischain.com/    
     labels:
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8008"
-      - "prometheus-scrape.job_name=nimbus-gnosis"
+      - "prometheus-scrape.port=5054"
+      - "prometheus-scrape.job_name=lodestar-gnosis"
       - "prometheus-scrape.metrics_path=/metrics"
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.nimbus-gnosis-stripprefix.stripprefix.prefixes=/nimbus-gnosis"
-      - "traefik.http.services.nimbus-gnosis.loadbalancer.server.port=4500"
-      - "traefik.http.routers.nimbus-gnosis.entrypoints=websecure"
-      - "traefik.http.routers.nimbus-gnosis.tls.certresolver=myresolver"
-      - "traefik.http.routers.nimbus-gnosis.rule=Host(`$DOMAIN`) && PathPrefix(`/nimbus-gnosis`)"
-      - "traefik.http.routers.nimbus-gnosis.middlewares=nimbus-gnosis-stripprefix, ipwhitelist"
 
       
 volumes:
   gnosis-archive_data:
-  nimbus-gnosis:    
+  lodestar-gnosis:    
