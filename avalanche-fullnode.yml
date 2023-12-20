@@ -7,16 +7,16 @@ services:
       nofile: 1048576
     expose:
       - "9650"
-      - "9651"
+      - "34964"
     ports:
-      - "9651:9651/tcp"
-      - "9651:9651/udp"
+      - "34964:34964/tcp"
+      - "34964:34964/udp"
     volumes:
       - avalanche-fullnode:/root/.avalanchego
       - ./avalanche/configs/chains/C/fullnode-config.json:/root/.avalanchego/configs/chains/C/config.json
     networks:
       - chains
-    command: "/avalanchego/build/avalanchego --http-host= --http-allowed-hosts=*"
+    command: "/avalanchego/build/avalanchego --http-host= --http-allowed-hosts=* --staking-port=34964"
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
