@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   mainnet-reth:
-    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.11
+    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.13
     user: root
     volumes:
       - "reth-mainnet:/root/.local/share/reth/mainnet/db"
