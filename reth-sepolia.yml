@@ -48,7 +48,7 @@ services:
         "--monitoring-host=0.0.0.0",
         "--p2p-tcp-port=52969",
         "--p2p-udp-port=52969",
-        "--checkpoint-sync-url=https://sepolia-checkpoint-sync.stakely.io",
+        "--checkpoint-sync-url=https://beaconstate-sepolia.chainsafe.io",
         "--execution-endpoint=http://sepolia-reth:8551",
         "--accept-terms-of-use"
       ]
