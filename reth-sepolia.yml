@@ -1,0 +1,65 @@
+version: '3.1'
+
+services:
+  sepolia-reth:
+    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.13
+    user: root
+    volumes:
+      - "reth-sepolia:/root/.local/share/reth/sepolia/db"
+      - ".jwtsecret:/jwtsecret"
+    expose:
+      - 37798
+      - 8545
+      - 9001
+    ports:
+      - "37798:37798"
+      - "37798:37798/udp"
+    restart: unless-stopped
+    command: node --chain sepolia --rpc-max-connections 429496729 --metrics 0.0.0.0:9001 --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --port 37798 --discovery.port 37798 --authrpc.addr 0.0.0.0 --authrpc.jwtsecret /jwtsecret --http.api "debug,eth,net,trace,txpool,web3,rpc,reth" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth" --http.corsdomain '*'
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9001"
+      - "prometheus-scrape.job_name=sepolia-reth"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.sepolia-reth-stripprefix.stripprefix.prefixes=/sepolia-reth"
+      - "traefik.http.services.sepolia-reth.loadbalancer.server.port=8545"
+      - "traefik.http.routers.sepolia-reth.entrypoints=websecure"
+      - "traefik.http.routers.sepolia-reth.tls.certresolver=myresolver"
+      - "traefik.http.routers.sepolia-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/sepolia-reth`)"
+      - "traefik.http.routers.sepolia-reth.middlewares=sepolia-reth-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+  sepolia-prysm-reth:
+    image: prysmaticlabs/prysm-beacon-chain:stable
+    ports:
+      #- "127.0.0.1:3500:3500"
+      - "52969:52969"
+      - "52969:52969/udp"
+    command:
+      [
+        "--datadir=/data",
+        "--sepolia",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--p2p-tcp-port=52969",
+        "--p2p-udp-port=52969",
+        "--checkpoint-sync-url=https://sepolia-checkpoint-sync.stakely.io",
+        "--execution-endpoint=http://sepolia-reth:8551",
+        "--accept-terms-of-use"
+      ]
+    networks:
+      - chains
+    volumes:
+      - "prysm-reth-sepolia:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m
+
+volumes:
+    reth-sepolia:
+    prysm-reth-sepolia:
