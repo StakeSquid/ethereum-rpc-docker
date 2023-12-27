@@ -103,49 +103,6 @@ services:
       - "traefik.http.routers.optimism-archive.middlewares=optimism-archive-stripprefix, ipwhitelist"
   
       
-  optimism-op-erigon:
-    image: testinprod/op-erigon:2.48.1-0.1.11-amd64
-    restart: unless-stopped
-    stop_grace_period: 5m
-    expose:
-      - "9090"
-      - "8545"
-      - "8551"
-    command: >
-      --private.api.addr=localhost:9090
-      --http.api=eth,debug,net,trace,web3,erigon
-      --http.addr=0.0.0.0
-      --http.port=8545
-      --http.corsdomain="*"
-      --http.vhosts="*"
-      --authrpc.addr=0.0.0.0
-      --authrpc.port=8551
-      --authrpc.vhosts="*"
-      --authrpc.jwtsecret=/jwtsecret      
-      --rollup.sequencerhttp="https://mainnet-sequencer.optimism.io"
-      --rollup.historicalrpc="http://optimism-l2geth:8545"
-      --chain=optimism-mainnet
-      --ws
-      --nodiscover
-    volumes:
-      - erigon-optimism-bedrock:/root/.local/share/erigon
-      - .jwtsecret:/jwtsecret
-    networks:
-      - chains
-    labels:
-      - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=6060"
-      - "prometheus-scrape.job_name=optimism-erigon"
-      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.optimism-erigon-stripprefix.stripprefix.prefixes=/optimism-erigon"
-      - "traefik.http.services.optimism-erigon.loadbalancer.server.port=8545"
-      - "traefik.http.routers.optimism-erigon.entrypoints=websecure"
-      - "traefik.http.routers.optimism-erigon.tls.certresolver=myresolver"
-      - "traefik.http.routers.optimism-erigon.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-erigon`)"
-      - "traefik.http.routers.optimism-erigon.middlewares=optimism-erigon-stripprefix, ipwhitelist"
-
-
   optimism-op-node:
     image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.4
     restart: unless-stopped
@@ -171,35 +128,7 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret
 
-
-  optimism-op-node-erigon:
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.4
-    restart: unless-stopped
-    stop_grace_period: 5m
-    environment:
-      - OPTIMISM_L1_URL=${OPTIMISM_L1_URL}
-      - OPTIMISM_L1_TYPE=${OPTIMISM_L1_TYPE:-basic}
-    command: >
-      op-node
-      --l1=$OPTIMISM_L1_URL
-      --l2=http://optimism-op-erigon:8551
-      --network=mainnet
-      --rpc.addr=0.0.0.0
-      --rpc.port=9545
-      --l2.jwt-secret=/jwtsecret
-      --l1.trustrpc
-      --l1.rpckind=$OPTIMISM_L1_TYPE
-      --metrics.enabled
-      --metrics.addr=0.0.0.0
-      --metrics.port=7300    
-    networks:
-      - chains
-    volumes:
-      - .jwtsecret:/jwtsecret
-
-      
 volumes:
   optimism-dtl:
   optimism-geth:
   optimism-op-geth:
-  erigon-optimism-bedrock:
