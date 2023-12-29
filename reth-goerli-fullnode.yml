@@ -48,7 +48,7 @@ services:
         "--monitoring-host=0.0.0.0",
         "--p2p-tcp-port=30569",
         "--p2p-udp-port=30569",
-        "--checkpoint-sync-url=https://goerli-checkpoint-sync.stakely.io",
+        "--checkpoint-sync-url=https://sync-goerli.beaconcha.in",
         "--execution-endpoint=http://goerli-reth-fullnode:8551",
         "--accept-terms-of-use"
       ]
