@@ -72,6 +72,8 @@ exec ./geth \
 	--maxpeers=100 \
 	--nat=extip:$HOST_IP \
 	--networkid="$CHAIN_ID" \
+	--op-network="base-mainnet" \
+	--rollup.halt=major \
 	--rollup.sequencerhttp="$OP_GETH_SEQUENCER_HTTP" \
 	--port="$P2P_PORT" \
 	$ADDITIONAL_ARGS # intentionally unquoted
