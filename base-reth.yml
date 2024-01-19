@@ -50,6 +50,7 @@ services:
     volumes:
       - ".jwtsecret:/jwtsecret"
     environment:
+      - "OP_NODE_NETWORK=base-mainnet"
       - "OP_NODE_L1_ETH_RPC=${BASE_ETHEREUM_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "OP_NODE_L2_ENGINE_RPC=http://base-reth:8551"
