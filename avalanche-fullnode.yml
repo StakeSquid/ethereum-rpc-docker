@@ -2,21 +2,21 @@ version: '3.1'
 
 services:
   avalanche-fullnode:
-    image: avaplatform/avalanchego:v1.10.17
+    image: avaplatform/avalanchego:v1.10.18
     ulimits:
       nofile: 1048576
     expose:
       - "9650"
-      - "34964"
+      - "18507"
     ports:
-      - "34964:34964/tcp"
-      - "34964:34964/udp"
+      - "18507:18507/tcp"
+      - "18507:18507/udp"
     volumes:
       - avalanche-fullnode:/root/.avalanchego
       - ./avalanche/configs/chains/C/fullnode-config.json:/root/.avalanchego/configs/chains/C/config.json
     networks:
       - chains
-    command: "/avalanchego/build/avalanchego --http-host= --http-allowed-hosts=* --staking-port=34964"
+    command: "/avalanchego/build/avalanchego --http-host= --http-allowed-hosts=* --staking-port=18507"
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
