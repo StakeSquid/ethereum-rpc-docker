@@ -16,7 +16,7 @@ services:
     restart: always
     stop_grace_period: 30s    
     volumes:
-      - base-reth:/root/.local/share/reth/base/db/
+      - base-reth-fullnode:/root/.local/share/reth/base/db/
       - ".jwtsecret:/jwtsecret"
     labels:                     
       - "traefik.enable=true"
@@ -74,4 +74,4 @@ services:
       - chains
       
 volumes:  
-    base-reth:
+    base-reth-fullnode:
