@@ -20,12 +20,12 @@ services:
       - ".jwtsecret:/jwtsecret"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.base-reth-stripprefix.stripprefix.prefixes=/base-reth-fullnode"                      
-      - "traefik.http.services.base-reth.loadbalancer.server.port=8545"
-      - "traefik.http.routers.base-reth.entrypoints=websecure"                                              
-      - "traefik.http.routers.base-reth.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.base-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/base-reth-fullnode`)"                     
-      - "traefik.http.routers.base-reth.middlewares=base-reth-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.base-reth-fullnode-stripprefix.stripprefix.prefixes=/base-reth-fullnode"                      
+      - "traefik.http.services.base-reth-fullnode.loadbalancer.server.port=8545"
+      - "traefik.http.routers.base-reth-fullnode.entrypoints=websecure"                                              
+      - "traefik.http.routers.base-reth-fullnode.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.base-reth-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/base-reth-fullnode`)"                     
+      - "traefik.http.routers.base-reth-fullnode.middlewares=base-reth-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
@@ -33,7 +33,7 @@ services:
   base-reth-fullnode-node:
     build: ./base
     depends_on:
-      - base-reth
+      - base-reth-fullnode
     expose:
       - 8545     # RPC
       - 47544     # P2P TCP
