@@ -1,37 +1,20 @@
 version: '3.1'
 
 services:
-  fusenetstat:
-    image: fusenet/netstat:1.0.0
-    command: "--instance-name 0xeb5Ca1d019e9D8b9aa9C47991993C84d1062628d --role node --parity-version 2.0.1 --fuseapp-version 1.0.0 --netstats-version 1.0.0"
-    network_mode: "service:fusenet"
-    restart: unless-stopped
-    depends_on:
-      - fusenet
-  
-  # wants udp and tcp port bindings on 30303
-  fusenet:
-    image: fusenet/node:2.0.1
+  fuse-nethermind:
+    image: fusenet/node:nethermind-1.17.3-v4.0.0
     expose:
-      - "3000"
+      - "30300/tcp"
+      - "30300/udp"
       - "8545"
       - "8546"
-      - "30303"
-    environment:
-      - HOME=/home/parity
-      - PARITY_HOME_DIR=/home/parity/.local/share/io.parity.ethereum
-      - PARITY_CONFIG_FILE_CHAIN=/home/parity/.local/share/io.parity.ethereum/spec.json
-      - PARITY_CONFIG_FILE_BOOTNODES=/home/parity/.local/share/io.parity.ethereum/bootnodes.txt
-      - PARITY_CONFIG_FILE_TEMPLATE=/home/parity/.local/share/io.parity.ethereum/config_template.toml
-      - PARITY_DATA_DIR=/home/parity/.local/share/io.parity.ethereum/chains
-      - PARITY_BIN=/usr/local/bin/parity
-      - PARITY_WRAPPER_SCRIPT=/home/parity/parity_wrapper.sh
+    command: "--config fuse --Init.WebSocketsEnabled true --HealthChecks.Enabled true --HealthChecks.Slug /api/health --JsonRpc.EnabledModules Eth,Web3,RPC,Net,Parity,Health"
     volumes:
-      - fusenet_data:/data
-      - fusenet_config:/config/custom
+      - fuse-nethermind-keystore:/nethermind/keystore
+      - fuse-nethermind-logs:/nethermind/logs
+      - fuse-nethermind-db:/nethermind/nethermind_db
     networks:
       - chains
-    command: "--role node --parity-args --no-warp --node-key 0xeb5Ca1d019e9D8b9aa9C47991993C84d1062628d --jsonrpc-threads 1 --jsonrpc-server-threads 4 --metrics --metrics-interface=0.0.0.0"
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -43,8 +26,9 @@ services:
       - "traefik.http.routers.fuse.middlewares=fuse-stripprefix, ipwhitelist"
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=3000"
-      - "prometheus-scrape.job_name=fusenet"
+      - "prometheus-scrape.job_name=fuse-nethermind"
 
 volumes:
-    fusenet_data:
-    fusenet_config:  
+    fuse-nethermind-keystore:
+    fuse-nethermind-logs:
+    fuse-nethermind-db:
