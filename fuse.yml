@@ -10,7 +10,6 @@ services:
     ports:
       - "35045:35045/tcp"
       - "35045:35045/udp"
-    command: "--config fuse"
     volumes:
       - fuse-nethermind-keystore:/nethermind/keystore
       - fuse-nethermind-logs:/nethermind/logs
@@ -18,7 +17,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - NETHERMIND_CONFIG=mainnet
+      - NETHERMIND_CONFIG=fuse
       - NETHERMIND_JSONRPCCONFIG_ENABLED=true
       - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,RPC,Subscribe,TxPool,Web3,Net,Parity,Health]
       - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
