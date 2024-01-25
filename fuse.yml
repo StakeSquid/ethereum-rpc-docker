@@ -4,15 +4,36 @@ services:
   fuse-nethermind:
     image: fusenet/node:nethermind-1.17.3-v4.0.0
     expose:
-      - "30300/tcp"
-      - "30300/udp"
+      - "35045"
       - "8545"
       - "8546"
-    command: "--config fuse --Init.WebSocketsEnabled true --HealthChecks.Enabled true --HealthChecks.Slug /api/health --JsonRpc.EnabledModules Eth,Web3,RPC,Net,Parity,Health"
+    ports:
+      - "35045:35045/tcp"
+      - "35045:35045/udp"
+    command: "--config fuse"
     volumes:
       - fuse-nethermind-keystore:/nethermind/keystore
       - fuse-nethermind-logs:/nethermind/logs
       - fuse-nethermind-db:/nethermind/nethermind_db
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - NETHERMIND_CONFIG=mainnet
+      - NETHERMIND_JSONRPCCONFIG_ENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,RPC,Subscribe,TxPool,Web3,Net,Parity,Health]
+      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
+      - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
+      - NETHERMIND_NETWORKCONFIG_P2PPORT=35045
+      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=35045
+      - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=250
+      - NETHERMIND_JSONRPCCONFIG_PORT=8545
+      - NETHERMIND_JSONRPCCONFIG_WEBSOCKETSPORT=8545
+      - NETHERMIND_SYNCCONFIG_FASTSYNC=true
+      - NETHERMIND_SYNCCONFIG_SNAPSYNC=true
+      - NETHERMIND_SYNCCONFIG_FASTBLOCKS=true
+      - NETHERMIND_SYNCCONFIG_DOWNLOADBODIESINFASTSYNC=true
+      - NETHERMIND_SYNCCONFIG_DOWNLOADRECEIPTSINFASTSYNC=true
+      - NETHERMIND_SYNCCONFIG_USEGETHLIMITSINFASTBLOCKS=false
     networks:
       - chains
     restart: unless-stopped
