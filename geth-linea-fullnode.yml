@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  geth-linea:                         
+  geth-linea-fullnode:                         
     build: ./linea/geth
     expose: 
       # HTTP server / GraphQL API 
@@ -48,21 +48,21 @@ services:
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
-      - geth-linea:/root/.ethereum
+      - geth-linea-fullnode:/root/.ethereum
       - ./linea/shared:/configs/mainnet/shared
     restart: unless-stopped
     stop_grace_period: 1m
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.linea-stripprefix.stripprefix.prefixes=/linea"                  
-      - "traefik.http.services.linea.loadbalancer.server.port=8545"                                 
-      - "traefik.http.routers.linea.entrypoints=websecure"                                          
-      - "traefik.http.routers.linea.tls.certresolver=myresolver"                                    
-      - "traefik.http.routers.linea.rule=Host(`$DOMAIN`) && PathPrefix(`/linea`)"                 
-      - "traefik.http.routers.linea.middlewares=linea-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.linea-fullnode-stripprefix.stripprefix.prefixes=/linea-fullnode"                  
+      - "traefik.http.services.linea-fullnode.loadbalancer.server.port=8545"                                 
+      - "traefik.http.routers.linea-fullnode.entrypoints=websecure"                                          
+      - "traefik.http.routers.linea-fullnode.tls.certresolver=myresolver"                                    
+      - "traefik.http.routers.linea-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-fullnode`)"                 
+      - "traefik.http.routers.linea-fullnode.middlewares=linea-fullnode-stripprefix, ipwhitelist"
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=6060"
-      - "prometheus-scrape.job_name=geth-linea"
+      - "prometheus-scrape.job_name=geth-linea-fullnode"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"      
       
 volumes:
