@@ -16,7 +16,7 @@ services:
       - --execution.caching.archive
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
-      - --node.rpc.classic-redirect=${ARBITRUM_CLASSIC_URL:-http://arbitrum-classic:8547/}
+      - --execution.rpc.classic-redirect=${ARBITRUM_CLASSIC_URL:-http://arbitrum-classic:8547/}
       - --parent-chain.connection.url=${ARBITRUM_L1_URL}
       - --chain.id=42161
       - --http.api=net,web3,eth,debug 
