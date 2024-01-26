@@ -67,7 +67,9 @@ exec ./geth \
 	--metrics.addr=0.0.0.0 \
 	--metrics.port="$METRICS_PORT" \
 	--syncmode=full \
-	--gcmode=archive \
+	--gcmode=${OP_GETH_GCMODE:-archive} \
+	--state.scheme=${OP_GETH_STATE_SCHEME:-hash}
+        --db.engine=${GETH_DB_ENGINE:-leveldb}
 	--nodiscover \
 	--maxpeers=100 \
 	--nat=extip:$HOST_IP \

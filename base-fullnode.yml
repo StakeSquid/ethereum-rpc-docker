@@ -1,0 +1,83 @@
+version: '3.1'
+
+services:
+  base-archive: # this is Optimism's geth client
+    build: ./base
+    expose:
+      - 8545       # RPC / Websocket      
+      - 48554     # P2P TCP (currently unused)
+      - 48554/udp # P2P UDP (currently unused)
+      - 6060       # metrics
+    ports:
+      - "48554:48554"
+      - "48554:48554/udp"
+    command: [ "sh", "./geth-entrypoint" ]
+    restart: always
+    stop_grace_period: 30s    
+    volumes:
+      - base-archive:/data
+    environment:
+      - "OP_GETH_GENESIS_FILE_PATH=mainnet/genesis-l2.json"
+      - "OP_GETH_SEQUENCER_HTTP=https://mainnet-sequencer.base.org"
+      - "OP_GETH_GCMODE=full"
+      - "OP_GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
+      - "P2P_PORT=48554"
+      - "WS_PORT=8545"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=688f5d737bad920bdfb2fc2f488d6b6209eebda1dae949a8de91398d932c517a"
+      - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.base-archive-stripprefix.stripprefix.prefixes=/base-archive"                      
+      - "traefik.http.services.base-archive.loadbalancer.server.port=8545"
+      - "traefik.http.routers.base-archive.entrypoints=websecure"                                              
+      - "traefik.http.routers.base-archive.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.base-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/base-archive`)"                     
+      - "traefik.http.routers.base-archive.middlewares=base-archive-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+      
+  base-node:
+    build: ./base
+    depends_on:
+      - base-archive
+    expose:
+      - 8545     # RPC
+      - 63839     # P2P TCP
+      - 63839/udp # P2P UDP
+      - 7300     # metrics
+      - 6060     # pprof
+    ports:
+      - "63839:63839"
+      - "63839:63839/udp"
+    command: [ "sh", "./op-node-entrypoint" ]
+    restart: always
+    stop_grace_period: 30s
+    environment:
+      - "OP_NODE_NETWORK=base-mainnet"
+      - "OP_NODE_L1_ETH_RPC=${BASE_ETHEREUM_ENDPOINT}"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=688f5d737bad920bdfb2fc2f488d6b6209eebda1dae949a8de91398d932c517a"
+      - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
+      - "OP_NODE_L2_ENGINE_RPC=http://base-archive:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      - "OP_NODE_P2P_AGENT=base"
+      - "OP_NODE_P2P_BOOTNODES=enr:-J24QNz9lbrKbN4iSmmjtnr7SjUMk4zB7f1krHZcTZx-JRKZd0kA2gjufUROD6T3sOWDVDnFJRvqBBo62zuF-hYCohOGAYiOoEyEgmlkgnY0gmlwhAPniryHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQKNVFlCxh_B-716tTs-h1vMzZkSs1FTu_OYTNjgufplG4N0Y3CCJAaDdWRwgiQG,enr:-J24QH-f1wt99sfpHy4c0QJM-NfmsIfmlLAMMcgZCUEgKG_BBYFc6FwYgaMJMQN5dsRBJApIok0jFn-9CS842lGpLmqGAYiOoDRAgmlkgnY0gmlwhLhIgb2Hb3BzdGFja4OFQgCJc2VjcDI1NmsxoQJ9FTIv8B9myn1MWaC_2lJ-sMoeCDkusCsk4BYHjjCq04N0Y3CCJAaDdWRwgiQG,enr:-J24QDXyyxvQYsd0yfsN0cRr1lZ1N11zGTplMNlW4xNEc7LkPXh0NAJ9iSOVdRO95GPYAIc6xmyoCCG6_0JxdL3a0zaGAYiOoAjFgmlkgnY0gmlwhAPckbGHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQJwoS7tzwxqXSyFL7g0JM-KWVbgvjfB8JA__T7yY_cYboN0Y3CCJAaDdWRwgiQG,enr:-J24QHmGyBwUZXIcsGYMaUqGGSl4CFdx9Tozu-vQCn5bHIQbR7On7dZbU61vYvfrJr30t0iahSqhc64J46MnUO2JvQaGAYiOoCKKgmlkgnY0gmlwhAPnCzSHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQINc4fSijfbNIiGhcgvwjsjxVFJHUstK9L1T8OTKUjgloN0Y3CCJAaDdWRwgiQG,enr:-J24QG3ypT4xSu0gjb5PABCmVxZqBjVw9ca7pvsI8jl4KATYAnxBmfkaIuEqy9sKvDHKuNCsy57WwK9wTt2aQgcaDDyGAYiOoGAXgmlkgnY0gmlwhDbGmZaHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQIeAK_--tcLEiu7HvoUlbV52MspE0uCocsx1f_rYvRenIN0Y3CCJAaDdWRwgiQG"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=63839"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=63839"
+      - "OP_NODE_ROLLUP_CONFIG=mainnet/rollup.json"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      - "OP_NODE_L1_RPC_KIND=${BASE_ETHEREUM_ENDPOINT_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${BASE_ETHEREUM_ENDPOINT_TRUST:-false}"
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+    base-archive:
