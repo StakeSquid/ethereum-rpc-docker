@@ -16,8 +16,8 @@ services:
       - --node.staker.enable=false
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
-      - --l1.url=${ARBITRUM_L1_URL}
-      - --l2.chain-id=42170
+      - --parent-chain.connection.url=${ARBITRUM_L1_URL}
+      - --chain.id=42170
       - --http.api=net,web3,eth,debug 
       - --http.corsdomain=* 
       - --http.addr=0.0.0.0 
