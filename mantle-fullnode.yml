@@ -38,7 +38,7 @@ services:
       WS_ORIGINS: '*'
       CHAIN_ID: 5000
       DATADIR: /root/.ethereum
-      GCMODE: pruned
+      GCMODE: full
       IPC_DISABLE: 'true'
       NETWORK_ID: 5000
       NO_USB: 'true'
