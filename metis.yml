@@ -56,7 +56,7 @@ services:
       NETWORK_ID: 1088
       TARGET_GAS_LIMIT: 1100000000
     volumes:
-      - metis-l2geth:/root/.ethereum
+      - metis:/root/.ethereum
       - ./metis/scripts:/scripts
     expose:
       - 8546
@@ -88,6 +88,6 @@ services:
       - "traefik.http.routers.metis.rule=Host(`$DOMAIN`) && PathPrefix(`/metis`)"
       - "traefik.http.routers.metis.middlewares=metis-stripprefix, ipwhitelist"
 
-Volumes:
-  - metis-l2geth
-  - metis-dtl
+olumes:
+  metis:
+  metis-dtl:
