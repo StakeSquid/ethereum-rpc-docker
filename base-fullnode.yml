@@ -28,12 +28,12 @@ services:
       - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.base-archive-stripprefix.stripprefix.prefixes=/base-archive"                      
-      - "traefik.http.services.base-archive.loadbalancer.server.port=8545"
-      - "traefik.http.routers.base-archive.entrypoints=websecure"                                              
-      - "traefik.http.routers.base-archive.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.base-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/base-archive`)"                     
-      - "traefik.http.routers.base-archive.middlewares=base-archive-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.base-stripprefix.stripprefix.prefixes=/base"                      
+      - "traefik.http.services.base.loadbalancer.server.port=8545"
+      - "traefik.http.routers.base.entrypoints=websecure"                                              
+      - "traefik.http.routers.base.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.base.rule=Host(`$DOMAIN`) && PathPrefix(`/base`)"                     
+      - "traefik.http.routers.base.middlewares=base-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
