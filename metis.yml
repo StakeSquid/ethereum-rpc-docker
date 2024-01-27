@@ -88,6 +88,6 @@ services:
       - "traefik.http.routers.metis.rule=Host(`$DOMAIN`) && PathPrefix(`/metis`)"
       - "traefik.http.routers.metis.middlewares=metis-stripprefix, ipwhitelist"
 
-olumes:
+volumes:
   metis:
   metis-dtl:
