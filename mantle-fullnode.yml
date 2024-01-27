@@ -1,0 +1,85 @@
+version: "3.1"                                     
+
+services:
+  mantle-fullnode:
+    image: mantlenetworkio/l2geth:v0.4.3
+    entrypoint: sh ./geth.sh
+    volumes:
+      - mantle-fullnode:/root/.ethereum/geth/
+    environment:
+      ETH1_HTTP: ${MANTLE_ETHEREUM_ENDPOINT}
+      SEQUENCER_CLIENT_HTTP: https://rpc.mantle.xyz
+      ROLLUP_STATE_DUMP_PATH: https://mantlenetworkio.github.io/networks/mainnet/genesis.json
+      ROLLUP_CLIENT_HTTP: ${MANTLE_DTL_ENDPOINT:-https://dtl.mantle.xyz}
+      ROLLUP_BACKEND: 'l2'
+      ETH1_CTC_DEPLOYMENT_HEIGHT: 8
+      RETRIES: 60
+      ROLLUP_VERIFIER_ENABLE: 'true'
+      ROLLUP_TIMESTAMP_REFRESH: 5s
+      ETH1_CTC_DEPLOYMENT_HEIGHT: 17577586
+      ROLLUP_ENFORCE_FEES: 'true'
+      ROLLUP_FEE_THRESHOLD_DOWN: 1
+      ROLLUP_FEE_THRESHOLD_UP: 4000
+      GASPRICE: 0
+      ETH1_SYNC_SERVICE_ENABLE: 'true'
+      ETH1_CONFIRMATION_DEPTH: 0
+      ROLLUP_POLL_INTERVAL_FLAG: 500ms
+      ROLLUP_ENABLE_L2_GAS_POLLING: 'true'
+      RPC_ENABLE: 'true'
+      RPC_ADDR: 0.0.0.0
+      RPC_PORT: 8545
+      RPC_API: eth,net,rollup,web3,debug
+      RPC_CORS_DOMAIN: '*'
+      RPC_VHOSTS: '*'
+      WS: 'true'
+      WS_ADDR: 0.0.0.0
+      WS_PORT: 8546
+      WS_API: eth,net,rollup,web3,debug
+      WS_ORIGINS: '*'
+      CHAIN_ID: 5000
+      DATADIR: /root/.ethereum
+      GCMODE: pruned
+      IPC_DISABLE: 'true'
+      NETWORK_ID: 5000
+      NO_USB: 'true'
+      NO_DISCOVER: 'true'
+      TARGET_GAS_LIMIT: 30000000
+      USING_BVM: 'true'
+      VERBOSITY: 3
+      BLOCK_SIGNER_KEY: '9f50ccaebd966113a0ef09793f8a3288cd0bb2c05d20caa3c0015b4e665f1b2d'
+      BLOCK_SIGNER_ADDRESS: '0x000000b36A00872bAF079426e012Cf5Cd2A74E8b'
+    expose:
+      - 8545
+      - 8546
+      - 30303
+    networks:
+      - chains
+
+  mantle-fullnode-proxy:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - mantle-fullnode
+    expose:  
+      - 80                                                                                            
+    environment:                                                                                      
+      PROXY_HOST: mantle-fullnode
+      RPC_PORT: 8545            
+      WS_PORT: 8546                     
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates        
+    labels:          
+      - "traefik.enable=true"                                                                                                                                                                              
+      - "traefik.http.middlewares.mantle-fullnode-stripprefix.stripprefix.prefixes=/mantle-fullnode"
+      - "traefik.http.services.mantle-fullnode.loadbalancer.server.port=80"
+      - "traefik.http.routers.mantle-fullnode.entrypoints=websecure"
+      - "traefik.http.routers.mantle-fullnode.tls.certresolver=myresolver"                                                                                                                                          
+      - "traefik.http.routers.mantle-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle-fullnode`)"                     
+      - "traefik.http.routers.mantle-fullnode.middlewares=mantle-fullnode-stripprefix, ipwhitelist"
+
+      
+volumes:
+  mantle-fullnode:
+      
