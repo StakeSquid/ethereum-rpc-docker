@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   optimism-op-erigon:
-    image: testinprod/op-erigon:2.51.0-0.3.1-amd64
+    image: testinprod/op-erigon:2.52.5-0.3.1-amd64
     restart: unless-stopped
     stop_grace_period: 5m
     expose:
