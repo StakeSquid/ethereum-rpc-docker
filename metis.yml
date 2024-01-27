@@ -40,8 +40,7 @@ services:
     env_file:
       - ./metis/geth.env
     depends_on:
-      dtl:
-        condition: service_healthy
+      - metis-dtl
     healthcheck:
       test: ["CMD-SHELL", "curl http://127.0.0.1:8545"]
       interval: 5s
@@ -69,7 +68,7 @@ services:
     restart: unless-stopped           
     image: nginx
     depends_on:
-      - mantle-fullnode
+      - metis
     expose:  
       - 80                                                                                            
     environment:                                                                                      
