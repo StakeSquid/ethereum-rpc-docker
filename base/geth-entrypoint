@@ -68,8 +68,10 @@ exec ./geth \
 	--metrics.port="$METRICS_PORT" \
 	--syncmode=full \
 	--gcmode=${OP_GETH_GCMODE:-archive} \
-	--state.scheme=${OP_GETH_STATE_SCHEME:-hash}
-        --db.engine=${GETH_DB_ENGINE:-leveldb}
+	--state.scheme=${OP_GETH_STATE_SCHEME:-hash} \
+        --db.engine=${GETH_DB_ENGINE:-leveldb} \
+        --port=${P2P_PORT:-30303} \
+        --discovery.port=${P2P_PORT:-30303} \
 	--nodiscover \
 	--maxpeers=100 \
 	--nat=extip:$HOST_IP \
