@@ -28,7 +28,7 @@ services:
       - NETHERMIND_JSONRPCCONFIG_PORT=8545
       - NETHERMIND_JSONRPCCONFIG_WEBSOCKETSPORT=8545
       - NETHERMIND_SYNCCONFIG_FASTSYNC=true
-      - NETHERMIND_SYNCCONFIG_SNAPSYNC=true
+      - NETHERMIND_SYNCCONFIG_SNAPSYNC=false
       - NETHERMIND_SYNCCONFIG_FASTBLOCKS=true
       - NETHERMIND_SYNCCONFIG_DOWNLOADBODIESINFASTSYNC=true
       - NETHERMIND_SYNCCONFIG_DOWNLOADRECEIPTSINFASTSYNC=true
@@ -36,6 +36,7 @@ services:
     networks:
       - chains
     restart: unless-stopped
+    command: --Init.WebSocketsEnabled true
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.fuse-stripprefix.stripprefix.prefixes=/fuse"
