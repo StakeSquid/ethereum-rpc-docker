@@ -1,8 +1,8 @@
 version: '3.1'
 
 services:
-  erigon-mainnet:
-    image: thorax/erigon:v2.48.1
+  erigon-mainnet-fullnode:
+    image: thorax/erigon:v2.57.1
     expose:
       - "16630"
       - "9090"
@@ -52,36 +52,35 @@ services:
       - "traefik.http.routers.erigon-mainnet-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-fullnode`)"
       - "traefik.http.routers.erigon-mainnet-fullnode.middlewares=erigon-mainnet-fullnode-stripprefix, ipwhitelist"
       
-  lighthouse-mainnet-fullnode:
-    image: sigp/lighthouse:v4.0.1-modern
+  prysm-mainnet-erigon-fullnode:
+    image: prysmaticlabs/prysm-beacon-chain:stable
     ports:
-      - "57462:57462"
-      - "57462:57462/udp"      
-    volumes:
-      - .jwtsecret:/jwtsecret
-      - lighthouse-mainnet-fullnode_data:/root/.lighthouse
-    command: >
-      lighthouse beacon_node
-      --eth1-endpoints http://erigon-mainnet-fullnode:8545
-      --execution-endpoint http://erigon-mainnet-fullnode:8551
-      --execution-jwt /jwtsecret
-      --checkpoint-sync-url https://sync.invis.tools
-      --http
-      --http-address 0.0.0.0
-      --port 57462
-    restart: unless-stopped
-    stop_grace_period: 1m
+      #- "127.0.0.1:3500:3500"
+      - "36997:36997"
+      - "36997:36997/udp"
+    command:
+      [
+        "--datadir=/data",
+        "--mainnet",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--p2p-tcp-port=36997",
+        "--p2p-udp-port=36997",
+        "--checkpoint-sync-url=https://mainnet-checkpoint-sync.stakely.io",
+        "--execution-endpoint=http://mainnet-erigon-fullnode:8551",
+        "--accept-terms-of-use"
+      ]
     networks:
       - chains
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.lighthouse-mainnet-fullnode-stripprefix.stripprefix.prefixes=/lighthouse-mainnet-fullnode"
-      - "traefik.http.services.lighthouse-mainnet-fullnode.loadbalancer.server.port=5052"
-      - "traefik.http.routers.lighthouse-mainnet-fullnode.entrypoints=websecure"
-      - "traefik.http.routers.lighthouse-mainnet-fullnode.tls.certresolver=myresolver"
-      - "traefik.http.routers.lighthouse-mainnet-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/lighthouse-mainnet-fullnode`)"
-      - "traefik.http.routers.lighthouse-mainnet-fullnode.middlewares=lighthouse-mainnet-fullnode-stripprefix, ipwhitelist"
+    volumes:
+      - "prysm-mainnet-erigon-fullnode:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m
 
+      
 volumes:
     erigon-mainnet-fullnode:
-    lighthouse-mainnet-fullnode_data:
+    prysm-mainnet-erigon-fullnode:
