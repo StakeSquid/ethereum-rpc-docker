@@ -24,6 +24,7 @@ services:
       --private.api.addr=0.0.0.0:9090
       --torrent.upload.rate="1250mb"
       --torrent.download.rate="1250mb"
+      --nat=stun
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
