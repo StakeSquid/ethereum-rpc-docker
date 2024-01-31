@@ -25,6 +25,7 @@ services:
       --torrent.upload.rate="1250mb"
       --torrent.download.rate="1250mb"
       --nat=stun
+      --downloader.verify
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
