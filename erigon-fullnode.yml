@@ -18,7 +18,10 @@ services:
       - chains
     command: >
       --chain mainnet
-      --prune=hrtc
+      --prune.h.older=128
+      --prune.r.older=128
+      --prune.t.older=128
+      --prune.c.older=128
       --port=44081
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
