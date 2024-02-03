@@ -3,7 +3,7 @@ services:
   fantom:
     build:
       args:
-        VERSION: release/1.1.3-rc.5
+        VERSION: release/txtracing/1.1.3-rc.5
       context: ./fantom
       dockerfile: Dockerfile-fullnode
     environment:
