@@ -6,18 +6,18 @@ set -e
 # Set fantom Home Directory
 FANTOM_HOME=/datadir
 
-if [ ! -f "$FANTOM_HOME/testnet-16200-pruned-mpt.g" ];
+if [ ! -f "$FANTOM_HOME/testnet-171200-pruned-mpt.g" ];
 then
     cd $FANTOM_HOME
     echo "downloading launch genesis file"
-    wget --quiet https://download.fantom.network/mainnet-109331-no-history.g
+    wget --quiet https://files.fantom.network/mainnet-171200-no-history.g
 fi
 
 # uncomment the next line and do docker-compose build in case you have to try to fix the db after unclean shutdown etc.
 # opera --db.preset pbl-1 --datadir=$FANTOM_HOME db heal --experimental
 
 opera \
-    --genesis=$FANTOM_HOME/mainnet-109331-no-history.g \
+    --genesis=$FANTOM_HOME/mainnet-171200-no-history.g \
     --port=19921 \
     --maxpeers=200 \
     --datadir=$FANTOM_HOME \
@@ -30,10 +30,11 @@ opera \
     --ws \
     --ws.addr=0.0.0.0 \
     --ws.port=18544 \
-    --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc \
+    --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc,trace \
     --ws.origins="*" \
     --nousb \
     --db.migration.mode reformat \
+    --tracenode \
     --db.preset pbl-1 \
     --cache=${CACHE_SIZE:-16000} \
     --syncmode=snap
