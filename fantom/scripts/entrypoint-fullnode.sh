@@ -6,7 +6,7 @@ set -e
 # Set fantom Home Directory
 FANTOM_HOME=/datadir
 
-if [ ! -f "$FANTOM_HOME/mainnet-171200-pruned-mpt.g" ];
+if [ ! -f "$FANTOM_HOME/mainnet-171200-no-history.g" ];
 then
     cd $FANTOM_HOME
     echo "downloading launch genesis file"
