@@ -14,7 +14,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.fantom-stripprefix.stripprefix.prefixes=$FANTOM_PREFIX"
-      - "traefik.http.services.fantom.loadbalancer.server.port=18545"
+      - "traefik.http.services.fantom.loadbalancer.server.port=8545"
       - "traefik.http.routers.fantom.entrypoints=websecure"
       - "traefik.http.routers.fantom.tls.certresolver=myresolver"
       - "traefik.http.routers.fantom.rule=Host(`$FANTOM_DOMAIN`) && PathPrefix(`$FANTOM_PREFIX`)"
