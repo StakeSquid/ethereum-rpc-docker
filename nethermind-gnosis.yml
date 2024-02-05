@@ -21,7 +21,6 @@ services:
       --config=gnosis
       --datadir=/data
       --log=INFO
-      --Sync.SnapSync=true
       --JsonRpc.Enabled=true
       --JsonRpc.Host=0.0.0.0
       --JsonRpc.Port=8545
