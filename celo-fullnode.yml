@@ -7,7 +7,7 @@ services:
     stop_grace_period: 1m
     command: |
       --verbosity 3
-      --syncmode snap
+      --syncmode full
       --state.scheme path
       --db.engine pebble
       --gcmode full
