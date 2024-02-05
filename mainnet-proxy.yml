@@ -1,0 +1,22 @@
+version: "3.1"
+services:
+  mainnet-proxy:
+    image: stakesquid/eth-cluster
+    environment:
+      - FULLNODE_WS_URL=${MAINNET_FULLNODE_WS}
+      - FULLNODE_RPC_URL=${MAINNET_FULLNODE_RPC}
+      - ARCHIVE_RPC_URL=${MAINNET_ARCHIVE_RPC}
+      - ALL_TRACE_TO_ARCHIVE=${ALL_TRACE_TO_ARCHIVE:-true}
+    expose:
+      - "8545"
+    networks:
+      - chains
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.mainnet-stripprefix.stripprefix.prefixes=$MAINNET_PREFIX"
+      - "traefik.http.services.mainnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.mainnet.entrypoints=websecure"
+      - "traefik.http.routers.mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.mainnet.rule=Host(`$MAINNET_DOMAIN`) && PathPrefix(`$MAINNET_PREFIX`)"
+      - "traefik.http.routers.mainnet.middlewares=mainnet-stripprefix, ipwhitelist"
