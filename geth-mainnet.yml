@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   geth-mainnet:                         
-    image: ethereum/client-go:v1.13.2
+    image: ethereum/client-go:v1.13.11
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
@@ -13,6 +13,8 @@ services:
       [                                                                                               
         # Blockchain sync mode ("snap", "full" or "light")                                            
         "--syncmode=snap",
+        "--state.scheme=path",
+        "--db.engine=pebble",
         "--port=49545",
         # Megabytes of memory allocated to internal caching                                           
         "--cache=8192",
