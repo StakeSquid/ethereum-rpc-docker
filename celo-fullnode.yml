@@ -8,7 +8,6 @@ services:
     command: |
       --verbosity 3
       --syncmode full
-      --state.scheme path
       --db.engine pebble
       --gcmode full
       --cache.preimages
