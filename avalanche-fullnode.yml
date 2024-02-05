@@ -40,7 +40,7 @@ services:
 
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=9650"
-      - "prometheus-scrape.job_name=avalanche-fullnode-archive"
+      - "prometheus-scrape.job_name=avalanche-fullnode"
       - "prometheus-scrape.metrics_path=/ext/metrics"
 
 volumes:

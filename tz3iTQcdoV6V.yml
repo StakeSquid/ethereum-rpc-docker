@@ -6,17 +6,16 @@ services:
     restart: unless-stopped
     expose:
       - 6700
+      - 7300
     command: /config/tz3iTQcdoV6V.json
     volumes:
-      - "./main_configs:/config"
+      - "./main_configs:/config"      
     networks:
       - chains
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.tz3iTQcdoV6V.loadbalancer.server.port=6700"
       - "traefik.http.routers.tz3iTQcdoV6V.entrypoints=websecure"
-      - "traefik.http.routers.tz3iTQcdoV6V.tls.certresolver=default" # Use the default certresolver (Traefik will not try to obtain Let's Encrypt certificate)
-      - "traefik.http.routers.tz3iTQcdoV6V.tls.certificates=file:/main_configs/tz3iTQcdoV6V.crt,/main_configs/tz3iTQcdoV6V.key"
-      - "traefik.http.routers.your_service.tls.options=/main_configs/tz3iTQcdoV6V.ca.crt"
-      - "traefik.http.routers.tz3iTQcdoV6V.rule=Host(`$DOMAIN2`)"
+      - "traefik.http.routers.tz3iTQcdoV6V.tls.options=/main_configs/tz3iTQcdoV6V.crt,/main_configs/tz3iTQcdoV6V.key"
+      - "traefik.http.routers.tz3iTQcdoV6V.rule=Host(`index.8ch2.com`) && PathPrefix(`/`)"
 

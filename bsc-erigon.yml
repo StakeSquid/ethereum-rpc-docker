@@ -13,7 +13,7 @@ services:
       - "25703:25703"
       - "25703:25703/udp"
     restart: unless-stopped
-    command: --db.pagesize=16k --chain=bsc --prune=hrtc --sentry.drop-useless-peers --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,web3,erigon --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=54993 --p2p.protocol=66 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1100000 --torrent.port=25703 --torrent.download.rate=80mb
+    command: --db.pagesize=16k --chain=bsc --prune=hrtc --sentry.drop-useless-peers --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,web3,erigon --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=54993 --p2p.protocol=66 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1100000 --torrent.port=25703 --torrent.download.rate 1000mb --torrent.upload.rate 10mb
 
     stop_grace_period: 1m
     labels:

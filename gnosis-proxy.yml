@@ -1,0 +1,22 @@
+version: "3.1"
+services:
+  gnosis-proxy:
+    image: stakesquid/eth-cluster
+    environment:
+      - FULLNODE_WS_URL=${GNOSIS_FULLNODE_WS}
+      - FULLNODE_RPC_URL=${GNOSIS_FULLNODE_RPC}
+      - ARCHIVE_RPC_URL=${GNOSIS_ARCHIVE_RPC}
+      - ALL_TRACE_TO_ARCHIVE=${ALL_TRACE_TO_ARCHIVE:-true}
+    expose:
+      - "8545"
+    networks:
+      - chains
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.gnosis-stripprefix.stripprefix.prefixes=$GNOSIS_PREFIX"
+      - "traefik.http.services.gnosis.loadbalancer.server.port=8545"
+      - "traefik.http.routers.gnosis.entrypoints=websecure"
+      - "traefik.http.routers.gnosis.tls.certresolver=myresolver"
+      - "traefik.http.routers.gnosis.rule=Host(`$GNOSIS_DOMAIN`) && PathPrefix(`$GNOSIS_PREFIX`)"
+      - "traefik.http.routers.gnosis.middlewares=gnosis-stripprefix, ipwhitelist"
