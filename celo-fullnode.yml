@@ -8,7 +8,6 @@ services:
     command: |
       --verbosity 3
       --syncmode full
-      --db.engine pebble
       --gcmode full
       --cache.preimages
       --port 20748
