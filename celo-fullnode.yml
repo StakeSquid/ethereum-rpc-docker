@@ -23,7 +23,7 @@ services:
       - 8545
       - 8546
     ports:
-OB      - '20748:20748/tcp' # p2p
+      - '20748:20748/tcp' # p2p
       - '20748:20748/udp' # p2p
     volumes:
       - celo:/root/.celo
