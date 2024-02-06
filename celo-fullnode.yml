@@ -23,7 +23,7 @@ services:
       - 8545
       - 8546
     ports:
-      - '20748:20748/tcp' # p2p
+OB      - '20748:20748/tcp' # p2p
       - '20748:20748/udp' # p2p
     volumes:
       - celo:/root/.celo
@@ -31,11 +31,11 @@ services:
       - chains
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.celo-stripprefix.stripprefix.prefixes=/celo-archive"
+      - "traefik.http.middlewares.celo-stripprefix.stripprefix.prefixes=/celo"
       - "traefik.http.services.celo.loadbalancer.server.port=8545"
       - "traefik.http.routers.celo.entrypoints=websecure"
       - "traefik.http.routers.celo.tls.certresolver=myresolver"
-      - "traefik.http.routers.celo.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-archive`)"
+      - "traefik.http.routers.celo.rule=Host(`$DOMAIN`) && PathPrefix(`/celo`)"
       - "traefik.http.routers.celo.middlewares=celo-stripprefix, ipwhitelist"
 
 
