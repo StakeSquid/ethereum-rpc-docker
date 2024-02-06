@@ -61,6 +61,7 @@ services:
     expose:
       - 8546
       - 8545
+      - 8547
     networks:
       - chains
 
@@ -74,7 +75,7 @@ services:
     environment:                                                                                      
       PROXY_HOST: metis
       RPC_PORT: 8545            
-      WS_PORT: 8545
+      WS_PORT: 8547
     networks:               
       - chains 
     volumes:               
