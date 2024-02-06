@@ -75,7 +75,7 @@ services:
     environment:                                                                                      
       PROXY_HOST: metis
       RPC_PORT: 8545            
-      WS_PORT: 8547
+      WS_PORT: 8546
     networks:               
       - chains 
     volumes:               
