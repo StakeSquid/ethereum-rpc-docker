@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-polygon-mumbai-fullnode:
-    image: thorax/erigon:v2.57.3n
+    image: thorax/erigon:v2.57.3
     user: root
     volumes:
       - "polygon-mumbai-erigon-fullnode:/datadir"
