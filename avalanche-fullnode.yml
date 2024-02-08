@@ -16,7 +16,7 @@ services:
       - ./avalanche/configs/chains/C/fullnode-config.json:/root/.avalanchego/configs/chains/C/config.json
     networks:
       - chains
-    command: "/avalanchego/build/avalanchego --http-host= --http-allowed-hosts=* --staking-port=18507"
+    command: "/avalanchego/build/avalanchego --http-host= --http-allowed-hosts=* --staking-port=18507 --public-ip=$IP"
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
