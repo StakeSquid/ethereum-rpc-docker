@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   geth-holesky:                         
-    image: ethereum/client-go:v1.13.4
+    image: ethereum/client-go:v1.13.11
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
@@ -61,7 +61,7 @@ services:
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
 
   prysm-holesky:
-    image: prysmaticlabs/prysm-beacon-chain:v4.1.0
+    image: prysmaticlabs/prysm-beacon-chain:v4.2.1
     expose:
       - 24638
     ports:
