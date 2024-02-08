@@ -1,12 +1,12 @@
 version: "3.1"
 services:
-  gnosis-proxy:
-    image: stakesquid/eth-cluster
+  arbitrum-proxy:
+    image: stakesquid/eth-cluster@sha256:403b77ca59ff92180f85dc924984a240073f47ae844bf9b76b032ec98a17e7ca
     environment:
-      - FULLNODE_WS_URL=${ARBITRUM_FULLNODE_WS}
-      - FULLNODE_RPC_URL=${ARBITRUM_FULLNODE_RPC}
-      - ARCHIVE_RPC_URL=${ARBITRUM_ARCHIVE_RPC}
-      - ALL_TRACE_TO_ARCHIVE=${ARBITRUM_TRACE_TO_ARCHIVE:-true}
+      - FULLNODE_WS_URL=${ARBITRUM_PROXY_FULLNODE_WS}
+      - FULLNODE_RPC_URL=${ARBITRUM_PROXY_FULLNODE_RPC}
+      - ARCHIVE_RPC_URL=${ARBITRUM_PROXY_ARCHIVE_RPC}
+      - ALL_TRACE_TO_ARCHIVE=${ARBITRUM_PROXY_TRACE_TO_ARCHIVE:-true}
     expose:
       - "8545"
     networks:
@@ -14,9 +14,9 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.gnosis-stripprefix.stripprefix.prefixes=/arbitrum-archive"
-      - "traefik.http.services.gnosis.loadbalancer.server.port=8545"
-      - "traefik.http.routers.gnosis.entrypoints=websecure"
-      - "traefik.http.routers.gnosis.tls.certresolver=myresolver"
-      - "traefik.http.routers.gnosis.rule=Host(`$ARBITRUM_DOMAIN`) && PathPrefix(`/arbitrum-archive`)"
-      - "traefik.http.routers.gnosis.middlewares=gnosis-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.arbitrum-proxy-stripprefix.stripprefix.prefixes=$ARBITRUM_PROXY_PREFIX"
+      - "traefik.http.services.arbitrum-proxy.loadbalancer.server.port=8545"
+      - "traefik.http.routers.arbitrum-proxy.entrypoints=websecure"
+      - "traefik.http.routers.arbitrum-proxy.tls.certresolver=myresolver"
+      - "traefik.http.routers.arbitrum-proxy.rule=Host(`$ARBITRUM_PROXY_DOMAIN`) && PathPrefix(`$ARBITRUM_PROXY_PREFIX`)"
+      - "traefik.http.routers.arbitrum-proxy.middlewares=arbitrum-proxy-stripprefix, ipwhitelist"
