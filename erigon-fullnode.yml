@@ -74,7 +74,7 @@ services:
         "--p2p-tcp-port=36997",
         "--p2p-udp-port=36997",
         "--checkpoint-sync-url=https://mainnet-checkpoint-sync.stakely.io",
-        "--execution-endpoint=http://mainnet-erigon-fullnode:8551",
+        "--execution-endpoint=http://erigon-mainnet-fullnode:8551",
         "--accept-terms-of-use"
       ]
     networks:
