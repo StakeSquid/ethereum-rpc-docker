@@ -14,6 +14,7 @@ services:
       --ws
       --ws.port 8545
       --ws.addr 0.0.0.0
+      --ws.origins=*
       --http
       --http.vhosts=*
       --http.addr 0.0.0.0
