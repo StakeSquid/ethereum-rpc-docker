@@ -31,9 +31,8 @@ services:
       - "traefik.http.services.drpc.loadbalancer.server.scheme=h2c"
       - "traefik.http.services.drpc.loadbalancer.server.port=2449"
       - "traefik.http.routers.drpc.entrypoints=grpc"
-      #- "traefik.http.routers.drpc.tls.certresolver=myresolver"
+      - "traefik.http.routers.drpc.tls.certresolver=myresolver"
       - "traefik.http.routers.drpc.rule=Host(`$GWDOMAIN`)"
-      - "traefik.http.routers.drpc.middlewares=ipwhitelist"      
 
 
     networks:
