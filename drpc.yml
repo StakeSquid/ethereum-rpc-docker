@@ -27,7 +27,6 @@ services:
       #- "traefik.http.routers.public.tls.certresolver=myresolver"
       #- "traefik.http.routers.public.rule=Host(`$GWDOMAIN`) && PathPrefix(`/public`)"
       #- "traefik.http.routers.public.middlewares=public-stripprefix"
-      - "traefik.enable=true"
       - "traefik.http.services.drpc.loadbalancer.server.scheme=h2c"
       - "traefik.http.services.drpc.loadbalancer.server.port=2449"
       - "traefik.http.routers.drpc.entrypoints=grpc"
