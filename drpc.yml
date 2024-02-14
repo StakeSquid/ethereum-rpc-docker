@@ -21,12 +21,20 @@ services:
       - "prometheus-scrape.job_name=drpc-dshackle"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.public-stripprefix.stripprefix.prefixes=/public"
-      - "traefik.http.services.public.loadbalancer.server.port=25703"
-      - "traefik.http.routers.public.entrypoints=websecure"
-      - "traefik.http.routers.public.tls.certresolver=myresolver"
-      - "traefik.http.routers.public.rule=Host(`$GWDOMAIN`) && PathPrefix(`/public`)"
-      - "traefik.http.routers.public.middlewares=public-stripprefix"
+      #- "traefik.http.middlewares.public-stripprefix.stripprefix.prefixes=/public"
+      #- "traefik.http.services.public.loadbalancer.server.port=25703"
+      #- "traefik.http.routers.public.entrypoints=websecure"
+      #- "traefik.http.routers.public.tls.certresolver=myresolver"
+      #- "traefik.http.routers.public.rule=Host(`$GWDOMAIN`) && PathPrefix(`/public`)"
+      #- "traefik.http.routers.public.middlewares=public-stripprefix"
+      - "traefik.enable=true"
+      - "traefik.http.services.drpc.loadbalancer.server.scheme=h2c"
+      - "traefik.http.services.drpc.loadbalancer.server.port=2449"
+      - "traefik.http.routers.drpc.entrypoints=grpc"
+      #- "traefik.http.routers.drpc.tls.certresolver=myresolver"
+      - "traefik.http.routers.drpc.rule=Host(`$GWDOMAIN`)"
+      - "traefik.http.routers.drpc.middlewares=ipwhitelist"      
+
 
     networks:
       - chains
