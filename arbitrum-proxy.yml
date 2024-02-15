@@ -1,7 +1,7 @@
 version: "3.1"
 services:
   arbitrum-proxy:
-    image: stakesquid/eth-cluster@sha256:403b77ca59ff92180f85dc924984a240073f47ae844bf9b76b032ec98a17e7ca
+    image: stakesquid/eth-cluster@sha256:be8ac9d1325b7389a6cb8d57fe00a1cc55ed47a6a48861e93e326453676e56d6
     environment:
       - FULLNODE_WS_URL=${ARBITRUM_PROXY_FULLNODE_WS}
       - FULLNODE_RPC_URL=${ARBITRUM_PROXY_FULLNODE_RPC}

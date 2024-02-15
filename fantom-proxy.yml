@@ -1,11 +1,11 @@
 version: "3.1"
 services:
   fantom-proxy:
-    image: stakesquid/eth-cluster
+    image: stakesquid/eth-cluster@sha256:be8ac9d1325b7389a6cb8d57fe00a1cc55ed47a6a48861e93e326453676e56d6
     environment:
-      - FULLNODE_WS_URL=${FANTOM_FULLNODE_WS}
-      - FULLNODE_RPC_URL=${FANTOM_FULLNODE_RPC}
-      - ARCHIVE_RPC_URL=${FANTOM_ARCHIVE_RPC}      
+      - FULLNODE_WS_URL=${FANTOM_PROXY_FULLNODE_WS}
+      - FULLNODE_RPC_URL=${FANTOM_PROXY_FULLNODE_RPC}
+      - ARCHIVE_RPC_URL=${FANTOM_PROXY_ARCHIVE_RPC}      
     expose:
       - "8545"
     networks:
@@ -13,9 +13,9 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.fantom-stripprefix.stripprefix.prefixes=$FANTOM_PREFIX"
-      - "traefik.http.services.fantom.loadbalancer.server.port=8545"
-      - "traefik.http.routers.fantom.entrypoints=websecure"
-      - "traefik.http.routers.fantom.tls.certresolver=myresolver"
-      - "traefik.http.routers.fantom.rule=Host(`$FANTOM_DOMAIN`) && PathPrefix(`$FANTOM_PREFIX`)"
-      - "traefik.http.routers.fantom.middlewares=fantom-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.fantom-proxy-stripprefix.stripprefix.prefixes=$FANTOM_PROXY_PREFIX"
+      - "traefik.http.services.fantom-proxy.loadbalancer.server.port=8545"
+      - "traefik.http.routers.fantom-proxy.entrypoints=websecure"
+      - "traefik.http.routers.fantom-proxy.tls.certresolver=myresolver"
+      - "traefik.http.routers.fantom-proxy.rule=Host(`$FANTOM_PROXY_DOMAIN`) && PathPrefix(`$FANTOM_PROXY_PREFIX`)"
+      - "traefik.http.routers.fantom-proxy.middlewares=fantom-proxy-stripprefix, ipwhitelist"

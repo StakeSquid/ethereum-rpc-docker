@@ -1,12 +1,12 @@
 version: "3.1"
 services:
   gnosis-proxy:
-    image: stakesquid/eth-cluster
+    image: stakesquid/eth-cluster@sha256:be8ac9d1325b7389a6cb8d57fe00a1cc55ed47a6a48861e93e326453676e56d6
     environment:
-      - FULLNODE_WS_URL=${GNOSIS_FULLNODE_WS}
-      - FULLNODE_RPC_URL=${GNOSIS_FULLNODE_RPC}
-      - ARCHIVE_RPC_URL=${GNOSIS_ARCHIVE_RPC}
-      - ALL_TRACE_TO_ARCHIVE=${ALL_TRACE_TO_ARCHIVE:-true}
+      - FULLNODE_WS_URL=${GNOSIS_PROXY_FULLNODE_WS}
+      - FULLNODE_RPC_URL=${GNOSIS_PROXY_FULLNODE_RPC}
+      - ARCHIVE_RPC_URL=${GNOSIS_PROXY_ARCHIVE_RPC}
+      - ALL_TRACE_TO_ARCHIVE=${GNOSIS_PROXY_TRACE_TO_ARCHIVE:-true}
     expose:
       - "8545"
     networks:
@@ -14,9 +14,9 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.gnosis-stripprefix.stripprefix.prefixes=$GNOSIS_PREFIX"
-      - "traefik.http.services.gnosis.loadbalancer.server.port=8545"
-      - "traefik.http.routers.gnosis.entrypoints=websecure"
-      - "traefik.http.routers.gnosis.tls.certresolver=myresolver"
-      - "traefik.http.routers.gnosis.rule=Host(`$GNOSIS_DOMAIN`) && PathPrefix(`$GNOSIS_PREFIX`)"
-      - "traefik.http.routers.gnosis.middlewares=gnosis-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.gnosis-proxy-stripprefix.stripprefix.prefixes=$GNOSIS_PROXY_PREFIX"
+      - "traefik.http.services.gnosis-proxy.loadbalancer.server.port=8545"
+      - "traefik.http.routers.gnosis-proxy.entrypoints=websecure"
+      - "traefik.http.routers.gnosis-proxy.tls.certresolver=myresolver"
+      - "traefik.http.routers.gnosis-proxy.rule=Host(`$GNOSIS_PROXY_DOMAIN`) && PathPrefix(`$GNOSIS_PROXY_PREFIX`)"
+      - "traefik.http.routers.gnosis-proxy.middlewares=gnosis-proxy-stripprefix, ipwhitelist"
