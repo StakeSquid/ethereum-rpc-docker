@@ -22,6 +22,7 @@ services:
         "--ws",
         "--ws.port=8545",
         "--ws.addr=0.0.0.0",
+        "--ws.origins=*",
         # Enable the HTTP-RPC server      
         "--http",
         "--http.port=8545",
