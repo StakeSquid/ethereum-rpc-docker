@@ -34,7 +34,7 @@ services:
       - chains
 
   sepolia-prysm-reth:
-    image: prysmaticlabs/prysm-beacon-chain:stable
+    image: prysmaticlabs/prysm-beacon-chain:v4.2.1
     ports:
       #- "127.0.0.1:3500:3500"
       - "52969:52969"
