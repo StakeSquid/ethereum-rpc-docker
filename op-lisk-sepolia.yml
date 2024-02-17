@@ -17,7 +17,7 @@ services:
     volumes:
       - lisk-sepolia:/data      
     environment:
-      - "OP_GETH_GENESIS_FILE_PATH=sepolia/lisk/genesis.json"
+      - "OP_GETH_GENESIS_FILE_PATH=/app/sepolia/lisk/genesis.json"
       #- "OP_GETH_SEQUENCER_HTTP=https://mainnet-sequencer.base.org"
       - "OP_GETH_GCMODE=full"
       - "OP_GETH_STATE_SCHEME=path"
@@ -70,7 +70,7 @@ services:
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
       - "OP_NODE_P2P_LISTEN_TCP_PORT=18660"
       - "OP_NODE_P2P_LISTEN_UDP_PORT=18660"
-      - "OP_NODE_ROLLUP_CONFIG=sepolia/lisk/rollup.json"
+      - "OP_NODE_ROLLUP_CONFIG=/app/sepolia/lisk/rollup.json"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_RPC_PORT=8545"
       - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
