@@ -34,6 +34,8 @@ services:
       "--p2p-port=7791",
       ]
     restart: unless-stopped
+    networks:
+      - chains
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.mainnet-besu-stripprefix.stripprefix.prefixes=/mainnet-besu"                  
