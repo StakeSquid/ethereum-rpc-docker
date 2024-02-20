@@ -85,7 +85,7 @@ services:
       --metrics
       --metrics-port=5054
       --metrics-address=0.0.0.0
-      --checkpoint-sync-url=https://mainnet-checkpoint-sync.attestant.io
+      --checkpoint-sync-url=https://mainnet-checkpoint-sync.stakely.io
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=5054"
