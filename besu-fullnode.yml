@@ -17,9 +17,9 @@ services:
       - .jwtsecret:/jwt.hex
     command:
       [
-      "--rpc-ws-host='0.0.0.0'",
+      "--rpc-ws-host=0.0.0.0",
       "--rpc-ws-enabled=true",
-      "--rpc-http-host='0.0.0.0'",
+      "--rpc-http-host=0.0.0.0",
       "--rpc-http-enabled=true",
       "--host-allowlist=*",
       "--rpc-http-cors-origins=*",
