@@ -1,0 +1,22 @@
+version: "3.1"
+services:
+  polygon-proxy:
+    image: stakesquid/eth-cluster@sha256:537f9207d3894732c946244b464c4482fb0661f2b3ac1daffb1f549a64a49d79
+    environment:
+      - FULLNODE_WS_URL=${POLYGON_PROXY_FULLNODE_WS}
+      - FULLNODE_RPC_URL=${POLYGON_PROXY_FULLNODE_RPC}
+      - ARCHIVE_RPC_URL=${POLYGON_PROXY_ARCHIVE_RPC}
+      - ALL_TRACE_TO_ARCHIVE=${POLYGON_PROXY_TRACE_TO_ARCHIVE:-false}
+    expose:
+      - "8545"
+    networks:
+      - chains
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.polygon-proxy-stripprefix.stripprefix.prefixes=$POLYGON_PROXY_PREFIX"
+      - "traefik.http.services.polygon-proxy.loadbalancer.server.port=8545"
+      - "traefik.http.routers.polygon-proxy.entrypoints=websecure"
+      - "traefik.http.routers.polygon-proxy.tls.certresolver=myresolver"
+      - "traefik.http.routers.polygon-proxy.rule=Host(`$POLYGON_PROXY_DOMAIN`) && PathPrefix(`$POLYGON_PROXY_PREFIX`)"
+      - "traefik.http.routers.polygon-proxy.middlewares=polygon-proxy-stripprefix, ipwhitelist"
