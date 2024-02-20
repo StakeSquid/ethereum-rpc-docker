@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   mainnet-reth-fullnode:
-    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.13
+    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.19
     user: root
     volumes:
       - "reth-mainnet-fullnode:/root/.local/share/reth/mainnet/db"
@@ -33,7 +33,7 @@ services:
       - chains
 
   mainnet-prysm-reth-fullnode:
-    image: prysmaticlabs/prysm-beacon-chain:stable
+    image: prysmaticlabs/prysm-beacon-chain:v4.2.1
     ports:
       #- "127.0.0.1:3500:3500"
       - "32924:32924"
