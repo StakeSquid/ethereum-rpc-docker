@@ -49,7 +49,7 @@ services:
 
       
   lighthouse-mainnet:
-    image: sigp/lighthouse:v4.3.0-modern
+    image: sigp/lighthouse:v4.6.0-modern
     restart: unless-stopped
     networks:
       - chains
