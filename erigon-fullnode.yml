@@ -3,6 +3,7 @@ version: '3.1'
 services:
   erigon-mainnet-fullnode:
     image: thorax/erigon:v2.57.3
+    user: root
     expose:
       - "16630"
       - "9090"
@@ -12,7 +13,8 @@ services:
       - "44081:44081"
       - "44081:44081/udp"
     volumes:
-      - erigon-mainnet-fullnode:/home/erigon/.local/share/erigon
+      - erigon-mainnet-fullnode:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
       - .jwtsecret:/jwtsecret
     networks:
       - chains
@@ -28,7 +30,6 @@ services:
       --torrent.upload.rate="1250mb"
       --torrent.download.rate="1250mb"
       --nat=stun
-      --downloader.verify
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
