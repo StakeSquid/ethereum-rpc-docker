@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   op-lisk-sepolia: # this is Optimism's geth client
-    build: ./op
+    image: stakesquid/op-lisk-sepolia:v0.1
     expose:
       - 8545       # RPC / Websocket      
       - 54521     # P2P TCP (currently unused)
@@ -40,7 +40,7 @@ services:
 
       
   op-lisk-sepolia-node:
-    build: ./op
+    image: stakesquid/op-lisk-sepolia:v0.1
     depends_on:
       - op-lisk-sepolia
     expose:
