@@ -18,7 +18,7 @@ services:
       - lisk-sepolia:/data      
     environment:
       - "OP_GETH_GENESIS_FILE_PATH=/app/sepolia/lisk/genesis.json"
-      #- "OP_GETH_SEQUENCER_HTTP=https://mainnet-sequencer.base.org"
+      - "OP_GETH_SEQUENCER_HTTP=https://rpc.sepolia-api.lisk.com"
       - "OP_GETH_GCMODE=full"
       - "OP_GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
