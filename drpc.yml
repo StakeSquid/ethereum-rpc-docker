@@ -14,7 +14,7 @@ services:
 #      - "8081:8081"
 #      - "8082:8082"
       - "2449:2449"
-      - "25703:25703"
+#      - "25703:25703"
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8081"
