@@ -11,7 +11,8 @@ services:
     environment:
       - "GETH_ROLLUP_SEQUENCERHTTP=https://sequencer.blast.io"
       - "GETH_GCMODE=full"
-      - "GETH_STATE_SCHEME=path"
+      - "GETH_SYNCMODE=full"
+      - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
       - "GETH_NODISCOVER=true"
       - "GETH_DATADIR-/data"
