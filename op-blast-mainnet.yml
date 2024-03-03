@@ -1,0 +1,53 @@
+version: '3.1'
+
+services:
+
+  op-blast-mainnet:
+    image: blastio/blast-geth:${NETWORK}
+    volumes:
+      - blast-mainnet:/data      
+      - ./blast-io:/config:rw
+      - .jwtsecret:/jwtsecret
+    environment:
+      - "GETH_ROLLUP_SEQUENCERHTTP=https://sequencer.blast.io"
+    expose:
+      - 9545
+    entrypoint: /bin/sh
+    command: -c "[ ! -d /data/geth ] && /usr/local/bin/geth init --datadir=/data /config/mainnet}/genesis.json || exit 0 && geth --datadir=/data --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=9545 --http.api=web3,debug,eth,txpool,net,engine --ws --ws.addr=0.0.0.0 --ws.port=9545 --ws.origins=* --ws.api=debug,eth,txpool,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --syncmode=full --gcmode=prune --nodiscover --maxpeers=0 --rollup.disabletxpoolgossip=true --state.scheme=path --db.engine=pebble"
+    networks:
+      - chains
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.blast-stripprefix.stripprefix.prefixes=/blast-mainnet"                      
+      - "traefik.http.services.blast.loadbalancer.server.port=9545"
+      - "traefik.http.routers.blast.entrypoints=websecure"                                              
+      - "traefik.http.routers.blast.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.blast.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-mainnet`)"                     
+      - "traefik.http.routers.blast.middlewares=blast-stripprefix, ipwhitelist"                           
+
+      
+  op-blast-mainnet-node:
+    image: blastio/blast-optimism:mainnet
+    volumes:
+      - ./blast-io:/config
+      - .jwtsecret:/jwtsecret      
+    ports:
+      - "9003:9003"
+    command: >
+      op-node
+      --l1="$L1_RPC_URL"
+      --l1.rpckind="$L1_RPC_KIND"
+      --l2="http://op-blast-mainnet:8551"
+      --l2.jwt-secret=/jwtsecret
+      --rollup.config="/config/mainnet/rollup.json"
+    depends_on:
+      - op-blast-mainnet
+    networks:
+      - chains
+    environment:
+      - "OP_NODE_P2P_BOOTNODES=enr:-J64QGwHl9uYLfC_cnmxSA6wQH811nkOWJDWjzxqkEUlJoZHWvI66u-BXgVcPCeMUmg0dBpFQAPotFchG67FHJMZ9OSGAY3d6wevgmlkgnY0gmlwhANizeSHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaECg4pk0cskPAyJ7pOmo9E6RqGBwV-Lex4VS9a3MQvu7PWDdGNwgnZhg3VkcIJ2YQ,enr:-J64QDge2jYBQtcNEpRqmKfci5E5BHAhNBjgv4WSdwH1_wPqbueq2bDj38-TSW8asjy5lJj1Xftui6Or8lnaYFCqCI-GAY3d6wf3gmlkgnY0gmlwhCO2D9yHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaEDo4aCTq7pCEN8om9U5n_VyWdambGnQhwHNwKc8o-OicaDdGNwgnZhg3VkcIJ2YQ"
+      - "L1_RPC_URL=${ETHEREUM_RPC_ENDPOINT}"
+      - "L1_RPC_KIND=${ETHEREUM_RPC_KIND}"
+
+volumes:  
+    blast-mainnet:      
