@@ -10,12 +10,30 @@ services:
       - .jwtsecret:/jwtsecret
     environment:
       - "GETH_ROLLUP_SEQUENCERHTTP=https://sequencer.blast.io"
+      - "GETH_GCMODE=full"
+      - "GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
+      - "GETH_NODISCOVER=true"
+      - "GETH_DATADIR-/data"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_PORT=9545"
+      - "GETH_HTTP_VHOSTS=*"
+      - "GETH_HTTP_CORSDOMAIN=*"
+      - "GETH_HTTP_API=web3,debug,eth,txpool,net,engine"
+      - "GETH_WS_PORT=9545"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_ORIGINS=*"
+      - "GETH_WS=true"
+      - "GETH_AUTHRPC_VHOSTS=*"
+      - "GETH_AUTHRPC_ADDR=0.0.0.0"
+      - "GETH_LIGHT_MAXPEERS=0"
     expose:
       - 9545
     restart: always
     stop_grace_period: 30s          
     entrypoint: /bin/sh
-    command: -c "[ ! -d /data/geth ] && /usr/local/bin/geth init --datadir=/data /config/mainnet/genesis.json || geth --datadir=/data --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=9545 --http.api=web3,debug,eth,txpool,net,engine --ws --ws.addr=0.0.0.0 --ws.port=9545 --ws.origins=* --ws.api=debug,eth,txpool,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --syncmode=full --gcmode=full --nodiscover --maxpeers=0 --rollup.disabletxpoolgossip=true --state.scheme=path --db.engine=pebble"
+    command: -c "[ ! -d $GETH_DATADIR/geth ] && /usr/local/bin/geth init /config/mainnet/genesis.json || geth --rollup.disabletxpoolgossip=true"
     networks:
       - chains
     labels:                     
