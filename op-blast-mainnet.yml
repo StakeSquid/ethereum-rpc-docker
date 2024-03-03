@@ -29,18 +29,23 @@ services:
     image: blastio/blast-optimism:mainnet
     volumes:
       - ./blast-io:/config
-      - .jwtsecret:/jwtsecret      
+      - .jwtsecret:/jwtsecret
+    ports:
+      - "51439:51439"
+      - "51439:51439/udp"
     environment:
       - "OP_NODE_P2P_BOOTNODES=enr:-J64QGwHl9uYLfC_cnmxSA6wQH811nkOWJDWjzxqkEUlJoZHWvI66u-BXgVcPCeMUmg0dBpFQAPotFchG67FHJMZ9OSGAY3d6wevgmlkgnY0gmlwhANizeSHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaECg4pk0cskPAyJ7pOmo9E6RqGBwV-Lex4VS9a3MQvu7PWDdGNwgnZhg3VkcIJ2YQ,enr:-J64QDge2jYBQtcNEpRqmKfci5E5BHAhNBjgv4WSdwH1_wPqbueq2bDj38-TSW8asjy5lJj1Xftui6Or8lnaYFCqCI-GAY3d6wf3gmlkgnY0gmlwhCO2D9yHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaEDo4aCTq7pCEN8om9U5n_VyWdambGnQhwHNwKc8o-OicaDdGNwgnZhg3VkcIJ2YQ"
-      - "L1_RPC_URL=${ETHEREUM_RPC_ENDPOINT}"
-      - "L1_RPC_KIND=${ETHEREUM_RPC_KIND}"      
-    command: >
-      op-node
-      --l1="$L1_RPC_URL"
-      --l1.rpckind="$L1_RPC_KIND"
-      --l2="http://op-blast-mainnet:8551"
-      --l2.jwt-secret=/jwtsecret
-      --rollup.config="/config/mainnet/rollup.json"
+      - "OP_NODE_L1_RPC_RATE_LIMIT=0"
+      - "OP_NODE_L1_RPC_MAX_BATCH_SIZE=20"
+      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_RPC_KIND:-basic}"
+      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_RPC_ENDPOINT}"
+      - "OP_NODE_L1_TRUST_RPC=true"
+      - "OP_NODE_L2_ENGINE_RPC=http://op-blast-mainnet:8551"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_SKIP_SYNC_START_CHECK=true"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=51439"
+      - "OP_NODE_ROLLUP_CONFIG=/config/mainnet/rollup.json"
+    command: op-node
     depends_on:
       - op-blast-mainnet
     networks:
