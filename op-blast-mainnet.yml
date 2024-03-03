@@ -13,7 +13,7 @@ services:
     expose:
       - 9545
     entrypoint: /bin/sh
-    command: -c "[ ! -d /data/geth ] && /usr/local/bin/geth init --datadir=/data /config/mainnet/genesis.json || exit 0 && geth --datadir=/data --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=9545 --http.api=web3,debug,eth,txpool,net,engine --ws --ws.addr=0.0.0.0 --ws.port=9545 --ws.origins=* --ws.api=debug,eth,txpool,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --syncmode=full --gcmode=prune --nodiscover --maxpeers=0 --rollup.disabletxpoolgossip=true --state.scheme=path --db.engine=pebble"
+    command: -c "[ ! -d /data/geth ] && /usr/local/bin/geth init --datadir=/data /config/mainnet/genesis.json || exit 0 && geth --datadir=/data --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=9545 --http.api=web3,debug,eth,txpool,net,engine --ws --ws.addr=0.0.0.0 --ws.port=9545 --ws.origins=* --ws.api=debug,eth,txpool,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --syncmode=full --gcmode=full --nodiscover --maxpeers=0 --rollup.disabletxpoolgossip=true --state.scheme=path --db.engine=pebble"
     networks:
       - chains
     labels:                     
