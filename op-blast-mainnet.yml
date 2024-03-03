@@ -15,7 +15,7 @@ services:
       - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
       - "GETH_NODISCOVER=true"
-      - "GETH_DATADIR-/data"
+      - "GETH_DATADIR=/data"
       - "GETH_HTTP=true"
       - "GETH_HTTP_ADDR=0.0.0.0"
       - "GETH_HTTP_PORT=9545"
@@ -28,13 +28,14 @@ services:
       - "GETH_WS=true"
       - "GETH_AUTHRPC_VHOSTS=*"
       - "GETH_AUTHRPC_ADDR=0.0.0.0"
+      - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
       - "GETH_LIGHT_MAXPEERS=0"
     expose:
       - 9545
     restart: always
     stop_grace_period: 30s          
     entrypoint: /bin/sh
-    command: -c "[ ! -d $GETH_DATADIR/geth ] && /usr/local/bin/geth init /config/mainnet/genesis.json || geth --rollup.disabletxpoolgossip=true"
+    command: -c "[ ! -d /data/geth ] && /usr/local/bin/geth init /config/mainnet/genesis.json || /usr/local/bin/geth --rollup.disabletxpoolgossip=true"
     networks:
       - chains
     labels:                     
