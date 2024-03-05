@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   avalanche-fullnode:
-    image: avaplatform/avalanchego:v1.11.1
+    image: avaplatform/avalanchego:v1.11.2
     ulimits:
       nofile: 1048576
     expose:
