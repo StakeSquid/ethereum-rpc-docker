@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   arbitrum-sepolia-fullnode:
-    image: 'offchainlabs/nitro-node:v2.3.0-3e14543'
+    image: 'offchainlabs/nitro-node:v2.3.1-26fad6f'
     restart: always
     stop_grace_period: 30s
     user: root
