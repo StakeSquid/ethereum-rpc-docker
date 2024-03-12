@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   mainnet-reth-fullnode:
-    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.19
+    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.21
     user: root
     volumes:
       - "reth-mainnet-fullnode:/root/.local/share/reth/mainnet/db"
