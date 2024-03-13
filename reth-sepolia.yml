@@ -35,6 +35,8 @@ services:
 
   sepolia-prysm-reth:
     image: prysmaticlabs/prysm-beacon-chain:v4.2.1
+    expose:
+      - 3500
     ports:
       #- "127.0.0.1:3500:3500"
       - "52969:52969"
@@ -60,6 +62,14 @@ services:
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.sepolia-reth-prysm-stripprefix.stripprefix.prefixes=/sepolia-reth-prysm"
+      - "traefik.http.services.sepolia-reth-prysm.loadbalancer.server.port=3500"
+      - "traefik.http.routers.sepolia-reth-prysm.entrypoints=websecure"
+      - "traefik.http.routers.sepolia-reth-prysm.tls.certresolver=myresolver"
+      - "traefik.http.routers.sepolia-reth-prysm.rule=Host(`$DOMAIN`) && PathPrefix(`/sepolia-reth-prysm`)"
+      - "traefik.http.routers.sepolia-reth-prysm.middlewares=sepolia-reth-prysm-stripprefix, ipwhitelist"
 
 volumes:
     reth-sepolia:
