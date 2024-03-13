@@ -59,7 +59,9 @@ services:
       - "traefik.http.routers.erigon-mainnet-fullnode.middlewares=erigon-mainnet-fullnode-stripprefix, ipwhitelist"
       
   prysm-mainnet-erigon-fullnode:
-    image: prysmaticlabs/prysm-beacon-chain:stable
+    image: prysmaticlabs/prysm-beacon-chain:v5.0.1
+    expose:
+      - 3500
     ports:
       #- "127.0.0.1:3500:3500"
       - "36997:36997"
@@ -85,6 +87,14 @@ services:
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.prysm-mainnet-fullnode-stripprefix.stripprefix.prefixes=/prysm-fullnode"
+      - "traefik.http.services.prysm-mainnet-fullnode.loadbalancer.server.port=3500"
+      - "traefik.http.routers.prysm-mainnet-fullnode.entrypoints=websecure"
+      - "traefik.http.routers.prysm-mainnet-fullnode.tls.certresolver=myresolver"
+      - "traefik.http.routers.prysm-mainnet-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/prysm-fullnode`)"
+      - "traefik.http.routers.prysm-mainnet-fullnode.middlewares=prysm-mainnet-fullnode-stripprefix, ipwhitelist"
 
       
 volumes:
