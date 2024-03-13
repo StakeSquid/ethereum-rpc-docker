@@ -8,10 +8,11 @@ services:
     user: root
     volumes:
       - 'arb-playblock:/persistent'
+      - './arbnova/playblock/baseConfig.yml:/baseConfig.yml'
     expose:
       - 8547 # http + ws
     command:
-      - --conf.file=baseConfig.json
+      - --conf.file=/baseConfig.json
       - --persistent.ancient=/persistent/ancient
       - --persistent.chain=/persistent/chain
       - --persistent.global-config=/persistent/global-config
