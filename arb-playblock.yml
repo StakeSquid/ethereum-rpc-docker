@@ -8,7 +8,7 @@ services:
     user: root
     volumes:
       - 'arb-playblock:/persistent'
-      - './arbnova/playblock/baseConfig.yml:/baseConfig.yml'
+      - './arb/nova/playblock/baseConfig.json:/baseConfig.json'      
     expose:
       - 8547 # http + ws
     command:
