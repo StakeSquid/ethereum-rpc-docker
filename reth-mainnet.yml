@@ -34,6 +34,8 @@ services:
 
   mainnet-prysm-reth:
     image: prysmaticlabs/prysm-beacon-chain:stable
+    expose:
+      - 3500
     ports:
       #- "127.0.0.1:3500:3500"
       - "36997:36997"
@@ -59,6 +61,14 @@ services:
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.mainnet-reth-prysm-stripprefix.stripprefix.prefixes=/mainnet-reth-prysm"
+      - "traefik.http.services.mainnet-reth-prysm.loadbalancer.server.port=3500"
+      - "traefik.http.routers.mainnet-reth-prysm.entrypoints=websecure"
+      - "traefik.http.routers.mainnet-reth-prysm.tls.certresolver=myresolver"
+      - "traefik.http.routers.mainnet-reth-prysm.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-reth-prysm`)"
+      - "traefik.http.routers.mainnet-reth-prysm.middlewares=mainnet-reth-prysm-stripprefix, ipwhitelist"
 
 volumes:
     reth-mainnet:
