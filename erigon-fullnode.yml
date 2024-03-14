@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-mainnet-fullnode:
-    image: thorax/erigon:v2.58.1
+    image: thorax/erigon:${ERIGON_VERSION:-v2.58.1}
     user: root
     expose:
       - "16630"
@@ -59,7 +59,7 @@ services:
       - "traefik.http.routers.erigon-mainnet-fullnode.middlewares=erigon-mainnet-fullnode-stripprefix, ipwhitelist"
       
   prysm-mainnet-erigon-fullnode:
-    image: prysmaticlabs/prysm-beacon-chain:v5.0.1
+    image: prysmaticlabs/prysm-beacon-chain:${PRYSM_VERSION:-v5.0.1}
     expose:
       - 3500
     ports:

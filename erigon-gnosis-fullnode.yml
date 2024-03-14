@@ -3,7 +3,7 @@ version: '3.1'
 services:                             
                                                    
   erigon-gnosis-fullnode:        
-    image: thorax/erigon:v2.58.1
+    image: thorax/erigon:${ERIGON_VERSION:-v2.58.1}
     user: root
     volumes:                  
       - "gnosis-fullnode_data:/datadir"
@@ -46,8 +46,8 @@ services:
       driver: local
 
 
-  lodestar-gnosis-fulnlode:
-    image: chainsafe/lodestar:v1.12.0
+  lodestar-gnosis-fullnode:
+    image: chainsafe/lodestar:${LODESTAR_VERSION:-v1.17.0}
     restart: always
     networks:
       - chains

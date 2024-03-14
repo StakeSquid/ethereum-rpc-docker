@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   polygon-erigon-fullnode:
-    image: thorax/erigon:v2.57.3
+    image: thorax/erigon${ERIGON_VERSION:-:v2.57.3}
     user: root
     volumes:
       - "polygon-erigon-fullnode:/datadir"
