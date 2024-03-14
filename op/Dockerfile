@@ -1,36 +1,33 @@
-FROM golang:1.20 as op
+FROM golang:1.21 as op
 
 WORKDIR /app
 
 ENV REPO=https://github.com/ethereum-optimism/optimism.git
-ENV VERSION=v1.4.2
+ENV VERSION=v1.7.1
 # for verification:
-ENV COMMIT=f2229b8b955e53408be0775a22d7f9f162b0de66
+
 
 RUN git clone $REPO --branch op-node/$VERSION --single-branch . && \
-    git switch -c branch-$VERSION && \
-    bash -c '[ "$(git rev-parse HEAD)" = "$COMMIT" ]'
+    git switch -c branch-$VERSION
+
 
 RUN cd op-node && \
     make op-node
 
-FROM golang:1.20 as geth
+FROM golang:1.21 as geth
 
 WORKDIR /app
 
 ENV REPO=https://github.com/ethereum-optimism/op-geth.git
-ENV VERSION=v1.101304.2
-# for verification:
-ENV COMMIT=c6b416da212fe6713ff40b8092303d0035405a47
+ENV VERSION=v1.101308.2
 
 # avoid depth=1, so the geth build can read tags
 RUN git clone $REPO --branch $VERSION --single-branch . && \
-    git switch -c branch-$VERSION && \
-    bash -c '[ "$(git rev-parse HEAD)" = "$COMMIT" ]'
+    git switch -c branch-$VERSION
 
 RUN go run build/ci.go install -static ./cmd/geth
 
-FROM golang:1.19
+FROM golang:1.21
 
 RUN apt-get update && \
     apt-get install -y jq curl && \
