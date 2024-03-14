@@ -43,8 +43,8 @@ uDdWRwgiMr"
 
       
   op-lisk-sepolia-node:
-    # image: stakesquid/op-lisk-sepolia:v0.1
-    build: ./op
+    image: stakesquid/op-lisk-sepolia:v0.1
+    #build: ./op
     depends_on:
       - op-lisk-sepolia
     expose:
