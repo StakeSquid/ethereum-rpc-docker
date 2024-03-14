@@ -23,7 +23,7 @@ services:
       - "OP_GETH_BOOTNODES=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIy\
 uDdWRwgiMr"
       - "OP_GETH_GCMODE=full"
-      - "OP_GETH_STATE_SCHEME=path"
+      - "OP_GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
       #- "CHAIN_NAME=lisk-sepolia"
       - "P2P_PORT=54521"
