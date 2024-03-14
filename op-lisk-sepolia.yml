@@ -82,7 +82,7 @@ uDdWRwgiMr"
       - "OP_NODE_L1_RPC_MAX_BATCH_SIZE=${LISK_SEPOLIA_L1_BATCH_SIZE:-20}"
       - "OP_NODE_L1_RPC_RATE_LIMIT=${LISK_SEPOLIA_L1_RATE_LIMIT:-30}"
       - "OP_NODE_L1_RPC_KIND=${LISK_SEPOLIA_L1_ENDPOINT_KIND:-basic}"
-      - "OP_NODE_L1_TRUST_RPC=${LISK_SEPLIA_L1_ENDPOINT_TRUST:-false}"
+      - "OP_NODE_L1_TRUST_RPC=${LISK_SEPOLIA_L1_ENDPOINT_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${LISK_SEPOLIA_L1_BEACON_URL}"
     networks:                                                                                         
       - chains
