@@ -78,5 +78,5 @@ exec ./geth \
 	--op-network="base-mainnet" \
 	--rollup.halt=major \
 	--rollup.sequencerhttp="$OP_GETH_SEQUENCER_HTTP" \
-	--port="$P2P_PORT" \
+	--port=${P2P_PORT} \
 	$ADDITIONAL_ARGS # intentionally unquoted
