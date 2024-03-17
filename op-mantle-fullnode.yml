@@ -120,7 +120,8 @@ services:
     volumes:
       - "./mantle/mainnet/:/config"
       - "./mantle/generate-node-key:/generate-node-key"
-    command: sh /generate-node-key
+    entrypoint: sh
+    command: /generate-node-key
       
 volumes:  
     mantle-fullnode:
