@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cast w n | grep -i 'Private Key' | awk -F ': ' '{print $2}' | sed 's/0x//' > /config/p2p_node_key_txt
