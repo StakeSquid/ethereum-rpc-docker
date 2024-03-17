@@ -1,0 +1,118 @@
+version: '3.1'
+
+services:
+  mantle-fullnode:
+    image: mantlenetworkio/op-geth:v1.0.0-alpha.1
+    expose:
+      - 8545       # RPC / Websocket      
+      - 25637     # P2P TCP (currently unused)
+      - 25637/udp # P2P UDP (currently unused)
+      - 6060       # metrics
+      - 8551
+    ports:
+      - "25637:25637"
+      - "25637:25637/udp"
+    entrypoint: geth
+    command:
+      - --datadir=/data
+      - --verbosity=3
+      - --port=25637
+      - --http
+      - --http.corsdomain=*
+      - --http.vhosts=*
+      - --http.addr=0.0.0.0
+      - --http.port=8545
+      - --http.api=web3,eth,debug,txpool,net
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.port=8546
+      - --ws.origins=*
+      - --ws.api=web3,eth,debug,txpool,net
+      - --syncmode=full
+      - --maxpeers=0
+      - --networkid=5003
+      - --rpc.allow-unprotected-txs
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.port=8551
+      - --authrpc.vhosts=*
+      - --authrpc.jwtsecret=/jwtsecret
+      - --pprof
+      - --pprof.addr=0.0.0.0
+      - --pprof.port=6060
+      - --gcmode=archive
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=9001
+      - --snapshot=false
+    restart: always
+    stop_grace_period: 30s    
+    volumes:
+      - mantle-fullnode:/data
+      - ".jwtsecret:/jwtsecret"
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.mantle-stripprefix.stripprefix.prefixes=/mantle"                      
+      - "traefik.http.services.mantle.loadbalancer.server.port=8545"
+      - "traefik.http.routers.mantle.entrypoints=websecure"                                              
+      - "traefik.http.routers.mantle.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.mantle.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle`)"                     
+      - "traefik.http.routers.mantle.middlewares=mantle-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+      
+  mantle-fullnode-node:
+    image: mantlenetworkio/op-geth:v1.0.0-alpha.1
+    depends_on:
+      - mantle-fullnode
+    expose:
+      - 8545     # RPC
+      - 10788     # P2P TCP
+      - 10788/udp # P2P UDP
+      - 7300     # metrics
+      - 6060     # pprof
+    ports:
+      - "10788:10788"
+      - "10788:10788/udp"
+    volumes:
+      - "mantle/mainnet/rollup.json:/rollup.json"
+      - .jwtsecret:/jwtsecret
+    command: [ "sh", "./op-node-entrypoint" ]
+    restart: always
+    stop_grace_period: 30s
+    environment:
+      OP_NODE_L1_ETH_RPC: ${MANTLE_ETHEREUM_ENDPOINT}
+      OP_NODE_L2_ENGINE_RPC: 'http://mantel-fullnode:8551'
+      OP_NODE_L2_ENGINE_AUTH: /jwtsecret
+      OP_NODE_ROLLUP_CONFIG: '/config/rollup.json'
+      OP_NODE_P2P_PRIV_PATH: /p2p_node_key_txt
+      OP_NODE_VERIFIER_L1_CONFS: '3'
+      OP_NODE_RPC_ADDR: '0.0.0.0'
+      OP_NODE_RPC_PORT: 8545
+      OP_NODE_P2P_LISTEN_IP: '0.0.0.0'
+      OP_NODE_P2P_LISTEN_TCP_PORT: 10788
+      OP_NODE_P2P_LISTEN_UDP_PORT: 10788
+      OP_NODE_P2P_PEER_SCORING: 'light'
+      OP_NODE_P2P_PEER_BANNING: 'true'
+      OP_NODE_METRICS_ENABLED: 'true'
+      OP_NODE_METRICS_ADDR: '0.0.0.0'
+      OP_NODE_METRICS_PORT: 7300
+      OP_NODE_PPROF_ENABLED: 'true'
+      OP_NODE_PPROF_PORT: 6060
+      OP_NODE_PPROF_ADDR: '0.0.0.0'
+      OP_NODE_P2P_DISCOVERY_PATH: '/op-node/opnode_discovery_db'
+      OP_NODE_P2P_PEERSTORE_PATH: '/op-node/opnode_peerstore_db'
+      OP_NODE_INDEXER_SOCKET: 'da-indexer-api.mantle.xyz:443'
+      OP_NODE_INDEXER_ENABLE: 'true'
+      OP_NODE_L2_BACKUP_UNSAFE_SYNC_RPC: https://rpc.mantle.xyz
+      OP_NODE_P2P_STATIC: '/dns4/peer0.mantle.xyz/tcp/9003/p2p/16Uiu2HAmKVKzUAns2gLhZAz1PYcbnhY3WpxNxUZYeTN1x29tNBAW,/dns4/peer1.mantle.xyz/tcp/9003/p2p/16Uiu2HAm1AiZtVp8f5C8LvpSTAXC6GtwqAVKnB3VLawWYSEBmcFN,/dns4/peer2.mantle.xyz/tcp/9003/p2p/16Uiu2HAm2UHVKiPXpovs8VbbUQVPr7feBAqBJdFsH1z5XDiLEvHT'
+      OP_NODE_SEQUENCER_ENABLED: 'false'
+      OP_NODE_P2P_AGENT: 'mantle'
+      OP_NODE_L2_ENGINE_SYNC_ENABLED: 'true'
+      OP_NODE_L2_SKIP_SYNC_START_CHECK: 'true'
+      OP_NODE_P2P_SYNC_REQ_RESP: 'true'
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+    mantle-fullnode:
