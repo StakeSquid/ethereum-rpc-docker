@@ -76,7 +76,7 @@ services:
       - "25713:25713"
       - "25713:25713/udp"
     volumes:
-      - "mantle/mainnet/:/config"
+      - "./mantle/mainnet/:/config"
       - .jwtsecret:/jwtsecret
     command: [ "sh", "./op-node-entrypoint" ]
     restart: always
@@ -118,7 +118,7 @@ services:
   mantle-key-generator:
     image: ghcr.io/foundry-rs/foundry
     volumes:
-      - "mantle/mainnet/:/config"
+      - "./mantle/mainnet/:/config"
       - "./mantle/generate-node-key:/generate-node-key"
     command: sh /generate-node-key
       
