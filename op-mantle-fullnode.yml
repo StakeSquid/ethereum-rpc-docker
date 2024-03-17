@@ -5,18 +5,18 @@ services:
     image: mantlenetworkio/op-geth:v1.0.0-alpha.1
     expose:
       - 8545       # RPC / Websocket      
-      - 25637     # P2P TCP (currently unused)
-      - 25637/udp # P2P UDP (currently unused)
+      - 3851     # P2P TCP (currently unused)
+      - 3851/udp # P2P UDP (currently unused)
       - 6060       # metrics
       - 8551
     ports:
-      - "25637:25637"
-      - "25637:25637/udp"
+      - "3851:3851"
+      - "3851:3851/udp"
     entrypoint: geth
     command:
       - --datadir=/data
       - --verbosity=3
-      - --port=25637
+      - --port=3851
       - --http
       - --http.corsdomain=*
       - --http.vhosts=*
@@ -39,7 +39,7 @@ services:
       - --pprof
       - --pprof.addr=0.0.0.0
       - --pprof.port=6060
-      - --gcmode=archive
+      - --gcmode=full
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=9001
@@ -51,12 +51,12 @@ services:
       - ".jwtsecret:/jwtsecret"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.mantle-stripprefix.stripprefix.prefixes=/mantle"                      
-      - "traefik.http.services.mantle.loadbalancer.server.port=8545"
-      - "traefik.http.routers.mantle.entrypoints=websecure"                                              
-      - "traefik.http.routers.mantle.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.mantle.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle`)"                     
-      - "traefik.http.routers.mantle.middlewares=mantle-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.mantle-fullnode-stripprefix.stripprefix.prefixes=/mantle-fullnode"                      
+      - "traefik.http.services.mantle-fullnode.loadbalancer.server.port=8545"
+      - "traefik.http.routers.mantle-fullnode.entrypoints=websecure"                                              
+      - "traefik.http.routers.mantle-fullnode.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.mantle-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle-fullnode`)"                     
+      - "traefik.http.routers.mantle-fullnode.middlewares=mantle-fullnode-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
@@ -64,34 +64,35 @@ services:
   mantle-fullnode-node:
     image: mantlenetworkio/op-geth:v1.0.0-alpha.1
     depends_on:
+      - mantle-key-generator
       - mantle-fullnode
     expose:
       - 8545     # RPC
-      - 10788     # P2P TCP
-      - 10788/udp # P2P UDP
+      - 25713     # P2P TCP
+      - 25713/udp # P2P UDP
       - 7300     # metrics
       - 6060     # pprof
     ports:
-      - "10788:10788"
-      - "10788:10788/udp"
+      - "25713:25713"
+      - "25713:25713/udp"
     volumes:
-      - "mantle/mainnet/rollup.json:/rollup.json"
+      - "mantle/mainnet/:/config"
       - .jwtsecret:/jwtsecret
     command: [ "sh", "./op-node-entrypoint" ]
     restart: always
     stop_grace_period: 30s
     environment:
       OP_NODE_L1_ETH_RPC: ${MANTLE_ETHEREUM_ENDPOINT}
-      OP_NODE_L2_ENGINE_RPC: 'http://mantel-fullnode:8551'
+      OP_NODE_L2_ENGINE_RPC: 'http://mantle-fullnode:8551'
       OP_NODE_L2_ENGINE_AUTH: /jwtsecret
       OP_NODE_ROLLUP_CONFIG: '/config/rollup.json'
-      OP_NODE_P2P_PRIV_PATH: /p2p_node_key_txt
+      OP_NODE_P2P_PRIV_PATH: /config/p2p_node_key_txt
       OP_NODE_VERIFIER_L1_CONFS: '3'
       OP_NODE_RPC_ADDR: '0.0.0.0'
       OP_NODE_RPC_PORT: 8545
       OP_NODE_P2P_LISTEN_IP: '0.0.0.0'
-      OP_NODE_P2P_LISTEN_TCP_PORT: 10788
-      OP_NODE_P2P_LISTEN_UDP_PORT: 10788
+      OP_NODE_P2P_LISTEN_TCP_PORT: 25713
+      OP_NODE_P2P_LISTEN_UDP_PORT: 25713
       OP_NODE_P2P_PEER_SCORING: 'light'
       OP_NODE_P2P_PEER_BANNING: 'true'
       OP_NODE_METRICS_ENABLED: 'true'
@@ -113,6 +114,12 @@ services:
       OP_NODE_P2P_SYNC_REQ_RESP: 'true'
     networks:                                                                                         
       - chains
+
+  mantle-key-generator:
+    image: ghcr.io/foundry-rs/foundry
+    volumes:
+      - "mantle/mainnet/:/config"
+    command: cast w n |grep -i 'Private Key' |awk -F ': ' '{print $2}' |sed 's/0x//' > /config/p2p_node_key_txt
       
 volumes:  
     mantle-fullnode:
