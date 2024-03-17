@@ -119,7 +119,7 @@ services:
     image: ghcr.io/foundry-rs/foundry
     volumes:
       - "mantle/mainnet/:/config"
-    command: "cast w n |grep -i 'Private Key' |awk -F ': ' '{print $2}' |sed 's/0x//' > /config/p2p_node_key_txt"
+    command: ["sh", "-c", "cast w n | grep -i 'Private Key' | awk -F ': ' '{print $2}' | sed 's/0x//' > /config/p2p_node_key_txt"]
       
 volumes:  
     mantle-fullnode:
