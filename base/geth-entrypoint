@@ -71,7 +71,7 @@ exec ./geth \
 	--state.scheme=${OP_GETH_STATE_SCHEME:-hash} \
         --db.engine=${GETH_DB_ENGINE:-leveldb} \
         --discovery.port=${P2P_PORT:-30303} \
-	--nodiscover \
+	#--nodiscover \
 	--maxpeers=100 \
 	--nat=extip:$HOST_IP \
 	--networkid="$CHAIN_ID" \
