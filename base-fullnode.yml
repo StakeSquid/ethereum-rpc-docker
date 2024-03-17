@@ -8,6 +8,7 @@ services:
       - 8480     # P2P TCP (currently unused)
       - 8480/udp # P2P UDP (currently unused)
       - 6060       # metrics
+      - 855
     ports:
       - "8480:8480"
       - "8480:8480/udp"
