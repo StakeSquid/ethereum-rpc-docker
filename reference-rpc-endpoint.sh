@@ -4,10 +4,7 @@ if [ $# -gt 2 ]; then
     exit 1
 fi
 
-read -r id
-if [ -z "$id" ]; then
-    id="$1"
-fi
+id="$1"
 
 if [[ $id == 0x* ]]; then
     id=$(printf "%d" "$id")
@@ -15,7 +12,7 @@ fi
 
 index="${2:-0}"
 
-json_file="reference-rpc-endpoint.json"
+json_file="/root/rpc/reference-rpc-endpoint.json"
 if [ ! -f "$json_file" ]; then
     exit 1
 fi

@@ -35,7 +35,7 @@ for path in $pathlist; do
 		if [ -n "$2" ]; then
 		    ref="$2"
 		else
-		    chain_id=$(curl --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL | jq -r '.result')
+		    chain_id=$(curl --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL | jq -r '.result')
 		    chain_id_decimal=$((16#${chain_id#0x}))
 		    ref=$($BASEPATH/reference-rpc-endpoint.sh $chain_id_decimal)
 		fi
