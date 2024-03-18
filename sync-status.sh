@@ -31,7 +31,16 @@ for path in $pathlist; do
 
 		rm "$response_file"
 
+		ref=''
 		if [ -n "$2" ]; then
+		    ref="$2"
+		else
+		    chain_id=$(curl --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL | jq -r '.result')
+		    chain_id_decimal=$((16#${chain_id#0x}))
+		    ref=$($BASEPATH/reference-rpc-endpoint.sh $chain_id_decimal)
+		fi
+		
+		if [ -n "$ref" ]; then
 		    # echo "do a quick fitness test"
 		    # use the proxy to normalize responses from different implementations of eth endpoints.
 		    # make the proxy exit on a mismatch
@@ -41,7 +50,7 @@ for path in $pathlist; do
 		    latest_block_hash=$(echo "$response" | jq -r '.result.hash')			
 		    response_file2=$(mktemp)
 		    
-		    http_status_code2=$(curl --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["$latest_block_number", false],"id":1}' $2)
+		    http_status_code2=$(curl --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["$latest_block_number", false],"id":1}' $ref)
 		    if [ $? -eq 0 ]; then
 			if [[ $http_status_code2 -eq 200 ]]; then
 			    response2=$(cat "$response_file2")
