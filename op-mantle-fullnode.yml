@@ -104,7 +104,7 @@ services:
 
       
   mantle-fullnode-node:
-    image: mantlenetworkio/op-geth:v1.0.0-alpha.1
+    image: mantlenetworkio/op-node:v1.0.0-alpha.1
     depends_on:
       - mantle-key-generator
       - mantle-fullnode
