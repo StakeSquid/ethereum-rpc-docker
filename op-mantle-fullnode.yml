@@ -120,7 +120,6 @@ services:
     volumes:
       - "./mantle/mainnet/:/config"
       - .jwtsecret:/jwtsecret
-    command: [ "sh", "./op-node-entrypoint" ]
     restart: always
     stop_grace_period: 30s
     environment:
