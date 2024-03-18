@@ -3,7 +3,7 @@
 BASEPATH=/root/rpc
 source $BASEPATH/.env
 blacklist=("lighthouse" "prism" "beacon" "nimbus" "ws" "arbitrum-classic" "hagall" "public")
-pathlist=$(cat $BASEPATH/$1 | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
+pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
 
 for path in $pathlist; do
     include=true
@@ -83,5 +83,7 @@ for path in $pathlist; do
 	
  	rm "$response_file"
 	break
+    else
+	echo "not found"
     fi
 done
