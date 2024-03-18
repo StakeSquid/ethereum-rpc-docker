@@ -1,0 +1,6 @@
+{
+  "chain": {
+    "info-json": "[{\"chain-id\":111188,\"parent-chain-id\":1,\"parent-chain-is-arbitrum\":false,\"chain-name\":\"real\",\"chain-config\":{\"homesteadBlock\":0,\"daoForkBlock\":null,\"daoForkSupport\":true,\"eip150Block\":0,\"eip150Hash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"eip155Block\":0,\"eip158Block\":0,\"byzantiumBlock\":0,\"constantinopleBlock\":0,\"petersburgBlock\":0,\"istanbulBlock\":0,\"muirGlacierBlock\":0,\"berlinBlock\":0,\"londonBlock\":0,\"clique\":{\"period\":0,\"epoch\":0},\"arbitrum\":{\"EnableArbOS\":true,\"AllowDebugPrecompiles\":false,\"DataAvailabilityCommittee\":true,\"InitialArbOSVersion\":11,\"GenesisBlockNum\":0,\"MaxCodeSize\":24576,\"MaxInitCodeSize\":49152,\"InitialChainOwner\":\"0xbB0385FebfD25E01527617938129A34bD497331e\"},\"chainId\":111188},\"rollup\":{\"bridge\":\"0x39D2EEcC8B55f46aE64789E2494dE777cDDeED03\",\"inbox\":\"0xf538671ddd60eE54BdD6FBb0E309c491A7A2df11\",\"sequencer-inbox\":\"0x51C4a227D59E49E26Ea07D8e4E9Af163da4c87A0\",\"rollup\":\"0xc4F7B37bE2bBbcF07373F28c61b1A259dfe49d2a\",\"validator-utils\":\"0x2b0E04Dc90e3fA58165CB41E2834B44A56E766aF\",\"validator-wallet-creator\":\"0x9CAd81628aB7D8e239F1A5B497313341578c5F71\",\"deployed-at\":19446518}}]",
+    "name": "real"
+  }
+}

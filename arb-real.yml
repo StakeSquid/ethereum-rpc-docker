@@ -1,0 +1,58 @@
+version: '3.1'
+
+services:
+  arb-real:
+    image: 'offchainlabs/nitro-node:v2.2.4-8517340'
+    restart: always
+    stop_grace_period: 30s
+    user: root
+    volumes:
+      - 'arb-real:/persistent'
+      - './arb/nova/real/baseConfig.json:/baseConfig.json'      
+    expose:
+      - 8547 # http + ws
+    command:
+      - --conf.file=/baseConfig.json
+      - --persistent.ancient=/persistent/ancient
+      - --persistent.chain=/persistent/chain
+      - --persistent.global-config=/persistent/global-config
+      - --execution.caching.archive=true
+      - --execution.forwarding-target=https://rpc.realforreal.gelato.digital
+      - --node.feed.input.url=wss://wss.realforreal.gelato.digital
+      - --parent-chain.connection.url=${REAL_PARENT_RPC}
+      - --http.addr=0.0.0.0
+      - --http.port=8547
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --http.api=eth,net,web3,arb,txpool,debug
+      - --ws.port=8547
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+      - --ws.api=eth,net,web3,arb,txpool,debug
+      - --node.data-availability.enable=true
+      - --node.data-availability.sequencer-inbox-address=0x51C4a227D59E49E26Ea07D8e4E9Af163da4c87A0
+      - --node.data-availability.parent-chain-node-url=${REAL_PARENT_RPC}
+      - --node.data-availability.rest-aggregator.enable=true
+      - --node.data-availability.rest-aggregator.urls=https://das.realforreal.gelato.digital
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=6070
+      - --log-type=json
+      - --node.sequencer=false
+      - --execution.sequencer.enable=false
+      - --node.staker.enable=false
+      - --node.batch-poster.enable=false
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.real-stripprefix.stripprefix.prefixes=/real"                      
+      - "traefik.http.services.real.loadbalancer.server.port=8547"
+      - "traefik.http.routers.real.entrypoints=websecure"                                              
+      - "traefik.http.routers.real.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.real.rule=Host(`$DOMAIN`) && PathPrefix(`/real`)"                     
+      - "traefik.http.routers.real.middlewares=real-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:  
+    arb-real:
