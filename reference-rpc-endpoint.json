@@ -1,7 +1,7 @@
 {
     "base": {
 	"id": 8453,
-	"urls": ["https://base.drpc.org"]}
+	"urls": ["https://base.drpc.org"]},
     "eth": {
 	"id": 1,
 	"urls": ["https://eth.drpc.org"]}
