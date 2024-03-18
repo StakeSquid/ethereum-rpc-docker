@@ -12,6 +12,10 @@ services:
     ports:
       - "25637:25637"
       - "25637:25637/udp"
+    environment:
+      USING_BVM: "true"
+      BLOCK_SIGNER_KEY: 9f50ccaebd966113a0ef09793f8a3288cd0bb2c05d20caa3c0015b4e665f1b2d
+      BLOCK_SIGNER_ADDRESS: 0x000000b36A00872bAF079426e012Cf5Cd2A74E8b
     entrypoint: geth
     command:
       - --datadir=/data
@@ -77,7 +81,6 @@ services:
     volumes:
       - "./mantle/mainnet/:/config"
       - .jwtsecret:/jwtsecret
-    command: [ "sh", "./op-node-entrypoint" ]
     restart: always
     stop_grace_period: 30s
     environment:
