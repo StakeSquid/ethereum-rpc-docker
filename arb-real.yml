@@ -18,7 +18,7 @@ services:
       - --persistent.global-config=/persistent/global-config
       - --execution.caching.archive=true
       - --execution.forwarding-target=https://rpc.realforreal.gelato.digital
-      - --node.feed.input.url=wss://wss.realforreal.gelato.digital
+      - --node.feed.input.url=wss://feed.realforreal.gelato.digital
       - --parent-chain.connection.url=${REAL_PARENT_RPC}
       - --http.addr=0.0.0.0
       - --http.port=8547
