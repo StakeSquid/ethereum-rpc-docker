@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Threshold for disk usage percentage
-threshold=10
+threshold=90
 
 # Get the list of mounted filesystems and their usage, excluding pseudo, duplicate, inaccessible file systems, and tmpfs
 filesystems=$(df -h -x tmpfs --output=target,pcent | tail -n +2)
