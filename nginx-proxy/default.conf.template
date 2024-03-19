@@ -1,6 +1,6 @@
 map $http_upgrade $proxy_connection {
-    default "https_backend";
-    websocket "ws_backend";
+    default "https_backend${RPC_PATH}";
+    websocket "ws_backend${WS_PATH}";
 }
 
 server {
@@ -17,9 +17,9 @@ server {
 }
 
 upstream rpc_backend {
-    server ${PROXY_HOST}:${RPC_PORT}${RPC_PATH};
+    server ${PROXY_HOST}:${RPC_PORT};
 }
 
 upstream ws_backend {
-    server ${PROXY_HOST}:${WS_PORT}${WS_PATH};
+    server ${PROXY_HOST}:${WS_PORT};
 }
