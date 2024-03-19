@@ -19,6 +19,7 @@ while IFS= read -r line; do
             echo "WARNING: Filesystem $filesystem is $usage% full!"
         fi
     else
-        echo "WARNING: Unable to parse usage for filesystem $filesystem."
+        # Skip the line if usage information cannot be parsed
+        continue
     fi
 done <<< "$filesystems"
