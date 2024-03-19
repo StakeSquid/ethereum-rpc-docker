@@ -18,9 +18,11 @@ for part in "${parts[@]}"; do
     
     if $include; then
 	result=$(./sync-status.sh "${part%.yml}")
-	echo "$part: $result"
+	echo "${part%.yml}: $result"
     fi
 done
+
+./show-db-size.sh
 	
 	
 	
