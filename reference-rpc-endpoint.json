@@ -19,5 +19,9 @@
     "arbitrum-nova": {
 	"id": 42170,
 	"urls": ["https://arbitrum-nova.public.blastapi.io"]
+    },
+    "arbitrum-seploia": {
+	"id": 421614,
+	"urls": ["https://arbitrum-sepolia.blockpi.network/v1/rpc/public"]
     }
 }
