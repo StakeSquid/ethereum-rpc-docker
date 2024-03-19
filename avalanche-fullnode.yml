@@ -24,7 +24,7 @@ services:
     restart: unless-stopped           
     image: nginx
     depends_on:
-      - mantle
+      - avalanche-fullnode
     expose:  
       - 80                                                                                            
     environment:                                                                                      
