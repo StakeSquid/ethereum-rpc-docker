@@ -7,5 +7,9 @@
 	"urls": ["https://eth.drpc.org"]},
     "playnance-mainnet": {
 	"id": 1829,
-	"urls": ["https://rpc.playblock.io"]}
+	"urls": ["https://rpc.playblock.io"]},
+    "real": {
+	"id": 111188,
+	"urls": ["https://rpc.realforreal.gelato.digital"]
+    }
 }
