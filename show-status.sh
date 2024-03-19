@@ -22,7 +22,6 @@ for part in "${parts[@]}"; do
     fi
 done
 
-./show-db-size.sh
 	
 	
 	
