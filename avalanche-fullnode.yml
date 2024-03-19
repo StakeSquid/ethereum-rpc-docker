@@ -18,30 +18,35 @@ services:
       - chains
     command: "/avalanchego/build/avalanchego --http-host= --http-allowed-hosts=* --staking-port=18507 --public-ip=$IP"
     restart: unless-stopped
+
+    
+  avalanche-proxy:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - mantle
+    expose:  
+      - 80                                                                                            
+    environment:                                                                                      
+      PROXY_HOST: avalanche-fullnode
+      RPC_PORT: 9650
+      RPC_PATH: /ext/bc/c/rpc
+      WS_PORT: 9650
+      WS_PATH: /ext/bc/C/ws
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.avalanche-fullnode-replacepath.replacepath.path=/ext/bc/C/rpc"
       - "traefik.http.middlewares.avalanche-fullnode-stripprefix.stripprefix.prefixes=/avalanche-fullnode"
-      - "traefik.http.services.avalanche-fullnode.loadbalancer.server.port=9650"
+      - "traefik.http.services.avalanche-fullnode.loadbalancer.server.port=80"
       - "traefik.http.routers.avalanche-fullnode.entrypoints=websecure"
       - "traefik.http.routers.avalanche-fullnode.tls.certresolver=myresolver"
       - "traefik.http.routers.avalanche-fullnode.service=avalanche-fullnode"
       - "traefik.http.routers.avalanche-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-fullnode`)"      
       - "traefik.http.routers.avalanche-fullnode.middlewares=avalanche-fullnode-stripprefix, avalanche-fullnode-replacepath, ipwhitelist"
-
-      - "traefik.http.middlewares.avalanche-fullnode-ws-replacepath.replacepath.path=/ext/bc/C/ws"
-      - "traefik.http.middlewares.avalanche-fullnode-ws-stripprefix.stripprefix.prefixes=/avalanche-fullnode-ws"
-      - "traefik.http.services.avalanche-fullnode-ws.loadbalancer.server.port=9650"
-      - "traefik.http.routers.avalanche-fullnode-ws.entrypoints=websecure"
-      - "traefik.http.routers.avalanche-fullnode-ws.tls.certresolver=myresolver"
-      - "traefik.http.routers.avalanche-fullnode-ws.service=avalanche-fullnode"
-      - "traefik.http.routers.avalanche-fullnode-ws.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-fullnode-ws`)"
-      - "traefik.http.routers.avalanche-fullnode-ws.middlewares=avalanche-fullnode-ws-stripprefix, avalanche-fullnode-ws-replacepath, ipwhitelist"
-
-      - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=9650"
-      - "prometheus-scrape.job_name=avalanche-fullnode"
-      - "prometheus-scrape.metrics_path=/ext/metrics"
-
+      
 volumes:
   avalanche-fullnode:
