@@ -12,11 +12,14 @@ services:
     ports:
       - "54521:54521"
       - "54521:54521/udp"
-    command: [ "sh", "./geth-entrypoint" ]
+    #command: [ "sh", "./geth-entrypoint" ]
+    entrypoint: ./geth
+    command: --datadir=/data --rollup.sequencerhttp=https://rpc.sepolia-api.lisk.com --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --bootnodes=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIyuDdWRwgiMr --override.ecotone=1708534800 --override.canyon=0
     restart: always
     stop_grace_period: 30s    
     volumes:
-      - lisk-sepolia:/data      
+      - lisk-sepolia:/data
+      - .jwtsecret:/jwtsecret
     environment:
       - "OP_GETH_GENESIS_FILE_PATH=/app/sepolia/lisk/genesis.json"
       - "OP_GETH_SEQUENCER_HTTP=https://rpc.sepolia-api.lisk.com"
@@ -28,8 +31,9 @@ uDdWRwgiMr"
       #- "CHAIN_NAME=lisk-sepolia"
       - "P2P_PORT=54521"
       - "WS_PORT=8545"
-      - "OP_NODE_L2_ENGINE_AUTH_RAW=688f5d737bad920bdfb2fc2f488d6b6209eebda1dae949a8de91398d932c517a"
-      - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
+      #- "OP_NODE_L2_ENGINE_AUTH_RAW=688f5d737bad920bdfb2fc2f488d6b6209eebda1dae949a8de91398d932c517a"
+      #- "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
+      #- "OP_GETH_ALLOW_UNPROTECTED_TXS=false --override.ecotone=1708534800"
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.base-stripprefix.stripprefix.prefixes=/lisk-sepolia"                      
@@ -58,12 +62,15 @@ uDdWRwgiMr"
       - "18660:18660/udp"
     command: [ "sh", "./op-node-entrypoint" ]
     restart: always
+    volumes:
+      - .jwtsecret:/jwtsecret
     stop_grace_period: 30s
     environment:
       #- "OP_NODE_NETWORK=lisk-sepolia"
       - "OP_NODE_L1_ETH_RPC=${LISK_SEPOLIA_L1_ENDPOINT}"
-      - "OP_NODE_L2_ENGINE_AUTH_RAW=688f5d737bad920bdfb2fc2f488d6b6209eebda1dae949a8de91398d932c517a"
-      - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
+      #- "OP_NODE_L2_ENGINE_AUTH_RAW=688f5d737bad920bdfb2fc2f488d6b6209eebda1dae949a8de91398d932c517a"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "OP_NODE_L2_ENGINE_RPC=http://op-lisk-sepolia:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
