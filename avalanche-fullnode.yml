@@ -30,7 +30,7 @@ services:
     environment:                                                                                      
       PROXY_HOST: avalanche-fullnode
       RPC_PORT: 9650
-      RPC_PATH: /ext/bc/c/rpc
+      RPC_PATH: /ext/bc/C/rpc
       WS_PORT: 9650
       WS_PATH: /ext/bc/C/ws
     networks:               
@@ -39,14 +39,12 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.avalanche-fullnode-replacepath.replacepath.path=/ext/bc/C/rpc"
       - "traefik.http.middlewares.avalanche-fullnode-stripprefix.stripprefix.prefixes=/avalanche-fullnode"
       - "traefik.http.services.avalanche-fullnode.loadbalancer.server.port=80"
       - "traefik.http.routers.avalanche-fullnode.entrypoints=websecure"
       - "traefik.http.routers.avalanche-fullnode.tls.certresolver=myresolver"
-      - "traefik.http.routers.avalanche-fullnode.service=avalanche-fullnode"
       - "traefik.http.routers.avalanche-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-fullnode`)"      
-      - "traefik.http.routers.avalanche-fullnode.middlewares=avalanche-fullnode-stripprefix, avalanche-fullnode-replacepath, ipwhitelist"
+      - "traefik.http.routers.avalanche-fullnode.middlewares=avalanche-fullnode-stripprefix, ipwhitelist"
       
 volumes:
   avalanche-fullnode:

@@ -1,11 +1,11 @@
 map $http_upgrade $proxy_connection {
-    default "https_backend${RPC_PATH}";
+    default "rpc_backend${RPC_PATH}";
     websocket "ws_backend${WS_PATH}";
 }
 
 server {
     listen 80;
-    server_name example.com;
+    server_name _;
 
     location / {
         proxy_pass http://$proxy_connection;
