@@ -12,8 +12,13 @@ while IFS= read -r line; do
     filesystem=$(echo "$line" | awk '{print $1}')
     usage=$(echo "$line" | awk -F'%' '{print $1}')
 
-    # Check if usage is above the threshold
-    if [ "$usage" -ge "$threshold" ]; then
-        echo "WARNING: Filesystem $filesystem is $usage% full!"
+    # Check if usage is a number
+    if [[ $usage =~ ^[0-9]+$ ]]; then
+        # Check if usage is above the threshold
+        if [ "$usage" -ge "$threshold" ]; then
+            echo "WARNING: Filesystem $filesystem is $usage% full!"
+        fi
+    else
+        echo "WARNING: Unable to parse usage for filesystem $filesystem."
     fi
 done <<< "$filesystems"
