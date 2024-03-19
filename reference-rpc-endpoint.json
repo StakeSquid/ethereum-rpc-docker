@@ -14,14 +14,10 @@
     },
     "arbitrum": {
 	"id": 42161,
-	"urls": ["https://1rpc.io/arb"]
-    },
-    "arbitrum": {
-	"id": 42161,
-	"urls": ["https://arb1.arbitrum.io/rpc"]
+	"urls": ["https://arbitrum-one.public.blastapi.io"]
     },
     "arbitrum-nova": {
 	"id": 42170,
-	"urls": ["https://nova.arbitrum.io/rpc"]
+	"urls": ["https://arbitrum-nova.public.blastapi.io"]
     }
 }
