@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASEPATH=/root/rpc
+BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
 
 IFS=':' read -ra parts <<< $COMPOSE_FILE

@@ -1,4 +1,6 @@
 #!/bin/bash
 
-./check-disk-space.sh
-./show-status.sh | grep -v "online"
+dir="$(dirname "$0")"
+
+$dir/check-disk-space.sh
+$dir/show-status.sh | grep -v "online"
