@@ -2,7 +2,13 @@
 
 BASEPATH=/root/rpc
 source $BASEPATH/.env
-blacklist=("lighthouse" "prism" "beacon" "nimbus" "ws" "arbitrum-classic" "hagall" "public")
+
+blacklist=()
+while IFS= read -r line; do
+    # Add each line to the array
+    blacklist+=("$line")
+done < "path-blacklist.txt"
+
 pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
 
 for path in $pathlist; do

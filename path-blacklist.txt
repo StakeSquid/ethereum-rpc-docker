@@ -1,0 +1,8 @@
+lighthouse
+prism
+beacon
+nimbus
+ws
+arbitrum-classic
+hagall
+public
