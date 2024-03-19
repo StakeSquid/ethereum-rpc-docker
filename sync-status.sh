@@ -1,13 +1,13 @@
 #!/bin/bash
 
-BASEPATH=/root/rpc
+BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
 
 blacklist=()
 while IFS= read -r line; do
     # Add each line to the array
     blacklist+=("$line")
-done < "path-blacklist.txt"
+done < "$BASEPATH/path-blacklist.txt"
 
 pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
 
