@@ -10,13 +10,13 @@ filesystems=$(df -h -x tmpfs --output=target,pcent | tail -n +2)
 while IFS= read -r line; do
     # Extract filesystem and usage percentage
     filesystem=$(echo "$line" | awk '{print $1}')
-    usage=$(echo "$line" | awk -F'%' '{print $1}')
+    usage=$(echo "$line" | awk '{print $NF}' | tr -d '%')
 
     # Check if usage is a number
     if [[ $usage =~ ^[0-9]+$ ]]; then
         # Check if usage is above the threshold
         if [ "$usage" -ge "$threshold" ]; then
-            echo "WARNING: Filesystem $filesystem is $usage% full!"
+            echo "WARNING: $filesystem is $usage% full!"
         fi
     else
         # Skip the line if usage information cannot be parsed
