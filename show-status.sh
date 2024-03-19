@@ -17,7 +17,7 @@ for part in "${parts[@]}"; do
     done
     
     if $include; then
-	result=$(./sync-status.sh "${part%.yml}")
+	result=$($BASEPATH/sync-status.sh "${part%.yml}")
 	echo "${part%.yml}: $result"
     fi
 done
