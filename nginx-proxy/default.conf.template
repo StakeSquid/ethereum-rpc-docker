@@ -17,9 +17,9 @@ server {
 }
 
 upstream rpc_backend {
-    server ${PROXY_HOST}:${RPC_PORT}${RPC_PATH:-/};
+    server ${PROXY_HOST}:${RPC_PORT}${RPC_PATH};
 }
 
 upstream ws_backend {
-    server ${PROXY_HOST}:${WS_PORT}${WS_PATH:-/};
+    server ${PROXY_HOST}:${WS_PORT}${WS_PATH};
 }
