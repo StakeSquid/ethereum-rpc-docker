@@ -25,7 +25,7 @@ services:
       - "GETH_DB_ENGINE=pebble"
       - "P2P_PORT=8480"
       - "WS_PORT=8545"
-      - "OP_NODE_L2_ENGINE_AUTH_RAW=688f5d737bad920bdfb2fc2f488d6b6209eebda1dae949a8de91398d932c517a"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
     labels:                     
       - "traefik.enable=true"
@@ -58,7 +58,7 @@ services:
     environment:
       - "OP_NODE_NETWORK=base-mainnet"
       - "OP_NODE_L1_ETH_RPC=${BASE_ETHEREUM_ENDPOINT}"
-      - "OP_NODE_L2_ENGINE_AUTH_RAW=688f5d737bad920bdfb2fc2f488d6b6209eebda1dae949a8de91398d932c517a"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
       - "OP_NODE_L2_ENGINE_RPC=http://base-fullnode:8551"
       - "OP_NODE_LOG_LEVEL=info"
