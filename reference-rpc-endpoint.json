@@ -20,8 +20,25 @@
 	"id": 42170,
 	"urls": ["https://arbitrum-nova.public.blastapi.io"]
     },
-    "arbitrum-seploia": {
+    "arbitrum-sepolia": {
 	"id": 421614,
 	"urls": ["https://arbitrum-sepolia.blockpi.network/v1/rpc/public"]
-    }
+    },
+    "blast": {
+	"id": 81457,
+	"urls": ["https://rpc.blast.io"]
+    },
+    "fuse": {
+	"id": 122,
+	"urls": ["https://fuse-pokt.nodies.app"]
+    },
+    "avalanche": {"id":43114,"urls":["https://avax-pokt.nodies.app/ext/bc/C/rpc"]},
+    "celo":{"id":42220,"urls":["https://rpc.ankr.com/celo"]},
+    "fantom":{"id":250,"urls":["https://fantom-rpc.publicnode.com"]},
+    "fantom-testnet":{"id":4002,"urls":["https://fantom-testnet.public.blastapi.io"]},
+    "sepolia":{"id":11155111,"urls":["https://1rpc.io/sepolia"]},
+    "holesky":{"id":17000,"urls":["https://rpc.holesky.ethpandaops.io"]},
+    "gnosis":{"id":100,"urls":["https://gnosis-mainnet.public.blastapi.io"]},
+    "mantle":{"id":5000,"urls":["https://rpc.mantle.xyz"]},
+    "polygon":{"id":137,"urls":["https://polygon-rpc.com"]}
 }
