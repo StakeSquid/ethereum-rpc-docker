@@ -1,11 +1,11 @@
 version: '3.1'
 
 services:
-  dshackle:
+  dshackle-free:
     image: drpcorg/dshackle:0.52.1
     restart: unless-stopped
     volumes:
-      - ./main_configs:/etc/dshackle
+      - ./free_configs:/etc/dshackle
     expose:
       - 8080
       - 25703
@@ -21,22 +21,19 @@ services:
       - "traefik.http.services.drpc.loadbalancer.server.port=2449"
       - "traefik.http.routers.drpc.entrypoints=grpc"
       - "traefik.http.routers.drpc.tls.certresolver=myresolver"
-      - "traefik.http.routers.drpc.rule=Host(`$GW_DOMAIN`)"
+      - "traefik.http.routers.drpc.rule=Host(`$GW_FREE_DOMAIN`)"
     networks:
       - chains
     logging: 
       driver: journald
       
-  redis:
+  redis-free:
     image: healthcheck/redis:alpine
     restart: unless-stopped
     command:
       - "redis-server"
-      - "--maxmemory ${GW_REDIS_RAM}"
+      - "--maxmemory ${GW_FREE_REDIS_RAM}"
       - "--maxmemory-policy allkeys-lru"
       - '--save ""'
     networks:
       - chains
-
-
-      
