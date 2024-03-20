@@ -21,7 +21,7 @@ for part in "${parts[@]}"; do
     include=true
     for word in "${blacklist[@]}"; do
 	if echo "$part" | grep -qE "$word"; then
-	    #echo "The path $path contains a blacklisted word: $word"
+	    # echo "The path $path contains a blacklisted word: $word"
 	    include=false
 	fi
     done
@@ -58,6 +58,7 @@ for part in "${parts[@]}"; do
 		export PROVIDER=${ORGANIZATION}-${ID}
 		
 		chain_id=$(curl --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL | jq -r '.result')
+		#echo "$TEST_URL $chain_id" >&2
 		chain_id_decimal=$((16#${chain_id#0x}))
 		export CHAIN=$($BASEPATH/get-shortname.sh $chain_id_decimal)
 		
