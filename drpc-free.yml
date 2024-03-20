@@ -9,8 +9,6 @@ services:
     expose:
       - 8080
       - 25703
-    ports:
-      - "2449:2449"
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8081"
