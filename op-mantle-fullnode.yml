@@ -29,7 +29,7 @@ services:
       - --http.api=web3,eth,debug,txpool,net
       - --ws
       - --ws.addr=0.0.0.0
-      - --ws.port=8546
+      - --ws.port=8545
       - --ws.origins=*
       - --ws.api=web3,eth,debug,txpool,net
       - --syncmode=full
