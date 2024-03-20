@@ -3,7 +3,7 @@
 BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
 
-$LOCAL=${1:-false}
+LOCAL=${1:-false}
 
 IFS=':' read -ra parts <<< $COMPOSE_FILE
 
@@ -41,20 +41,22 @@ for part in "${parts[@]}"; do
 	    if $path_include; then
 		
 
-		if [ "$LOCAL" = "true" ]; then
-		    url=$(./get-local-name.sh "${part%.yml}")
+		if $LOCAL; then
+		    url=$("$BASEPATH/get-local-url.sh" "${part%.yml}")
+                    TEST_URL="https://$DOMAIN$path"
 		    export RPC_URL="http://$url"
 		    export WS_URL="ws://$url"		   
+		    export ID=$(echo "$DOMAIN$path" | sed -E 's/^rpc-(.*)\.stakesquid\.eu\/(.*)$/\1-\2/')
 		else
 		    url="$DOMAIN$path"
 		    export RPC_URL="https://$url"
 		    export WS_URL="wss://$url"		    
+                    export ID=$(echo "$url" | sed -E 's/^rpc-(.*)\.stakesquid\.eu\/(.*)$/\1-\2/')
 		fi
 		
-		export ID=$(echo "$url" | sed -E 's/^rpc-(.*)\.stakesquid\.eu\/(.*)$/\1-\2/')
 		export PROVIDER=${ORGANIZATION}-${ID}
 		
-		chain_id=$(curl --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL | jq -r '.result')
+		chain_id=$(curl --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL | jq -r '.result')
 		chain_id_decimal=$((16#${chain_id#0x}))
 		export CHAIN=$($BASEPATH/get-shortname.sh $chain_id_decimal)
 		
