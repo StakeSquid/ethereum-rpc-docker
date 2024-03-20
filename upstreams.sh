@@ -7,7 +7,7 @@ LOCAL=${1:-false}
 
 IFS=':' read -ra parts <<< $COMPOSE_FILE
 
-blacklist=("drpc.yml" "base.yml" "rpc.yml" "monitoring.yml")
+blacklist=("drpc.yml" "drpc-free.yml" "base.yml" "rpc.yml" "monitoring.yml")
 
 upstreams=()
 
