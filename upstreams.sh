@@ -50,6 +50,7 @@ for part in "${parts[@]}"; do
 		else
 		    url="$DOMAIN$path"
 		    export RPC_URL="https://$url"
+		    export TEST_URL="$RPC_URL"
 		    export WS_URL="wss://$url"		    
                     export ID=$(echo "$url" | sed -E 's/^rpc-(.*)\.stakesquid\.eu\/(.*)$/\1-\2/')
 		fi
