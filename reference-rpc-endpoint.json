@@ -41,5 +41,6 @@
     "gnosis":{"id":100,"urls":["https://gnosis-mainnet.public.blastapi.io"]},
     "mantle":{"id":5000,"urls":["https://rpc.mantle.xyz"]},
     "polygon":{"id":137,"urls":["https://polygon-rpc.com"]},
-    "linea":{"id":59144,"urs":["https://rpc.linea.build"]}
+    "linea":{"id":59144,"urls":["https://rpc.linea.build"]},
+    "lisk-sepolia":{"id":4202,"urls":["https://rpc.sepolia-api.lisk.com"]}
 }
