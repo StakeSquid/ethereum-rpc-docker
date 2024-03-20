@@ -56,8 +56,20 @@ for part in "${parts[@]}"; do
 		fi
 		
 		export PROVIDER=${ORGANIZATION}-${ID}
+
+		response_file=$(mktemp)
 		
-		chain_id=$(curl --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL | jq -r '.result')
+		http_status_code=$(curl --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL)
+
+		if [ $? -eq 0 ] && [[ $http_status_code -ne 200 ]]; then
+		    echo "have error response from $TEST_URL: $(cat $response_file)" >&2
+		    rm "$response_file"
+		    continue  # Skip to the next iteration of the loop
+		fi
+		
+		chain_id=$(cat "$response_file" | jq -r '.result')		
+		rm "$response_file"
+		
 		#echo "$TEST_URL $chain_id" >&2
 		chain_id_decimal=$((16#${chain_id#0x}))
 		export CHAIN=$($BASEPATH/get-shortname.sh $chain_id_decimal)
