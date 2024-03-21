@@ -67,12 +67,12 @@ for path in $pathlist; do
 			    if [ "$latest_block_hash" == "$latest_block_hash2" ]; then
 				response_file3=$(mktemp)
 
-				http_status_code=$(curl --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file3" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}" $RPC_URL)
-
+				http_status_code=$(curl --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file3" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}" $ref)
+				
 				if [ $? -eq 0 ]; then
 				    if [[ $http_status_code -eq 200 ]]; then
 					response3=$(cat "$response_file3")
-					latest_block_timestamp3=$(echo "$response" | jq -r '.result.timestamp')
+					latest_block_timestamp3=$(echo "$response3" | jq -r '.result.timestamp')
 					latest_block_timestamp_decimal3=$((16#${latest_block_timestamp3#0x}))
 					time_difference3=$(( latest_block_timestamp_decimal3 - latest_block_timestamp_decimal ))
 
