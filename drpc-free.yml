@@ -12,14 +12,14 @@ services:
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8081"
-      - "prometheus-scrape.job_name=drpc-dshackle"
+      - "prometheus-scrape.job_name=drpc-dshackle-free"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.services.drpc.loadbalancer.server.scheme=h2c"
-      - "traefik.http.services.drpc.loadbalancer.server.port=2449"
-      - "traefik.http.routers.drpc.entrypoints=grpc"
-      - "traefik.http.routers.drpc.tls.certresolver=myresolver"
-      - "traefik.http.routers.drpc.rule=Host(`$GW_FREE_DOMAIN`)"
+      - "traefik.http.services.drpc-free.loadbalancer.server.scheme=h2c"
+      - "traefik.http.services.drpc-free.loadbalancer.server.port=2449"
+      - "traefik.http.routers.drpc-free.entrypoints=grpc"
+      - "traefik.http.routers.drpc-free.tls.certresolver=myresolver"
+      - "traefik.http.routers.drpc-free.rule=Host(`$GW_FREE_DOMAIN`)"
     networks:
       - chains
     logging: 
