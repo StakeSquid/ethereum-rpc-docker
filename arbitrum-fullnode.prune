@@ -1,0 +1,29 @@
+#!/bin/bash
+
+BASEPATH="$(dirname "$0")"
+source $BASEPATH/.env
+
+#IFS=':' read -ra parts <<< $COMPOSE_FILE
+
+# Add the --init.prune option to the command list
+sed -i '/command:/a \ \ - --init.prune' "$BASEPATH/arbitrum-fullnode.yml"
+
+docker-compose up -d -f $BASEPATH/docker-compose.yml
+
+while true; do
+    # Execute SSH command and extract the answer                                                                                                                                                                      
+    answer=$($BASEPATH/sync-status.sh arbitrum-fullnode)
+      
+    # Check if answer is "online"                                                                                                                                                                                     
+    if [ "$answer" == "online" ]; then
+        break  # Break the loop if answer is "online"                                                                                                                                                                 
+    else
+        blocknumber=$($BASEPATH/blocknumber.sh arbitrum-fullnode)
+        echo "$(date) staus is $answer and blocknumber is $blocknumber"
+    fi
+    
+    # Wait for 5 minutes before next iteration                                                                                                                                                                        
+    sleep 5m
+done
+
+git -C $BASTEPATH checkout arbitrum-fullnode.yml
