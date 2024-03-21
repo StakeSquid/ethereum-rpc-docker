@@ -4,14 +4,18 @@
 backup_dir="/backup"
 
 # Path to the volume directory
-volume_dir="/var/lib/docker/volume"
+volume_dir="/var/lib/docker/volumes"
 
 if [ ! -d "$backup_dir" ]; then
     echo "Error: /backup directory does not exist"
     exit 1
 fi
 
-# Function to calculate the required disk space
+if [ ! -d "$volume_dir" ]; then
+    echo "Error: /var/lib/docker/volumes directory does not exist"
+    exit 1
+fi
+
 calculate_required_space() {
     # Extract the size from the filename
     size=$(echo "$1" | grep -oE '[0-9]+G')
@@ -33,7 +37,7 @@ keys=$(cat /root/rpc/$1.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
 # Iterate over the list of keys
 for key in $keys; do
     echo "Executing command with key: /var/lib/docker/volumes/rpc_$key/_data"
-    volume_name="rpc_$volume_name"
+    volume_name="rpc_$key"
     
     newest_file=$(ls -1 "$backup_dir"/"$volume_name"* | sort | tail -n 1)
 
