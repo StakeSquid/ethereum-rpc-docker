@@ -5,7 +5,7 @@
     "eth": {
 	"id": 1,
 	"urls": ["https://ethereum-rpc.publicnode.com"]},
-    "playnance-mainnet": {
+    "playnance": {
 	"id": 1829,
 	"urls": ["https://rpc.playblock.io"]},
     "real": {
