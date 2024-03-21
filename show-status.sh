@@ -5,7 +5,7 @@ source $BASEPATH/.env
 
 IFS=':' read -ra parts <<< $COMPOSE_FILE
 
-blacklist=("drpc.yml" "base.yml" "rpc.yml" "monitoring.yml")
+blacklist=("drpc.yml" "drpc-free.yml" "base.yml" "rpc.yml" "monitoring.yml")
 
 for part in "${parts[@]}"; do
     include=true
