@@ -49,7 +49,7 @@ services:
       - --metrics.port=9001
       - --snapshot=false
     restart: always
-    stop_grace_period: 30s    
+    stop_grace_period: 3m    
     volumes:
       - mantle-fullnode:/data
       - ".jwtsecret:/jwtsecret"

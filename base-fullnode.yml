@@ -14,7 +14,7 @@ services:
       - "8480:8480/udp"
     command: [ "sh", "./geth-entrypoint" ]
     restart: always
-    stop_grace_period: 30s    
+    stop_grace_period: 3m   
     volumes:
       - base-fullnode:/data
     environment:
