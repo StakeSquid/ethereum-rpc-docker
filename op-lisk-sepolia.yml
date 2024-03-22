@@ -62,6 +62,7 @@ uDdWRwgiMr"
     restart: always
     volumes:
       - .jwtsecret:/jwtsecret
+      - ./op/sepolia/lisk/rollup.json:/app/sepolia/lisk/rollup.json
     stop_grace_period: 30s
     environment:
       #- "OP_NODE_NETWORK=lisk-sepolia"
