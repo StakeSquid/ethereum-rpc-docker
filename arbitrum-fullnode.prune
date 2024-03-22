@@ -3,12 +3,14 @@
 BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
 
+echo "running in $BASEPATH"
+
 #IFS=':' read -ra parts <<< $COMPOSE_FILE
 
 # Add the --init.prune option to the command list
 sed -i '/command:/a \ \ - --init.prune' "$BASEPATH/arbitrum-fullnode.yml"
 
-docker-compose -f $BASEPATH/docker-compose.yml up -d
+docker-compose -f "$BASEPATH/docker-compose.yml" up -d
 
 while true; do
     # Execute SSH command and extract the answer                                                                                                                                                                      
