@@ -48,6 +48,8 @@ for key in $keys; do
 
     required_space=$(calculate_required_space "$(basename "$newest_file")")
 
+    rm -rf "/var/lib/docker/volumes/rpc_$key/_data/*"
+    
     available_space=$(df --output=avail -B1 "$volume_dir" | tail -n 1)
 
     if [ "$available_space" -lt "$required_space" ]; then
