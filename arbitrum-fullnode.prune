@@ -26,4 +26,4 @@ while true; do
     sleep 5m
 done
 
-git -C $BASTEPATH checkout arbitrum-fullnode.yml
+git -C $BASEPATH checkout arbitrum-fullnode.yml
