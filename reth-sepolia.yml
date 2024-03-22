@@ -54,7 +54,7 @@ services:
         "--checkpoint-sync-url=https://beaconstate-sepolia.chainsafe.io",
         "--execution-endpoint=http://sepolia-reth:8551",
         "--accept-terms-of-use",
-        "--backfill"
+        "--enable-experimental-backfill=true"
       ]
     networks:
       - chains
