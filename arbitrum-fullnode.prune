@@ -8,7 +8,7 @@ source $BASEPATH/.env
 # Add the --init.prune option to the command list
 sed -i '/command:/a \ \ - --init.prune' "$BASEPATH/arbitrum-fullnode.yml"
 
-docker-compose up -d -f $BASEPATH/docker-compose.yml
+docker-compose -f $BASEPATH/docker-compose.yml up -d
 
 while true; do
     # Execute SSH command and extract the answer                                                                                                                                                                      
