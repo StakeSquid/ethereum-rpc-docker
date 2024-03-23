@@ -4,6 +4,7 @@ services:
   mantle:
     image: mantlenetworkio/l2geth:v0.4.3
     entrypoint: sh ./geth.sh
+    stop_grace_period: 3m
     volumes:
       - mantle:/root/.ethereum/geth/
     environment:
