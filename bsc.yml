@@ -13,7 +13,7 @@ services:
       - "8546"                                                                           
       - "29061"                                                                          
     volumes:                                                                             
-      - bsc:/bsc/node                                                                                                                                                
+      - bsc:/data                                                                                                                                                
       - ./bsc/config:/bsc/config
     environment:
       GETH_HTTP_ADDR: 0.0.0.0
@@ -26,7 +26,7 @@ services:
       GETH_WS_ORIGINS: '*'
       GETH_DISCOVERY_PORT: 29061
       GETH_PORT: 29061
-      GETH_DATADIR: /bsc/node
+      #GETH_DATADIR: /bsc/node
       GETH_STATE_SCHEME: path
       GETH_DB_ENGINE: pebble
       GETH_SYNCMODE: full
