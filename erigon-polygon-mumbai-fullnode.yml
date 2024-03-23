@@ -4,6 +4,7 @@ services:
   erigon-polygon-mumbai-fullnode:
     image: thorax/erigon:${ERIGON_VERSION:-v2.57.3}
     user: root
+    stop_grace_period: 3m
     volumes:
       - "polygon-mumbai-erigon-fullnode:/datadir"
       - "/slowdisk:/slowdisk"

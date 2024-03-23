@@ -4,6 +4,7 @@ services:
   erigon-mainnet-fullnode:
     image: thorax/erigon:${ERIGON_VERSION:-v2.59.0}
     user: root
+    stop_grace_period: 10m
     expose:
       - "16630"
       - "9090"
@@ -44,7 +45,6 @@ services:
       --rpc.gascap=5000000000
       --ws 
     restart: unless-stopped
-    stop_grace_period: 1m
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=6060"
