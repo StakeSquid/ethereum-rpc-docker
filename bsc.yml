@@ -14,8 +14,23 @@ services:
       - "29061"                                                                          
     volumes:                                                                             
       - bsc:/bsc/node                                                                                                                                                
-      - ./bsc/config:/bsc/config                                               
-    command: "--port=29061 --history.transactions=0 --syncmode=full --db.engine=pebble --state.scheme=path --http.addr='0.0.0.0' --http.port=8545 --http.vhosts='*' --ws.addr='0.0.0.0' --ws.port=8545 --ws.origins='*' --datadir='/bsc/node'"
+      - ./bsc/config:/bsc/config
+    environment:
+      GETH_HTTP_ADDR: 0.0.0.0
+      GETH_HTTP: true
+      GETH_HTTP_PORT: 8545
+      GETH_HTTP_VHOSTS: '*'
+      GETH_WS: true
+      GETH_WS_ADDR: 0.0.0.0
+      GETH_WS_PORT: 8545
+      GETH_WS_ORIGINS: '*'
+      GETH_DISCOVERY_PORT: 29061
+      GETH_PORT: 29061
+      GETH_DATADIR: /bsc/node
+      GETH_STATE_SCHEME: path
+      GETH_DB_ENGINE: pebble
+      GETH_SYNCMODE: full
+      GETH_HISTORY_TRANSACTIONS: 0
     restart: unless-stopped
     stop_grace_period: 3m
     networks: 
