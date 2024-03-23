@@ -42,8 +42,11 @@ for key in $keys; do
     newest_file=$(ls -1 "$backup_dir"/"$volume_name"* | sort | tail -n 1)
 
     if [ -z "$newest_file" ]; then
-	echo "Error: No backup found for volume '$volume_name'"
-	exit 1
+
+	if [ -z "$2" ]; then
+	    echo "Error: No backup found for volume '$volume_name'"
+	    exit 1
+	fi
     fi
 
     required_space=$(calculate_required_space "$(basename "$newest_file")")

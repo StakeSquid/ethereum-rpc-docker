@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-mainnet-fullnode:
-    image: thorax/erigon:${ERIGON_VERSION:-v2.58.1}
+    image: thorax/erigon:${ERIGON_VERSION:-v2.59.0}
     user: root
     expose:
       - "16630"
