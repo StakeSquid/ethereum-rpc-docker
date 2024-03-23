@@ -2,16 +2,19 @@ version: '3.1'
 
 services:
 
-  binance-smart-chain:                                                                                                                                                            
-    image: dysnix/bsc:v1.1.11
+  bsc:                                                                                                                                                            
+    image: ghcr.io/bnb-chain/bsc:1.1.18_hf
+    ports:
+      - "29061:29061"
+      - "29061:29061/udp"
     expose:                                                                              
       - "8545"                                                                           
       - "8546"                                                                           
-      - "30303"                                                                          
+      - "29061"                                                                          
     volumes:                                                                             
-      - bsc_data:/datadir                                                                                                                                                
-      - ./bsc/config.toml:/config.toml                                               
-    command: "--cache 18000 --rpc --rpcaddr=\"0.0.0.0\" --rpc.allow-unprotected-txs --txlookuplimit 0 --syncmode snap --config /config.toml --datadir /datadir"
+      - bsc:/bsc/node                                                                                                                                                
+      - ./bsc/config:/bsc/config                                               
+    command: "--port=29061 --history.transactions=0 --syncmode=full --db.engine=pebble --state.scheme=path --http.addr 0.0.0.0 --http.port 8545 --http.vhosts '*' --verbosity 5 --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*'"
     restart: unless-stopped                                                              
     networks: 
       - chains
@@ -25,5 +28,5 @@ services:
       - "traefik.http.routers.bsc.middlewares=bsc-stripprefix, ipwhitelist"
 
 volumes:
-    bsc_data:
+    bsc:
 
