@@ -55,23 +55,26 @@ for key in $keys; do
     directory="$volume_dir/rpc_$key/_data/"
     [ -d "$directory" ] && existing_size=$(du -sb "$directory" | awk '{ total += $1 } END { print total }') || existing_size=0
 
-    if [ -z "$newest_file" ]; then
+    #echo "$directory: $existing_size"
 
+    if [ -z "$newest_file" ]; then
 	if [[ "$2" = "--print-size-only" && $existing_size -gt 0 ]]; then
 	    # I only want to have a theoretical file size
-	    GB=$(echo "$existing_size / 1024 / 1024 / 1024" | bc )
-	    echo "$GB"
-	    exit 0
+	    required_space=$existing_size
+	    #GB=$(echo "$existing_size / 1024 / 1024 / 1024" | bc )
+	    #echo "$GB"
+	    #exit 0
 	else
 	    echo "Error: No backup found for volume '$volume_name'"
 	    exit 1
 	fi
+    else
+      restore_files+=("$newest_file")
+      cleanup_folders+=("$directory")
+
+      required_space=$(calculate_required_space "$(basename "$newest_file")")
     fi
 
-    restore_files+=("$newest_file")
-    cleanup_folders+=("$directory")
-
-    required_space=$(calculate_required_space "$(basename "$newest_file")")
     #echo "$volume_name: $required_space"
     total_space=$(echo "$total_space + $required_space" | bc)
 
