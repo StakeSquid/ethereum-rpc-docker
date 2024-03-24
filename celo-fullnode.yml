@@ -4,7 +4,7 @@ services:
   celo:
     image: us.gcr.io/celo-org/geth:1.8
     restart: unless-stopped
-    stop_grace_period: 1m
+    stop_grace_period: 3m
     command: |
       --verbosity 3
       --syncmode full
