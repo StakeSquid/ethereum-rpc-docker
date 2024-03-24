@@ -143,7 +143,8 @@
       "https://gnosis-mainnet.public.blastapi.io"
     ],
     "default": [
-      "erigon-gnosis-fullnode"
+	"erigon-gnosis-fullnode",
+	"nethermind-gnosis"
     ]
   },
   "mantle": {
