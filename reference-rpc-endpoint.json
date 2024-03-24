@@ -1,0 +1,201 @@
+{
+  "base": {
+    "id": 8453,
+    "urls": [
+      "https://mainnet.base.org"
+    ],
+    "default": [
+      "base-fullnode"
+    ]
+  },
+  "ethereum": {
+    "id": 1,
+    "urls": [
+      "https://ethereum-rpc.publicnode.com"
+    ],
+    "default": [
+      "erigon-fullnode"
+    ],
+    "archive": [
+      "reth-mainnet"
+    ]
+  },
+  "playnance": {
+    "id": 1829,
+    "urls": [
+      "https://rpc.playblock.io"
+    ],
+    "default": [
+      "arb-playblock"
+    ]
+  },
+  "real": {
+    "id": 111188,
+    "urls": [
+      "https://rpc.realforreal.gelato.digital"
+    ],
+    "default": [
+      "arb-real"
+    ]
+  },
+  "arbitrum": {
+    "id": 42161,
+    "urls": [
+      "https://arbitrum-one.public.blastapi.io"
+    ],
+    "default": [
+      "arbitrum-fullnode"
+    ]
+  },
+  "arbitrum-nova": {
+    "id": 42170,
+    "urls": [
+      "https://arbitrum-nova.public.blastapi.io"
+    ],
+    "default": [
+      "arbitrum-nova-fullnode"
+    ]
+  },
+  "arbitrum-sepolia": {
+    "id": 421614,
+    "urls": [
+      "https://arbitrum-sepolia.blockpi.network/v1/rpc/public"
+    ],
+    "default": [
+      "arbitrum-sepolia-fullnode"
+    ]
+  },
+  "blast": {
+    "id": 81457,
+    "urls": [
+      "https://rpc.blast.io"
+    ],
+    "default": [
+      "op-blast-mainnet"
+    ]
+  },
+  "fuse": {
+    "id": 122,
+    "urls": [
+      "https://fuse-pokt.nodies.app"
+    ],
+    "default": [
+      "fuse"
+    ]
+  },
+  "avalanche": {
+    "id": 43114,
+    "urls": [
+      "https://avax-pokt.nodies.app/ext/bc/C/rpc"
+    ],
+    "default": [
+      "avalanche-fullnode"
+    ]
+  },
+  "celo": {
+    "id": 42220,
+    "urls": [
+      "https://rpc.ankr.com/celo"
+    ],
+    "default": [
+      "celo-fullnode"
+    ]
+  },
+  "fantom": {
+    "id": 250,
+    "urls": [
+      "https://fantom-rpc.publicnode.com"
+    ],
+    "default": [
+      "fantom"
+    ]
+  },
+  "fantom-testnet": {
+    "id": 4002,
+    "urls": [
+      "https://fantom-testnet.public.blastapi.io"
+    ],
+    "default": [
+      "fantom-testnet"
+    ]
+  },
+  "sepolia": {
+    "id": 11155111,
+    "urls": [
+      "https://1rpc.io/sepolia"
+    ],
+    "default": [
+      "reth-sepolia"
+    ]
+  },
+  "holesky": {
+    "id": 17000,
+    "urls": [
+      "https://rpc.holesky.ethpandaops.io"
+    ],
+    "default": [
+      "geth-holesky"
+    ]
+  },
+  "gnosis": {
+    "id": 100,
+    "urls": [
+      "https://gnosis-mainnet.public.blastapi.io"
+    ],
+    "default": [
+      "erigon-gnosis-fullnode"
+    ]
+  },
+  "mantle": {
+    "id": 5000,
+    "urls": [
+      "https://rpc.mantle.xyz"
+    ],
+    "default": [
+      "mantle-fullnode"
+    ],
+    "archive": [
+      "mantle"
+    ]
+  },
+  "polygon": {
+    "id": 137,
+    "urls": [
+      "https://polygon-rpc.com"
+    ],
+    "default": [
+      "polygon-erigon-fullnode"
+    ]
+  },
+  "linea": {
+    "id": 59144,
+    "urls": [
+      "https://rpc.linea.build"
+    ],
+    "default": [
+      "linea"
+    ],
+    "archive": [
+      "linea"
+    ]
+  },
+  "lisk-sepolia": {
+    "id": 4202,
+    "urls": [
+      "https://rpc.sepolia-api.lisk.com"
+    ],
+    "default": [
+      "op-lisk-sepolia"
+    ]
+  },
+  "bsc": {
+    "id": 56,
+    "urls": [
+      "https://bscrpc.com"
+    ],
+    "default": [
+      "bsc",
+      "bsc-erigon-fullnode"
+    ]
+  }
+}
