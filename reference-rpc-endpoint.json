@@ -173,10 +173,10 @@
       "https://rpc.linea.build"
     ],
     "default": [
-      "linea"
+      "geth-linea"
     ],
     "archive": [
-      "linea"
+      "geth-linea"
     ]
   },
   "lisk-sepolia": {
