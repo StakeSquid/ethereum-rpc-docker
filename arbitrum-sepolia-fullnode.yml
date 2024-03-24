@@ -4,7 +4,7 @@ services:
   arbitrum-sepolia-fullnode:
     image: 'offchainlabs/nitro-node:v2.3.1-26fad6f'
     restart: always
-    stop_grace_period: 30s
+    stop_grace_period: 3m
     user: root
     volumes:
       - 'arbitrum-sepolia-fullnode_data:/arbitrum-node'
