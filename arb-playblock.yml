@@ -4,7 +4,7 @@ services:
   arb-playblock:
     image: 'offchainlabs/nitro-node:v2.2.4-8517340'
     restart: always
-    stop_grace_period: 30s
+    stop_grace_period: 3m
     user: root
     volumes:
       - 'arb-playblock:/persistent'
