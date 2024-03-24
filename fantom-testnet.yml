@@ -6,6 +6,7 @@ services:
         VERSION: release/1.1.3-rc.5
       context: ./fantom
       dockerfile: Dockerfile-testnet
+    stop_grace_period: 3m
     environment:
       - CACHE_SIZE=${FANTOM_CACHE_SIZE:-16000}
     volumes:
