@@ -13,11 +13,14 @@ for key in $(jq -r 'keys[]' <<< "$json"); do
     default_array+=($default_values)
 done
 
-for node in $default_array; do
-    size_in_gb=$($BASEPATH/restore-volumes.sh --print-size-only)
+for node in "${default_array[@]}"; do
+#echo "check $node"
+    size_in_gb=$($BASEPATH/restore-volumes.sh "$node" --print-size-only)
 
     if [ $? -eq 0 ]; then
-	echo "$node: $sizeG"
+	echo "$node: $size_in_gb"
+#    else
+#   	echo "$node can not"
     fi
 done
 

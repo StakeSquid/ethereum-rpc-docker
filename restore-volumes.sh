@@ -51,10 +51,10 @@ cleanup_folders=()
 for key in $keys; do
     volume_name="rpc_$key"
 
-    newest_file=$(ls -1 "$backup_dir"/"$volume_name"* | sort | tail -n 1)
+    newest_file=$(ls -1 "$backup_dir"/"$volume_name"* 2>/dev/null | sort | tail -n 1)
     directory="$volume_dir/rpc_$key/_data/"
     [ -d "$directory" ] && existing_size=$(du -sb "$directory" | awk '{ total += $1 } END { print total }') || existing_size=0
-    
+
     if [ -z "$newest_file" ]; then
 
 	if [[ "$2" = "--print-size-only" && $existing_size -gt 0 ]]; then
