@@ -22,11 +22,17 @@ calculate_required_space() {
 
     # Remove 'G' from the size and convert it to bytes
     size_bytes=$(echo "$size" | sed 's/G//')
-    size_bytes=$(( size_bytes * 1024 * 1024 * 1024 ))  # Convert GB to bytes
+    if [[ $size_bytes == 0* ]]; then
+      # this happens when the size is smalleer than 1 GB
+      size_bytes=1
+    fi
+
+    size_bytes=$(echo "$size_bytes * 1024 * 1024 * 1024" | bc)
 
     # Calculate 10% of the size and add it to the required space
-    ten_percent=$(( size_bytes / 10 ))
-    required_space=$(( size_bytes + ten_percent ))
+    ten_percent=$(echo "$size_bytes / 10" | bc)
+    required_space=$(echo "$size_bytes + $ten_percent" | bc)
+    #required_space=$(( size_bytes + ten_percent ))
 
     echo "$required_space"
 }
@@ -44,7 +50,7 @@ cleanup_folders=()
 
 for key in $keys; do
     volume_name="rpc_$key"
-    
+
     newest_file=$(ls -1 "$backup_dir"/"$volume_name"* | sort | tail -n 1)
 
     if [ -z "$newest_file" ]; then
@@ -58,16 +64,17 @@ for key in $keys; do
     directory="$volume_dir/rpc_$key/_data/"
     restore_files+=("$newest_file")
     cleanup_folders+=("$directory")
-    
+
     required_space=$(calculate_required_space "$(basename "$newest_file")")
-    total_space=$((total_space + required_space))
+    #echo "$volume_name: $required_space"
+    total_space=$(echo "$total_space + $required_space" | bc)
 
     [ -d "$directory" ] && existing_size=$(du -sb "$directory" | awk '{ total += $1 } END { print total }') || existing_size=0
-    cleanup_space=$((cleanup_space + existing_size))    
+    cleanup_space=$(echo "$cleanup_space + existing_size" | bc)
 done
 
 if [ "$2" = "--print-size-only" ]; then
-    GB=$(( $total_space / 1024 / 1024 / 1024 ))
+    GB=$(echo "$total_space / 1024 / 1024 / 1024" | bc )
     echo "$GB"
     exit 0
 fi
