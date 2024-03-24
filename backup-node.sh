@@ -18,15 +18,19 @@ for key in $keys; do
      sub(/[Kk]$/, "", size)  # Remove 'K' suffix if present
      sub(/[Mm]$/, "", size)  # Remove 'M' suffix if present
      sub(/[Gg]$/, "", size)  # Remove 'G' suffix if present
+     sub(/[Tt]$/, "", size)  # Remove 'T' suffix if present
      if ($1 ~ /[Kk]$/) {
          size *= 0.001   # Convert kilobytes to gigabytes
      } else if ($1 ~ /[Mm]$/) {
          size *= 0.001   # Convert megabytes to gigabytes
+     } else if ($1 ~ /[Tt]$/) {
+     	 size *= 1000 # convert terabytes to gigabytes
      }
      print size "G"
     }')
     
     target_file="/backup/rpc_$key-$(date +'%Y-%m-%d-%H-%M-%S')-$folder_size.tar.zst"
 
+    #echo "$target_file"
     tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd -o "$target_file"
 done
