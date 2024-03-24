@@ -55,7 +55,7 @@ for key in $keys; do
     directory="$volume_dir/rpc_$key/_data/"
     [ -d "$directory" ] && existing_size=$(du -sb "$directory" | awk '{ total += $1 } END { print total }') || existing_size=0
 
-    echo "$directory: $existing_size"
+    #echo "$directory: $existing_size"
 
     if [ -z "$newest_file" ]; then
 	if [[ "$2" = "--print-size-only" && $existing_size -gt 0 ]]; then
