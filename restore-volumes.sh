@@ -35,6 +35,13 @@ calculate_required_space() {
 keys=$(cat /root/rpc/$1.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
 
 # Iterate over the list of keys
+
+total_space=0
+cleanup_space=0
+
+restore_files=()
+cleanup_folders=()
+
 for key in $keys; do
     echo "Executing command with key: /var/lib/docker/volumes/rpc_$key/_data"
     volume_name="rpc_$key"
@@ -49,21 +56,39 @@ for key in $keys; do
 	fi
     fi
 
-    required_space=$(calculate_required_space "$(basename "$newest_file")")
-
-    rm -rf "/var/lib/docker/volumes/rpc_$key/_data/*"
+    directory="$volume_dir/rpc_$key/_data/"
+    restore_files+=("$newest_file")
+    cleanup_folders+=("$directory")
     
-    available_space=$(df --output=avail -B1 "$volume_dir" | tail -n 1)
+    required_space=$(calculate_required_space "$(basename "$newest_file")")
+    total_space=$((total_space + required_space))
 
-    if [ "$available_space" -lt "$required_space" ]; then
-	echo "Error: Not enough free space in $volume_dir"
-	exit 1
-    fi
-
-    tar -I zstd -xf "$newest_file" -C /
-
-    echo "Backup '$newest_file' restored"    
+    [ -d "$directory" ] && existing_size=$(du -sb "$directory" | awk '{ total += $1 } END { print total }') || existing_size=0
+    cleanup_space=$((cleanup_space + existing_size))    
 done
 
+if [ "$2" = "--print-size-only" ]; then
+    GB=$(( $total_space / 1024 / 1024 / 1024 ))
+    echo "$GB"
+    exit 0
+fi
 
+available_space=$(df --output=avail -B1 "$volume_dir" | tail -n 1)
+available_space=$((available_space + cleanup_space))
 
+if [ "$available_space" -lt "$total_space" ]; then
+    echo "Error: Not enough free space in $volume_dir"
+    exit 1
+fi
+
+for folder in $cleanup_folders; do
+    [ -d "$folder" ] && rm -rf "$folder/*"
+done
+
+for file in $restore_files; do    
+    tar -I zstd -xf "$file" -C /
+    echo "Backup '$file' restored"        
+done
+
+echo "node $1 restored."
+    
