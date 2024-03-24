@@ -27,19 +27,20 @@ OracleThreshold = 1000
 
 [Node]
 IPCPath = "geth.ipc"
-HTTPHost = "localhost"
+HTTPHost = "0.0.0.0"
 InsecureUnlockAllowed = false
 HTTPPort = 8545
-HTTPVirtualHosts = ["localhost"]
+HTTPVirtualHosts = ["*"]
 HTTPModules = ["eth", "net", "web3", "txpool", "parlia"]
-WSPort = 8546
+WSHost = "0.0.0.0"
+WSPort = 8545
 WSModules = ["net", "web3", "eth"]
 
 [Node.P2P]
 MaxPeers = 200
 NoDiscovery = false
 StaticNodes = []
-ListenAddr = ":30311"
+ListenAddr = ":29061"
 EnableMsgEvents = false
 
 

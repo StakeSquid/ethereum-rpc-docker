@@ -13,24 +13,10 @@ services:
       - "8546"                                                                           
       - "29061"                                                                          
     volumes:                                                                             
-      - bsc:/data                                                                                                                                                
+      - bsc:/bsc/.ethereum                                                                                                                                                
       - ./bsc/config:/bsc/config
-    environment:
-      GETH_HTTP_ADDR: 0.0.0.0
-      GETH_HTTP: 'true'
-      GETH_HTTP_PORT: 8545
-      GETH_HTTP_VHOSTS: '*'
-      GETH_WS: 'true'
-      GETH_WS_ADDR: 0.0.0.0
-      GETH_WS_PORT: 8545
-      GETH_WS_ORIGINS: '*'
-      GETH_DISCOVERY_PORT: 29061
-      GETH_PORT: 29061
-      #GETH_DATADIR: /bsc/node
-      GETH_STATE_SCHEME: path
-      GETH_DB_ENGINE: pebble
-      GETH_SYNCMODE: full
-      GETH_HISTORY_TRANSACTIONS: 0
+    entrypoint: geth
+    command: --config=/bsc/config/config.toml --ws.origins='*' --history.transactions=0 --state.scheme=path --syncmode=full --db.engine=pebble
     restart: unless-stopped
     stop_grace_period: 3m
     networks: 
