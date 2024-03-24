@@ -43,7 +43,6 @@ restore_files=()
 cleanup_folders=()
 
 for key in $keys; do
-    echo "Executing command with key: /var/lib/docker/volumes/rpc_$key/_data"
     volume_name="rpc_$key"
     
     newest_file=$(ls -1 "$backup_dir"/"$volume_name"* | sort | tail -n 1)
@@ -82,6 +81,7 @@ if [ "$available_space" -lt "$total_space" ]; then
 fi
 
 for folder in $cleanup_folders; do
+    echo "delete $folder"
     [ -d "$folder" ] && rm -rf "$folder/*"
 done
 
