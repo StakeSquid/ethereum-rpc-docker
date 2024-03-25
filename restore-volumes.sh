@@ -60,7 +60,11 @@ for key in $keys; do
     if [ -z "$newest_file" ]; then
 	if [[ "$2" = "--print-size-only" && $existing_size -gt 0 ]]; then
 	    # I only want to have a theoretical file size
-	    required_space=$existing_size
+	    status=$(./sync-status "$1")
+	    if [ $? -eq 0 ]; then
+		# 0 means it's synced
+		required_space=$existing_size
+	    fi
 	    #GB=$(echo "$existing_size / 1024 / 1024 / 1024" | bc )
 	    #echo "$GB"
 	    #exit 0
