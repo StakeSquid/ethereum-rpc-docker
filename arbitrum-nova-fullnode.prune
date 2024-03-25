@@ -1,6 +1,6 @@
 #!/bin/bash
 
-COMPOSE_NMAME="arbitrum-nova-fullnode"
+COMPOSE_NAME="arbitrum-nova-fullnode"
 
 BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
