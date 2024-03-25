@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   sepolia-reth:
-    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.21
+    image: ghcr.io/paradigmxyz/reth:{RETH_VERSION:-v0.1.0-alpha.21}
     user: root
     volumes:
       - "reth-sepolia:/root/.local/share/reth/sepolia/db"
