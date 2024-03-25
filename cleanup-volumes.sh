@@ -34,7 +34,7 @@ done
 
 if [ "$1" = "--remove-from-disk" ]; then
     # Iterate over volumes in the difference array and remove them from disk
-    for volume in "${unused_volume[@]}"; do
+    for volume in "${unused_volumes[@]}"; do
         docker volume rm "$volume"
     done
 else
