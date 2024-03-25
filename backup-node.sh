@@ -34,5 +34,6 @@ for key in $keys; do
     target_file="/backup/rpc_$key-$(date +'%Y-%m-%d-%H-%M-%S')-${folder_size_gb}G.tar.zst"
 
     #echo "$target_file"
-    tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd -o "$target_file"
+    tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd -o "uploading-$target_file"
+    mv "uploading-$target_file" "$target_file"
 done
