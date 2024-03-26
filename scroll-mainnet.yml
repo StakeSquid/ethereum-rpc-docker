@@ -14,8 +14,6 @@ services:
         "--scroll",
         # Blockchain sync mode ("snap", "full" or "light")                                            
         "--syncmode=snap",
-        "--state.scheme=path",
-        "--db.engine=pebble",
         "--port=27374",
         # Megabytes of memory allocated to internal caching                                           
         "--cache=8192",
@@ -36,11 +34,7 @@ services:
         "--metrics",
         "--metrics.addr=0.0.0.0",
         # Maximum number of network peers (network disabled if set to 0) (default: 50)                
-        "--maxpeers=30",
-        # The Merge
-        "--authrpc.jwtsecret=/jwtsecret",
-        "--authrpc.addr=0.0.0.0",
-        "--authrpc.vhosts=*"
+        "--maxpeers=30"
       ]                                                                                               
     networks:                            
       - chains                                                                                        
