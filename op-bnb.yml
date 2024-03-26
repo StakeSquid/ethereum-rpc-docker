@@ -1,0 +1,60 @@
+version: '3.1'
+
+services:
+
+  op-bnb:
+    image: ghcr.io/bnb-chain/op-geth:${OPBNB_GETH_IMAGE_TAG:-v0.3.0}
+    restart: unless-stopped
+    stop_grace_period: 5m
+    entrypoint: /scripts/op-geth-start.sh
+    environment:
+      BEDROCK_DATADIR: /geth
+      CHAIN_ID: 204
+      L2_RPC: https://opbnb-mainnet-rpc.bnbchain.org
+      NETWORK_NAME: mainnet
+    ports:
+      - ${PORT__OP_GETH:-8545}:8545
+    volumes:
+      - ./op-bnb/scripts/:/scripts
+      - .jwtsecret:/jwtsecret      
+      - op-bnb-geth:/geth
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.op-bnb-stripprefix.stripprefix.prefixes=/opbnb"
+      - "traefik.http.services.op-bnb.loadbalancer.server.port=8545"
+      - "traefik.http.routers.op-bnb.entrypoints=websecure"
+      - "traefik.http.routers.op-bnb.tls.certresolver=myresolver"
+      - "traefik.http.routers.op-bnb.rule=Host(`$DOMAIN`) && PathPrefix(`/opbnb`)"
+      - "traefik.http.routers.op-bnb.middlewares=op-bnb-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+      
+  op-bnb-node:
+    image: ghcr.io/bnb-chain/op-node:${OPBNB_NODE_IMAGE_TAG:-v0.3.0}
+    depends_on:
+      - op-bnb
+    restart: unless-stopped
+    stop_grace_period: 5m
+    entrypoint: /scripts/op-node-start.sh
+    environment:
+      OP_NODE__RPC_ENDPOINT: ${OPBNB_BSC_ENDPOINT}
+      NETWORK_NAME: mainnet
+    expose:
+      - 3074
+    env_file:
+      - .env
+    ports:
+      - ${PORT__OP_NODE_P2P:-3074}:3074
+      - ${PORT__OP_NODE:-8546}:8546
+    volumes:
+      - ./op-bnb/scripts/:/scripts
+      - .jwtsecret:/jwtsecret
+      - op-bnb-node:/op_node
+    networks:
+      - chains
+
+
+volumes:
+  op-bnb-geth:
+  op-bnb-node:

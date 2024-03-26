@@ -14,7 +14,9 @@
       "https://ethereum-rpc.publicnode.com"
     ],
     "default": [
-      "erigon-fullnode"
+	"erigon-fullnode",
+	"nethermind-mainnet",
+	"geth-mainnet"
     ],
     "archive": [
       "reth-mainnet"
@@ -126,6 +128,9 @@
     ],
     "default": [
       "reth-sepolia"
+    ],
+    "erchive": [
+      "reth-sepolia"
     ]
   },
   "holesky": {
@@ -153,10 +158,10 @@
       "https://rpc.mantle.xyz"
     ],
     "default": [
-      "mantle-fullnode"
+      "op-mantle-fullnode"
     ],
     "archive": [
-      "mantle"
+      "op-mantle"
     ]
   },
   "polygon": {
@@ -198,5 +203,23 @@
       "bsc",
       "bsc-erigon-fullnode"
     ]
-  }
+  },
+    "opbnb": {
+	"id": 204,
+	"urls": [
+	    "https://opbnb-mainnet-rpc.bnbchain.org"
+	],
+	"default": [
+	    "op-bnb.yml"
+	]
+    },
+    "polygon-amoy": {
+	"id": 80002,
+	"urls": [
+	    "https://rpc-amoy.polygon.technology/"
+	],
+	"default": [
+	    "polygon-amoy-erigon-fullnode"
+	]
+    }
 }
