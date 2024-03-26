@@ -21,7 +21,11 @@ services:
       - "OP_GETH_GENESIS_FILE_PATH=mainnet/genesis-l2.json"
       - "OP_GETH_SEQUENCER_HTTP=https://mainnet-sequencer.base.org"
       - "OP_GETH_GCMODE=full"
+      - "OP_GETH_SYNCMODE=snap"
       - "OP_GETH_STATE_SCHEME=path"
+      - "OP_GETH_DB_ENGINE=pebble"
+      - "OP_GETH_P2P_PORT=8480"
+      - "OP_GETH_DISCOVERY_PORT=8480"
       - "GETH_DB_ENGINE=pebble"
       - "P2P_PORT=8480"
       - "WS_PORT=8545"
@@ -57,6 +61,7 @@ services:
     stop_grace_period: 30s
     environment:
       - "OP_NODE_NETWORK=base-mainnet"
+      - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${BASE_ETHEREUM_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
