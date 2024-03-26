@@ -3,7 +3,7 @@ version: '3.1'
 services:
   arbitrum-nova-fullnode:
     image: offchainlabs/nitro-node:${NITRO_VERSION:-v2.3.1-26fad6f}
-    stop_grace_period: 30s
+    stop_grace_period: 3m
     user: root
     volumes:
       - 'arbitrum-nova-fullnode_data:/arbitrum-node'
