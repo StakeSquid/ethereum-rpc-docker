@@ -1,0 +1,66 @@
+version: '3.1'
+
+services:
+  scroll-mainnet:                         
+    image: scrolltech/l2geth:scroll-v5.1.24
+    expose: 
+      # HTTP server / GraphQL API 
+      - 8545                   
+    ports:                      
+      - "27374:27374"                                                                                 
+      - "27374:27374/udp"  
+    command:
+      [                                                                                               
+        "--scroll",
+        # Blockchain sync mode ("snap", "full" or "light")                                            
+        "--syncmode=snap",
+        "--state.scheme=path",
+        "--db.engine=pebble",
+        "--port=27374",
+        # Megabytes of memory allocated to internal caching                                           
+        "--cache=8192",
+        # Enable the WS-RPC server         
+        "--ws",
+        "--ws.port=8545",
+        "--ws.addr=0.0.0.0",
+        "--ws.origins=*",
+        # Enable the HTTP-RPC server      
+        "--http",
+        "--http.port=8545",
+        "--http.addr=0.0.0.0",                     
+        "--http.vhosts=*",                         
+        # Enable GraphQL on the HTTP-RPC server. Note that GraphQL can only be started if an HTTP server is started as well.                                                                               
+        "--graphql",                               
+        "--graphql.vhosts=*",             
+        # Enable metrics collection and reporting                                                     
+        "--metrics",
+        "--metrics.addr=0.0.0.0",
+        # Maximum number of network peers (network disabled if set to 0) (default: 50)                
+        "--maxpeers=30",
+        # The Merge
+        "--authrpc.jwtsecret=/jwtsecret",
+        "--authrpc.addr=0.0.0.0",
+        "--authrpc.vhosts=*"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "scroll-mainnet:/root/.ethereum"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.scroll-stripprefix.stripprefix.prefixes=/scroll"                  
+      - "traefik.http.services.scroll.loadbalancer.server.port=8545"                                 
+      - "traefik.http.routers.scroll.entrypoints=websecure"                                          
+      - "traefik.http.routers.scroll.tls.certresolver=myresolver"                                    
+      - "traefik.http.routers.scroll.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll`)"                 
+      - "traefik.http.routers.scroll.middlewares=scroll-stripprefix, ipwhitelist"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=geth-scroll"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+
+volumes:
+    scroll-mainnet:
