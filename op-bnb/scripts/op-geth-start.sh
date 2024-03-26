@@ -40,7 +40,6 @@ exec geth \
   --ws.port=8545 \
   --ws.origins="*" \
   --ws.api=eth,engine \
-  --syncmode=full \
   --maxpeers=10 \
   --networkid=$CHAIN_ID \
   --miner.gaslimit=150000000 \
@@ -61,3 +60,4 @@ exec geth \
   --syncmode=full \
   --bootnodes=$P2P_BOOTNODES \
   --rollup.sequencerhttp=$L2_RPC
+
