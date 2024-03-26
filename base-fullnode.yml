@@ -52,6 +52,8 @@ services:
     build: ./base
     depends_on:
       - base-fullnode
+    volumes:
+      - .jwtsecret:/jwtsecret
     expose:
       - 8545     # RPC
       - 32521     # P2P TCP
