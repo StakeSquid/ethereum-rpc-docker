@@ -12,11 +12,14 @@ services:
     ports:
       - "8480:8480"
       - "8480:8480/udp"
-    command: [ "sh", "./geth-entrypoint" ]
+    #command: [ "sh", "./geth-entrypoint" ]
     restart: always
-    stop_grace_period: 3m   
+    stop_grace_period: 3m
+    entrypoint: ./geth
+    command: --datadir=/data --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --syncmode=snap --gcmode=full --state.scheme=path --db.engine=pebble --discovery.port=8480 --maxpeers=100 --nat=extip:0.0.0.0 --networkid=8453 --op-network=base-mainnet --rollup.halt=major --rollup.sequencerhttp=https://mainnet-sequencer.base.org --port=8480
     volumes:
       - base-fullnode:/data
+      - .jwtsecret:/jwtsecret
     environment:
       - "OP_GETH_GENESIS_FILE_PATH=mainnet/genesis-l2.json"
       - "OP_GETH_SEQUENCER_HTTP=https://mainnet-sequencer.base.org"
@@ -58,7 +61,8 @@ services:
     ports:
       - "32521:32521"
       - "32521:32521/udp"
-    command: [ "sh", "./op-node-entrypoint" ]
+    #command: [ "sh", "./op-node-entrypoint" ]
+    entrypoint: ./op-node
     restart: always
     stop_grace_period: 30s
     environment:
@@ -66,7 +70,7 @@ services:
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${BASE_ETHEREUM_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
-      - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "OP_NODE_L2_ENGINE_RPC=http://base-fullnode:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
