@@ -8,6 +8,7 @@ services:
     stop_grace_period: 10m
     volumes:                  
       - "gnosis-fullnode_data:/datadir"
+      - /slowdisk:/slowdisk
       - .jwtsecret:/jwtsecret
     expose:  
       - "20947"
