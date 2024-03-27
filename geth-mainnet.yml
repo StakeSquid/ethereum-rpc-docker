@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   geth-mainnet:                         
-    image: ethereum/client-go:v1.13.12
+    image: ethereum/client-go:v1.13.14
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
@@ -46,7 +46,7 @@ services:
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
-      - "geth-mainnet_data:/root/.ethereum"
+      - "geth-mainnet:/root/.ethereum"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
@@ -64,7 +64,7 @@ services:
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
 
   prysm-mainnet:
-    image: prysmaticlabs/prysm-beacon-chain:stable
+    image: prysmaticlabs/prysm-beacon-chain:v5.0.1
     ports:
       #- "127.0.0.1:3500:3500"
       - "13000:13000"
@@ -83,11 +83,11 @@ services:
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
-      - "prysm-mainnet_data:/data"
+      - "prysm-mainnet:/data"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
 
 volumes:
-    prysm-mainnet_data:
-    geth-mainnet_data:
+    prysm-mainnet:
+    geth-mainnet:
