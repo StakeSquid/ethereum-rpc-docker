@@ -40,6 +40,7 @@ services:
     entrypoint: /scripts/op-node-start.sh
     environment:
       OP_NODE__RPC_ENDPOINT: ${OPBNB_BSC_ENDPOINT}
+      P2P_PRIV_KEY: ${OPBNB_NODE_PRIV_KEY}
       NETWORK_NAME: mainnet
     expose:
       - 3074
