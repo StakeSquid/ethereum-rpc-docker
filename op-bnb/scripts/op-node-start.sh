@@ -37,7 +37,7 @@ exec op-node \
   --rpc.enable-admin \
   --l1=$OP_NODE__RPC_ENDPOINT \
   --l2=http://op-bnb:8551 \
-  --l2.jwt-secret=./jwt.txt \
+  --l2.jwt-secret=/jwtsecret \
   --l2.engine-sync=true \
   --l2.skip-sync-start-check=true \
   --log.level=debug

@@ -51,7 +51,7 @@ exec geth \
   --authrpc.addr="0.0.0.0" \
   --authrpc.port="8551" \
   --authrpc.vhosts="*" \
-  --authrpc.jwtsecret=./jwt.txt \
+  --authrpc.jwtsecret=/jwtsecret \
   --gcmode=archive \
   --metrics \
   --metrics.port 6060 \
