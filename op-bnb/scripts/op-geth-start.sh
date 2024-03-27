@@ -43,7 +43,6 @@ exec geth \
   --maxpeers=10 \
   --networkid=$CHAIN_ID \
   --miner.gaslimit=150000000 \
-#  --triesInMemory=32 \
   --txpool.globalslots=10000 \
   --txpool.globalqueue=5000 \
   --cache 6000 \
