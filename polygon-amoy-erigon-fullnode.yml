@@ -27,7 +27,7 @@ services:
       - "prometheus-scrape.job_name=erigon"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.polygon-amoy-fullnode-stripprefix.stripprefix.prefixes=/polygon-amoy"
+      - "traefik.http.middlewares.polygon-amoy-erigon-fullnode-stripprefix.stripprefix.prefixes=/polygon-amoy"
       - "traefik.http.services.polygon-amoy-erigon-fullnode.loadbalancer.server.port=8545"
       - "traefik.http.routers.polygon-amoy-erigon-fullnode.entrypoints=websecure"
       - "traefik.http.routers.polygon-amoy-erigon-fullnode.tls.certresolver=myresolver"
