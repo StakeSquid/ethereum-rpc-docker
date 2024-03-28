@@ -15,7 +15,7 @@ services:
         # Blockchain sync mode ("snap", "full" or "light")                                            
         "--syncmode=snap",
         "--port=27374",
-        "--nat=extip:$IP"
+        "--nat=extip:$IP",
         # Megabytes of memory allocated to internal caching                                           
         "--cache=8192",
         # Enable the WS-RPC server         
