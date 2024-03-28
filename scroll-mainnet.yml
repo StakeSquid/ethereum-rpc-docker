@@ -27,7 +27,9 @@ services:
         "--http",
         "--http.port=8545",
         "--http.addr=0.0.0.0",                     
-        "--http.vhosts=*",                         
+        "--http.vhosts=*",
+        "--l1.endpoint=${SCROLL_L1_ENDPOINT}",
+        "--rollup.verify",
         # Enable GraphQL on the HTTP-RPC server. Note that GraphQL can only be started if an HTTP server is started as well.                                                                               
         "--graphql",                               
         "--graphql.vhosts=*",             
