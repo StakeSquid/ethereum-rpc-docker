@@ -87,7 +87,16 @@ services:
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.prysm-mainnet-stripprefix.stripprefix.prefixes=/prysm-mainnet"
+      - "traefik.http.services.prysm-mainnet.loadbalancer.server.port=3500"
+      - "traefik.http.routers.prysm-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.prysm-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.prysm-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/prysm-mainnet`)"
+      - "traefik.http.routers.prysm-mainnet.middlewares=prysm-mainnet-stripprefix, ipwhitelist"
 
+    
 volumes:
     prysm-mainnet:
     geth-mainnet:
