@@ -25,8 +25,8 @@ exec op-node \
   --rpc.port=8546 \
   --p2p.sync.req-resp \
   --p2p.listen.ip=0.0.0.0 \
-  --p2p.listen.tcp=9003 \
-  --p2p.listen.udp=9003 \
+  --p2p.listen.tcp=${P2P_PORT:-9003} \
+  --p2p.listen.udp=${P2P_PORT:-9003} \
   --snapshotlog.file=./snapshot.log \
   --p2p.priv.raw=$P2P_PRIV_KEY \
   --p2p.bootnodes=$P2P_BOOTNODES \
@@ -36,7 +36,7 @@ exec op-node \
   --pprof.enabled \
   --rpc.enable-admin \
   --l1=$OP_NODE__RPC_ENDPOINT \
-  --l2=http://op-bnb:8551 \
+  --l2=http://${OP_L2_HOST:-op-bnb}:8551 \
   --l2.jwt-secret=/jwtsecret \
   --l2.engine-sync=true \
   --l2.skip-sync-start-check=true \

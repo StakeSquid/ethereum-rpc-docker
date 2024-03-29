@@ -41,6 +41,10 @@ exec geth \
   --ws.origins="*" \
   --ws.api=eth,engine \
   --maxpeers=10 \
+  --syncmode=${OP_GETH_SYNCMODE:-full} \
+  --gcmode=${OP_GETH_GCMODE:-archive} \
+  --db.engine=${OP_GETH_DB_ENGINE:-leveldb} \
+  --state.scheme=${OP_GETH_STATE_SCHEME:-hash} \
   --networkid=$CHAIN_ID \
   --miner.gaslimit=150000000 \
   --txpool.globalslots=10000 \
