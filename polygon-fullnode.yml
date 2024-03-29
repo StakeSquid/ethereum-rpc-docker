@@ -1,26 +1,17 @@
 version: '3.1'
 
 services:
-  bor:                      
-    build:                                
-      args:                
-        UPSTREAM_VERSION: v0.2.14
-      context: ./polygon/bor                       
-      dockerfile: Dockerfile
+  bor:
+    image: 0xpolygon/bor:1.2.8
     sysctls:
       net.ipv4.tcp_slow_start_after_idle: 0
       net.ipv4.tcp_no_metrics_save: 1
-    environment:
-      - SNAPSHOT_URL=https://matic-blockchain-snapshots.s3-accelerate.amazonaws.com/matic-mainnet/bor-fullnode-snapshot-2022-10-10.tar.gz
-      - BOOTSTRAP=1
-      - ARCHIVE=0                                                                              
     volumes:                  
       - "bor_data:/datadir"
     ports:                   
       - "40303:40303"                                                                                 
       - "40303:40303/udp"                
-    depends_on:                                                                                       
-      - heimdallr                                                                                     
+    command: server -bor.heimdall=${HEIMDALL_REST_API} --port=40303 --http --ws --ws.port=8545 --ws.addr=0.0.0.0 --http.addr=0.0.0.0 --datadir=/datadir
     restart: unless-stopped                 
     labels:                     
       - "traefik.enable=true"
