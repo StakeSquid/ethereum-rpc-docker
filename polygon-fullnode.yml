@@ -11,7 +11,7 @@ services:
     ports:                   
       - "40303:40303"                                                                                 
       - "40303:40303/udp"                
-    command: server -bor.heimdall=${HEIMDALL_REST_API} --port=40303 --http --ws --ws.port=8545 --ws.addr=0.0.0.0 --http.addr=0.0.0.0 --datadir=/datadir
+    command: server --bor.heimdall=https://polygon-heimdall-rest.publicnode.com --port=40303 --http --ws --ws.port=8545 --ws.addr=0.0.0.0 --http.addr=0.0.0.0 --datadir=/datadir
     restart: unless-stopped                 
     labels:                     
       - "traefik.enable=true"
