@@ -11,6 +11,8 @@ services:
       - 25703
     ports:
       - "2449:2449"
+    environment:
+      DSHACKLE_LOG_LEVEL: ${DSHACKLE_LOG_LEVEL:-info
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8081"
