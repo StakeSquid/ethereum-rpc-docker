@@ -13,7 +13,7 @@ services:
       ROLLUP_STATE_DUMP_PATH: https://mantlenetworkio.github.io/networks/mainnet/genesis.json
       ROLLUP_CLIENT_HTTP: ${MANTLE_DTL_ENDPOINT:-https://dtl.mantle.xyz}
       ROLLUP_BACKEND: 'l2'
-      ETH1_CTC_DEPLOYMENT_HEIGHT: 8
+      #ETH1_CTC_DEPLOYMENT_HEIGHT: 8
       RETRIES: 60
       ROLLUP_VERIFIER_ENABLE: 'true'
       ROLLUP_TIMESTAMP_REFRESH: 5s
