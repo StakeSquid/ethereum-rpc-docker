@@ -31,12 +31,12 @@ for path in $pathlist; do
                 latest_block_timestamp=$(echo "$response" | jq -r '.result.timestamp')
                 current_timestamp=$(date +%s)
                 age=$((current_timestamp - ("16#${latest_block_timestamp#0x}")))
-                
+		
+                echo "$age"
+		
                 if (( age < ${2:-3600} )); then
-                    echo "Block is less than ${2:-3600} seconds old. Age: $age seconds"
                     exit 0
                 else
-                    echo "Block is older than ${2:-3600} seconds. Age: $age seconds"
                     exit 1
                 fi
             fi
