@@ -7,8 +7,8 @@ echo "running in $BASEPATH"
 
 target_file="op-lisk-sepolia-node-$(date +'%Y-%m-%d-%H-%M-%S').peers"
 
-echo "wait 10 seconds for the node to come online"
-sleep 10
+echo "wait 30 seconds for the node to come online"
+sleep 30
 
 newest_file=$(ls -1 /backup/op-lisk-sepolia-node-*.peers 2>/dev/null | sort | tail -n 1)
 
