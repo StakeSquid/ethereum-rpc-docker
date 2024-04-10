@@ -14,7 +14,7 @@ sed -i '/command:/a \ \     - --init.prune=full' "$BASEPATH/$COMPOSE_NAME.yml"
 
 echo "$(cat $BASEPATH/$COMPOSE_NAME.yml)"
 
-docker-compose --project-directory "$BASEPATH" up -d
+docker compose --project-directory "$BASEPATH" up -d
 
 while true; do
     # Execute SSH command and extract the answer                                                                                                                                                                      
