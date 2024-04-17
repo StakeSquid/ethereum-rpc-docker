@@ -88,7 +88,9 @@ services:
       - monitoring
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor-${TARGETPLATFORM}:v0.49.1
+    image: 
+      amd64: gcr.io/cadvisor/cadvisor-amd64:v0.49.1
+      arm64: gcr.io/cadvisor/cadvisor-arm64:v0.49.1
     container_name: cadvisor
     privileged: true
     devices:
