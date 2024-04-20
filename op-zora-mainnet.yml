@@ -66,7 +66,6 @@ services:
     restart: always
     volumes:
       - .jwtsecret:/jwtsecret
-      - ./op/mainnet/zora/rollup.json:/app/mainnet/zora/rollup.json
     stop_grace_period: 30s
     environment:
       #- "OP_NODE_NETWORK=zora-mainnet-0"
