@@ -4,8 +4,8 @@ set -eu
 VERBOSITY=${GETH_VERBOSITY:-3}
 GETH_DATA_DIR=/data
 GETH_CHAINDATA_DIR="$GETH_DATA_DIR/geth/chaindata"
-OP_GETH_GENESIS_FILE_PATH="${OP_GETH_GENESIS_FILE_PATH:-/genesis.json}"
-CHAIN_ID=$(jq -r .config.chainId < "$OP_GETH_GENESIS_FILE_PATH")
+GETH_GENESIS_FILE_PATH="${GETH_GENESIS_FILE_PATH:-/genesis.json}"
+CHAIN_ID=$(jq -r .config.chainId < "$GETH_GENESIS_FILE_PATH")
 RPC_PORT="${RPC_PORT:-8545}"
 WS_PORT="${WS_PORT:-8546}"
 AUTHRPC_PORT="${AUTHRPC_PORT:-8551}"
@@ -19,7 +19,7 @@ if [ ! -d "$GETH_CHAINDATA_DIR" ]; then
 	echo "Initializing genesis."
 	./geth --verbosity="$VERBOSITY" init \
 		--datadir="$GETH_DATA_DIR" \
-		"$OP_GETH_GENESIS_FILE_PATH"
+		"$GETH_GENESIS_FILE_PATH"
 else
 	echo "$GETH_CHAINDATA_DIR exists."
 fi
@@ -28,12 +28,12 @@ if [ -v my_var ] && [ -n "$my_var" ]; then
     echo "$OP_NODE_L2_ENGINE_AUTH_RAW" > "$OP_NODE_L2_ENGINE_AUTH"
 fi
 
-if [ "${OP_GETH_ETH_STATS+x}" = x ]; then
-  ADDITIONAL_ARGS="$ADDITIONAL_ARGS --ethstats=$OP_GETH_ETH_STATS"
+if [ "${GETH_ETH_STATS+x}" = x ]; then
+  ADDITIONAL_ARGS="$ADDITIONAL_ARGS --ethstats=$GETH_ETH_STATS"
 fi
 
-if [ "${OP_GETH_ALLOW_UNPROTECTED_TXS+x}" = x ]; then
-	ADDITIONAL_ARGS="$ADDITIONAL_ARGS --rpc.allow-unprotected-txs=$OP_GETH_ALLOW_UNPROTECTED_TXS"
+if [ "${GETH_ALLOW_UNPROTECTED_TXS+x}" = x ]; then
+	ADDITIONAL_ARGS="$ADDITIONAL_ARGS --rpc.allow-unprotected-txs=$GETH_ALLOW_UNPROTECTED_TXS"
 fi
 
 exec ./geth \
@@ -58,8 +58,8 @@ exec ./geth \
 	--metrics.addr=0.0.0.0 \
 	--metrics.port="$METRICS_PORT" \
 	--syncmode=full \
-	--gcmode=${OP_GETH_GCMODE:-full} \
-	--state.scheme=${OP_GETH_STATE_SCHEME:-path} \
+	--gcmode=${GETH_GCMODE:-full} \
+	--state.scheme=${GETH_STATE_SCHEME:-path} \
         --db.engine=${GETH_DB_ENGINE:-pebble} \
         --discovery.port=${P2P_PORT:-30303} \
 	--maxpeers=100 \
