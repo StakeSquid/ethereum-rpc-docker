@@ -24,7 +24,7 @@ services:
       - .jwtsecret:/jwtsecret
     environment:
       - "GETH_GENESIS_FILE_PATH=/app/mainnet/zora/genesis.json"
-      - "GETH_SEQUENCER_HTTP=https://rpc-zora-mainnet-0.t.conduit.xyz"
+      - "GETH_ROLLUP_SEQUENCERHTTP=https://rpc-zora-mainnet-0.t.conduit.xyz"
       - "GETH_GCMODE=full"
       - "GETH_NODISCOVER=true"
       - "GETH_STATE_SCHEME=hash"
