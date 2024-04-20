@@ -14,7 +14,6 @@ HOST_IP="0.0.0.0"
 P2P_PORT="${P2P_PORT:-30303}"
 ADDITIONAL_ARGS=""
 
-
 if [ ! -d "$GETH_CHAINDATA_DIR" ]; then
 	echo "$GETH_CHAINDATA_DIR missing, running init"
 	echo "Initializing genesis."
@@ -25,7 +24,9 @@ else
 	echo "$GETH_CHAINDATA_DIR exists."
 fi
 
-echo "$OP_NODE_L2_ENGINE_AUTH_RAW" > "$OP_NODE_L2_ENGINE_AUTH"
+if [ -n "$OP_NODE_L2_ENGINE_AUTH_RAW" ]; then
+    echo "$OP_NODE_L2_ENGINE_AUTH_RAW" > "$OP_NODE_L2_ENGINE_AUTH"
+fi
 
 if [ "${OP_GETH_ETH_STATS+x}" = x ]; then
   ADDITIONAL_ARGS="$ADDITIONAL_ARGS --ethstats=$OP_GETH_ETH_STATS"
@@ -61,7 +62,6 @@ exec ./geth \
 	--state.scheme=${OP_GETH_STATE_SCHEME:-path} \
         --db.engine=${GETH_DB_ENGINE:-pebble} \
         --discovery.port=${P2P_PORT:-30303} \
-	--nodiscover \
 	--maxpeers=100 \
 	--nat=extip:$HOST_IP \
 	--networkid="$CHAIN_ID" \
