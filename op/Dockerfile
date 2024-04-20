@@ -2,13 +2,13 @@ FROM golang:1.21 as op
 
 WORKDIR /app
 
-ENV REPO=https://github.com/ethereum-optimism/optimism.git
-ENV VERSION=v1.7.1
+ARG OP_REPO=https://github.com/ethereum-optimism/optimism.git
+ARG OP_VERSION=v1.7.1
 # for verification:
 
 
-RUN git clone $REPO --branch op-node/$VERSION --single-branch . && \
-    git switch -c branch-$VERSION
+RUN git clone $OP_REPO --branch op-node/$OP_VERSION --single-branch . && \
+    git switch -c branch-$OP_VERSION
 
 
 RUN cd op-node && \
@@ -18,12 +18,12 @@ FROM golang:1.21 as geth
 
 WORKDIR /app
 
-ENV REPO=https://github.com/ethereum-optimism/op-geth.git
-ENV VERSION=v1.101308.2
+ARG GETH_REPO=https://github.com/ethereum-optimism/op-geth.git
+ARG GETH_VERSION=v1.101308.2
 
 # avoid depth=1, so the geth build can read tags
-RUN git clone $REPO --branch $VERSION --single-branch . && \
-    git switch -c branch-$VERSION
+RUN git clone $GETH_REPO --branch $GETH_VERSION --single-branch . && \
+    git switch -c branch-$GETH_VERSION
 
 RUN go run build/ci.go install -static ./cmd/geth
 

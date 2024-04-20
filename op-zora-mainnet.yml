@@ -3,7 +3,11 @@ version: '3.1'
 services:
   op-zora-mainnet: # this is Optimism's geth client
     #image: stakesquid/op-zora-mainnet:v0.1
-    build: ./op
+    build:
+      context: ./op
+      args:
+        OP_VERSION: v1.3.1
+        GETH_VERSION: v1.101304.1
     expose:
       - 8545       # RPC / Websocket      
       - 2483     # P2P TCP (currently unused)
@@ -42,7 +46,11 @@ services:
       
   op-zora-mainnet-node:
     #image: stakesquid/op-zora-mainnet:v0.1
-    build: ./op
+    build:
+      context: ./op
+      args:
+        OP_VERSION: v1.3.1
+        GETH_VERSION: v1.101304.1
     depends_on:
       - op-zora-mainnet
     expose:

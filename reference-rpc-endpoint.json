@@ -226,5 +226,14 @@
 	"id": 534352,
 	"urls": ["https://rpc.scroll.io"],
 	"default": ["scroll-mainnet"]
+    },
+    "zora": {
+	"id": 7777777,
+	"urls": [
+	    "https://rpc.zora.energy"
+	],
+	"default": [
+	    "op-zora-mainnet"
+	]
     }
 }
