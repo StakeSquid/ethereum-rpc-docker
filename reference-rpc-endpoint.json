@@ -16,7 +16,8 @@
     "default": [
 	"erigon-fullnode",
 	"nethermind-mainnet",
-	"geth-mainnet"
+	"geth-mainnet",
+	"besu-fullnode"
     ],
     "archive": [
       "reth-mainnet"
