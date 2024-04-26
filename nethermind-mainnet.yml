@@ -40,10 +40,10 @@ services:
       - NETHERMIND_PRUNINGCONFIG_FULLPRUNINGTHRESHOLDMB=96000
       - NETHERMIND_RECEIPTCONFIG_STORERECEIPTS=false
       - NETHERMIND_RECEIPTCONFIG_TXLOOKUPLIMIT=128
-      - NETHERMIND_RECEIPTCONFIG_RECEIPTSMIGRATION=true
-      - NETHERMIND_SYNCCONFIG_FASTSYNC=true
+      #- NETHERMIND_RECEIPTCONFIG_RECEIPTSMIGRATION=true
+      #- NETHERMIND_SYNCCONFIG_FASTSYNC=true
       - NETHERMIND_SYNCCONFIG_SNAPSYNC=true
-      - NETHERMIND_SYNCCONFIG_FASTBLOCKS=true
+      #- NETHERMIND_SYNCCONFIG_FASTBLOCKS=true
       - NETHERMIND_SYNCCONFIG_NONVALIDATORNODE=true
       - NETHERMIND_SYNCCONFIG_DOWNLOADBODIESINFASTSYNC=false
       - NETHERMIND_SYNCCONFIG_DOWNLOADHEADERSINFASTSYNC=false
@@ -66,50 +66,46 @@ services:
       - "prometheus-scrape.job_name=nethermind-mainnet"
 
       
-  nimbus-mainnet:
-    build:
-      context: ./nimbus
-      args:
-        UPSTREAM_VERSION: v24.3.0
-    restart: unless-stopped
-    stop_grace_period: 1m
-    environment:
-      NETWORK: mainnet
-      LOG_TYPE: INFO
-      P2P_TCP_PORT: 23079
-      P2P_UDP_PORT: 23079
-      CHECKPOINT_SYNC_URL: "https://mainnet-checkpoint-sync.attestant.io"
-      EXTRA_OPTS: ""
-      FEE_RECIPIENT_ADDRESS: ""
-      EXECUTION_ENDPOINT: "http://nethermind-mainnet:8551"
-    volumes:
-      - nimbus-mainnet:/home/user/nimbus-eth2/build/data
-      - .jwtsecret:/jwt.hex      
-    networks:
-      - chains
+  prysm-mainnet:
+    image: prysmaticlabs/prysm-beacon-chain:v5.0.1
     ports:
-      - 23079:23079/tcp # p2p
-      - 23079:23079/udp # p2p
-    expose:
-      - 8008 # metrics
-      - 4500 # http
-      - 23079 # p2p
+      #- "127.0.0.1:3500:3500"
+      - "13000:13000"
+      - "12000:12000/udp"
+    command:
+      [                                                                                               
+        "--datadir=/data",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--checkpoint-sync-url=https://sync-mainnet.beaconcha.in",
+        "--execution-endpoint=http://nethermind-mainnet:8551",
+        "--accept-terms-of-use"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "prysm-mainnet:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m      
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8008"
-      - "prometheus-scrape.job_name=nimbus-mainnet"
+      - "prometheus-scrape.job_name=prysm-mainnet"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.nimbus-mainnet-stripprefix.stripprefix.prefixes=/nimbus-mainnet"
-      - "traefik.http.services.nimbus-mainnet.loadbalancer.server.port=4500"
-      - "traefik.http.routers.nimbus-mainnet.entrypoints=websecure"
-      - "traefik.http.routers.nimbus-mainnet.tls.certresolver=myresolver"
-      - "traefik.http.routers.nimbus-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/nimbus-mainnet`)"
-      - "traefik.http.routers.nimbus-mainnet.middlewares=nimbus-mainnet-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.prysm-mainnet-stripprefix.stripprefix.prefixes=/prysm-mainnet"
+      - "traefik.http.services.prysm-mainnet.loadbalancer.server.port=4500"
+      - "traefik.http.routers.prysm-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.prysm-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.prysm-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/prysm-mainnet`)"
+      - "traefik.http.routers.prysm-mainnet.middlewares=prysm-mainnet-stripprefix, ipwhitelist"
 
 
 volumes:
   nethermind_mainnet_db:
   nethermind_mainnet_keystore:
   nethermind_mainnet_logs:
-  nimbus-mainnet:
+  prysm-mainnet:
