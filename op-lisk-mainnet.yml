@@ -21,10 +21,10 @@ services:
       - lisk-mainnet:/data
       - .jwtsecret:/jwtsecret
     environment:
-      - "OP_GETH_GENESIS_FILE_PATH=/app/mainnet/lisk/genesis.json"
-      - "OP_GETH_SEQUENCER_HTTP=https://rpc.api.lisk.com"
-      - "OP_GETH_GCMODE=full"
-      - "OP_GETH_STATE_SCHEME=hash"
+      - "GETH_GENESIS_FILE_PATH=/app/mainnet/lisk/genesis.json"
+      - "GETH_SEQUENCER_HTTP=https://rpc.api.lisk.com"
+      - "GETH_GCMODE=full"
+      - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
       - "P2P_PORT=6999"
       - "WS_PORT=8545"
