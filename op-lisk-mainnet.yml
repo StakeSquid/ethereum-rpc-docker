@@ -12,9 +12,9 @@ services:
     ports:
       - "6999:6999"
       - "6999:6999/udp"
-    #command: [ "sh", "./geth-entrypoint" ]
-    entrypoint: ./geth
-    command: --datadir=/data --rollup.sequencerhttp=https://rpc.api.lisk.com --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine
+    command: [ "sh", "./geth-entrypoint" ]
+    #entrypoint: ./geth
+    #command: --datadir=/data --rollup.sequencerhttp=https://rpc.api.lisk.com --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine
     restart: always
     stop_grace_period: 3m    
     volumes:
