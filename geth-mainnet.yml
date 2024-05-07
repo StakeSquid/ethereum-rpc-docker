@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   geth-mainnet:                         
-    image: ethereum/client-go:v1.13.14
+    image: ethereum/client-go:v1.13.15
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
@@ -20,11 +20,13 @@ services:
         "--cache=8192",
         # Enable the WS-RPC server         
         "--ws",
+        "--ws.api=eth,net,web3,personal,txpool",        
         "--ws.port=8545",
         "--ws.addr=0.0.0.0",
         "--ws.origins=*",
         # Enable the HTTP-RPC server      
         "--http",
+        "--http.api=eth,net,web3,personal,txpool",
         "--http.port=8545",
         "--http.addr=0.0.0.0",                     
         "--http.vhosts=*",                         
@@ -64,7 +66,7 @@ services:
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
 
   prysm-mainnet:
-    image: prysmaticlabs/prysm-beacon-chain:v5.0.1
+    image: prysmaticlabs/prysm-beacon-chain:v5.0.3
     ports:
       #- "127.0.0.1:3500:3500"
       - "13000:13000"
