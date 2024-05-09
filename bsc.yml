@@ -16,7 +16,7 @@ services:
       - bsc:/bsc/.ethereum                                                                                                                                                
       - ./bsc/config:/bsc/config
     entrypoint: geth
-    command: --config=/bsc/config/config.toml --ws.origins='*' --history.transactions=0 --state.scheme=path --syncmode=full --db.engine=pebble --rpc.gascap=120000000
+    command: --config=/bsc/config/config.toml --ws.origins='*' --history.transactions=0 --state.scheme=path --syncmode=full --db.engine=pebble --rpc.gascap=600000000
     restart: unless-stopped
     stop_grace_period: 3m
     networks: 
