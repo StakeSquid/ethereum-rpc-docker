@@ -31,6 +31,7 @@ services:
       - --node.data-availability.enable=true
       - --node.data-availability.sequencer-inbox-address=0x16Ef70c48EF4BaaCfdaa4AfdD37F69332832a0bD
       - --node.data-availability.parent-chain-node-url=${ALEPHZERO_SEPOLIA_PARENT_RPC}
+      - --parent-chain.blob-client.beacon-url=${ALEPHZERO_SEPOLIA_PARENT_BEACON_REST}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das.alephzero-testnet.gelato.digital
       - --metrics
