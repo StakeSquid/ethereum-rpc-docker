@@ -32,6 +32,15 @@
       "arb-playblock"
     ]
   },
+  "alephzero-sepolia": {
+    "id": 6398,
+    "urls": [
+      "https://rpc.alephzero-testnet.gelato.digital"
+    ],
+    "default": [
+      "arb-alephzero-sepolia"
+    ]
+  },
   "real": {
     "id": 111188,
     "urls": [
