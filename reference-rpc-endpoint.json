@@ -33,7 +33,7 @@
     ]
   },
   "alephzero-sepolia": {
-    "id": 6398,
+    "id": 2039,
     "urls": [
       "https://rpc.alephzero-testnet.gelato.digital"
     ],
@@ -41,6 +41,15 @@
       "arb-alephzero-sepolia"
     ]
   },
+  "connext-sepolia": {
+    "id": 6398,
+    "urls": [
+      "https://rpc.connext-sepolia.gelato.digital"
+    ],
+    "default": [
+      "arb-connext-sepolia"
+    ]
+  },    
   "real": {
     "id": 111188,
     "urls": [
