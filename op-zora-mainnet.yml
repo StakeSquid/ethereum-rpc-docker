@@ -33,6 +33,9 @@ services:
       - "WS_PORT=8545"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "HOST_IP=${IP}"
+      - "GETH_OVERRIDE_CANYON=1704992401"
+      - "GETH_OVERRIDE_DELTA=1708560000"
+      - "GETH_OVERRIDE_ECOTONE=1710374401"      
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.zora-stripprefix.stripprefix.prefixes=/zora-mainnet"                      
@@ -96,6 +99,9 @@ services:
       - "OP_NODE_L1_RPC_KIND=${ZORA_MAINNET_L1_ENDPOINT_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${ZORA_MAINNET_L1_ENDPOINT_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${ZORA_MAINNET_L1_BEACON_URL}"
+      - "OP_NODE_OVERRIDE_CANYON=1704992401"
+      - "OP_NODE_OVERRIDE_DELTA=1708560000"
+      - "OP_NODE_OVERRIDE_ECOTONE=1710374401"
     networks:                                                                                         
       - chains
       
