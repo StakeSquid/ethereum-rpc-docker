@@ -6,8 +6,8 @@ services:
     build:
       context: ./op
       args:
-        OP_VERSION: v1.7.3
-        GETH_VERSION: v1.101311.0
+        OP_VERSION: v1.7.5
+        GETH_VERSION: v1.101315.0
     expose:
       - 8545       # RPC / Websocket      
       - 2483     # P2P TCP (currently unused)
@@ -53,8 +53,8 @@ services:
     build:
       context: ./op
       args:
-        OP_VERSION: v1.7.3
-        GETH_VERSION: v1.101311.0
+        OP_VERSION: v1.7.5
+        GETH_VERSION: v1.101315.0
     depends_on:
       - op-zora-mainnet
     expose:
