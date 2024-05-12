@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+  polygon-bor:
+    image: 0xpolygon/bor:1.3.2
+    sysctls:
+      net.ipv4.tcp_slow_start_after_idle: 0
+      net.ipv4.tcp_no_metrics_save: 1
+    volumes:                  
+      - "polygon-bor:/datadir"
+    expose:
+      - 8545
+    ports:                   
+      - "27374:27374"                                                                                 
+      - "27374:27374/udp"
+    command: server --datadir=/datadir --db.engine=pebble --state.scheme=path --bor.heimdall=https://polygon-heimdall-rest.publicnode.com --port=27374 --bind=0.0.0.0 --nat=extip:$IP --rpc.returndatalimit=10000000
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.polygon-bor-stripprefix.stripprefix.prefixes=/polygon"                      
+      - "traefik.http.services.polygon-bor.loadbalancer.server.port=8545"                                     
+      - "traefik.http.routers.polygon-bor.entrypoints=websecure"                                              
+      - "traefik.http.routers.polygon-bor.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.polygon-bor.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon`)"                     
+      - "traefik.http.routers.polygon-bor.middlewares=polygon-bor-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:  
+    polygon-bor:
