@@ -213,6 +213,15 @@
       "op-lisk-sepolia"
     ]
   },
+  "lisk-mainnet": {
+    "id": 1135,
+    "urls": [
+      "https://rpc.api.lisk.com"
+    ],
+    "default": [
+      "op-lisk-mainnet"
+    ]
+  },    
   "bsc": {
     "id": 56,
     "urls": [
