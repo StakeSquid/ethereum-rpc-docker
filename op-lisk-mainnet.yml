@@ -75,6 +75,7 @@ services:
       - "OP_NODE_METRICS_PORT=7300"
       - "OP_NODE_P2P_AGENT=lisk"
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_BOOTNODES=enr:-Iu4QBCIUw0OhAq5ErARIYBLIr6xPb83OqeFRqlUJGlJ9kWpNECaumPArYWsEFdM_cEKm26JJT_EA52f4dlavBldldgBgmlkgnY0gmlwhCPqq5CJc2VjcDI1NmsxoQLBE74gZyIHkwBEnkI4K7nR4SM2Lytj2VTLqJaj5nQevoN0Y3CCIyuDdWRwgiMs"
       - "OP_NODE_P2P_LISTEN_TCP_PORT=3074"
       - "OP_NODE_P2P_LISTEN_UDP_PORT=3074"
       - "OP_NODE_ROLLUP_CONFIG=/app/mainnet/lisk/rollup.json"
@@ -88,6 +89,8 @@ services:
       - "OP_NODE_L1_RPC_KIND=${LISK_MAINNET_L1_ENDPOINT_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${LISK_MAINNET_L1_ENDPOINT_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${LISK_MAINNET_L1_BEACON_URL}"
+      - "OP_NODE_P2P_PEER_BANNING=false"
+      - "OP_NODE_P2P_PEER_SCORING=none"
     networks:                                                                                         
       - chains
       
