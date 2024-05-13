@@ -32,12 +32,12 @@ services:
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.base-stripprefix.stripprefix.prefixes=/lisk-mainnet"                      
-      - "traefik.http.services.base.loadbalancer.server.port=8545"
-      - "traefik.http.routers.base.entrypoints=websecure"                                              
-      - "traefik.http.routers.base.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.base.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-mainnet`)"                     
-      - "traefik.http.routers.base.middlewares=base-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.lisk-mainnet-stripprefix.stripprefix.prefixes=/lisk-mainnet"                      
+      - "traefik.http.services.lisk-mainnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.lisk-mainnet.entrypoints=websecure"                                              
+      - "traefik.http.routers.lisk-mainnet.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.lisk-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-mainnet`)"                     
+      - "traefik.http.routers.lisk-mainnet.middlewares=lisk-mainnet-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
