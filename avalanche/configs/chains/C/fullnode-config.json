@@ -1,5 +1,5 @@
 {
     "state-sync-enabled": true,
     "pruning-enabled": true,
-    "offline-pruning-enabled": true
+    "offline-pruning-enabled": false
 }
