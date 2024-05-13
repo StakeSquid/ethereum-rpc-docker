@@ -16,6 +16,6 @@ for file in $backup_files; do
 
     # Keep only the latest backup file for this volume name
     if [[ "$file" != "$latest_backup" ]]; then
-        echo "$file"
+         rm "$file"
     fi
 done
