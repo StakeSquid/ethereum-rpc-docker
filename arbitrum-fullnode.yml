@@ -32,7 +32,7 @@ services:
       - "traefik.http.routers.arbitrum.entrypoints=websecure"                                              
       - "traefik.http.routers.arbitrum.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.arbitrum.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-fullnode`)"                     
-      - "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix, ipwhitelist"                           
+      - "traefik.http.routers.arbitrum.middlewares=arbitrum-stripprefix"                           
     networks:                                                                                         
       - chains
 
