@@ -5,7 +5,7 @@ source $BASEPATH/.env
 
 IFS=':' read -ra parts <<< $COMPOSE_FILE
 
-blacklist=("drpc.yml" "drpc-free.yml" "base.yml" "rpc.yml" "monitoring.yml")
+blacklist=("drpc.yml" "drpc-free.yml" "base.yml" "rpc.yml" "monitoring.yml" "ftp.yml" "backup-http.yml")
 
 for part in "${parts[@]}"; do
     include=true
@@ -18,7 +18,12 @@ for part in "${parts[@]}"; do
     
     if $include; then
 	result=$($BASEPATH/sync-status.sh "${part%.yml}")
-	echo "${part%.yml}: $result"
+	if [ "$1" = "${part%.yml}" ]; then
+	    echo "${result}"
+	    exit 0
+	else
+	    echo "${part%.yml}: $result"
+	fi
     fi
 done
 
