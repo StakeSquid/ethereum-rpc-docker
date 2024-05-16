@@ -1,4 +1,5 @@
 #!/bin/bash
+dir="$(dirname "$0")"
 
 # Path to the backup directory
 backup_dir="/backup"
@@ -38,7 +39,7 @@ calculate_required_space() {
 }
 
 # Read the JSON input and extract the list of keys
-keys=$(cat /root/rpc/$1.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
+keys=$(cat $dir/$1.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]' | grep -E '^["'\'']?[0-9a-z]')
 
 # Iterate over the list of keys
 
@@ -55,15 +56,19 @@ for key in $keys; do
     directory="$volume_dir/rpc_$key/_data/"
     [ -d "$directory" ] && existing_size=$(du -sb "$directory" | awk '{ total += $1 } END { print total }') || existing_size=0
 
+    #echo "$newest_file"
     #echo "$directory: $existing_size"
 
     if [ -z "$newest_file" ]; then
 	if [[ "$2" = "--print-size-only" && $existing_size -gt 0 ]]; then
 	    # I only want to have a theoretical file size
-	    status=$(./sync-status "$1")
+	    status=$($dir/sync-status.sh "$1")
 	    if [ $? -eq 0 ]; then
 		# 0 means it's synced
 		required_space=$existing_size
+	    else
+		echo "Error: No backup and unfisnished syncing '$volume_name'"
+		exit 1
 	    fi
 	    #GB=$(echo "$existing_size / 1024 / 1024 / 1024" | bc )
 	    #echo "$GB"
@@ -76,18 +81,21 @@ for key in $keys; do
       restore_files+=("$newest_file")
       cleanup_folders+=("$directory")
 
+      #echo "bleb"
       required_space=$(calculate_required_space "$(basename "$newest_file")")
     fi
 
     #echo "$volume_name: $required_space"
+    #echo "blab: $total_space + $required_space"
     total_space=$(echo "$total_space + $required_space" | bc)
-
-
+    #echo "blub"
     cleanup_space=$(echo "$cleanup_space + existing_size" | bc)
+    #echo "blob"
 done
 
 if [ "$2" = "--print-size-only" ]; then
     GB=$(echo "$total_space / 1024 / 1024 / 1024" | bc )
+    #echo "blib"
     echo "$GB"
     exit 0
 fi

@@ -238,7 +238,7 @@
 	    "https://opbnb-mainnet-rpc.bnbchain.org"
 	],
 	"default": [
-	    "op-bnb.yml"
+	    "op-bnb"
 	]
     },
     "polygon-amoy": {
