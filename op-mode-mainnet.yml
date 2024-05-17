@@ -10,12 +10,12 @@ services:
         GETH_VERSION: v1.101315.0
     expose:
       - 8545       # RPC / Websocket      
-      - 2483     # P2P TCP (currently unused)
-      - 2483/udp # P2P UDP (currently unused)
+      - 34542     # P2P TCP (currently unused)
+      - 34542/udp # P2P UDP (currently unused)
       - 6060       # metrics
     ports:
-      - "2483:2483"
-      - "2483:2483/udp"
+      - "34542:34542"
+      - "34542:34542/udp"
     command: [ "sh", "./geth-entrypoint" ]
     restart: always
     stop_grace_period: 3m    
@@ -29,7 +29,7 @@ services:
       - "GETH_NODISCOVER=true"
       - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
-      - "P2P_PORT=2483"
+      - "P2P_PORT=34542"
       - "WS_PORT=8545"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "HOST_IP=${IP}"
@@ -60,12 +60,12 @@ services:
     expose:
       - 8545     # RPC
       - 3306     # P2P TCP
-      - 3306/udp # P2P UDP
+      - 29687/udp # P2P UDP
       - 7300     # metrics
       - 6060     # pprof
     ports:
-      - "3306:3306"
-      - "3306:3306/udp"
+      - "29687:29687"
+      - "29687:29687/udp"
     command: [ "sh", "./op-node-entrypoint" ]
     restart: always
     volumes:
@@ -85,8 +85,8 @@ services:
       - "OP_NODE_P2P_STATIC=/ip4/34.127.98.251/tcp/9222/p2p/16Uiu2HAmSU4jpfL8pPf6Z1bFS5SgNTAffNuvz1goX8MgTakkgAfP"
       - "OP_NODE_P2P_AGENT=conduit"
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=3306"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=3306"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=29687"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=29687"
       - "OP_NODE_ROLLUP_CONFIG=/app/mainnet/mode/rollup.json"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
