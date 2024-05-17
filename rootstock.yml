@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   rootstock-mainnet:                         
-    image: rsksmart/rskj:IRIS-3.3.0
+    image: rsksmart/rskj:ARROWHEAD-6.1.0
     expose: 
       # HTTP server / GraphQL API 
       - 4444                   
