@@ -24,8 +24,10 @@ services:
       - 80                                                                                            
     environment:                                                                                      
       PROXY_HOST: linea-besu-fullnode
-      RPC_PORT: 8545            
-      WS_PORT: 8546                     
+      RPC_PORT: 8545
+      RPC_PATH: /
+      WS_PORT: 8546
+      WS_PATH: /
     networks:               
       - chains 
     volumes:               
