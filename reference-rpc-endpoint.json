@@ -197,8 +197,8 @@
     "urls": [
       "https://rpc.linea.build"
     ],
-    "default": [
-      "geth-linea"
+      "default": [
+	  "linea-besu"
     ],
     "archive": [
       "geth-linea"
