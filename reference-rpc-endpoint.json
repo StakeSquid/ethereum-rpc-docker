@@ -263,5 +263,14 @@
 	"default": [
 	    "op-zora-mainnet"
 	]
+    },
+    "mode": {
+	"id": 34443,
+	"urls": [
+	    "https://mainnet.mode.network"
+	],
+	"default": [
+	    "op-mode-mainnet"
+	]
     }
 }
