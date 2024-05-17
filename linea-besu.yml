@@ -1,0 +1,30 @@
+
+
+services:
+  besu-mainnet-node:
+    image: hyperledger/besu:latest
+    command: --config-file=/config/config-snap-mainnet.toml --genesis-file=/config/genesis-mainnet.json --p2p-host=${IP}
+    ports:
+      - 2483:2483
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - linea-besu-fullnode:/db
+      - ./linea/besu/config:/config      
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.linea-besu-stripprefix.stripprefix.prefixes=/linea-besu"                  
+      - "traefik.http.services.linea-besu.loadbalancer.server.port=8545"                                 
+      - "traefik.http.routers.linea-besu.entrypoints=websecure"                                          
+      - "traefik.http.routers.linea-besu.tls.certresolver=myresolver"                                    
+      - "traefik.http.routers.linea-besu.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-besu`)"                 
+      - "traefik.http.routers.linea-besu.middlewares=linea-besu-stripprefix, ipwhitelist"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=linea-besu"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"      
+
+volumes:
+  linea-besu-fullnode:
