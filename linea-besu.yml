@@ -1,9 +1,10 @@
 
 
 services:
-  besu-mainnet-node:
+  linea-besu-fullnode:
     image: hyperledger/besu:latest
     command: --config-file=/config/config-snap-mainnet.toml --genesis-file=/config/genesis-mainnet.json --p2p-host=${IP}
+    user: root
     ports:
       - 2483:2483
     networks:                            
@@ -12,7 +13,23 @@ services:
       - linea-besu-fullnode:/db
       - ./linea/besu/config:/config      
     restart: unless-stopped
-    stop_grace_period: 1m
+    stop_grace_period: 5m
+
+  linea-besu-fullnode-proxy:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - mantle-fullnode
+    expose:  
+      - 80                                                                                            
+    environment:                                                                                      
+      PROXY_HOST: linea-besu-fullnode
+      RPC_PORT: 8545            
+      WS_PORT: 8546                     
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.linea-besu-stripprefix.stripprefix.prefixes=/linea-besu"                  
