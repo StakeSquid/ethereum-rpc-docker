@@ -19,7 +19,7 @@ services:
     restart: unless-stopped           
     image: nginx
     depends_on:
-      - mantle-fullnode
+      - linea-besu-fullnode
     expose:  
       - 80                                                                                            
     environment:                                                                                      
