@@ -35,7 +35,7 @@ services:
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.linea-besu-stripprefix.stripprefix.prefixes=/linea-besu"                  
-      - "traefik.http.services.linea-besu.loadbalancer.server.port=8545"                                 
+      - "traefik.http.services.linea-besu.loadbalancer.server.port=80"                                 
       - "traefik.http.routers.linea-besu.entrypoints=websecure"                                          
       - "traefik.http.routers.linea-besu.tls.certresolver=myresolver"                                    
       - "traefik.http.routers.linea-besu.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-besu`)"                 
