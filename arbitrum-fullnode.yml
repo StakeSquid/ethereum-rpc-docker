@@ -7,7 +7,7 @@ services:
     user: root
     volumes:
       - 'arbitrum-fullnode_data:/arbitrum-node'
-      - './tmp:/tmp'      
+      - './tmp/arbitrum-fullnode:/tmp'      
     expose:
       - 8547
       - 8548

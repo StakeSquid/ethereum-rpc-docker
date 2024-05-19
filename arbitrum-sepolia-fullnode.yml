@@ -7,7 +7,7 @@ services:
     user: root
     volumes:
       - 'arbitrum-sepolia-fullnode_data:/arbitrum-node'
-      - './tmp:/tmp'      
+      - './tmp/arbitrum-sepolia-fullnode:/tmp'      
     expose:
       - 8547 # http + ws
     command:
