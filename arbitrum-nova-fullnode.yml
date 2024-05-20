@@ -19,6 +19,7 @@ services:
       - --parent-chain.connection.url=${ARBITRUM_L1_URL}
       - --parent-chain.blob-client.beacon-url=${ARBITRUM_L1_BEACON_URL}      
       - --chain.id=42170
+      - --execution.rpc.gas-cap=600000000
       - --http.api=net,web3,eth,debug 
       - --http.corsdomain=* 
       - --http.addr=0.0.0.0 

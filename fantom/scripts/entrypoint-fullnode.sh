@@ -33,6 +33,7 @@ opera \
     --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc,trace \
     --ws.origins="*" \
     --nousb \
+    --rpc.gascap=600000000 \
     --db.migration.mode reformat \
     --tracenode \
     --db.preset pbl-1 \
