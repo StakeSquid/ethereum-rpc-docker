@@ -49,6 +49,7 @@ services:
       - chains                                                                                        
     volumes:                                                                                          
       - "geth-mainnet:/root/.ethereum"
+      - "/slowdisk:/slowdisk"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
