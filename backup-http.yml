@@ -2,14 +2,14 @@ version: '3.1'
 
 services:
   backup-http:
-    image: jdkelley/simple-http-server:latest
+    image: abassi/node-http-server:latest
     restart: unless-stopped
     volumes:
-      - /backup:/serve
+      - /backup:/dir_to_serve
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.backup-server-stripprefix.stripprefix.prefixes=/backup"                      
-      - "traefik.http.services.backup-server.loadbalancer.server.port=8000"
+      - "traefik.http.services.backup-server.loadbalancer.server.port=8080"
       - "traefik.http.routers.backup-server.entrypoints=websecure"                                              
       - "traefik.http.routers.backup-server.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.backup-server.rule=Host(`$DOMAIN`) && PathPrefix(`/backup`)"                     
