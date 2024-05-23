@@ -21,7 +21,10 @@ services:
     command: >
       --chain holesky
       --internalcl
-      —-caplin.archive
+      --caplin.archive
+      --caplin.backfilling
+      --caplin.backfilling.blob
+      --caplin.backfilling.blob.no-pruning
       --port=15432
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
@@ -38,6 +41,7 @@ services:
       --http.vhosts=*
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --beacon.api=beacon,builder,config,debug,node,validator,lighthouse
       --rpc.returndata.limit=1100000
       --rpc.gascap=5000000000
       --ws 
