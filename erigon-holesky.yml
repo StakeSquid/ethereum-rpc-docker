@@ -61,7 +61,7 @@ services:
       - "traefik.http.routers.erigon-holesky.entrypoints=websecure"
       - "traefik.http.routers.erigon-holesky.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-holesky.rule=Host(`$DOMAIN`) && PathPrefix(`/holesky-erigon`)"
-      - "traefik.http.routers.erigon-holesky.middlewares=erigon-holesky-stripprefix, ipwhitelist"
+      - "traefik.http.routers.erigon-holesky.middlewares=erigon-holesky-stripprefix"
       
 volumes:
     erigon-holesky:
