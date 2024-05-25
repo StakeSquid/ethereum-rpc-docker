@@ -27,6 +27,7 @@ services:
         "--gpo.maxprice=100000000000000",
         "--txpool.nolocals",
         "--http",
+        "--nat extip:${IP}",
         "--http.addr=0.0.0.0",
         "--http.port=8545",
         "--http.corsdomain=*",
@@ -52,7 +53,7 @@ services:
       - geth-linea:/root/.ethereum
       - ./linea/shared:/configs/mainnet/shared
     restart: unless-stopped
-    stop_grace_period: 1m
+    stop_grace_period: 5m
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.linea-stripprefix.stripprefix.prefixes=/linea"                  
