@@ -89,6 +89,7 @@ services:
       - "OP_NODE_L1_RPC_KIND=${LISK_MAINNET_L1_ENDPOINT_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${LISK_MAINNET_L1_ENDPOINT_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${LISK_MAINNET_L1_BEACON_URL}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${LISK_MAINNET_L1_BEACON_ARCHIVER}"
       - "OP_NODE_P2P_PEER_BANNING=false"
       - "OP_NODE_P2P_PEER_SCORING=none"
     networks:                                                                                         
