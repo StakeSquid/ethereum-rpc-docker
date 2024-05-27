@@ -28,6 +28,7 @@ services:
       - "GETH_DB_ENGINE=pebble"
       - "P2P_PORT=6999"
       - "WS_PORT=8545"
+      - "IP=${IP}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
     labels:                     
