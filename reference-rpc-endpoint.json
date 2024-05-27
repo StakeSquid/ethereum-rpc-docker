@@ -20,7 +20,8 @@
 	"besu-fullnode"
     ],
     "archive": [
-      "reth-mainnet"
+	"reth-mainnet",
+	"erigon-mainnet"
     ]
   },
   "playnance": {
