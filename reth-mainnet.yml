@@ -51,7 +51,7 @@ services:
         "--monitoring-host=0.0.0.0",
         "--p2p-tcp-port=36997",
         "--p2p-udp-port=36997",
-        "--checkpoint-sync-url=https://mainnet-checkpoint-sync.stakely.io",
+        "--checkpoint-sync-url=https://beaconstate.info",
         "--execution-endpoint=http://mainnet-reth:8551",
         "--accept-terms-of-use"
       ]
