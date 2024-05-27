@@ -8,6 +8,7 @@ services:
       - "16630"
       - "9090"
       - "8545"
+      - "5555"
       - "8551"
     ports:
       - "15432:15432"
@@ -25,7 +26,7 @@ services:
       --caplin.backfilling
       --caplin.backfilling.blob
       --caplin.backfilling.blob.no-pruning
-      --beacon.api.port=8545
+      --beacon.api.port=5555
       --beacon.api.addr=0.0.0.0
       --beacon.api.cors.allow-origins=*
       --port=15432
@@ -44,10 +45,11 @@ services:
       --http.vhosts=*
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
-      --beacon.api=beacon,builder,debug,lighthouse
+      --beacon.api=beacon,builder,debug,lighthouse,node
       --rpc.returndata.limit=1100000
       --rpc.gascap=5000000000
-      --ws 
+      --ws
+      --ws.port=8545       
     restart: unless-stopped
     stop_grace_period: 1m
     labels:
@@ -57,11 +59,20 @@ services:
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
       - "traefik.http.middlewares.erigon-holesky-stripprefix.stripprefix.prefixes=/holesky-erigon"
+
       - "traefik.http.services.erigon-holesky.loadbalancer.server.port=8545"
       - "traefik.http.routers.erigon-holesky.entrypoints=websecure"
+      - "traefik.http.routers.erigon-holesky.service=erigon-holesky"
       - "traefik.http.routers.erigon-holesky.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-holesky.rule=Host(`$DOMAIN`) && PathPrefix(`/holesky-erigon`)"
       - "traefik.http.routers.erigon-holesky.middlewares=erigon-holesky-stripprefix"
+
+      - "traefik.http.services.erigon-holesky-beacon.loadbalancer.server.port=5555"
+      - "traefik.http.routers.erigon-holesky-beacon.entrypoints=websecure"
+      - "traefik.http.routers.erigon-holesky-beacon.service=erigon-holesky-beacon"
+      - "traefik.http.routers.erigon-holesky-beacon.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-holesky-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/holesky-erigon/eth`)"
+      - "traefik.http.routers.erigon-holesky-beacon.middlewares=erigon-holesky-stripprefix"
       
 volumes:
     erigon-holesky:
