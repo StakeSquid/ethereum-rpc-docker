@@ -6,6 +6,7 @@ services:
     user: root
     volumes:
       - "reth-mainnet:/root/.local/share/reth/mainnet"
+      - "/slowdisk:/slowdisk"
       - ".jwtsecret:/jwtsecret"
     expose:
       - 44169
