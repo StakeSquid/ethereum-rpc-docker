@@ -147,7 +147,8 @@
       "https://1rpc.io/sepolia"
     ],
     "default": [
-      "reth-sepolia"
+	"reth-sepolia",
+	"geth-repolia"
     ],
     "erchive": [
       "reth-sepolia"
