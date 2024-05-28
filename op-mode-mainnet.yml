@@ -32,7 +32,7 @@ services:
       - "P2P_PORT=34542"
       - "WS_PORT=8545"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "HOST_IP=${IP}"
+      - "IP=${IP}"
       - "GETH_OVERRIDE_CANYON=1704992401"
       - "GETH_OVERRIDE_DELTA=1708560000"
       - "GETH_OVERRIDE_ECOTONE=1710374401"      

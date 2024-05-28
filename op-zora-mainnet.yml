@@ -29,6 +29,7 @@ services:
       - "GETH_NODISCOVER=true"
       - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
+      - "IP=${IP}"
       - "P2P_PORT=2483"
       - "WS_PORT=8545"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
