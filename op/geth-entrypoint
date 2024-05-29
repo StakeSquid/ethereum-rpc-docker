@@ -62,7 +62,7 @@ exec ./geth \
 	--state.scheme=${GETH_STATE_SCHEME:-path} \
         --db.engine=${GETH_DB_ENGINE:-pebble} \
         --discovery.port=${P2P_PORT:-30303} \
-	--maxpeers=100 \
+	--maxpeers=${GETH_MAXPEERS:-100} \
 	--nat=extip:$HOST_IP \
 	--networkid="$CHAIN_ID" \
 	--rollup.halt=major \
