@@ -34,7 +34,7 @@ services:
       - chains
 
   sepolia-prysm-reth:
-    image: prysmaticlabs/prysm-beacon-chain:v4.2.1
+    image: prysmaticlabs/prysm-beacon-chain:v5.0.3
     expose:
       - 3500
     ports:
