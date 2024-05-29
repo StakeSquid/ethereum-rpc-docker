@@ -31,7 +31,7 @@ services:
         "--http.addr=0.0.0.0",
         "--http.port=8545",
         "--http.corsdomain=*",
-        "--http.api=web3,eth,txpool,net,debug", 
+        "--http.api=admin,web3,eth,txpool,net,debug", 
         "--http.vhosts=*",
         "--ws",
         "--ws.addr=0.0.0.0",
