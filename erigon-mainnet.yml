@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-mainnet:
-    image: thorax/erigon:v2.60.0
+    image: thorax/erigon:v2.59.3
     user: root
     expose:
       - "16630"
@@ -25,6 +25,9 @@ services:
       --caplin.backfilling
       --caplin.backfilling.blob
       --caplin.backfilling.blob.no-pruning
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
       --port=15432
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
@@ -41,6 +44,7 @@ services:
       --http.vhosts=*
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --beacon.api=beacon,builder,debug,lighthouse,node      
       --rpc.returndata.limit=1100000
       --rpc.gascap=5000000000
       --ws 
@@ -53,11 +57,20 @@ services:
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
       - "traefik.http.middlewares.erigon-mainnet-stripprefix.stripprefix.prefixes=/mainnet-erigon"
+
       - "traefik.http.services.erigon-mainnet.loadbalancer.server.port=8545"
       - "traefik.http.routers.erigon-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.erigon-mainnet.service=erigon-mainnet"
       - "traefik.http.routers.erigon-mainnet.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-erigon`)"
-      - "traefik.http.routers.erigon-mainnet.middlewares=erigon-mainnet-stripprefix, ipwhitelist"
+      - "traefik.http.routers.erigon-mainnet.middlewares=erigon-mainnet-stripprefix"
+
+      - "traefik.http.services.erigon-mainnet-beacon.loadbalancer.server.port=5555"
+      - "traefik.http.routers.erigon-mainnet-beacon.entrypoints=websecure"
+      - "traefik.http.routers.erigon-mainnet-beacon.service=erigon-mainnet-beacon"
+      - "traefik.http.routers.erigon-mainnet-beacon.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-mainnet-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-erigon/eth`)"
+      - "traefik.http.routers.erigon-mainnet-beacon.middlewares=erigon-mainnet-stripprefix"
       
 volumes:
     erigon-mainnet:
