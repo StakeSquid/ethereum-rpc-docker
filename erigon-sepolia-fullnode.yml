@@ -1,0 +1,92 @@
+version: '3.1'
+
+services:
+  erigon-sepolia-fullnode:
+    image: thorax/erigon:v2.57.3
+    user: root
+    expose:
+      - "16630"
+      - "9090"
+      - "8545"
+      - "8551"
+    ports:
+      - "44081:44081"
+      - "44081:44081/udp"
+    volumes:
+      - erigon-sepolia-fullnode:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+      - .jwtsecret:/jwtsecret
+    networks:
+      - chains
+    command: >
+      --chain sepolia
+      --prune.h.older=128
+      --prune.r.older=128
+      --prune.t.older=128
+      --prune.c.older=128
+      --port=44081
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --nat=stun
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --authrpc.addr=0.0.0.0
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws 
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=erigon"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.erigon-sepolia-fullnode-stripprefix.stripprefix.prefixes=/sepolia-erigon-fullnode"
+      - "traefik.http.services.erigon-sepolia-fullnode.loadbalancer.server.port=8545"
+      - "traefik.http.routers.erigon-sepolia-fullnode.entrypoints=websecure"
+      - "traefik.http.routers.erigon-sepolia-fullnode.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-sepolia-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/sepolia-erigon-fullnode`)"
+      - "traefik.http.routers.erigon-sepolia-fullnode.middlewares=erigon-sepolia-fullnode-stripprefix, ipwhitelist"
+      
+  prysm-sepolia-erigon-fullnode:
+    image: prysmaticlabs/prysm-beacon-chain:stable
+    ports:
+      #- "127.0.0.1:3500:3500"
+      - "36997:36997"
+      - "36997:36997/udp"
+    command:
+      [
+        "--datadir=/data",
+        "--sepolia",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--p2p-tcp-port=36997",
+        "--p2p-udp-port=36997",
+        "--checkpoint-sync-url=https://sepolia-checkpoint-sync.stakely.io",
+        "--execution-endpoint=http://erigon-sepolia-fullnode:8551",
+        "--accept-terms-of-use"
+      ]
+    networks:
+      - chains
+    volumes:
+      - "prysm-sepolia-erigon-fullnode:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m
+
+      
+volumes:
+    erigon-sepolia-fullnode:
+    prysm-sepolia-erigon-fullnode:

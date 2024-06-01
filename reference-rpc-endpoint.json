@@ -147,11 +147,11 @@
       "https://1rpc.io/sepolia"
     ],
     "default": [
-	"reth-sepolia",
 	"geth-repolia"
     ],
     "erchive": [
-      "reth-sepolia"
+	"reth-sepolia",
+	"erigon-sepolia"
     ]
   },
   "holesky": {
