@@ -70,7 +70,7 @@ services:
     stop_grace_period: 30s
     environment:
       - "OP_NODE_NETWORK=op-mainnet"
-      - "OP_NODE_SYNCMODE=execution-layer"
+#      - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${OPTIMISM_ETHEREUM_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
