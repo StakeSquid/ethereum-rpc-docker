@@ -13,7 +13,7 @@ services:
     ports:                   
       - "27374:27374"                                                                                 
       - "27374:27374/udp"
-    command: server --datadir=/datadir --db.engine=pebble --state.scheme=path --bor.heimdall=https://polygon-heimdall-rest.publicnode.com --port=27374 --bind=0.0.0.0 --nat=extip:$IP --rpc.returndatalimit=10000000 --http --http.port=8545 --http.vhosts=* --ws --ws.port=8545 --ws.origins=* --ws.addr=0.0.0.0 --http.addr=0.0.0.0
+    command: server --datadir=/datadir --db.engine=pebble --state.scheme=path --bor.heimdall=https://polygon-heimdall-rest.publicnode.com --port=27374 --bind=0.0.0.0 --nat=extip:$IP --rpc.returndatalimit=10000000 --http --http.port=8545 --http.vhosts=* --ws --ws.port=8545 --ws.origins=* --ws.addr=0.0.0.0 --http.addr=0.0.0.0 --maxpeers=200
     restart: unless-stopped                 
     labels:                     
       - "traefik.enable=true"
