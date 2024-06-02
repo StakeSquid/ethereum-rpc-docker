@@ -45,7 +45,7 @@ services:
       --http.vhosts=*
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
-      --beacon.api=beacon,builder,debug,lighthouse,node
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       --rpc.returndata.limit=1100000
       --rpc.gascap=5000000000
       --ws
@@ -65,14 +65,14 @@ services:
       - "traefik.http.routers.erigon-holesky.service=erigon-holesky"
       - "traefik.http.routers.erigon-holesky.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-holesky.rule=Host(`$DOMAIN`) && PathPrefix(`/holesky-erigon`)"
-      - "traefik.http.routers.erigon-holesky.middlewares=erigon-holesky-stripprefix"
+      - "traefik.http.routers.erigon-holesky.middlewares=erigon-holesky-stripprefix, ipwhitelist"
 
       - "traefik.http.services.erigon-holesky-beacon.loadbalancer.server.port=5555"
       - "traefik.http.routers.erigon-holesky-beacon.entrypoints=websecure"
       - "traefik.http.routers.erigon-holesky-beacon.service=erigon-holesky-beacon"
       - "traefik.http.routers.erigon-holesky-beacon.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-holesky-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/holesky-erigon/eth`)"
-      - "traefik.http.routers.erigon-holesky-beacon.middlewares=erigon-holesky-stripprefix"
+      - "traefik.http.routers.erigon-holesky-beacon.middlewares=erigon-holesky-stripprefix, ipwhitelist"
       
 volumes:
     erigon-holesky:

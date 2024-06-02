@@ -44,7 +44,7 @@ services:
       --http.vhosts=*
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
-      --beacon.api=beacon,builder,debug,lighthouse,node      
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       --rpc.returndata.limit=1100000
       --rpc.gascap=5000000000
       --ws 
@@ -63,14 +63,14 @@ services:
       - "traefik.http.routers.erigon-sepolia.service=erigon-sepolia"
       - "traefik.http.routers.erigon-sepolia.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/sepolia-erigon`)"
-      - "traefik.http.routers.erigon-sepolia.middlewares=erigon-sepolia-stripprefix"
+      - "traefik.http.routers.erigon-sepolia.middlewares=erigon-sepolia-stripprefix, ipwhitelist"
 
       - "traefik.http.services.erigon-sepolia-beacon.loadbalancer.server.port=5555"
       - "traefik.http.routers.erigon-sepolia-beacon.entrypoints=websecure"
       - "traefik.http.routers.erigon-sepolia-beacon.service=erigon-sepolia-beacon"
       - "traefik.http.routers.erigon-sepolia-beacon.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-sepolia-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/sepolia-erigon/eth`)"
-      - "traefik.http.routers.erigon-sepolia-beacon.middlewares=erigon-sepolia-stripprefix"
+      - "traefik.http.routers.erigon-sepolia-beacon.middlewares=erigon-sepolia-stripprefix, ipwhitelist"
       
 volumes:
     erigon-sepolia:
