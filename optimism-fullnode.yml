@@ -16,7 +16,7 @@ services:
     restart: always
     stop_grace_period: 3m
     entrypoint: ./geth
-    command: --datadir=/data --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --syncmode=snap --gcmode=full --state.scheme=path --db.engine=pebble --discovery.port=51439 --maxpeers=100 --nat=extip:0.0.0.0 --networkid=8453 --op-network=op-mainnet --rollup.halt=major --rollup.sequencerhttp=https://mainnet-sequencer.optimism.io --port=51439 --nat=extip:${IP}
+    command: --datadir=/data --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --syncmode=snap --gcmode=full --state.scheme=path --db.engine=pebble --discovery.port=51439 --maxpeers=100 --nat=extip:${IP} --op-network=op-mainnet --rollup.halt=major --rollup.sequencerhttp=https://mainnet-sequencer.optimism.io --port=51439 --nat=extip:${IP}
     volumes:
       - optimism-fullnode:/data
       - .jwtsecret:/jwtsecret
@@ -34,6 +34,7 @@ services:
       - "GETH_DB_ENGINE=pebble"
       - "P2P_PORT=51439"
       - "WS_PORT=8545"
+      - "IP=${IP}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
     labels:                     
