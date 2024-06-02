@@ -141,6 +141,15 @@
       "fantom-testnet"
     ]
   },
+    "optimism": {
+	"id": 10,
+	"urls": [
+	    "https://1rpc.io/op"
+	],
+	"default": [
+	    "optimism-fullnode"
+	]
+    },
   "sepolia": {
     "id": 11155111,
     "urls": [
