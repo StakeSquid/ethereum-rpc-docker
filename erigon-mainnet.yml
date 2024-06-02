@@ -44,7 +44,7 @@ services:
       --http.vhosts=*
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
-      --beacon.api=beacon,builder,debug,lighthouse,node      
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       --rpc.returndata.limit=1100000
       --rpc.gascap=5000000000
       --ws 
@@ -63,14 +63,14 @@ services:
       - "traefik.http.routers.erigon-mainnet.service=erigon-mainnet"
       - "traefik.http.routers.erigon-mainnet.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-erigon`)"
-      - "traefik.http.routers.erigon-mainnet.middlewares=erigon-mainnet-stripprefix"
+      - "traefik.http.routers.erigon-mainnet.middlewares=erigon-mainnet-stripprefix, ipwhitelist"
 
       - "traefik.http.services.erigon-mainnet-beacon.loadbalancer.server.port=5555"
       - "traefik.http.routers.erigon-mainnet-beacon.entrypoints=websecure"
       - "traefik.http.routers.erigon-mainnet-beacon.service=erigon-mainnet-beacon"
       - "traefik.http.routers.erigon-mainnet-beacon.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-mainnet-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-erigon/eth`)"
-      - "traefik.http.routers.erigon-mainnet-beacon.middlewares=erigon-mainnet-stripprefix"
+      - "traefik.http.routers.erigon-mainnet-beacon.middlewares=erigon-mainnet-stripprefix, ipwhitelist"
       
 volumes:
     erigon-mainnet:
