@@ -16,7 +16,7 @@ services:
     restart: always
     stop_grace_period: 3m
     entrypoint: ./geth
-    command: --datadir=/data --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --syncmode=snap --gcmode=full --state.scheme=path --db.engine=pebble --discovery.port=8480 --maxpeers=100 --nat=extip:0.0.0.0 --networkid=8453 --op-network=base-mainnet --rollup.halt=major --rollup.sequencerhttp=https://mainnet-sequencer.base.org --port=8480 --nat=extip:${IP}
+    command: --datadir=/data --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --syncmode=snap --gcmode=full --state.scheme=path --db.engine=pebble --discovery.port=8480 --maxpeers=100 --networkid=8453 --op-network=base-mainnet --rollup.halt=major --rollup.sequencerhttp=https://mainnet-sequencer.base.org --port=8480 --nat=extip:${IP}
     volumes:
       - base-fullnode:/data
       - .jwtsecret:/jwtsecret
