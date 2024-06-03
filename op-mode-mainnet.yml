@@ -5,9 +5,6 @@ services:
     #image: stakesquid/op-mode-mainnet:v0.1
     build:
       context: ./op
-      args:
-        OP_VERSION: v1.7.5
-        GETH_VERSION: v1.101315.0
     expose:
       - 8545       # RPC / Websocket      
       - 34542     # P2P TCP (currently unused)
@@ -52,9 +49,6 @@ services:
     #image: stakesquid/op-mode-mainnet:v0.1
     build:
       context: ./op
-      args:
-        OP_VERSION: v1.7.5
-        GETH_VERSION: v1.101315.0
     depends_on:
       - op-mode-mainnet
     expose:
@@ -98,6 +92,7 @@ services:
       - "OP_NODE_L1_RPC_KIND=${MODE_MAINNET_L1_ENDPOINT_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${MODE_MAINNET_L1_ENDPOINT_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${MODE_MAINNET_L1_BEACON_URL}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${MODE_MAINNET_L1_BEACON_ARCHIVER}"      
       - "OP_NODE_OVERRIDE_CANYON=1704992401"
       - "OP_NODE_OVERRIDE_DELTA=1708560000"
       - "OP_NODE_OVERRIDE_ECOTONE=1710374401"
