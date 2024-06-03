@@ -30,6 +30,7 @@ services:
       - "GETH_AUTHRPC_ADDR=0.0.0.0"
       - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
       - "GETH_LIGHT_MAXPEERS=0"
+      - "GETH_MAXPEERS=0"
     expose:
       - 9545
     restart: always
