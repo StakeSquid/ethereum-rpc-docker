@@ -47,6 +47,7 @@ services:
       --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       --rpc.returndata.limit=1100000
       --rpc.gascap=5000000000
+      --ws.port=8545
       --ws 
     restart: unless-stopped
     stop_grace_period: 1m
