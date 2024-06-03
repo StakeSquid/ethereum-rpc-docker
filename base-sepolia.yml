@@ -40,12 +40,12 @@ services:
       - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.base-stripprefix.stripprefix.prefixes=/base-sepolia"                      
-      - "traefik.http.services.base.loadbalancer.server.port=8545"
-      - "traefik.http.routers.base.entrypoints=websecure"                                              
-      - "traefik.http.routers.base.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.base.rule=Host(`$DOMAIN`) && PathPrefix(`/base-sepolia`)"                     
-      - "traefik.http.routers.base.middlewares=base-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.base-sepolia-stripprefix.stripprefix.prefixes=/base-sepolia"                      
+      - "traefik.http.services.base-sepolia.loadbalancer.server.port=8545"
+      - "traefik.http.routers.base-sepolia.entrypoints=websecure"                                              
+      - "traefik.http.routers.base-sepolia.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.base-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/base-sepolia`)"                     
+      - "traefik.http.routers.base-sepolia.middlewares=base-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
