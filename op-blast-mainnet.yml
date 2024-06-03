@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   op-blast-mainnet:
-    image: blastio/blast-geth@sha256:b68f5b8536f554219c7bc47933e1a7e2dc2dafb189d6b029d0dc7ec7b3943fad
+    image: blastio/blast-geth:v1.1.0-mainnet
     volumes:
       - blast-mainnet:/data      
       - ./blast-io:/config:rw
@@ -48,7 +48,7 @@ services:
       - "traefik.http.routers.blast.middlewares=blast-stripprefix, ipwhitelist"                           
       
   op-blast-mainnet-node:
-    image: blastio/blast-optimism@sha256:908a5b0c8fced91bb414b1c36d4d00e895e7f87a9ca06561279a745a05505132
+    image: blastio/blast-optimism:v1.1.0-mainnet
     volumes:
       - ./blast-io:/config
       - .jwtsecret:/jwtsecret
