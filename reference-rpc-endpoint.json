@@ -8,6 +8,15 @@
       "base-fullnode"
     ]
   },
+    "base-sepolia": {
+    "id": 84532,
+    "urls": [
+      "https://sepolia.base.org"
+    ],
+    "default": [
+      "base-sepolia"
+    ]
+  },
   "ethereum": {
     "id": 1,
     "urls": [

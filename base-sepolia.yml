@@ -1,0 +1,101 @@
+version: '3.1'
+
+services:
+  base-sepolia: # this is Optimism's geth client
+    build: ./base
+    expose:
+      - 8545       # RPC / Websocket      
+      - 30765     # P2P TCP (currently unused)
+      - 30765/udp # P2P UDP (currently unused)
+      - 6060       # metrics
+      - 855
+    ports:
+      - "30765:30765"
+      - "30765:30765/udp"
+    #command: [ "sh", "./geth-entrypoint" ]
+    restart: always
+    stop_grace_period: 3m
+    entrypoint: ./geth
+    command: --datadir=/data --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --syncmode=snap --gcmode=full --state.scheme=path --db.engine=pebble --discovery.port=30765 --maxpeers=100 --networkid=84532 --op-network=base-sepolia --rollup.halt=major --rollup.sequencerhttp=https://sepolia-sequencer.base.org --port=30765 --nat=extip:${IP}
+    volumes:
+      - base-sepolia:/data
+      - .jwtsecret:/jwtsecret
+    environment:
+      - "OP_GETH_GENESIS_FILE_PATH=sepolia/genesis-l2.json"
+      - "OP_GETH_SEQUENCER_HTTP=https://sepolia-sequencer.base.org"
+      - "OP_GETH_GCMODE=full"
+      - "OP_GETH_SYNCMODE=snap"
+      - "GETH_SYNCMODE=snap"
+      - "GETH_BOOTNODES=enode://548f715f3fc388a7c917ba644a2f16270f1ede48a5d88a4d14ea287cc916068363f3092e39936f1a3e7885198bef0e5af951f1d7b1041ce8ba4010917777e71f@18.210.176.114:30301,enode://6f10052847a966a725c9f4adf6716f9141155b99a0fb487fea3f51498f4c2a2cb8d534e680ee678f9447db85b93ff7c74562762c3714783a7233ac448603b25f@107.21.251.55:30301"
+      - "OP_GETH_STATE_SCHEME=path"
+      - "GETH_STATE_SCHEME=path"      
+      - "OP_GETH_DB_ENGINE=pebble"
+      - "OP_GETH_P2P_PORT=30765"
+      - "GETH_DISCOVERY_PORT=30765"
+      - "GETH_DB_ENGINE=pebble"
+      - "P2P_PORT=30765"
+      - "WS_PORT=8545"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
+      - "OP_NODE_L2_ENGINE_AUTH=/tmp/engine-auth-jwt"
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.base-stripprefix.stripprefix.prefixes=/base-sepolia"                      
+      - "traefik.http.services.base.loadbalancer.server.port=8545"
+      - "traefik.http.routers.base.entrypoints=websecure"                                              
+      - "traefik.http.routers.base.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.base.rule=Host(`$DOMAIN`) && PathPrefix(`/base-sepolia`)"                     
+      - "traefik.http.routers.base.middlewares=base-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+      
+  base-sepolia-node:
+    build: ./base
+    depends_on:
+      - base-sepolia
+    volumes:
+      - .jwtsecret:/jwtsecret
+    expose:
+      - 8545     # RPC
+      - 54844     # P2P TCP
+      - 54844/udp # P2P UDP
+      - 7300     # metrics
+      - 6060     # pprof
+    ports:
+      - "54844:54844"
+      - "54844:54844/udp"
+    #command: [ "sh", "./op-node-entrypoint" ]
+    entrypoint: ./op-node
+    restart: always
+    stop_grace_period: 30s
+    environment:
+      - "OP_NODE_NETWORK=base-sepolia"
+      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_L1_ETH_RPC=${BASE_ETHEREUM_ENDPOINT}"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_ENGINE_RPC=http://base-sepolia:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      - "OP_NODE_P2P_AGENT=base"
+      - "OP_NODE_P2P_BOOTNODES=enr:-J64QBwRIWAco7lv6jImSOjPU_W266lHXzpAS5YOh7WmgTyBZkgLgOwo_mxKJq3wz2XRbsoBItbv1dCyjIoNq67mFguGAYrTxM42gmlkgnY0gmlwhBLSsHKHb3BzdGFja4S0lAUAiXNlY3AyNTZrMaEDmoWSi8hcsRpQf2eJsNUx-sqv6fH4btmo2HsAzZFAKnKDdGNwgiQGg3VkcIIkBg,enr:-J64QFa3qMsONLGphfjEkeYyF6Jkil_jCuJmm7_a42ckZeUQGLVzrzstZNb1dgBp1GGx9bzImq5VxJLP-BaptZThGiWGAYrTytOvgmlkgnY0gmlwhGsV-zeHb3BzdGFja4S0lAUAiXNlY3AyNTZrMaEDahfSECTIS_cXyZ8IyNf4leANlZnrsMEWTkEYxf4GMCmDdGNwgiQGg3VkcIIkBg"
+      - "OP_NODE_BETA_EXTRA_NETWORKS=true"
+      - "OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=54844"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=54844"
+      - "OP_NODE_ROLLUP_CONFIG=sepolia/rollup.json"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      - "OP_NODE_L1_RPC_KIND=${BASE_ETHEREUM_ENDPOINT_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${BASE_ETHEREUM_ENDPOINT_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${BASE_ETHEREUM_ENDPOINT_BEACON}"
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+    base-sepolia:
