@@ -71,7 +71,7 @@ services:
     environment:
       - "OP_NODE_NETWORK=base-sepolia"
       - "OP_NODE_SYNCMODE=execution-layer"
-      - "OP_NODE_L1_ETH_RPC=${BASE_ETHEREUM_ENDPOINT}"
+      - "OP_NODE_L1_ETH_RPC=${BASE_SEPOLIA_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "OP_NODE_L2_ENGINE_RPC=http://base-sepolia:8551"
@@ -91,9 +91,9 @@ services:
       - "OP_NODE_RPC_PORT=8545"
       - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
       - "OP_NODE_VERIFIER_L1_CONFS=4"
-      - "OP_NODE_L1_RPC_KIND=${BASE_ETHEREUM_ENDPOINT_KIND:-basic}"
-      - "OP_NODE_L1_TRUST_RPC=${BASE_ETHEREUM_ENDPOINT_TRUST:-false}"
-      - "OP_NODE_L1_BEACON=${BASE_ETHEREUM_ENDPOINT_BEACON}"
+      - "OP_NODE_L1_RPC_KIND=${BASE_SEPOLIA_ENDPOINT_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${BASE_SEPOLIA_ENDPOINT_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${BASE_SEPOLIA_ENDPOINT_BEACON}"
     networks:                                                                                         
       - chains
       
