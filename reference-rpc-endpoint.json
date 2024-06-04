@@ -24,6 +24,13 @@
 	],
 	"default": ["metis"]
     },
+    "haqq": {
+	"id": 11235,
+	"urls": [
+	    "https://evm.haqq.sh"
+	],
+	"default": ["haqq"]
+    },
   "ethereum": {
     "id": 1,
     "urls": [
