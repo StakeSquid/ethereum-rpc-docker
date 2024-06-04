@@ -5,9 +5,11 @@ services:
     image: alhaqq/haqq:v1.7.4
     expose: 
       # HTTP server / GraphQL API 
-      - 8545                   
+      - 8545
+    ports:
+      - "55774:55774"
     user: root
-    command: haqqd start
+    command: haqqd start --p2p.laddr "tcp://0.0.0.0:55774" --rpc.laddr "tcp://0.0.0.0:26657"
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
@@ -18,7 +20,7 @@ services:
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.haqq-stripprefix.stripprefix.prefixes=/haqq"                  
-      - "traefik.http.services.haqq.loadbalancer.server.port=8545"                                 
+      - "traefik.http.services.haqq.loadbalancer.server.port=26657"                                 
       - "traefik.http.routers.haqq.entrypoints=websecure"                                          
       - "traefik.http.routers.haqq.tls.certresolver=myresolver"                                    
       - "traefik.http.routers.haqq.rule=Host(`$DOMAIN`) && PathPrefix(`/haqq`)"                 
