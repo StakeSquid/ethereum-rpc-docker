@@ -16,7 +16,14 @@
     "default": [
       "base-sepolia"
     ]
-  },
+    },
+    "metis": {
+	"id": 1088,
+	"urls": [
+	    "https://andromeda.metis.io/?owner=1088"
+	],
+	"default": ["metis"]
+    },
   "ethereum": {
     "id": 1,
     "urls": [
