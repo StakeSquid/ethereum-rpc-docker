@@ -91,6 +91,7 @@ uDdWRwgiMr"
       - "OP_NODE_L1_RPC_KIND=${LISK_SEPOLIA_L1_ENDPOINT_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${LISK_SEPOLIA_L1_ENDPOINT_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${LISK_SEPOLIA_L1_BEACON_URL}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${LISK_SEPOLIA_L1_BEACON_ARCHIVER}"      
     networks:                                                                                         
       - chains
       
