@@ -11,7 +11,7 @@ services:
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
-      - "haqq:/home/root/.haqqd"
+      - "haqq:/root/.haqqd"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
