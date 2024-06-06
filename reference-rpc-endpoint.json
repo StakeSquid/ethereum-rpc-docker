@@ -129,6 +129,15 @@
       "op-blast-mainnet"
     ]
   },
+  "blast-sepolia": {
+    "id": 168587773,
+    "urls": [
+      "https://sepolia.blast.io"
+    ],
+    "default": [
+      "op-blast-sepolia"
+    ]
+  },    
   "fuse": {
     "id": 122,
     "urls": [
