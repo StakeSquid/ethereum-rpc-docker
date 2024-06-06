@@ -24,6 +24,11 @@
 	],
 	"default": ["metis"]
     },
+    "taiko": {
+	"id": 167000,
+	"urls": ["https://rpc.mainnet.taiko.xyz"],
+	"default": ["taiko"]
+    },
     "haqq": {
 	"id": 11235,
 	"urls": [
