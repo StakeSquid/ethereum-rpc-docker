@@ -1,5 +1,5 @@
 services:
-  taiko:
+  taiko-hekla:
     image: us-docker.pkg.dev/evmchain/images/taiko-geth:latest
     restart: unless-stopped
     pull_policy: always
@@ -39,16 +39,16 @@ services:
       --maxpendpeers 0
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.taiko-mainnet-stripprefix.stripprefix.prefixes=/taiko-mainnet"
-      - "traefik.http.services.taiko-mainnet.loadbalancer.server.port=8545"
-      - "traefik.http.routers.taiko-mainnet.entrypoints=websecure"
-      - "traefik.http.routers.taiko-mainnet.tls.certresolver=myresolver"
-      - "traefik.http.routers.taiko-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-mainnet`)"
-      - "traefik.http.routers.taiko-mainnet.middlewares=taiko-mainnet-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.taiko-hekla-stripprefix.stripprefix.prefixes=/taiko-hekla"
+      - "traefik.http.services.taiko-hekla.loadbalancer.server.port=8545"
+      - "traefik.http.routers.taiko-hekla.entrypoints=websecure"
+      - "traefik.http.routers.taiko-hekla.tls.certresolver=myresolver"
+      - "traefik.http.routers.taiko-hekla.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-hekla`)"
+      - "traefik.http.routers.taiko-hekla.middlewares=taiko-hekla-stripprefix, ipwhitelist"
     networks:
       - chains
 
-  taiko_client_driver:
+  taiko-hekla-client-driver:
     image: us-docker.pkg.dev/evmchain/images/taiko-client:latest
     pull_policy: always
     restart: unless-stopped

@@ -47,7 +47,7 @@ services:
     networks:
       - chains
 
-  taiko_client_driver:
+  taiko-client-driver:
     image: us-docker.pkg.dev/evmchain/images/taiko-client:taiko-client-v0.25.0
     restart: unless-stopped
     depends_on:
