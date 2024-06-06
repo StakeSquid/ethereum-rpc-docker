@@ -11,8 +11,8 @@ services:
       - 8545
       - 8551
     ports:
-      - "52158:52158"
-      - "52158:52158/udp"
+      - "50213:50213"
+      - "50213:50213/udp"
     command: |
       --taiko
       --networkid 167009
@@ -33,8 +33,8 @@ services:
       --ws.port 8545
       --ws.origins "*"
       --gpo.defaultprice "10000000"
-      --port 52158
-      --discovery.port 52158
+      --port 50213
+      --discovery.port 50213
       --maxpeers 50
       --maxpendpeers 0
     labels:
