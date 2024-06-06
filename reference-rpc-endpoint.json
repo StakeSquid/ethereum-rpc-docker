@@ -29,6 +29,11 @@
 	"urls": ["https://rpc.mainnet.taiko.xyz"],
 	"default": ["taiko"]
     },
+    "taiko-hekla": {
+	"id": 167009,
+	"urls": ["https://rpc.hekla.taiko.xyz"],
+	"default": ["taiko-hekla"]
+    },    
     "haqq": {
 	"id": 11235,
 	"urls": [
