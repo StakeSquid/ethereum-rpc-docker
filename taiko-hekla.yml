@@ -5,7 +5,7 @@ services:
     pull_policy: always
     stop_grace_period: 3m
     volumes:
-      - taiko:/data/taiko-geth
+      - taiko-hekla:/data/taiko-geth
     expose:
       - 6060
       - 8545
@@ -53,7 +53,7 @@ services:
     pull_policy: always
     restart: unless-stopped
     depends_on:
-      - taiko
+      - taiko-hekla
     environment:
       - "TAIKO_L1_ADDRESS=0x79C9109b764609df928d16fC4a91e9081F7e87DB"
       - "TAIKO_TOKEN_L1_ADDRESS=0x6490E12d480549D333499236fF2Ba6676C296011"
@@ -64,7 +64,7 @@ services:
       - "L1_BEACON_HTTP=${TAIKO_HOLESKY_BEACON_REST}"
       - "L2_CHECKPOINT_SYNC_RPC=https://rpc.hekla.taiko.xyz"
     volumes:
-      - taiko:/data/taiko-geth
+      - taiko-hekla:/data/taiko-geth
       - ./taiko/script:/script
     entrypoint:
       - /bin/sh
@@ -74,4 +74,4 @@ services:
       - chains
       
 volumes:
-  taiko:
+  taiko-hekla:
