@@ -1,0 +1,22 @@
+services:
+  core:
+    image: stakesquid/core-chain:v1.0.8
+    user: root
+    restart: unless-stopped
+    ports:
+      - "53848:53848"
+      - "53848:53848/udp"
+    volumes:
+      - core-mainnet:/data
+      - ./core-chain/mainnet:/core/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.core-mainnet-stripprefix.stripprefix.prefixes=/core"
+      - "traefik.http.services.core-mainnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.core-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.core-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.core-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/core`)"
+      - "traefik.http.routers.core-mainnet.middlewares=core-mainnet-stripprefix, ipwhitelist"
+
+volumes:
+  core-mainnet:

@@ -328,5 +328,14 @@
 	"default": [
 	    "op-mode-mainnet"
 	]
+    },
+    "core": {
+	"id": 1116,
+	"urls": [
+	    "https://rpc.coredao.org"
+	],
+	"default": [
+	    "core-mainnet"
+	]
     }
 }
