@@ -9,6 +9,8 @@ services:
     volumes:
       - core-mainnet:/data
       - ./core-chain/mainnet:/core/config
+    networks:
+      - chains
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.core-mainnet-stripprefix.stripprefix.prefixes=/core"
