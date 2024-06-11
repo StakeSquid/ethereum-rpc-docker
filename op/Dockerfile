@@ -3,7 +3,7 @@ FROM golang:1.21 as op
 WORKDIR /app
 
 ARG OP_REPO=https://github.com/ethereum-optimism/optimism.git
-ARG OP_VERSION=v1.7.6
+ARG OP_VERSION=v1.7.7-rc.1
 # for verification:
 
 
