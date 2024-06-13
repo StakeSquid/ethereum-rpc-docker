@@ -2,7 +2,7 @@
 
 services:
   linea-besu-fullnode:
-    image: hyperledger/besu:latest
+    image: hyperledger/besu:24.5.4
     command: --config-file=/config/config-snap-mainnet.toml --genesis-file=/config/genesis-mainnet.json --p2p-host=${IP}
     user: root
     ports:
