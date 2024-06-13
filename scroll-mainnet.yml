@@ -7,14 +7,14 @@ services:
       # HTTP server / GraphQL API 
       - 8545                   
     ports:                      
-      - "27374:27374"                                                                                 
-      - "27374:27374/udp"  
+      - "38907:38907"                                                                                 
+      - "38907:38907/udp"  
     command:
       [                                                                                               
         "--scroll",
         # Blockchain sync mode ("snap", "full" or "light")                                            
         "--syncmode=full",
-        "--port=27374",
+        "--port=38907",
         "--nat=extip:$IP",
         # Megabytes of memory allocated to internal caching                                           
         "--cache=8192",
