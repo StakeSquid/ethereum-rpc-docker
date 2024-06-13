@@ -6,6 +6,7 @@ services:
     expose: 
       # HTTP server / GraphQL API 
       - 8545
+      - 8546
     ports:
       - "55774:55774"
     user: root
@@ -17,6 +18,24 @@ services:
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
+
+  haqq-proxy:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - metis
+    expose:  
+      - 80                                                                                            
+    environment:                                                                                      
+      PROXY_HOST: haqq
+      RPC_PORT: 8545
+      RPC_PATH: ""
+      WS_PORT: 8546
+      WS_PATH: ""
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates     
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.haqq-stripprefix.stripprefix.prefixes=/haqq"                  
