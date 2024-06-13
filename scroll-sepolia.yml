@@ -1,0 +1,63 @@
+version: '3.1'
+
+services:
+  scroll-sepolia:                         
+    image: scrolltech/l2geth:scroll-v5.4.2
+    expose: 
+      # HTTP server / GraphQL API 
+      - 8545                   
+    ports:                      
+      - "6326:6326"                                                                                 
+      - "6326:6326/udp"  
+    command:
+      [                                                                                               
+        "--scroll-sepolia",
+        # Blockchain sync mode ("snap", "full" or "light")                                            
+        "--syncmode=full",
+        "--port=6326",
+        "--nat=extip:$IP",
+        # Megabytes of memory allocated to internal caching                                           
+        "--cache=8192",
+        # Enable the WS-RPC server         
+        "--ws",
+        "--ws.port=8545",
+        "--ws.addr=0.0.0.0",
+        "--ws.origins=*",
+        # Enable the HTTP-RPC server      
+        "--http",
+        "--http.port=8545",
+        "--http.addr=0.0.0.0",                     
+        "--http.vhosts=*",
+        "--l1.endpoint=${SCROLL_SEPOLIA_L1_ENDPOINT}",
+        "--rollup.verify",
+        # Enable GraphQL on the HTTP-RPC server. Note that GraphQL can only be started if an HTTP server is started as well.                                                                               
+        "--graphql",                               
+        "--graphql.vhosts=*",             
+        # Enable metrics collection and reporting                                                     
+        "--metrics",
+        "--metrics.addr=0.0.0.0",
+        # Maximum number of network peers (network disabled if set to 0) (default: 50)                
+        "--maxpeers=100"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "scroll-sepolia:/root/.ethereum"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.scroll-sepolia-stripprefix.stripprefix.prefixes=/scroll-sepolia"                  
+      - "traefik.http.services.scroll-sepolia.loadbalancer.server.port=8545"                                 
+      - "traefik.http.routers.scroll-sepolia.entrypoints=websecure"                                          
+      - "traefik.http.routers.scroll-sepolia.tls.certresolver=myresolver"                                    
+      - "traefik.http.routers.scroll-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll-sepolia`)"                 
+      - "traefik.http.routers.scroll-sepolia.middlewares=scroll-sepolia-stripprefix, ipwhitelist"
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=geth-scroll-sepolia"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+
+volumes:
+    scroll-sepolia:

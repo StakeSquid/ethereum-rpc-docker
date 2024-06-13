@@ -306,8 +306,15 @@
     "scroll": {
 	"id": 534352,
 	"urls": ["https://rpc.scroll.io"],
-	"default": ["scroll-mainnet"]
+	"default": ["scroll-mainnet"],
+	"archive": ["scroll-mainnet"]
     },
+    "scroll-sepolia": {
+	"id": 534351,
+	"urls": ["https://sepolia-rpc.scroll.io"],
+	"default": ["scroll-sepolia"],
+	"archive": ["scroll-sepolia"]
+    },    
     "zora": {
 	"id": 7777777,
 	"urls": [
