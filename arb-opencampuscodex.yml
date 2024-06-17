@@ -7,7 +7,7 @@ services:
     user: root
     volumes:
       - 'arb-opencampuscodex:/persistent'
-      - './arb/nova/opencampuscodex/baseConfig.json:/baseConfig.json'      
+      - './arb/arb-sepolia/opencampuscodex/baseConfig.json:/baseConfig.json'
     expose:
       - 8547 # http + ws
     command:
