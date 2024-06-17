@@ -66,6 +66,13 @@
       "arb-playblock"
     ]
   },
+    "opencampuscodex-sepolia": {
+	"id": 656476,
+	"urls": [
+	    "https://rpc.open-campus-codex.gelato.digital"
+	],
+	"default": ["arb-opencampuscodex"]
+    },
   "alephzero-sepolia": {
     "id": 2039,
     "urls": [
