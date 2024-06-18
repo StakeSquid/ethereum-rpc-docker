@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   dshackle:
-    image: drpcorg/dshackle:0.56.0
+    image: drpcorg/dshackle:0.56.2
     restart: unless-stopped
     volumes:
       - ./main_configs:/etc/dshackle
