@@ -9,13 +9,13 @@ services:
       - "gnosis-chiado-nethermind-fullnode:/data"
       - .jwtsecret:/jwtsecret
     expose:  
-      - "1550"
+      - "7806"
       - "9090"
       - "8545"               
       - "8551"               
     ports: 
-      - "1550:1550" 
-      - "1550:1550/udp"
+      - "7806:7806" 
+      - "7806:7806/udp"
     restart: unless-stopped
     environment:
       #- "NETHERMIND_SYNCCONFIG_NONVALIDATORNODE=true"
@@ -36,7 +36,7 @@ services:
       --JsonRpc.JwtSecretFile=/jwtsecret
       --JsonRpc.EngineHost=0.0.0.0
       --JsonRpc.EnginePort=8551
-      --Network.DiscoveryPort=1550
+      --Network.DiscoveryPort=7806
       --HealthChecks.Enabled=false
       --Pruning.CacheMb=2048
     stop_grace_period: 3m                         
@@ -78,8 +78,8 @@ services:
         --jwt-secret=/jwt
         --light-client-data-serve=true
         --light-client-data-import-mode=full
-        --tcp-port=54356
-        --udp-port=54356
+        --tcp-port=61460
+        --udp-port=61460
         --rest
         --rest-address=0.0.0.0
         --network=chiado
@@ -87,12 +87,12 @@ services:
     networks:
       - chains
     ports:
-      - 54356:54356/tcp # p2p
-      - 54356:54356/udp # p2p
+      - 61460:61460/tcp # p2p
+      - 61460:61460/udp # p2p
     expose:
       - 8008 # metrics
       - 4500 # http
-      - 54356 # p2p
+      - 61460 # p2p
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8008"
