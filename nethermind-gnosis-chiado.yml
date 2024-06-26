@@ -82,7 +82,6 @@ services:
       beacon
       --network=chiado
       --dataDir=/data
-      #--preset=gnosis
       --eth1=true
       --execution.urls=http://nethermind-gnosis-chiado:8551
       --jwt-secret=/jwt.hex
