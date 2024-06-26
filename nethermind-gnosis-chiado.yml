@@ -60,53 +60,50 @@ services:
         compress: 'false'
       driver: local
 
-      
-  nimbus-gnosis-chiado:
-    build:
-      context: ./gnosis/nimbus
-    restart: unless-stopped
-    stop_grace_period: 1m
-    user: root
-    volumes:
-      - nimbus-gnosis-chiado:/data
-      - .jwtsecret:/jwt:ro
-    environment:
-      CHECKPOINT_SYNC_URL: "https://checkpoint.chiadochain.net/"
-    command: |
-        --data-dir=/data
-        --web3-url=http://nethermind-gnosis-chiado:8551
-        --jwt-secret=/jwt
-        --light-client-data-serve=true
-        --light-client-data-import-mode=full
-        --tcp-port=61460
-        --udp-port=61460
-        --rest
-        --rest-address=0.0.0.0
-        --network=chiado
-        --history=prune
+  lodestar-gnosis-chiado:
+    image: chainsafe/lodestar:v1.12.0
+    restart: always
     networks:
       - chains
     ports:
       - 61460:61460/tcp # p2p
       - 61460:61460/udp # p2p
     expose:
-      - 8008 # metrics
-      - 4500 # http
-      - 61460 # p2p
+      - 4000
+      - 5054
+    volumes:
+      - lodestar-gnosis-chiado:/data
+      - .jwtsecret:/jwt.hex:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=6144
+    command: |
+      beacon
+      --network=chiado
+      --dataDir=/data
+      #--preset=gnosis
+      --eth1=true
+      --execution.urls=http://nethermind-gnosis-chiado:8551
+      --jwt-secret=/jwt.hex
+      --logFile=/data/logs/beacon.log
+      --logFileLevel=info
+      --port=61460
+      --rest=true
+      --rest.address=0.0.0.0
+      --rest.port=4000
+      --rest.cors=*
+      --discv5=true
+      --targetPeers=50
+      --metrics=true
+      --metrics.port=5054
+      --checkpointSyncUrl=https://checkpoint.chiadochain.net/    
     labels:
       - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=8008"
-      - "prometheus-scrape.job_name=nimbus-gnosis-chiado"
+      - "prometheus-scrape.port=5054"
+      - "prometheus-scrape.job_name=lodestar-gnosis-chiado"
       - "prometheus-scrape.metrics_path=/metrics"
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.nimbus-gnosis-chiado-stripprefix.stripprefix.prefixes=/nimbus-gnosis-chiado"
-      - "traefik.http.services.nimbus-gnosis-chiado.loadbalancer.server.port=4500"
-      - "traefik.http.routers.nimbus-gnosis-chiado.entrypoints=websecure"
-      - "traefik.http.routers.nimbus-gnosis-chiado.tls.certresolver=myresolver"
-      - "traefik.http.routers.nimbus-gnosis-chiado.rule=Host(`$DOMAIN`) && PathPrefix(`/nimbus-gnosis-chiado`)"
-      - "traefik.http.routers.nimbus-gnosis-chiado.middlewares=nimbus-gnosis-chiado-stripprefix, ipwhitelist"
-
       
 volumes:
   gnosis-chiado-nethermind-fullnode:
-  nimbus-gnosis-chiado:    
+  lodestar-gnosis-chiado:    
