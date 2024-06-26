@@ -31,8 +31,8 @@ services:
       - "traefik.http.routers.dshackle.service=dshackle"
       - "traefik.http.routers.dshackle.tls.certresolver=myresolver"
       - "traefik.http.routers.dshackle.rule=Host(`$GW_DOMAIN`)"
-      - "traefik.http.middlewares.ipwhitelist.gwwhitelist.sourcerange=$GW_WHITELIST"      
-      - "traefik.http.routers.dshackle.middlewares=gwwhitelist"
+      - "traefik.http.middlewares.ipwhitelist.gwallowlist.sourcerange=$GW_ALLOW_LIST"      
+      - "traefik.http.routers.dshackle.middlewares=gwallowlist"
 
     networks:
       - chains
