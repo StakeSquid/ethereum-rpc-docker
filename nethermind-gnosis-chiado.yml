@@ -2,11 +2,11 @@ version: '3.1'
                                                    
 services:                             
                                                    
-  nethermind-gnosis:        
+  nethermind-gnosis-chiado:        
     image: nethermind/nethermind:1.27.0
     user: root
     volumes:                  
-      - "gnosis-nethermind-fullnode:/data"
+      - "gnosis-chiado-nethermind-fullnode:/data"
       - .jwtsecret:/jwtsecret
     expose:  
       - "1550"
@@ -26,7 +26,7 @@ services:
       #- "NETHERMIND_SYNCCONFIG_DOWNLOADBODIESINFASTSYNC=false"
       #- "NETHERMIND_SYNCCONFIG_DOWNLOADHEADERSINFASTSYNC=false"
     command: |
-      --config=gnosis
+      --config=chiado
       --datadir=/data
       --log=INFO
       --JsonRpc.Enabled=true
@@ -46,12 +46,12 @@ services:
       - "prometheus-scrape.job_name=nethermind"                                                           
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"                                                                         
-      - "traefik.http.middlewares.nethermind-gnosis-stripprefix.stripprefix.prefixes=/gnosis"
-      - "traefik.http.services.nethermind-gnosis.loadbalancer.server.port=8545"                    
-      - "traefik.http.routers.nethermind-gnosis.entrypoints=websecure"
-      - "traefik.http.routers.nethermind-gnosis.tls.certresolver=myresolver"
-      - "traefik.http.routers.nethermind-gnosis.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis`)"
-      - "traefik.http.routers.nethermind-gnosis.middlewares=nethermind-gnosis-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.nethermind-gnosis-chiado-stripprefix.stripprefix.prefixes=/gnosis-chiado"
+      - "traefik.http.services.nethermind-gnosis-chiado.loadbalancer.server.port=8545"                    
+      - "traefik.http.routers.nethermind-gnosis-chiado.entrypoints=websecure"
+      - "traefik.http.routers.nethermind-gnosis-chiado.tls.certresolver=myresolver"
+      - "traefik.http.routers.nethermind-gnosis-chiado.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado`)"
+      - "traefik.http.routers.nethermind-gnosis-chiado.middlewares=nethermind-gnosis-chiado-stripprefix, ipwhitelist"
     networks:   
       - chains        
     logging:
@@ -61,20 +61,20 @@ services:
       driver: local
 
       
-  nimbus-gnosis:
+  nimbus-gnosis-chiado:
     build:
       context: ./gnosis/nimbus
     restart: unless-stopped
     stop_grace_period: 1m
     user: root
     volumes:
-      - nimbus-gnosis:/data
+      - nimbus-gnosis-chiado:/data
       - .jwtsecret:/jwt:ro
     environment:
-      CHECKPOINT_SYNC_URL: "https://checkpoint.gnosischain.com/"
+      CHECKPOINT_SYNC_URL: "https://checkpoint.chiadochain.net/"
     command: |
         --data-dir=/data
-        --web3-url=http://nethermind-gnosis:8551
+        --web3-url=http://nethermind-gnosis-chiado:8551
         --jwt-secret=/jwt
         --light-client-data-serve=true
         --light-client-data-import-mode=full
@@ -82,7 +82,7 @@ services:
         --udp-port=54356
         --rest
         --rest-address=0.0.0.0
-        --network=gnosis
+        --network=chiado
         --history=prune
     networks:
       - chains
@@ -96,17 +96,17 @@ services:
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=8008"
-      - "prometheus-scrape.job_name=nimbus-gnosis"
+      - "prometheus-scrape.job_name=nimbus-gnosis-chiado"
       - "prometheus-scrape.metrics_path=/metrics"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.nimbus-gnosis-stripprefix.stripprefix.prefixes=/nimbus-gnosis"
-      - "traefik.http.services.nimbus-gnosis.loadbalancer.server.port=4500"
-      - "traefik.http.routers.nimbus-gnosis.entrypoints=websecure"
-      - "traefik.http.routers.nimbus-gnosis.tls.certresolver=myresolver"
-      - "traefik.http.routers.nimbus-gnosis.rule=Host(`$DOMAIN`) && PathPrefix(`/nimbus-gnosis`)"
-      - "traefik.http.routers.nimbus-gnosis.middlewares=nimbus-gnosis-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.nimbus-gnosis-chiado-stripprefix.stripprefix.prefixes=/nimbus-gnosis-chiado"
+      - "traefik.http.services.nimbus-gnosis-chiado.loadbalancer.server.port=4500"
+      - "traefik.http.routers.nimbus-gnosis-chiado.entrypoints=websecure"
+      - "traefik.http.routers.nimbus-gnosis-chiado.tls.certresolver=myresolver"
+      - "traefik.http.routers.nimbus-gnosis-chiado.rule=Host(`$DOMAIN`) && PathPrefix(`/nimbus-gnosis-chiado`)"
+      - "traefik.http.routers.nimbus-gnosis-chiado.middlewares=nimbus-gnosis-chiado-stripprefix, ipwhitelist"
 
       
 volumes:
-  gnosis-nethermind-fullnode:
-  nimbus-gnosis:    
+  gnosis-chiado-nethermind-fullnode:
+  nimbus-gnosis-chiado:    
