@@ -231,6 +231,11 @@
 	"nethermind-gnosis"
     ]
   },
+    "gnosis-chiado": {
+	"id": 10200,
+	"urls": ["https://rpc.chiadochain.net"],
+	"default": ["nethermind-gnosis-chiado"]
+    },
   "mantle": {
     "id": 5000,
     "urls": [
