@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   sepolia-reth:
-    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v0.1.0-alpha.23}
+    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.0.0}
     user: root
     volumes:
       - "reth-sepolia:/root/.local/share/reth/sepolia/db"
@@ -34,7 +34,7 @@ services:
       - chains
 
   sepolia-prysm-reth:
-    image: prysmaticlabs/prysm-beacon-chain:v5.0.3
+    image: prysmaticlabs/prysm-beacon-chain:v5.0.4
     expose:
       - 3500
     ports:
