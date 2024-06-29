@@ -61,7 +61,7 @@ services:
       driver: local
 
   lodestar-gnosis-chiado:
-    image: chainsafe/lodestar:v1.12.0
+    image: chainsafe/lodestar:v1.19.0
     restart: always
     networks:
       - chains
