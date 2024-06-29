@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   arb-connext-sepolia:
-    image: 'offchainlabs/nitro-node:v2.3.4-rc.5-b4cc111'
+    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.0.2-9efbc16}'
     stop_grace_period: 3m
     user: root
     volumes:
