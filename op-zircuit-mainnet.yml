@@ -64,7 +64,7 @@ services:
     image: ghcr.io/foundry-rs/foundry
     volumes:
       - "./zircuit/config:/config"
-      - "./zircuit/generate-node-key:/generate-node-key"
+      - "./zircuit/generate-node-key-script:/generate-node-key"
     entrypoint: sh
     command: /generate-node-key
 
