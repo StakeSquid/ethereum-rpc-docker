@@ -1,6 +1,3 @@
-volumes:
-  op-zircuit:
-
 services:
   op-zicuit:
     image: zircuit1/l2-geth:ae5c0d31197125a8cb579ed515f0cfc7a53a77dc
@@ -60,4 +57,7 @@ services:
       OP_NODE_LOG_LEVEL: info
       OP_NODE_LOG_FORMAT: json
       OP_NODE_LOG_COLOR: false
+
+volumes:
+  op-zircuit:
 
