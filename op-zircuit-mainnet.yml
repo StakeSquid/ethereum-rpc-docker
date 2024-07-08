@@ -13,6 +13,7 @@ services:
       - "--rollup.sequencerhttp=${ZIRCUIT_SEQUENCER_HTTP}"
       - "--rollup.disabletxpoolgossip=true"
     environment:
+      FORK_TRIGGER: false
       ETH_STATS_ENABLED: 1
       ETH_STATS_NODE: StakesSquid
       ETH_STATS_SERVER: ethstats-mainnet-sk3bgt6hciu.zircuit.com
