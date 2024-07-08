@@ -1,0 +1,63 @@
+volumes:
+  op-zircuit:
+
+services:
+  op-zicuit:
+    image: zircuit1/l2-geth:ae5c0d31197125a8cb579ed515f0cfc7a53a77dc
+    volumes:
+      - "op-zircuit:/db"
+      - "./zircuit/mainnet/genesis.json:/genesis.json"
+      - ".jwtsecret:/jwtsecret"
+    entrypoint:
+      # pass the L2 specific flags by overriding the entry-point and adding extra arguments
+      - "/bin/sh"
+      - "/entrypoint.sh"
+      - "--authrpc.jwtsecret=/jwt-secret"
+      - "--rollup.sequencerhttp=${ZIRCUIT_SEQUENCER_HTTP}"
+      - "--rollup.disabletxpoolgossip=true"
+    environment:
+      ETH_STATS_ENABLED: 1
+      ETH_STATS_NODE: StakesSquid
+      ETH_STATS_SERVER: ethstats-mainnet-sk3bgt6hciu.zircuit.com
+      ETH_STATS_SERVER_PORT: 443
+      WS_SECRET: ${ZIRCUIT_WS_SECRET}
+
+  op-zircuit-node:
+    depends_on:
+      - op-zircuit
+    image: zircuit1/op-node:ae5c0d31197125a8cb579ed515f0cfc7a53a77dc
+    ports:
+      - "43778:43778"
+    volumes:
+      - ".jwtsecret:/jwtsecret"
+      - "./zircuit/mainnet/rollup.json:/rollup.json"
+      #- "${ZIRCUIT_P2P_PRIVATE_KEY_PATH:-./zircuit-p2p-node-key.txt}:/p2p-node-key.txt"
+    environment:
+      OP_NODE_L1_ETH_RPC: ${ZIRCUIT_ETHEREUM_MAINNET_EXECUTION_RPC}
+      OP_NODE_L2_ENGINE_RPC: http://op-zircuit:8551
+      OP_NODE_ROLLUP_CONFIG: /rollup.json
+      OP_NODE_RPC_ADDR: "0.0.0.0"
+      OP_NODE_RPC_PORT: 8545
+      OP_NODE_L1_RPC_KIND: "basic"
+      OP_NODE_L2_ENGINE_AUTH: /jwtsecret
+      OP_NODE_VERIFIER_L1_CONFS: 0
+      OP_NODE_SEQUENCER_ENABLED: false
+      OP_NODE_SEQUENCER_STOPPED: false
+      OP_NODE_SEQUENCER_MAX_SAFE_LAG: 0
+      OP_NODE_SEQUENCER_L1_CONFS: 0
+      OP_NODE_L1_EPOCH_POLL_INTERVAL: 384s
+      OP_NODE_HEARTBEAT_ENABLED: false
+      OP_NODE_L1_BEACON: ${ZIRCUIT_ETHEREUM_MAINNET_BEACON_REST}
+      OP_NODE_SYNCMODE: "consensus-layer"
+      P2P_LISTEN_IP: "0.0.0.0"
+      P2P_LISTEN_TCP_PORT: 43778
+      P2P_LISTEN_UDP_PORT: 43778
+      P2P_PEER_SCORING: light
+      P2P_PEER_BANNING: true
+      P2P_STATIC: /dns4/mainnet-node1-p2p-s3cur1ty5.zircuit.com/tcp/9003/p2p/16Uiu2HAm5Uxn3E8RXEM2e5YsR9VNM8uKoPmZzwQjqp7r64ZLspd5
+      #P2P_PRIV_PATH: /p2p-node-key.txt
+
+      OP_NODE_LOG_LEVEL: info
+      OP_NODE_LOG_FORMAT: json
+      OP_NODE_LOG_COLOR: false
+
