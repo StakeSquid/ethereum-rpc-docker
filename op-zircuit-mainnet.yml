@@ -1,5 +1,5 @@
 services:
-  op-zicuit:
+  op-zircuit:
     image: zircuit1/l2-geth:ae5c0d31197125a8cb579ed515f0cfc7a53a77dc
     volumes:
       - "op-zircuit:/db"
