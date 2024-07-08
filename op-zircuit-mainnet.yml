@@ -28,7 +28,7 @@ services:
     volumes:
       - ".jwtsecret:/jwtsecret"
       - "./zircuit/mainnet/rollup.json:/rollup.json"
-      #- "${ZIRCUIT_P2P_PRIVATE_KEY_PATH:-./zircuit-p2p-node-key.txt}:/p2p-node-key.txt"
+      - "./zircuit/config/}:/config"
     environment:
       OP_NODE_L1_ETH_RPC: ${ZIRCUIT_ETHEREUM_MAINNET_EXECUTION_RPC}
       OP_NODE_L2_ENGINE_RPC: http://op-zircuit:8551
@@ -52,12 +52,22 @@ services:
       P2P_PEER_SCORING: light
       P2P_PEER_BANNING: true
       P2P_STATIC: /dns4/mainnet-node1-p2p-s3cur1ty5.zircuit.com/tcp/9003/p2p/16Uiu2HAm5Uxn3E8RXEM2e5YsR9VNM8uKoPmZzwQjqp7r64ZLspd5
-      #P2P_PRIV_PATH: /p2p-node-key.txt
+      P2P_PRIV_PATH: /config/p2p_node_key_txt
 
       OP_NODE_LOG_LEVEL: info
       OP_NODE_LOG_FORMAT: json
       OP_NODE_LOG_COLOR: false
 
+
+  op-zircuit-key-generator:
+    image: ghcr.io/foundry-rs/foundry
+    volumes:
+      - "./zircuit/config:/config"
+      - "./zircuit/generate-node-key:/generate-node-key"
+    entrypoint: sh
+    command: /generate-node-key
+
+      
 volumes:
   op-zircuit:
 
