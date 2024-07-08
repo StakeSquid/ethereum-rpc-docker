@@ -9,7 +9,7 @@ services:
       # pass the L2 specific flags by overriding the entry-point and adding extra arguments
       - "/bin/sh"
       - "/entrypoint.sh"
-      - "--authrpc.jwtsecret=/jwt-secret"
+      - "--authrpc.jwtsecret=/jwtsecret"
       - "--rollup.sequencerhttp=${ZIRCUIT_SEQUENCER_HTTP}"
       - "--rollup.disabletxpoolgossip=true"
     environment:
