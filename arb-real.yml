@@ -19,6 +19,7 @@ services:
       - --execution.forwarding-target=https://rpc.realforreal.gelato.digital
       - --node.feed.input.url=wss://feed.realforreal.gelato.digital
       - --parent-chain.connection.url=${REAL_PARENT_RPC}
+      - --parent-chain.blob-client.beacon-url=${REAL_PARENT_REST}
       - --http.addr=0.0.0.0
       - --http.port=8547
       - --http.vhosts=*
