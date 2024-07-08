@@ -236,6 +236,11 @@
 	"urls": ["https://rpc.chiadochain.net"],
 	"default": ["nethermind-gnosis-chiado"]
     },
+    "zircuit-mainnet": {
+	"id": 48900,
+	"urls": [],
+	"default": ["op-zircuit-mainnet"]
+    },
   "mantle": {
     "id": 5000,
     "urls": [
