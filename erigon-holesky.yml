@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-holesky:
-    image: thorax/erigon:v2.60.2
+    image: thorax/erigon:v2.60.3
     user: root
     expose:
       - "16630"
