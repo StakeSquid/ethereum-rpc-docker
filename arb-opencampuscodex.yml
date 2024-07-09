@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   arb-opencampuscodex:
-    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v2.2.4-8517340}'
+    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.0.0-e6f81cb}'
     stop_grace_period: 3m
     user: root
     volumes:
