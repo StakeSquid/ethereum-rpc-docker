@@ -26,6 +26,7 @@ services:
       - "GETH_GCMODE=full"
       - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
+      - "GETH_OVERRIDE_FJORD=1720627201"
       - "P2P_PORT=6999"
       - "WS_PORT=8545"
       - "IP=${IP}"
@@ -97,6 +98,7 @@ services:
       - "OP_NODE_L1_BEACON_ARCHIVER=${LISK_MAINNET_L1_BEACON_ARCHIVER}"
       - "OP_NODE_P2P_PEER_BANNING=false"
       - "OP_NODE_P2P_PEER_SCORING=none"
+      - "OP_NODE_OVERRIDE_FJORD=1720627201"
     networks:                                                                                         
       - chains
       
