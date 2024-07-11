@@ -99,6 +99,7 @@ services:
       - "OP_NODE_OVERRIDE_CANYON=1704992401"
       - "OP_NODE_OVERRIDE_DELTA=1708560000"
       - "OP_NODE_OVERRIDE_ECOTONE=1710374401"
+      - "OP_NODE_OVERRIDE_FJORD=1720627201"
     networks:                                                                                         
       - chains
       
