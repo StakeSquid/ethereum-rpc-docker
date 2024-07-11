@@ -34,6 +34,7 @@ services:
       - "GETH_OVERRIDE_CANYON=1704992401"
       - "GETH_OVERRIDE_DELTA=1708560000"
       - "GETH_OVERRIDE_ECOTONE=1710374401"      
+      - "GETH_OVERRIDE_FJORD=1720627201"
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.zora-stripprefix.stripprefix.prefixes=/zora-archive"                      
