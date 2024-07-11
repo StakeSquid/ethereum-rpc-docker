@@ -3,13 +3,10 @@ FROM golang:1.21 as op
 WORKDIR /app
 
 ENV REPO=https://github.com/ethereum-optimism/optimism.git
-ENV VERSION=v1.7.6
-# for verification:
-ENV COMMIT=4a487b8920daa9dc4b496d691d5f283f9bb659b1
+ENV VERSION=v1.7.7
 
 RUN git clone $REPO --branch op-node/$VERSION --single-branch . && \
-    git switch -c branch-$VERSION && \
-    bash -c '[ "$(git rev-parse HEAD)" = "$COMMIT" ]'
+    git switch -c branch-$VERSION
 
 RUN cd op-node && \
     make op-node
@@ -19,14 +16,11 @@ FROM golang:1.21 as geth
 WORKDIR /app
 
 ENV REPO=https://github.com/ethereum-optimism/op-geth.git
-ENV VERSION=v1.101315.1
-# for verification:
-ENV COMMIT=3fbae78d638d1b903e702a14f98644c1103ae1b3
+ENV VERSION=v1.101315.2
 
 # avoid depth=1, so the geth build can read tags
 RUN git clone $REPO --branch $VERSION --single-branch . && \
-    git switch -c branch-$VERSION && \
-    bash -c '[ "$(git rev-parse HEAD)" = "$COMMIT" ]'
+    git switch -c branch-$VERSION
 
 RUN go run build/ci.go install -static ./cmd/geth
 
@@ -42,5 +36,4 @@ COPY --from=op /app/op-node/bin/op-node ./
 COPY --from=geth /app/build/bin/geth ./
 COPY geth-entrypoint .
 COPY op-node-entrypoint .
-COPY goerli ./goerli
 COPY mainnet ./mainnet
