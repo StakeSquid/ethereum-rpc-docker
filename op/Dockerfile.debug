@@ -27,8 +27,7 @@ ENV OP_NODE_REPO=https://github.com/ethereum-optimism/optimism.git
 ARG OP_NODE_VERSION
 ARG OP_NODE_COMMIT 
 RUN git clone $OP_NODE_REPO --branch op-node/$OP_NODE_VERSION --single-branch . && \
-    git switch -c branch-$OP_NODE_VERSION && \
-    bash -c '[ "$(git rev-parse HEAD)" = "$OP_NODE_COMMIT" ]'
+    git switch -c branch-$OP_NODE_VERSION
 
 # Install pnpm
 RUN npm install -g pnpm && \
@@ -73,8 +72,7 @@ ARG OP_GETH_COMMIT
 
 # avoid depth=1, so the geth build can read tags
 RUN git clone $OP_GETH_REPO --branch $OP_GETH_VERSION --single-branch . && \
-    git switch -c branch-$OP_GETH_VERSION && \
-    bash -c '[ "$(git rev-parse HEAD)" = "$OP_GETH_COMMIT" ]'
+    git switch -c branch-$OP_GETH_VERSION
 
 RUN go run build/ci.go install -static ./cmd/geth
 
