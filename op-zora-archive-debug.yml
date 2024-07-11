@@ -7,9 +7,9 @@ services:
       dockerfile: Dockerfile.debug
     args:
       OP_GETH_VERSION: v1.101315.2
-      ARG OP_GETH_COMMIT: 7c28198
+      ARG OP_GETH_COMMIT: 7c2819836018bfe0ca07c4e4955754834ffad4e0
       OP_NODE_VERSION: v1.7.7
-      OP_NODE_COMMIT: f8143c8
+      OP_NODE_COMMIT: f8143c8cbc4cc0c83922c53f17a1e47280673485
     expose:
       - 8545       # RPC / Websocket      
       - 18322     # P2P TCP (currently unused)
