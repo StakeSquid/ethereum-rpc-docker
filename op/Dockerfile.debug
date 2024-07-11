@@ -1,5 +1,9 @@
 FROM node:20 as nodebuild
 
+
+# this helps to rewind a chain like so
+# ./op-w/bin/op-wheel engine set-forkchoice --unsafe=16966680 --safe=16966680 --finalized=16966680 --engine=http://localhost:8551/ --engine.jwt-secret=/jwtsecret
+
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
