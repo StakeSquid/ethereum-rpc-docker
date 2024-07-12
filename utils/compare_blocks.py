@@ -1,8 +1,15 @@
+import argparse
 import requests
 
-# Define the RPC endpoints
-rpc_url_1 = "$1"
-rpc_url_2 = "$2"
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description='Compare block hashes from two Ethereum RPC endpoints.')
+parser.add_argument('rpc_url_1', type=str, help='The first RPC URL')
+parser.add_argument('rpc_url_2', type=str, help='The second RPC URL')
+args = parser.parse_args()
+
+# Define the RPC endpoints from the command-line arguments
+rpc_url_1 = args.rpc_url_1
+rpc_url_2 = args.rpc_url_2
 
 # Define the JSON-RPC payload
 def get_block_by_number_payload(block_number):
@@ -37,12 +44,13 @@ latest_block_number = get_latest_block_number(rpc_url_1)
 for block_number in range(latest_block_number, -1, -1):
     hash_1 = get_block_hash(rpc_url_1, block_number)
     hash_2 = get_block_hash(rpc_url_2, block_number)
-    
+
     if hash_1 == hash_2:
         print(f"The first matching block is {block_number}")
         print(f"Block hash: {hash_1}")
         break
     else:
-        print(f"The first matching block is {block_number} - {hash_1} - {hash_2}")
+        print(f"Failed to match block {block_number} - {hash_1} - {hash_2}")
 else:
     print("No matching block hash found.")
+
