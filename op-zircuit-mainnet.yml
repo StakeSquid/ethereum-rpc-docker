@@ -15,7 +15,7 @@ services:
     environment:
       FORK_TRIGGER: false
       ETH_STATS_ENABLED: 1
-      ETH_STATS_NODE: "dRPC | ${DOMAIN}"
+      ETH_STATS_NODE: "d${DOMAIN}"
       ETH_STATS_SERVER: ethstats-mainnet-sk3bgt6hciu.zircuit.com
       ETH_STATS_SERVER_PORT: 443
       WS_SECRET: ${ZIRCUIT_WS_SECRET}
