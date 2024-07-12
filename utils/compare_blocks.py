@@ -1,5 +1,6 @@
 import argparse
 import requests
+import time
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Compare block hashes from two Ethereum RPC endpoints.')
@@ -40,17 +41,27 @@ def get_block_hash(rpc_url, block_number):
 # Get the latest block number from the first RPC endpoint
 latest_block_number = get_latest_block_number(rpc_url_1)
 
-# Iterate from the latest block down to the earliest
-for block_number in range(latest_block_number, -1, -1):
-    hash_1 = get_block_hash(rpc_url_1, block_number)
-    hash_2 = get_block_hash(rpc_url_2, block_number)
+# Binary search-like approach to find the first matching block hash
+low = 0
+high = latest_block_number
+first_matching_block = None
+
+while low <= high:
+    mid = (low + high) // 2
+    hash_1 = get_block_hash(rpc_url_1, mid)
+    hash_2 = get_block_hash(rpc_url_2, mid)
 
     if hash_1 == hash_2:
-        print(f"The first matching block is {block_number}")
-        print(f"Block hash: {hash_1}")
-        break
+        first_matching_block = mid
+        high = mid - 1  # Continue searching in the lower half
     else:
-        print(f"Failed to match block {block_number} - {hash_1} - {hash_2}")
+        low = mid + 1  # Continue searching in the upper half
+
+    # Sleep for one second before the next comparison
+    time.sleep(1)
+        
+if first_matching_block is not None:
+    print(f"The first matching block is {first_matching_block}")
+    print(f"Block hash: {get_block_hash(rpc_url_1, first_matching_block)}")
 else:
     print("No matching block hash found.")
-
