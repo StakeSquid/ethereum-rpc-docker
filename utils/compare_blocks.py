@@ -53,9 +53,9 @@ while low <= high:
 
     if hash_1 == hash_2:
         first_matching_block = mid
-        high = mid - 1  # Continue searching in the lower half
+        high = mid + 1  # Continue searching in the upper half
     else:
-        low = mid + 1  # Continue searching in the upper half
+        low = mid - 1  # Continue searching in the lower half
 
     # Sleep for one second before the next comparison
     time.sleep(1)
