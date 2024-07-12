@@ -55,6 +55,7 @@ services:
     image: zircuit1/op-node:ae5c0d31197125a8cb579ed515f0cfc7a53a77dc
     ports:
       - "43778:43778"
+      - "43778:43778/udp"
     volumes:
       - ".jwtsecret:/jwtsecret"
       - "./zircuit/mainnet/rollup.json:/rollup.json"
@@ -85,7 +86,7 @@ services:
       P2P_PEER_BANNING: true
       P2P_STATIC: /dns4/mainnet-node1-p2p-s3cur1ty5.zircuit.com/tcp/9003/p2p/16Uiu2HAm5Uxn3E8RXEM2e5YsR9VNM8uKoPmZzwQjqp7r64ZLspd5
       P2P_PRIV_PATH: /config/p2p_node_key_txt
-
+      OP_NODE_P2P_ADVERTISE_IP: ${IP}
       OP_NODE_LOG_LEVEL: info
       OP_NODE_LOG_FORMAT: json
       OP_NODE_LOG_COLOR: false
