@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   polygon-amoy-erigon-fullnode:
-    image: thorax/erigon:${ERIGON_VERSION:-v2.59.3}
+    image: thorax/erigon:${ERIGON_VERSION:-v2.60.4}
     user: root
     stop_grace_period: 3m
     volumes:
@@ -19,7 +19,6 @@ services:
       - "32011:32011/udp"
     restart: unless-stopped
     command: --chain=amoy --db.pagesize=16k --prune=hrtc --bor.heimdall=https://heimdall-api-amoy.polygon.technology --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,web3,erigon,bor --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=27374 --p2p.protocol=66 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1100000 --db.size.limit 7697000000000 --torrent.port=12345 --nat=stun
-
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=6060"
