@@ -3,8 +3,9 @@ version: '3.1'
 services:
   op-lisk-sepolia: # this is Optimism's geth client
     #image: stakesquid/op-lisk-sepolia:v0.1
-    build: ./op
-    dockerfile: Dockerfile.debug
+    build:
+      context: ./op
+      dockerfile: Dockerfile.debug
       args:
         OP_GETH_VERSION: v1.101315.2
         OP_NODE_VERSION: v1.7.7
