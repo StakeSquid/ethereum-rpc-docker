@@ -12,26 +12,31 @@ services:
     ports:
       - "54521:54521"
       - "54521:54521/udp"
-    #command: [ "sh", "./geth-entrypoint" ]
-    entrypoint: ./geth
-    command: --datadir=/data --rollup.sequencerhttp=https://rpc.sepolia-api.lisk.com --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --bootnodes=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIyuDdWRwgiMr --override.fjord=1716998400 --override.ecotone=1708534800 --override.canyon=0 --maxpeers=0
+    command: [ "sh", "./geth-entrypoint" ]
+    #entrypoint: ./geth
+    #command: --datadir=/data --rollup.sequencerhttp=https://rpc.sepolia-api.lisk.com --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --bootnodes=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIyuDdWRwgiMr --override.fjord=1716998400 --override.ecotone=1708534800 --override.canyon=0 --maxpeers=0
     restart: always
     stop_grace_period: 3m    
     volumes:
       - lisk-sepolia:/data
       - .jwtsecret:/jwtsecret
     environment:
-      - "OP_GETH_GENESIS_FILE_PATH=/app/sepolia/lisk/genesis.json"
-      - "OP_GETH_SEQUENCER_HTTP=https://rpc.sepolia-api.lisk.com"
-      - "OP_GETH_BOOTNODES=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIy\
-uDdWRwgiMr"
-      - "OP_GETH_GCMODE=full"
-      - "OP_GETH_STATE_SCHEME=hash"
+      - "GETH_GENESIS_FILE_PATH=/app/sepolia/lisk/genesis.json"
+      - "GETH_ROLLUP_SEQUENCERHTTP=https://rpc.sepolia-api.lisk.com"
+      - "GETH_GCMODE=full"
+      - "GETH_NODISCOVER=true"
+      - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
       - "P2P_PORT=54521"
       - "WS_PORT=8545"
-      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "IP=${IP}"
+      - "GETH_OVERRIDE_CANYON=0"
+      - "GETH_OVERRIDE_DELTA=0"
+      - "GETH_OVERRIDE_ECOTONE=1708534800"
+      - "GETH_OVERRIDE_FJORD=1716998400"
+      - "GETH_BOOTNODES=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIy\
+uDdWRwgiMr"
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.base-stripprefix.stripprefix.prefixes=/lisk-sepolia"                      
