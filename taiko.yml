@@ -1,6 +1,6 @@
 services:
   taiko:
-    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.4.0
+    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.5.0
     restart: unless-stopped
     stop_grace_period: 3m
     volumes:
