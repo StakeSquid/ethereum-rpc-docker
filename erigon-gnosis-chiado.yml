@@ -1,0 +1,114 @@
+services:                             
+
+  erigon-chiado:
+    image: thorax/erigon:v2.60.4
+    user: root
+    expose:
+      - "27374"
+      - "9090"
+      - "8545"
+      - "8551"
+    ports:
+      - "27374:27374"
+      - "27374:27374/udp"
+    volumes:
+      - erigon-chiado:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+      - .jwtsecret:/jwtsecret
+    networks:
+      - chains
+    command: >
+      --chain chiado
+      --externalcl
+      --caplin.archive
+      --caplin.backfilling
+      --caplin.backfilling.blob
+      --caplin.backfilling.blob.no-pruning
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
+      --port=27374
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --nat=stun
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --authrpc.addr=0.0.0.0
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws 
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=erigon"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.erigon-chiado-stripprefix.stripprefix.prefixes=/chiado-erigon"
+
+      - "traefik.http.services.erigon-chiado.loadbalancer.server.port=8545"
+      - "traefik.http.routers.erigon-chiado.entrypoints=websecure"
+      - "traefik.http.routers.erigon-chiado.service=erigon-chiado"
+      - "traefik.http.routers.erigon-chiado.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-chiado.rule=Host(`$DOMAIN`) && PathPrefix(`/chiado-erigon`)"
+      - "traefik.http.routers.erigon-chiado.middlewares=erigon-chiado-stripprefix, ipwhitelist"
+
+      
+  lodestar-gnosis-chiado:
+    image: chainsafe/lodestar:v1.19.0
+    restart: always
+    networks:
+      - chains
+    ports:
+      - 2967:2967/tcp # p2p
+      - 2967:2967/udp # p2p
+    expose:
+      - 4000
+      - 5054
+    volumes:
+      - lodestar-gnosis-chiado:/data
+      - .jwtsecret:/jwt.hex:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=6144
+    command: |
+      beacon
+      --network=chiado
+      --dataDir=/data
+      --eth1=true
+      --execution.urls=http://erigon-chiado:8551
+      --jwt-secret=/jwt.hex
+      --logFile=/data/logs/beacon.log
+      --logFileLevel=info
+      --port=2967
+      --rest=true
+      --rest.address=0.0.0.0
+      --rest.port=4000
+      --rest.cors=*
+      --discv5=true
+      --targetPeers=50
+      --metrics=true
+      --metrics.port=5054
+      --checkpointSyncUrl=https://checkpoint.chiadochain.net/    
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=5054"
+      - "prometheus-scrape.job_name=lodestar-gnosis-chiado"
+      - "prometheus-scrape.metrics_path=/metrics"
+      
+volumes:
+  erigon-chiado:
+  lodestar-gnosis-chiado:    
