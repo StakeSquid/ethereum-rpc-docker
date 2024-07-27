@@ -17,6 +17,7 @@ services:
     command: |
       --datadir=/db
       --port=4487
+      --nat=stun
       --chain=boba-mainnet
       --http.addr=0.0.0.0
       --http.port=9545
