@@ -44,12 +44,12 @@ services:
       - chains
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.blast-stripprefix.stripprefix.prefixes=/blast-sepolia"                      
-      - "traefik.http.services.blast.loadbalancer.server.port=9545"
-      - "traefik.http.routers.blast.entrypoints=websecure"                                              
-      - "traefik.http.routers.blast.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.blast.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-sepolia`)"                     
-      - "traefik.http.routers.blast.middlewares=blast-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.blast-sepolia-stripprefix.stripprefix.prefixes=/blast-sepolia"                      
+      - "traefik.http.services.blast-sepolia.loadbalancer.server.port=9545"
+      - "traefik.http.routers.blast-sepolia.entrypoints=websecure"                                              
+      - "traefik.http.routers.blast-sepolia.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.blast-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-sepolia`)"                     
+      - "traefik.http.routers.blast-sepolia.middlewares=blast-sepolia-stripprefix, ipwhitelist"                           
       
   op-blast-sepolia-node:
     image: blastio/blast-optimism:sepolia
