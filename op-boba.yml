@@ -1,0 +1,89 @@
+version: '3.4'
+
+# The erigon db can be downloaded from
+# https://boba-db.s3.us-east-2.amazonaws.com/mainnet/boba-mainnet-erigon-db-1149019.tgz
+# and extracted to the DATA_DIR
+
+# The jwt-secret.txt file should be a random string of32 characters and should be kept secret.
+
+# The p2p-node-key.txt is the private key used for the node to identify itself.
+
+# The discovery and peerstore directories are used to store the peerstore and discovery data.
+
+services:
+  op-boba:
+    image:  us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon:v1.1.5
+    command: |
+      --datadir=/db
+      --port=4487
+      --chain=boba-mainnet
+      --http.addr=0.0.0.0
+      --http.port=9545
+      --ws.port=9545
+      --ws
+      --http.corsdomain=*
+      --http.vhosts=*
+      --authrpc.addr=0.0.0.0
+      --authrpc.port=8551
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
+      --http.api=eth,debug,net,engine,web3
+      --txpool.gossip.disable=true
+      --rollup.sequencerhttp=https://mainnet.boba.network
+      --db.size.limit=8TB
+    ports:
+      - "4487:4487"
+      - "4487:4487/udp"
+    expose:
+      - 9545
+      - 8551
+    volumes:
+      - .jwtsecret:/jwtsecret
+      - boba-mainnet:/db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.boba-stripprefix.stripprefix.prefixes=/boba"
+      - "traefik.http.services.boba.loadbalancer.server.port=9545"
+      - "traefik.http.routers.boba.entrypoints=websecure"
+      - "traefik.http.routers.boba.tls.certresolver=myresolver"
+      - "traefik.http.routers.boba.rule=Host(`$DOMAIN`) && PathPrefix(`/boba`)"
+      - "traefik.http.routers.boba.middlewares=boba-stripprefix, ipwhitelist"
+
+  op-boba-node:
+    depends_on:
+      - op-boba
+    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node:v1.6.3
+    command: >
+      op-node
+      --l2=http://op-boba:8551
+      --l2.jwt-secret=/jwtsecret
+      --network=boba-mainnet
+      --rpc.addr=0.0.0.0
+      --rpc.port=8545
+      --plasma.enabled=false
+    # Optional flags
+    # These flags are optional and can be used to identify the node and store the peerstore and discovery data.
+    # We recommend adding these flags to your configuration to help identify your node and store the peerstore and discovery data.
+    #  --p2p.ban.peers=false
+    #  --p2p.priv.path=/config/p2p-node-key.txt
+    #  --p2p.discovery.path=/p2p_discovery_db
+    #  --p2p.peerstore.path=/p2p_peerstore_db
+    environment:
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=27374"
+      - "OP_NODE_L1_RPC_KIND=${BOBA_ETHEREUM_ENDPOINT_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${BOBA_ETHEREUM_ENDPOINT_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${BOBA_ETHEREUM_ENDPOINT_BEACON}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${BOBA_MAINNET_L1_BEACON_ARCHIVER}"      
+      - "OP_NODE_L1_ETH_RPC=${BOBA_ETHEREUM_ENDPOINT}"
+    ports:
+      - "27374:27374"
+      - "27374:27374/udp"
+    volumes:
+      - .jwtsecret:jwtsecret
+    #  - ./p2p-node-key.txt:/config/p2p-node-key.txt
+    #  - ./discovery:/p2p_discovery_db
+    #  - ./peerstore:/p2p_peerstore_db
+    restart: always
+
+volumes:
+    boba-mainnet:
