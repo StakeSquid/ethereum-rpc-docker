@@ -172,6 +172,11 @@
       "celo-fullnode"
     ]
   },
+    "celo-alfajores": {
+	"id": 44787,
+	"urls": ["https://alfajores-forno.celo-testnet.org"],
+	"default": ["celo-alfajores-fullnode"]
+    },
   "fantom": {
     "id": 250,
     "urls": [
