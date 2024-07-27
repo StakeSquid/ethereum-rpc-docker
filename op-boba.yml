@@ -69,15 +69,15 @@ services:
     #  --p2p.discovery.path=/p2p_discovery_db
     #  --p2p.peerstore.path=/p2p_peerstore_db
     environment:
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=27374"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=45202"
       - "OP_NODE_L1_RPC_KIND=${BOBA_ETHEREUM_ENDPOINT_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${BOBA_ETHEREUM_ENDPOINT_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${BOBA_ETHEREUM_ENDPOINT_BEACON}"
       - "OP_NODE_L1_BEACON_ARCHIVER=${BOBA_MAINNET_L1_BEACON_ARCHIVER}"      
       - "OP_NODE_L1_ETH_RPC=${BOBA_ETHEREUM_ENDPOINT}"
     ports:
-      - "27374:27374"
-      - "27374:27374/udp"
+      - "45202:45202"
+      - "45202:45202/udp"
     volumes:
       - .jwtsecret:/jwtsecret
     #  - ./p2p-node-key.txt:/config/p2p-node-key.txt
