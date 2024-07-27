@@ -79,7 +79,7 @@ services:
       - "27374:27374"
       - "27374:27374/udp"
     volumes:
-      - .jwtsecret:jwtsecret
+      - .jwtsecret:/jwtsecret
     #  - ./p2p-node-key.txt:/config/p2p-node-key.txt
     #  - ./discovery:/p2p_discovery_db
     #  - ./peerstore:/p2p_peerstore_db
