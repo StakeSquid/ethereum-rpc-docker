@@ -13,6 +13,7 @@ version: '3.4'
 services:
   op-boba:
     image:  us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon:v1.1.5
+    user: root
     command: |
       --datadir=/db
       --port=4487
