@@ -177,6 +177,11 @@
 	"urls": ["https://alfajores-forno.celo-testnet.org"],
 	"default": ["celo-alfajores-fullnode"]
     },
+    "boba": {
+	"id": 288,
+	"urls": ["https://mainnet.boba.network"],
+	"default": ["op-boba"]
+    },
   "fantom": {
     "id": 250,
     "urls": [
