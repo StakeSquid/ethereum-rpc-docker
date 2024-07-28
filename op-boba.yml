@@ -43,11 +43,6 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret
       - boba-mainnet:/db
-    environment:
-      #- "GETH_OVERRIDE_CANYON=1704992401"
-      #- "GETH_OVERRIDE_DELTA=1708560000"
-      #- "GETH_OVERRIDE_ECOTONE=1713302880"
-      #- "GETH_OVERRIDE_FJORD=1720627201"
     networks:                                                                                         
       - chains      
     labels:
