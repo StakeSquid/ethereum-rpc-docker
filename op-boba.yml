@@ -48,6 +48,8 @@ services:
       #- "GETH_OVERRIDE_DELTA=1708560000"
       #- "GETH_OVERRIDE_ECOTONE=1713302880"
       #- "GETH_OVERRIDE_FJORD=1720627201"
+    networks:                                                                                         
+      - chains      
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.boba-stripprefix.stripprefix.prefixes=/boba"
@@ -90,6 +92,8 @@ services:
     ports:
       - "45202:45202"
       - "45202:45202/udp"
+    networks:                                                                                         
+      - chains      
     volumes:
       - .jwtsecret:/jwtsecret
     #  - ./p2p-node-key.txt:/config/p2p-node-key.txt
