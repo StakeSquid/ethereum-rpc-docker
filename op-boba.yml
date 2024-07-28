@@ -21,8 +21,9 @@ services:
       --chain=boba-mainnet
       --http.addr=0.0.0.0
       --http.port=9545
+      --http.compression=true
       --ws.port=9545
-      --ws.addr=0.0.0.0
+      --ws.compression=true
       --ws
       --http.corsdomain=*
       --http.vhosts=*
