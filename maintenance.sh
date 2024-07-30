@@ -17,7 +17,7 @@ for part in "${parts[@]}"; do
     done
     
     if $include; then
-	file="${part%.yml}.maintenance"
+	file="$BASPATH/${part%.yml}.maintenance"
 	if [ -f "$file" ]; then
 	    echo "File $file exists. Executing it as a Bash script."
 	    # Execute the file as a Bash script
