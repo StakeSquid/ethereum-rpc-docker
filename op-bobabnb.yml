@@ -34,6 +34,7 @@ services:
       - op-bobabnb-geth:/root/.ethereum/
     environment:
       ETH1_HTTP: 'https://bsc-dataseed.binance.org/'
+      ETH1_CTC_DEPLOYMENT_HEIGHT: 1305672
       ROLLUP_TIMESTAMP_REFRESH: 5s
       ROLLUP_STATE_DUMP_PATH: http://op-bobabnb-dtl:8081/state-dump.latest.json
       ROLLUP_CLIENT_HTTP: http://op-bobabnb-dtl:7878
