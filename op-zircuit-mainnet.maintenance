@@ -1,0 +1,13 @@
+#!/bin/bash
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+PEERS=$(docker exec rpc-op-zircuit-node-1 sh -c "apk add curl > /dev/null; curl -s -X POST -H \"Content-Type: application/json\" --data     '{\"jsonrpc\":\"2.0\",\"method\":\"opp2p_peers\",\"params\":[true],\"id\":1}' http://localhost:8545" | jq '.result.peers | keys | length')
+
+if [ "$PEERS" -eq 0 ]; then
+  # Change to the script directory
+  cd "$script_dir" || exit
+
+  # Run the Docker Compose command
+  docker compose up -d --force-recreate op-zircuit-node
+fi
