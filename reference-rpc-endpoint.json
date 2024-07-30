@@ -82,6 +82,15 @@
       "arb-alephzero-sepolia"
     ]
   },
+  "alephzero-mainnet": {
+    "id": 41455,
+    "urls": [
+      "https://rpc.alephzero.raas.gelato.cloud"
+    ],
+    "default": [
+      "arb-alephzero-mainnet"
+    ]
+  },    
   "connext-sepolia": {
     "id": 6398,
     "urls": [

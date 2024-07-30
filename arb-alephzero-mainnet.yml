@@ -1,0 +1,58 @@
+version: '3.1'
+
+services:
+  arb-alephzero-mainnet:
+    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.1.0-7d1d84c}'
+    stop_grace_period: 3m
+    user: root
+    volumes:
+      - 'arb-alephzero-mainnet:/persistent'
+      - './arb/mainnet/alephzero/baseConfig.json:/baseConfig.json'      
+    expose:
+      - 8547 # http + ws
+    command:
+      - --conf.file=/baseConfig.json
+      - --persistent.ancient=/persistent/ancient
+      - --persistent.chain=/persistent/chain
+      - --persistent.global-config=/persistent/global-config
+      - --execution.caching.archive=true
+      - --execution.forwarding-target=https://rpc.alephzero.raas.gelato.cloud
+      - --node.feed.input.url=wss://feed.alephzero.raas.gelato.cloud
+      - --parent-chain.connection.url=${ALEPHZERO_MAINNET_PARENT_RPC}
+      - --http.addr=0.0.0.0
+      - --http.port=8547
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --http.api=eth,net,web3,arb,txpool,debug
+      - --ws.port=8547
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+      - --ws.api=eth,net,web3,arb,txpool,debug
+      - --node.data-availability.enable=true
+      - --node.data-availability.sequencer-inbox-address=0xF75206c49c1694594E3e69252E519434f1579876
+      - --node.data-availability.parent-chain-node-url=${ALEPHZERO_MAINNET_PARENT_RPC}
+      - --parent-chain.blob-client.beacon-url=${ALEPHZERO_MAINNET_PARENT_BEACON_REST}
+      - --node.data-availability.rest-aggregator.enable=true
+      - --node.data-availability.rest-aggregator.urls=https://das.alephzero.raas.gelato.cloud
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=6070
+      - --log-type=json
+      - --node.sequencer=false
+      - --execution.sequencer.enable=false
+      - --node.staker.enable=false
+      - --node.batch-poster.enable=false
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.alephzero-mainnet-stripprefix.stripprefix.prefixes=/alephzero-mainnet"                      
+      - "traefik.http.services.alephzero-mainnet.loadbalancer.server.port=8547"
+      - "traefik.http.routers.alephzero-mainnet.entrypoints=websecure"                                              
+      - "traefik.http.routers.alephzero-mainnet.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.alephzero-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/alephzero-mainnet`)"                     
+      - "traefik.http.routers.alephzero-mainnet.middlewares=alephzero-mainnet-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:  
+    arb-alephzero-mainnet:
