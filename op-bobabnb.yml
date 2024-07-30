@@ -76,7 +76,7 @@ services:
       CHAIN_ID: 56288
       DATADIR: /root/.ethereum
       GASPRICE: 0
-      GCMODE: archive
+      GCMODE: full
       IPC_DISABLE: true
       NETWORK_ID: 56288
       NO_USB: true
