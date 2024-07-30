@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   polygon-amoy-erigon-archive:
-    image: thorax/erigon:${ERIGON_VERSION:-v2.59.3}
+    image: thorax/erigon:${ERIGON_VERSION:-v2.60.5}
     user: root
     volumes:
       - "polygon-amoy-erigon-archive:/datadir"
