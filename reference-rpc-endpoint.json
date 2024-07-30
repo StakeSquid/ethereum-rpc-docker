@@ -182,6 +182,11 @@
 	"urls": ["https://mainnet.boba.network"],
 	"default": ["op-boba"]
     },
+    "boba-bnb": {
+	"id": 56288,
+	"urls": ["https://replica.bnb.boba.network"],
+	"default": ["op-bobabnb"]
+    },    
   "fantom": {
     "id": 250,
     "urls": [
