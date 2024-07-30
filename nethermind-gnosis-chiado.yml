@@ -46,11 +46,11 @@ services:
       - "prometheus-scrape.job_name=nethermind"                                                           
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"                                                                         
-      - "traefik.http.middlewares.nethermind-gnosis-chiado-stripprefix.stripprefix.prefixes=/gnosis-chiado"
+      - "traefik.http.middlewares.nethermind-gnosis-chiado-stripprefix.stripprefix.prefixes=/chiado"
       - "traefik.http.services.nethermind-gnosis-chiado.loadbalancer.server.port=8545"                    
       - "traefik.http.routers.nethermind-gnosis-chiado.entrypoints=websecure"
       - "traefik.http.routers.nethermind-gnosis-chiado.tls.certresolver=myresolver"
-      - "traefik.http.routers.nethermind-gnosis-chiado.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado`)"
+      - "traefik.http.routers.nethermind-gnosis-chiado.rule=Host(`$DOMAIN`) && PathPrefix(`/chiado`)"
       - "traefik.http.routers.nethermind-gnosis-chiado.middlewares=nethermind-gnosis-chiado-stripprefix, ipwhitelist"
     networks:   
       - chains        
