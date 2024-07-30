@@ -69,7 +69,7 @@ services:
 
       WS: true
       WS_ADDR: 0.0.0.0
-      WS_PORT: 8545
+      WS_PORT: 8546
       WS_API: eth,net,rollup,web3
       WS_ORIGINS: '*'
 
@@ -84,11 +84,29 @@ services:
       TARGET_GAS_LIMIT: 11000000
       USING_OVM: true
     networks:                                                                                         
-      - chains      
+      - chains
+
+  op-bobabnb-proxy:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - op-bobabnb
+    expose:  
+      - 80                                                                                            
+    environment:                                                                                      
+      PROXY_HOST: op-bobabnb
+      RPC_PORT: 8545
+      RPC_PATH: ""
+      WS_PORT: 8546
+      WS_PATH: ""
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates            
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.bobabnb-stripprefix.stripprefix.prefixes=/bobabnb"
-      - "traefik.http.services.bobabnb.loadbalancer.server.port=8545"
+      - "traefik.http.services.bobabnb.loadbalancer.server.port=0"
       - "traefik.http.routers.bobabnb.entrypoints=websecure"
       - "traefik.http.routers.bobabnb.tls.certresolver=myresolver"
       - "traefik.http.routers.bobabnb.rule=Host(`$DOMAIN`) && PathPrefix(`/bobabnb`)"
