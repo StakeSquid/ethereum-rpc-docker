@@ -38,6 +38,7 @@ services:
         "--metrics.addr=0.0.0.0",
         # Maximum number of network peers (network disabled if set to 0) (default: 50)                
         "--maxpeers=100"
+        "--gpo.ignoreprice=1"
       ]                                                                                               
     networks:                            
       - chains                                                                                        
