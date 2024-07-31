@@ -82,7 +82,7 @@
       "arb-alephzero-sepolia"
     ]
   },
-  "alephzero-mainnet": {
+  "alephzero": {
     "id": 41455,
     "urls": [
       "https://rpc.alephzero.raas.gelato.cloud"
