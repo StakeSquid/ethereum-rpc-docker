@@ -186,7 +186,7 @@
 	"urls": ["https://alfajores-forno.celo-testnet.org"],
 	"default": ["celo-alfajores-fullnode"]
     },
-    "boba": {
+    "boba-eth": {
 	"id": 288,
 	"urls": ["https://mainnet.boba.network"],
 	"default": ["op-boba"]
