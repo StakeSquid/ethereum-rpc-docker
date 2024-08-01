@@ -48,11 +48,11 @@ services:
       - chains      
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.boba-stripprefix.stripprefix.prefixes=/boba"
+      - "traefik.http.middlewares.boba-stripprefix.stripprefix.prefixes=/bobaeth"
       - "traefik.http.services.boba.loadbalancer.server.port=9545"
       - "traefik.http.routers.boba.entrypoints=websecure"
       - "traefik.http.routers.boba.tls.certresolver=myresolver"
-      - "traefik.http.routers.boba.rule=Host(`$DOMAIN`) && PathPrefix(`/boba`)"
+      - "traefik.http.routers.boba.rule=Host(`$DOMAIN`) && PathPrefix(`/bobaeth`)"
       - "traefik.http.routers.boba.middlewares=boba-stripprefix, ipwhitelist"
 
   op-boba-node:
