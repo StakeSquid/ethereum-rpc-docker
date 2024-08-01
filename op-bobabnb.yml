@@ -106,7 +106,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.bobabnb-stripprefix.stripprefix.prefixes=/bobabnb"
-      - "traefik.http.services.bobabnb.loadbalancer.server.port=0"
+      - "traefik.http.services.bobabnb.loadbalancer.server.port=80"
       - "traefik.http.routers.bobabnb.entrypoints=websecure"
       - "traefik.http.routers.bobabnb.tls.certresolver=myresolver"
       - "traefik.http.routers.bobabnb.rule=Host(`$DOMAIN`) && PathPrefix(`/bobabnb`)"
