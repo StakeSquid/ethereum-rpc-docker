@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   arb-alephzero-sepolia:
-    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.0.0-e6f81cb}'
+    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.1.0-7d1d84c}'
     stop_grace_period: 3m
     user: root
     volumes:
