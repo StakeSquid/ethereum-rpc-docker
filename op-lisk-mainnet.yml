@@ -83,6 +83,7 @@ services:
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
       - "OP_NODE_P2P_BOOTNODES=enr:-Iu4QBCIUw0OhAq5ErARIYBLIr6xPb83OqeFRqlUJGlJ9kWpNECaumPArYWsEFdM_cEKm26JJT_EA52f4dlavBldldgBgmlkgnY0gmlwhCPqq5CJc2VjcDI1NmsxoQLBE74gZyIHkwBEnkI4K7nR4SM2Lytj2VTLqJaj5nQevoN0Y3CCIyuDdWRwgiMs"
       - "OP_NODE_P2P_LISTEN_TCP_PORT=3074"
+      - "OP_NODE_P2P_STATIC=/ip4/34.90.229.28/tcp/9003/p2p/16Uiu2HAmBuVpfZwoRodETmKQPiiE7awhs53vGaBzJCuZnSuU2zyb"      
       - "OP_NODE_P2P_LISTEN_UDP_PORT=3074"
       - "OP_NODE_ROLLUP_CONFIG=/app/mainnet/lisk/rollup.json"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
