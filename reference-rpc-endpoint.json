@@ -264,7 +264,8 @@
     "zircuit-mainnet": {
 	"id": 48900,
 	"urls": [],
-	"default": ["op-zircuit-mainnet"]
+	"default": ["op-zircuit-mainnet"],
+	"urls": ["https://zircuit1-mainnet.p2pify.com"]
     },
   "mantle": {
     "id": 5000,
