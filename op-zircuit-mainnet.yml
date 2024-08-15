@@ -1,5 +1,5 @@
 services:
-  op-zircuit:
+  op-zircuit-client:
     image: zircuit1/l2-geth:19818ea035601120b745261253802e8bf86d52e1
     volumes:
       - "op-zircuit:/db"
@@ -22,15 +22,15 @@ services:
     networks:
       - chains
 
-  op-zircuit-proxy:         
+  op-zircuit:         
     restart: unless-stopped           
     image: nginx
     depends_on:
-      - op-zircuit
+      - op-zircuit-client
     expose:  
       - 80                                                                                    
     environment:                                                                                      
-      PROXY_HOST: op-zircuit
+      PROXY_HOST: op-zircuit-client
       RPC_PORT: 8545
       RPC_PATH: ""
       WS_PORT: 8546
@@ -51,7 +51,7 @@ services:
       
   op-zircuit-node:
     depends_on:
-      - op-zircuit
+      - op-zircuit-client
     image: zircuit1/op-node:19818ea035601120b745261253802e8bf86d52e1
     ports:
       - "43778:43778"
@@ -64,10 +64,10 @@ services:
       - chains
     environment:
       OP_NODE_L1_ETH_RPC: ${ZIRCUIT_ETHEREUM_MAINNET_EXECUTION_RPC}
-      OP_NODE_L2_ENGINE_RPC: http://op-zircuit:8551
+      OP_NODE_L2_ENGINE_RPC: http://op-zircuit-client:8551
       OP_NODE_ROLLUP_CONFIG: /rollup.json
       OP_NODE_RPC_ADDR: "0.0.0.0"
-      OP_NODE_RPC_PORT: 8545
+      OP_NODE_RPC_PORT: 9545
       OP_NODE_L1_RPC_KIND: "basic"
       OP_NODE_L2_ENGINE_AUTH: /jwtsecret
       OP_NODE_VERIFIER_L1_CONFS: 0
