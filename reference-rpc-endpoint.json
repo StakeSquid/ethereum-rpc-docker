@@ -263,9 +263,13 @@
     },
     "zircuit-mainnet": {
 	"id": 48900,
-	"urls": [],
 	"default": ["op-zircuit-mainnet"],
 	"urls": ["https://zircuit1-mainnet.p2pify.com"]
+    },
+    "ronin": {
+	"id": 2020,
+	"urls": ["https://api.roninchain.com/rpc"],
+	"default": ["ronin"]
     },
   "mantle": {
     "id": 5000,
