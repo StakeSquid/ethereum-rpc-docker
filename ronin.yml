@@ -1,0 +1,24 @@
+services:
+  ronin:
+    image: ghcr.io/axieinfinity/ronin:v2.8.3-d27eb42
+    stop_grace_period: 5m
+    stop_signal: SIGINT
+    ports:
+      - 38198:38198
+      - 38198:38198/udp
+    networks:
+      - chains
+    volumes:
+      - ronin:/ronin
+    environment:
+      - SYNC_MODE=full
+      - PASSWORD="stupidpassword"
+      - NETWORK_ID=2020
+      - RONIN_PARAMS="--port=38198 --http.api eth,net,web3,consortium --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com"
+      - VERBOSITY=3
+      - MINE="false"
+      - GASPRICE=20000000000
+      - ETHSTATS_ENDPOINT=${DOMAIN}:WSyDMrhRBe111@$ronin-stats-ws.roninchain.com:443
+
+volumes:
+  ronin:
