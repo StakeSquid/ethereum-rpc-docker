@@ -20,6 +20,7 @@ services:
       - RONIN_PARAMS=--port=38198 --http.api eth,net,web3,consortium --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com
       - VERBOSITY=3
       - MINE=false
+      - GETH_HTTP_API=admin,web3,eth,txpool,net,debug
       - GASPRICE=20000000000
       - ETHSTATS_ENDPOINT=${DOMAIN}:WSyDMrhRBe111@$ronin-stats-ws.roninchain.com:443
     labels:
