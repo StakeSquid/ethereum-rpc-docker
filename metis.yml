@@ -48,7 +48,7 @@ services:
       - chains
 
   metis:
-    image: metisdao/l2geth:v0.2.4
+    image: metisdao/l2geth:v0.3.3
     #entrypoint: ["sh", "/scripts/geth.sh"]
     restart: unless-stopped
     stop_grace_period: 2m
