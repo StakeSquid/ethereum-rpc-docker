@@ -376,7 +376,7 @@
     },
     "bob": {
 	"id": 60808,
-	"urls": ["https://rpc-mode-mainnet-0.t.conduit.xyz"],
+	"urls": ["https://rpc-bob-mainnet-0.t.conduit.xyz"],
 	"default": ["op-bob-mainnet"]
     },
     "mode": {
