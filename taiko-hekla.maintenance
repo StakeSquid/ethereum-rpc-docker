@@ -1,7 +1,7 @@
 #!/bin/bash
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
+exit 0
 # Check if the error is in the logs
 if docker logs rpc-taiko-hekla-client-driver-1 2>&1 | grep -q "Create chain head subscription error"; then
     # Navigate to the specified directory
