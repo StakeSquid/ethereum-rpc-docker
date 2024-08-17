@@ -1,0 +1,13 @@
+#!/bin/bash
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Check if the error is in the logs
+if docker logs rpc-taiko-client-driver-1 2>&1 | grep -q "Block batch iterator callback error"; then
+    # Navigate to the specified directory
+    cd $script_dir || exit
+    # Recreate the service
+    docker compose up -d --force-recreate taiko taiko-client-driver
+else
+    echo "No error found in the logs"
+fi
