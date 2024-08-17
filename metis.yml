@@ -8,7 +8,7 @@ services:
     environment:
       URL: "https://metisprotocol.github.io/metis-networks/andromeda-mainnet/addresses.json"
       DATA_TRANSPORT_LAYER__L1_RPC_ENDPOINT: "${METIS_L1_RPC:-https://eth.llamarpc.com}"
-      DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT: "https://andromeda.metis.io"
+      DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT: "andromeda.metis.io/?owner=1088"
       DATA_TRANSPORT_LAYER__SYNC_FROM_L1: true
       DATA_TRANSPORT_LAYER__SYNC_FROM_L2: true
       DATA_TRANSPORT_LAYER__L2_CHAIN_ID: 1088
