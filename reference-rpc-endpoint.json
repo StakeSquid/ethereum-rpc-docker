@@ -91,10 +91,10 @@
       "arb-alephzero-mainnet"
     ]
   },    
-  "connext-sepolia": {
+  "everclear-sepolia": {
     "id": 6398,
     "urls": [
-      "https://rpc.connext-sepolia.gelato.digital"
+      "https://rpc.everclear-sepolia.gelato.digital"
     ],
     "default": [
       "arb-connext-sepolia"
