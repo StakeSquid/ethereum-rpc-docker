@@ -45,6 +45,7 @@ HTTPPort = 8545
 HTTPVirtualHosts = ["*"]
 HTTPModules = ["admin", "eth", "net", "web3", "txpool", "satoshi"]
 WSPort = 8545
+WSHost = "0.0.0.0"
 WSModules = ["eth", "net", "web3", "txpool", "satoshi"]
 [Node.P2P]
 MaxPeers = 200
