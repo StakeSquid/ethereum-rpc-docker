@@ -10,9 +10,11 @@ version: '3.4'
 
 # The discovery and peerstore directories are used to store the peerstore and discovery data.
 
+# boba is part of the superchain registry and knows it's overrides
+
 services:
   op-boba:
-    image:  us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon:v1.1.5
+    image:  us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon:v1.2.0
     user: root
     command: |
       --datadir=/db
@@ -58,7 +60,7 @@ services:
   op-boba-node:
     depends_on:
       - op-boba
-    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node:v1.6.3
+    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node:v1.6.8
     command: >
       op-node
       --l2=http://op-boba:8551
