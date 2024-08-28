@@ -1,7 +1,7 @@
 services:                             
 
   erigon-chiado:
-    image: thorax/erigon:v2.60.4
+    image: thorax/erigon:2.60.6-amd64
     user: root
     expose:
       - "27374"
