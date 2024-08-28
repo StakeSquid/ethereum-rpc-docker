@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   fuse-nethermind:
-    image: fusenet/node:nethermind-1.17.3-v4.0.0
+    image: fusenet/node:nethermind-1.27.0-v6.0.2-alpha
     expose:
       - "35045"
       - "8545"
