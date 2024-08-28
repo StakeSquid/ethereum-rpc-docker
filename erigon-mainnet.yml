@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-mainnet:
-    image: thorax/erigon:2.60.5-amd64
+    image: thorax/erigon:2.60.6-amd64
     user: root
     expose:
       - "16630"
