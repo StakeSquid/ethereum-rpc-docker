@@ -3,7 +3,7 @@ version: '3.1'
 services:                             
                                                    
   nethermind-gnosis:        
-    image: nethermind/nethermind:1.27.1
+    image: nethermind/nethermind:1.29
     user: root
     volumes:                  
       - "gnosis-nethermind-fullnode:/data"
@@ -46,11 +46,11 @@ services:
       - "prometheus-scrape.job_name=nethermind"                                                           
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"                                                                         
-      - "traefik.http.middlewares.nethermind-gnosis-stripprefix.stripprefix.prefixes=/gnosis"
+      - "traefik.http.middlewares.nethermind-gnosis-stripprefix.stripprefix.prefixes=/gnosis-mainnet"
       - "traefik.http.services.nethermind-gnosis.loadbalancer.server.port=8545"                    
       - "traefik.http.routers.nethermind-gnosis.entrypoints=websecure"
       - "traefik.http.routers.nethermind-gnosis.tls.certresolver=myresolver"
-      - "traefik.http.routers.nethermind-gnosis.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis`)"
+      - "traefik.http.routers.nethermind-gnosis.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-mainnet`)"
       - "traefik.http.routers.nethermind-gnosis.middlewares=nethermind-gnosis-stripprefix, ipwhitelist"
     networks:   
       - chains        
