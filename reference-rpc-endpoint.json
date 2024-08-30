@@ -94,7 +94,7 @@
   "everclear-sepolia": {
     "id": 6398,
     "urls": [
-      "https://rpc.everclear-sepolia.gelato.digital"
+      "https://rpc.connext-sepolia.gelato.digital"
     ],
     "default": [
       "arb-connext-sepolia"
