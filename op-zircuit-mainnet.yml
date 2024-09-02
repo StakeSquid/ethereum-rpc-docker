@@ -86,7 +86,7 @@ services:
       OP_NODE_P2P_LISTEN_UDP_PORT: 43778
       OP_NODE_P2P_PEER_SCORING: light
       OP_NODE_P2P_PEER_BANNING: "true"
-      OP_NODE_P2P_STATIC: /dns4/mainnet-node1-p2p-s3cur1ty5.zircuit.com/tcp/9003/p2p/16Uiu2HAm5Uxn3E8RXEM2e5YsR9VNM8uKoPmZzwQjqp7r64ZLspd5
+      OP_NODE_P2P_STATIC: ${ZIRCUIT_STATIC_PEERS}
       OP_NODE_P2P_PRIV_PATH: /config/p2p_node_key_txt
       OP_NODE_P2P_ADVERTISE_IP: ${IP}
       OP_NODE_LOG_LEVEL: info
