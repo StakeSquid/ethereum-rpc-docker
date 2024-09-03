@@ -4,10 +4,10 @@ services:
   op-base-fullnode: 
     build:
       context: ./op
-      dockerfile: Dockerfile.debug
+      dockerfile: Dockerfile
       args:
-        OP_GETH_VERSION: v1.101315.2
-        OP_NODE_VERSION: v1.7.7
+        OP_GETH_VERSION: v1.101408.0
+        OP_NODE_VERSION: v1.9.1
     expose:
       - 8545       # RPC / Websocket      
       - 8480     # P2P TCP (currently unused)
@@ -56,6 +56,9 @@ services:
   op-base-fullnode-node:
     build:
       context: ./op
+      args:
+        OP_GETH_VERSION: v1.101408.0
+        OP_NODE_VERSION: v1.9.1      
     depends_on:
       - op-base-fullnode
     expose:
