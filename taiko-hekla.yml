@@ -63,7 +63,7 @@ services:
       - "L1_ENDPOINT_WS=${TAIKO_HOLESKY_EXECUTION_WS}"
       - "L1_BEACON_HTTP=${TAIKO_HOLESKY_BEACON_REST}"
       - "L2_CHECKPOINT_SYNC_RPC=https://rpc.hekla.taiko.xyz"
-      - "L2_GETH_RPC=http://taiko-hekla:8545"
+      - "L2_GETH_RPC=ws://taiko-hekla:8545"
       - "L2_GETH_AUTH=http://taiko-hekla:8551"
     volumes:
       - taiko-hekla:/data/taiko-geth
