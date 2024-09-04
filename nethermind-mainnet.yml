@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   nethermind-mainnet:
-    image: nethermind/nethermind:1.27.0
+    image: nethermind/nethermind:1.28.0
     restart: always
     stop_grace_period: 1m
     command: |
@@ -27,7 +27,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       - NETHERMIND_CONFIG=mainnet
-      - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,AccountAbstraction,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Trace]
+      - NETHERMIND_JSONRPCCONFIG_ENGINEENABLEDMODULES=[Eth,AccountAbstraction,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Trace,Debug,Admin]
       - NETHERMIND_JSONRPCCONFIG_ENGINEHOST=0.0.0.0
       - NETHERMIND_JSONRPCCONFIG_ENGINEPORT=8551
       - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
