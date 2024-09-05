@@ -134,7 +134,8 @@
     ],
     "default": [
       "arbitrum-sepolia-fullnode"
-    ]
+    ],
+      "archive": ["arbitrum-sepolia-archive"]
   },
   "blast": {
     "id": 81457,
