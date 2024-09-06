@@ -29,7 +29,6 @@
   "batch_inbox_address": "0x3a75346f81302aac0333fb5dcdd407e12a6cfa83",
   "deposit_contract_address": "0x8adee124447435fe03e3cd24df3f4cae32e65a3e",
   "l1_system_config_address": "0xacb886b75d76d1c8d9248cfddfa09b70c71c5393",
-  "protocol_versions_address": "0x0000000000000000000000000000000000000000",
-  "use_plasma": false
+  "protocol_versions_address": "0x0000000000000000000000000000000000000000"
 }
 
