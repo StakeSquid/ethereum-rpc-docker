@@ -24,7 +24,7 @@ else
 	echo "$GETH_CHAINDATA_DIR exists."
 fi
 
-if [ -v my_var ] && [ -n "$my_var" ]; then
+if [ "${OP_NODE_L2_ENGINE_AUTH_RAW+x}" ] && [ -n "$OP_NODE_L2_ENGINE_AUTH_RAW" ]; then
     echo "$OP_NODE_L2_ENGINE_AUTH_RAW" > "$OP_NODE_L2_ENGINE_AUTH"
 fi
 
