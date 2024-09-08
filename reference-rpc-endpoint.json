@@ -349,7 +349,7 @@
 	],
 	"default": [
 	    "polygon-amoy-erigon-fullnode"
-	]
+	], "archive": ["polygon-amoy-erigon-archive"]
     },
     "scroll": {
 	"id": 534352,
