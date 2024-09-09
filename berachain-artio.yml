@@ -41,11 +41,11 @@ services:
     ports:
       - "43471:43471"
       - "43471:43471/udp"
-    command: start
+    command: start --min-gas-price 0
     networks:
       - chains
     volumes:
-      - "berachain-artio-node:/data"
+      - "berachain-artio-node:/root/.beacond/data"
       - "./berachain/artio/config:/root/.beacond/config"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
