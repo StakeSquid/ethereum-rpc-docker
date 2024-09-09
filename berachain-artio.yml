@@ -46,7 +46,7 @@ services:
       - chains
     volumes:
       - "berachain-artio-node:/data"
-      - "./berachain/artio/config:/root/.beacond"
+      - "./berachain/artio/config:/root/.beacond/config"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
