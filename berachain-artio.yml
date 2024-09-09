@@ -41,7 +41,7 @@ services:
     ports:
       - "43471:43471"
       - "43471:43471/udp"
-    command: start --min-gas-price 0
+    command: start --minimum-gas-prices 0
     networks:
       - chains
     volumes:
