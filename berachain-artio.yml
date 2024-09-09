@@ -3,7 +3,7 @@ services:
     image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.0.6}
     user: root
     volumes:
-      - "reth-berachain-artio:/data"
+      - "berachain-artio-reth:/data"
       - "/slowdisk:/slowdisk"
       - "./berachain/artio/config:/config"
       - ".jwtsecret:/jwtsecret"
@@ -60,5 +60,5 @@ services:
       - "traefik.http.routers.berachain-artio-node.middlewares=berachain-artio-node-stripprefix, ipwhitelist"
 
 volumes:
-    reth-mainnet:
+    berachain-artio-reth:
     berachain-artio-node:
