@@ -173,6 +173,15 @@
       "avalanche-fullnode"
     ]
   },
+  "avalanche-fuji": {
+      "id": 43113,
+      "urls": [
+	  "https://api.zan.top/node/v1/avax/fuji/public/ext/bc/C/rpc"
+      ],
+      "default": [
+	  "avalanche-fuji-fullnode"
+      ]
+  },    
   "celo": {
     "id": 42220,
     "urls": [
