@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m
     command: |
+      --alfajores
       --verbosity 3
       --syncmode full
       --gcmode full
