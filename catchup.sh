@@ -16,7 +16,7 @@ s_to_human_readable() {
 BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
 
-seconds_to_measure=10
+seconds_to_measure=${2:-10}
 
 latest_block_timestamp_decimal=$(./timestamp.sh $1)
 current_time=$(date +%s)
