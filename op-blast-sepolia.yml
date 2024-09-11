@@ -34,7 +34,6 @@ services:
       - "GETH_MAXPEERS=0"
       - "GETH_OVERRIDE_CANYON=0"
       - "GETH_OVERRIDE_ECOTONE=1713999600"
-      - "GETH_OVERRIDE_TERMINALTOTALDIFFICULTY=17000000000000000"
     expose:
       - 9545
     restart: always
@@ -76,7 +75,7 @@ services:
       #- "OP_NODE_L2_SKIP_SYNC_START_CHECK=true"
       - "OP_NODE_P2P_LISTEN_TCP_PORT=12018"
       - "OP_NODE_ROLLUP_CONFIG=/config/sepolia/rollup.json"
-      - "OP_NODE_OVERRIDE_DELTA="      
+      - "OP_NODE_OVERRIDE_DELTA=0"      
       - "OP_NODE_OVERRIDE_ECOTONE=1713999600"
     command: >
       op-node
