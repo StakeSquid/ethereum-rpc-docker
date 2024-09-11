@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
     
-  avalanche-proxy:         
+  avalanche-fuji-proxy:         
     restart: unless-stopped           
     image: nginx
     depends_on:
