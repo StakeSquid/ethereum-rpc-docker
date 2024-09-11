@@ -25,7 +25,7 @@ time_difference=$((current_time - latest_block_timestamp_decimal))
 #echo "$latest_block_timestamp_decimal $current_time $time_difference"
 
 #s_to_human_readable $time_difference
-sleep 10
+sleep $seconds_to_measure
 
 latest_block_timestamp_decimal=$(./timestamp.sh $1)
 current_time=$(date +%s)
