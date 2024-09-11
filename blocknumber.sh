@@ -29,6 +29,7 @@ for path in $pathlist; do
 	    
 	    if [[ $http_status_code -eq 200 ]]; then
 		response=$(cat "$response_file")
+
 		latest_block_number=$(echo "$response" | jq -r '.result.number')
 		latest_block_number_decimal=$((16#${latest_block_number#0x}))
 
