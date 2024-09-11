@@ -85,7 +85,7 @@ for path in $pathlist; do
 					    echo "lagging"
 					    exit 0
 					else
-					    echo "syncing"
+					    echo "syncing ($(./catchup.sh $1))" 
 					    exit 1
 					fi
 				    fi
