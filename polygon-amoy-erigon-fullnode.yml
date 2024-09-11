@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   polygon-amoy-erigon-fullnode:
-    image: thorax/erigon:${ERIGON_VERSION:-v2.60.5}
+    image: erigontech/erigon:${ERIGON_VERSION:-2.60.7}
     user: root
     stop_grace_period: 3m
     volumes:
