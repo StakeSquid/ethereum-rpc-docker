@@ -28,6 +28,11 @@ latest_block_timestamp_decimal=$(./timestamp.sh $1)
 current_time=$(date +%s)
 time_difference2=$((current_time - latest_block_timestamp_decimal))	       
 
-progress=$(((time_difference2 - time_difference)/10))
+ms_to_human_readable $time_difference2
+progress=$((time_difference - time_difference2))
 
-echo "$progess ms/s"
+ms_to_human_readable $progress
+
+result=$(echo "scale=0; $latest_block_timestamp_decimal / ($progress * 6)" | bc)
+
+ms_to_human_readable $(($result*60*1000))
