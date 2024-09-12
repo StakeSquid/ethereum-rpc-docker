@@ -83,9 +83,42 @@ for part in "${parts[@]}"; do
 		upstreams+=("$(envsubst < "$input_file")")
 		break
 	    fi
-	done
+	done	
     fi
 done
+
+
+if [[ -f external-rpcs.txt ]]; then
+for IFS= read -r url; do
+
+    export RPC_URL="$url"
+    export TEST_URL="$RPC_URL"
+    #export WS_URL="wss://$url"		    
+    export PROVIDER=$(echo "$url" | sed -e 's|^https\?://||' -e 's|/|-|g' -e 's|\.|-|g')
+
+    response_file=$(mktemp)
+		
+    http_status_code=$(curl --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL)
+
+    if [ $? -eq 0 ] && [[ $http_status_code -ne 200 ]]; then
+	echo "have error response from $TEST_URL: $(cat $response_file)" >&2
+	rm "$response_file"
+	continue  # Skip to the next iteration of the loop
+    fi
+		
+    chain_id=$(cat "$response_file" | jq -r '.result')		
+    rm "$response_file"
+    
+    #echo "$TEST_URL $chain_id" >&2
+    chain_id_decimal=$((16#${chain_id#0x}))
+    export CHAIN=$($BASEPATH/get-shortname.sh $chain_id_decimal)
+
+    [ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
+		
+    # Run envsubst to replace environment variables in the input file and save the result to the output file
+    upstreams+=("$(envsubst < "$input_file")")
+done < external-rpcs.txt
+fi
 
 printf "%s\n" "${upstreams[@]}"
 
