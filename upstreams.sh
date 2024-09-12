@@ -89,11 +89,11 @@ done
 
 
 if [[ -f external-rpcs.txt ]]; then
-for IFS= read -r url; do
+while IFS= read -r url; do
 
     export RPC_URL="$url"
     export TEST_URL="$RPC_URL"
-    #export WS_URL="wss://$url"		    
+    export WS_URL=$(echo "$url" | sed -e 's|^http://|ws://|' -e 's|^https://|wss://|')
     export PROVIDER=$(echo "$url" | sed -e 's|^https\?://||' -e 's|/|-|g' -e 's|\.|-|g')
 
     response_file=$(mktemp)
@@ -113,11 +113,13 @@ for IFS= read -r url; do
     chain_id_decimal=$((16#${chain_id#0x}))
     export CHAIN=$($BASEPATH/get-shortname.sh $chain_id_decimal)
 
+    input_file="$BASEPATH/$(echo $url | sed -E 's|https?://([^.]+\.)*([^.]+\.[^.]+).*|\2|').cfg"
+    
     [ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
 		
     # Run envsubst to replace environment variables in the input file and save the result to the output file
     upstreams+=("$(envsubst < "$input_file")")
-done < external-rpcs.txt
+done < $BASEPATH/external-rpcs.txt
 fi
 
 printf "%s\n" "${upstreams[@]}"
