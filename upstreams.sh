@@ -88,7 +88,7 @@ for part in "${parts[@]}"; do
 done
 
 
-if [[ -f external-rpcs.txt ]]; then
+if [[ -f $BASEPATH/external-rpcs.txt ]]; then
 while IFS= read -r url; do
 
     export RPC_URL="$url"
