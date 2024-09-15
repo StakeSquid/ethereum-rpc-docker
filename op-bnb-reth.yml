@@ -1,0 +1,54 @@
+services:
+
+  op-bnb-reth:
+    image: ghcr.io/bnb-chain/op-reth:v1.0.4
+    restart: unless-stopped
+    stop_grace_period: 5m
+    command: node --datadir=/data --chain=opbnb-mainnet --rollup.sequencer-http=https://opbnb-mainnet-rpc.bnbchain.org --authrpc.addr="0.0.0.0" --authrpc.port=8551 --authrpc.jwtsecret=/jwtsecret--http --http.api="eth, net, txpool, web3, rpc, admin"
+    volumes:
+      - .jwtsecret:/jwtsecret      
+      - op-bnb-reth:/data
+    expose:
+      - 8545
+      - 8551
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.op-bnb-reth-stripprefix.stripprefix.prefixes=/opbnb-reth"
+      - "traefik.http.services.op-bnb-reth.loadbalancer.server.port=8545"
+      - "traefik.http.routers.op-bnb-reth.entrypoints=websecure"
+      - "traefik.http.routers.op-bnb-reth.tls.certresolver=myresolver"
+      - "traefik.http.routers.op-bnb-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/opbnb-reth`)"
+      - "traefik.http.routers.op-bnb-reth.middlewares=op-bnb-reth-stripprefix, ipwhitelist"
+    networks:
+      - chains
+      
+  op-bnb-reth-node:
+    image: ghcr.io/bnb-chain/op-node:${OPBNB_NODE_IMAGE_TAG:-v0.5.0}
+    depends_on:
+      - op-bnb-reth
+    restart: unless-stopped
+    stop_grace_period: 5m
+    entrypoint: /scripts/op-node-start.sh
+    environment:
+      OP_NODE__RPC_ENDPOINT: ${OPBNB_BSC_ENDPOINT}
+      OP_NODE_L1_RPC_KIND: erigon
+      P2P_PRIV_KEY: ${OPBNB_NODE_PRIV_KEY}
+      NETWORK_NAME: mainnet
+    expose:
+      - 3074
+    env_file:
+      - .env
+    ports:
+      - ${PORT__OP_NODE_P2P:-3074}:3074
+#      - ${PORT__OP_NODE:-8546}:8546
+    volumes:
+      - ./op-bnb/scripts/:/scripts
+      - .jwtsecret:/jwtsecret
+      - op-bnb-reth-node:/op_node
+    networks:
+      - chains
+
+
+volumes:
+  op-bnb-reth:
+  op-bnb-reth-node:
