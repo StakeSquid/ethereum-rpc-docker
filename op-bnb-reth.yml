@@ -35,11 +35,11 @@ services:
       P2P_PRIV_KEY: ${OPBNB_NODE_PRIV_KEY}
       NETWORK_NAME: mainnet
     expose:
-      - 3074
+      - 56452
     env_file:
       - .env
     ports:
-      - ${PORT__OP_NODE_P2P:-3074}:3074
+      - ${PORT__OP_NODE_P2P:-56452}:56452
 #      - ${PORT__OP_NODE:-8546}:8546
     volumes:
       - ./op-bnb/scripts/:/scripts
