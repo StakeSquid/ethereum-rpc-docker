@@ -4,7 +4,7 @@ services:
     image: ghcr.io/bnb-chain/op-reth:v1.0.4
     restart: unless-stopped
     stop_grace_period: 5m
-    command: node --datadir=/data --chain=opbnb-mainnet --rollup.sequencer-http=https://opbnb-mainnet-rpc.bnbchain.org --authrpc.addr="0.0.0.0" --authrpc.port=8551 --authrpc.jwtsecret=/jwtsecret--http --http.api="eth, net, txpool, web3, rpc, admin"
+    command: node --datadir=/data --chain=opbnb-mainnet --rollup.sequencer-http=https://opbnb-mainnet-rpc.bnbchain.org --authrpc.addr="0.0.0.0" --authrpc.port=8551 --authrpc.jwtsecret=/jwtsecret --http --http.api="eth, net, txpool, web3, rpc, admin"
     volumes:
       - .jwtsecret:/jwtsecret      
       - op-bnb-reth:/data
