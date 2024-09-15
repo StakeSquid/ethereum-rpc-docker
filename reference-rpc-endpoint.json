@@ -352,6 +352,11 @@
 	],
 	"archive": ["op-bnb-reth"]
     },
+    "zksync": {
+	"id": 324,
+	"urls": ["https://1rpc.io/zksync2-era"],
+	"default": ["zksync-mainnet-fullnode"]
+    },
     "polygon-amoy": {
 	"id": 80002,
 	"urls": [

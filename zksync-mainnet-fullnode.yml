@@ -1,0 +1,101 @@
+services:
+  zksync-mainnet-fullnode-db:
+    image: "postgres:14"
+    command: >
+      postgres
+      -c max_connections=200
+      -c log_error_verbosity=terse
+      -c shared_buffers=2GB
+      -c effective_cache_size=4GB
+      -c maintenance_work_mem=1GB
+      -c checkpoint_completion_target=0.9
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c min_wal_size=4GB
+      -c max_wal_size=16GB
+      -c max_worker_processes=16
+      -c checkpoint_timeout=1800
+    expose:
+      - 5430
+    volumes:
+      - zksync-mainnet-fullnode-db:/var/lib/postgresql/data
+    healthcheck:
+      interval: 1s
+      timeout: 3s
+      test:
+        [
+          "CMD-SHELL",
+          'psql -U postgres -c "select exists (select * from pg_stat_activity where datname = ''{{ database_name }}'' and application_name = ''pg_restore'')" | grep -e ".f$$"',
+        ]
+    environment:
+      - POSTGRES_PASSWORD=notsecurepassword
+      - PGPORT=5430
+    networks:
+      - chains
+
+  zksync-mainnet-fullnode-client:
+    image: "matterlabs/external-node:2.0-v24.16.0"
+    depends_on:
+      zksync-mainnet-fullnode-db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3060:3060"
+      - "127.0.0.1:3061:3061"
+      - "127.0.0.1:3081:3081"
+    volumes:
+      - zksync-mainnet-fullnode-client:/db
+    expose:
+      - 3322
+    environment:
+      DATABASE_URL: "postgres://postgres:notsecurepassword@zksync-mainnet-fullnode-db:5430/zksync_local_ext_node"
+      DATABASE_POOL_SIZE: 10
+
+      EN_HTTP_PORT: 3060
+      EN_WS_PORT: 3061
+      EN_HEALTHCHECK_PORT: 3081
+      EN_PROMETHEUS_PORT: 3322
+      EN_ETH_CLIENT_URL: ${ZKSYNC_MAINNET_L1_URL:-https://ethereum-rpc.publicnode.com}
+      EN_MAIN_NODE_URL: https://zksync2-mainnet.zksync.io
+      EN_L1_CHAIN_ID: 1
+      EN_L2_CHAIN_ID: 324
+      # EN_PRUNING_ENABLED: true
+
+      EN_STATE_CACHE_PATH: "./db/ext-node/state_keeper"
+      EN_MERKLE_TREE_PATH: "./db/ext-node/lightweight"
+      EN_SNAPSHOTS_RECOVERY_ENABLED: "true"
+      EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL: "zksync-era-mainnet-external-node-snapshots"
+      EN_SNAPSHOTS_OBJECT_STORE_MODE: "GCSAnonymousReadOnly"
+      RUST_LOG: "warn,zksync=info,zksync_core::metadata_calculator=debug,zksync_state=debug,zksync_utils=debug,zksync_web3_decl::client=error"
+    networks:
+      - chains
+
+  zksync-mainnet-fullnode:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - zksync-mainnet-fullnode-client
+    expose:  
+      - 80                                                                                    
+    environment:                                                                                      
+      PROXY_HOST: zksync-mainnet-fullnode-client
+      RPC_PORT: 3060
+      RPC_PATH: ""
+      WS_PORT: 3061
+      WS_PATH: ""
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates            
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.zksync-mainnet-fullnode-stripprefix.stripprefix.prefixes=/zksync-mainnet-fullnode"
+      - "traefik.http.services.zksync-mainnet-fullnode.loadbalancer.server.port=3060"
+      - "traefik.http.routers.zksync-mainnet-fullnode.entrypoints=websecure"
+      - "traefik.http.routers.zksync-mainnet-fullnode.tls.certresolver=myresolver"
+      - "traefik.http.routers.zksync-mainnet-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/zksync-mainnet-fullnode`)"
+      - "traefik.http.routers.zksync-mainnet-fullnode.middlewares=zksync-mainnet-fullnode-stripprefix"
+
+
+volumes:
+  zksync-mainnet-fullnode-db: {}
+  zksync-mainnet-fullnode-client: {}
