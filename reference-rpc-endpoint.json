@@ -349,7 +349,8 @@
 	],
 	"default": [
 	    "op-bnb"
-	]
+	],
+	"archive": ["op-bnb-reth"]
     },
     "polygon-amoy": {
 	"id": 80002,
