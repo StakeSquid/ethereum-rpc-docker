@@ -4,13 +4,16 @@ services:
     image: ghcr.io/bnb-chain/op-reth:v1.0.4
     restart: unless-stopped
     stop_grace_period: 5m
-    command: node --datadir=/data --chain=opbnb-mainnet --rollup.sequencer-http=https://opbnb-mainnet-rpc.bnbchain.org --authrpc.addr="0.0.0.0" --authrpc.port=8551 --authrpc.jwtsecret=/jwtsecret --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000
-    volumes:
+    command: node --datadir=/data --chain=opbnb-mainnet --rollup.sequencer-http=https://opbnb-mainnet-rpc.bnbchain.org --authrpc.addr="0.0.0.0" --authrpc.port=8551 --authrpc.jwtsecret=/jwtsecret --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000 --port 63815 --discovery.port 63815
+    volumes: 
       - .jwtsecret:/jwtsecret      
       - op-bnb-reth:/data
     expose:
       - 8545
       - 8551
+    ports:
+      - "63815:63815"
+      - "63815:63815/udp"
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.op-bnb-reth-stripprefix.stripprefix.prefixes=/opbnb-reth"
