@@ -17,7 +17,8 @@ if [ ! -d "$volume_dir" ]; then
     exit 1
 fi
 
-if [[ -n $2 ]]; then    
+if [[ -n $2 ]]; then
+    echo "download backup from http"
     $dir/clone-backup.sh $2 $1
 fi
 
