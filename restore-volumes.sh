@@ -17,7 +17,7 @@ if [ ! -d "$volume_dir" ]; then
     exit 1
 fi
 
-if [[ -v $2 ]]; then
+if [[ -n $2 ]]; then    
     $dir/clone-backup.sh $2 $1
 fi
 
