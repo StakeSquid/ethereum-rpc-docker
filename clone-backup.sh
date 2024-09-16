@@ -25,5 +25,5 @@ if [ "$3" = "--print-timestamp-only" ]; then
 fi
 
 base_url="$1"
-aria2c -d "$LOCAL_DIR" "${files[@]/#/$base_url}"
+aria2c -x8 j8 s8 -d "$LOCAL_DIR" "${files[@]/#/$base_url}"
 
