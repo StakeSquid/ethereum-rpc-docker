@@ -17,6 +17,10 @@ if [ ! -d "$volume_dir" ]; then
     exit 1
 fi
 
+if [[ -v $3 ]]; then
+    $dir/clone-backup.sh $3 $1
+fi
+
 calculate_required_space() {
     # Extract the size from the filename
     size=$(echo "$1" | grep -oE '[0-9]+G')

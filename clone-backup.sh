@@ -4,6 +4,8 @@ dir="$(dirname "$0")"
 # FTP server details
 LOCAL_DIR="/backup"
 
+mkdir -p "$LOCAL_DIR"
+
 keys=$(cat $dir/$2.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
 
 files=()
@@ -22,6 +24,6 @@ if [ "$3" = "--print-timestamp-only" ]; then
     exit 0
 fi
 
-base_url="https://$1.stakesquid.eu/backup/"
+base_url="$1"
 aria2c -d "$LOCAL_DIR" "${files[@]/#/$base_url}"
 
