@@ -99,7 +99,16 @@
     "default": [
       "arb-connext-sepolia"
     ]
-  },    
+  },
+  "everclear-mainnet": {
+    "id": 25327,
+    "urls": [
+      "https://rpc.everclear.raas.gelato.cloud"
+    ],
+    "default": [
+      "arb-everclear-mainnet"
+    ]
+  },        
   "real": {
     "id": 111188,
     "urls": [
