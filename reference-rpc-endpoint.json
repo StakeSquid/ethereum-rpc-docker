@@ -285,6 +285,11 @@
 	"default": ["op-zircuit-mainnet"],
 	"urls": ["https://zircuit1-mainnet.p2pify.com"]
     },
+    "zircuit-testnet": {
+	"id": 48899,
+	"default": ["op-zircuit-testnet"],
+	"urls": ["https://zircuit1-testnet.p2pify.com"]
+    },    
     "ronin": {
 	"id": 2020,
 	"urls": ["https://api.roninchain.com/rpc"],
