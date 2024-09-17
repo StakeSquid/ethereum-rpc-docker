@@ -55,8 +55,8 @@ services:
       - op-zircuit-testnet-client
     image: zircuit1/op-node:b7e91877a1f566082fcb9dc724a844da175f70a8
     ports:
-      - "43778:43778"
-      - "43778:43778/udp"
+      - "20209:20209"
+      - "20209:20209/udp"
     volumes:
       - ".jwtsecret:/jwtsecret"
       - "./zircuit/testnet/rollup.json:/rollup.json"
@@ -82,8 +82,8 @@ services:
       #OP_NODE_L1_BEACON_ARCHIVER: ${ZIRCUIT_ETHEREUM_TESTNET_BEACON_ARCHIVER}
       OP_NODE_SYNCMODE: "consensus-layer"
       OP_NODE_P2P_LISTEN_IP: "0.0.0.0"
-      OP_NODE_P2P_LISTEN_TCP_PORT: 43778
-      OP_NODE_P2P_LISTEN_UDP_PORT: 43778
+      OP_NODE_P2P_LISTEN_TCP_PORT: 20209
+      OP_NODE_P2P_LISTEN_UDP_PORT: 20209
       OP_NODE_P2P_PEER_SCORING: light
       OP_NODE_P2P_PEER_BANNING: "true"
       #OP_NODE_P2P_STATIC: ${ZIRCUIT_STATIC_PEERS}
