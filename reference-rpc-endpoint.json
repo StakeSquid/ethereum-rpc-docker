@@ -358,6 +358,15 @@
       "bsc-erigon-fullnode"
     ]
   },
+  "berachain-artio": {
+    "id": 80084,
+    "urls": [
+      "https://bartio.rpc.berachain.com"
+    ],
+    "default": [
+      "berachain-artio"
+    ]
+  },    
     "opbnb": {
 	"id": 204,
 	"urls": [
