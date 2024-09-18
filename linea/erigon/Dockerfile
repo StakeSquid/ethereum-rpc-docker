@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.22-alpine3.20 AS builder
+FROM docker.io/library/golang:golang:1.22-bookworm AS builder
 RUN apk add --no-cache make g++ gcc musl-dev linux-headers git
 ARG ERIGON_VERSION=2.60
 ARG ERIGON_REPOSITORY=https://github.com/erigontech/erigon.git
