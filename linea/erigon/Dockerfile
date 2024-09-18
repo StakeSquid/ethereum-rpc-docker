@@ -1,6 +1,6 @@
 FROM docker.io/library/golang:1.22-alpine3.20 AS builder
 RUN apk add --no-cache make g++ gcc musl-dev linux-headers git
-ARG ERIGON_VERSION=2.60.8
+ARG ERIGON_VERSION=2.60
 ARG ERIGON_REPOSITORY=https://github.com/erigontech/erigon.git
 
 RUN git clone --branch release/$ERIGON_VERSION --single-branch $ERIGON_REPOSITORY
