@@ -358,7 +358,7 @@
       "bsc-erigon-fullnode"
     ]
   },
-  "berachain-artio": {
+  "bartio": {
     "id": 80084,
     "urls": [
       "https://bartio.rpc.berachain.com"
