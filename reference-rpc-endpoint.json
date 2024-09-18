@@ -326,7 +326,8 @@
     ],
     "archive": [
 	"geth-linea",
-	"erigon-linea"
+	"erigon-linea",
+	"reth-linea"
     ]
   },
   "lisk-sepolia": {
