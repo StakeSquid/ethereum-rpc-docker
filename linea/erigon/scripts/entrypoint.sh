@@ -10,6 +10,7 @@ then
   echo "write the custom genesis block"
   mkdir -p ${ERIGON_HOME:-/root/.local/share/erigon}
   erigon init --datadir ${ERIGON_HOME:-/root/.local/share/erigon} /configs/mainnet/shared/genesis.json
+  touch "${ERIGON_HOME}/bootstrapped"
 fi
 
 exec erigon $@
