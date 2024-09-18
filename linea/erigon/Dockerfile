@@ -1,13 +1,11 @@
 FROM docker.io/library/golang:1.22-alpine3.20.1 AS builder
 RUN apk add --no-cache make g++ gcc musl-dev linux-headers git
 ARG ERIGON_VERSION=2.60.8
-ARG ERIGON_REPOSITORY=https://github.com/ledgerwatch/erigon.git
+ARG ERIGON_REPOSITORY=https://github.com/erigontech/erigon.git
 
-RUN git clone --recurse-submodules -j8 $ERIGON_REPOSITORY
+RUN git clone --branch release/$ERIGON_VERSION --single-branch $ERIGON_REPOSITORY
 
 WORKDIR ./erigon
-
-RUN git checkout ${ERIGON_VERSION}
 
 RUN make erigon
 
