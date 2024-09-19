@@ -14,6 +14,7 @@ services:
         "--scroll",
         # Blockchain sync mode ("snap", "full" or "light")                                            
         "--syncmode=full",
+        "--gcmode=full",        
         "--port=38907",
         "--nat=extip:$IP",
         # Megabytes of memory allocated to internal caching                                           
