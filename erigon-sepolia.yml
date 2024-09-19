@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-sepolia:
-    image: thorax/erigon:2.60.6-amd64
+    image: erigontech/erigon:2.60.8
     user: root
     expose:
       - "31337"
