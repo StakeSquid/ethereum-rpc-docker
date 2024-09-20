@@ -43,10 +43,10 @@ NoUSB = true
 InsecureUnlockAllowed = false
 HTTPPort = 8545
 HTTPVirtualHosts = ["*"]
-HTTPModules = ["admin", "eth", "net", "web3", "txpool", "satoshi"]
+HTTPModules = ["admin", "eth", "net", "web3", "txpool", "satoshi", "debug"]
 WSPort = 8545
 WSHost = "0.0.0.0"
-WSModules = ["eth", "net", "web3", "txpool", "satoshi"]
+WSModules = ["eth", "net", "web3", "txpool", "satoshi", "debug"]
 [Node.P2P]
 MaxPeers = 200
 NoDiscovery = false
