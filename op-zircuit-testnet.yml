@@ -94,7 +94,7 @@ services:
       OP_NODE_LOG_COLOR: "false"
 
 
-  op-zircuit-key-generator:
+  op-zircuit-testnet-key-generator:
     image: ghcr.io/foundry-rs/foundry
     volumes:
       - "./zircuit_testnet/config:/config"
