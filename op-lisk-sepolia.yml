@@ -40,12 +40,12 @@ services:
 uDdWRwgiMr"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.base-stripprefix.stripprefix.prefixes=/lisk-sepolia"                      
-      - "traefik.http.services.base.loadbalancer.server.port=8545"
-      - "traefik.http.routers.base.entrypoints=websecure"                                              
-      - "traefik.http.routers.base.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.base.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-sepolia`)"                     
-      - "traefik.http.routers.base.middlewares=base-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.lisk-sepolia-stripprefix.stripprefix.prefixes=/lisk-sepolia"                      
+      - "traefik.http.services.lisk-sepolia.loadbalancer.server.port=8545"
+      - "traefik.http.routers.lisk-sepolia.entrypoints=websecure"                                              
+      - "traefik.http.routers.lisk-sepolia.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.lisk-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-sepolia`)"                     
+      - "traefik.http.routers.lisk-sepolia.middlewares=lisk-sepolia-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
