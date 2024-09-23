@@ -13,7 +13,7 @@ services:
     command:
       - --init.url=https://snapshot.arbitrum.foundation/nova/nitro-pruned.tar
       - --node.data-availability.enable
-      - --execution.caching.state-scheme=path
+      - --execution.caching.state-scheme=hash
       - --node.staker.enable=false
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
