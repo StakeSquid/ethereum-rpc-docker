@@ -9,7 +9,22 @@ fi
 BASEPATH="$(dirname "$0")"
 
 JSON_FILE="$BASEPATH/reference-rpc-endpoint.json"
-shift
 
-# Extract values under 'default' or 'archive' attributes for given keys
-jq --argfile input "$JSON_FILE" '. as $in | ($IN.input | select(has("default")) | .default[]) + ($IN.input | select(has("archive")) | .archive[])' "$@"
+# Function to extract values for a given key
+extract_values() {
+  local key=$1
+  cat "$JSON_FILE" | jq -r --arg key "$key" '.[$key] | .default? // .archive? // [] | .[]'
+}
+
+# Initialize an empty result string
+result=""
+
+# Iterate over each key passed as a parameter
+for key in "$@"; do
+  # Append the values from the key to the result string
+  values=$(extract_values "$key")
+  result="$result $values"
+done
+
+# Trim and display the result
+echo $result | xargs
