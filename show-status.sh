@@ -23,7 +23,7 @@ for part in "${parts[@]}"; do
 
 	# Check if a string is part of the list
 	if [[ " ${params[@]} " =~ " $1 " ]]; then
-	    include=true # don't change anything 
+	    include=$include # don't change anything 
 	else
 	    include=false
 	fi
