@@ -22,7 +22,7 @@ for part in "${parts[@]}"; do
 	params=("$@")
 
 	# Check if a string is part of the list
-	if [[ " ${params[@]} " =~ " $1 " ]]; then
+	if [[ " ${params[@]} " =~ " ${part%.yml} " ]]; then
 	    include=$include # don't change anything 
 	else
 	    include=false
@@ -31,12 +31,12 @@ for part in "${parts[@]}"; do
     
     if $include; then
 	result=$($BASEPATH/sync-status.sh "${part%.yml}")
-	if [ "$1" = "${part%.yml}" ]; then
-	    echo "${result}"
-	    exit 0
-	else
+	#if [ "$1" = "${part%.yml}" ]; then
+	#    echo "${result}"
+	#    exit 0
+	#else
 	    echo "${part%.yml}: $result"
-	fi
+	#fi
     fi
 done
 
