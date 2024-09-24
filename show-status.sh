@@ -15,15 +15,28 @@ for part in "${parts[@]}"; do
 	    include=false
 	fi
     done
+
+    # Check if any parameters were passed
+    if [ $# -gt 0 ]; then
+	# Put parameters into an array (list)
+	params=("$@")
+
+	# Check if a string is part of the list
+	if [[ " ${params[@]} " =~ " ${part%.yml} " ]]; then
+	    include=$include # don't change anything 
+	else
+	    include=false
+	fi
+    fi	
     
     if $include; then
 	result=$($BASEPATH/sync-status.sh "${part%.yml}")
-	if [ "$1" = "${part%.yml}" ]; then
-	    echo "${result}"
-	    exit 0
-	else
+	#if [ "$1" = "${part%.yml}" ]; then
+	#    echo "${result}"
+	#    exit 0
+	#else
 	    echo "${part%.yml}: $result"
-	fi
+	#fi
     fi
 done
 
