@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   arbitrum-nova-fullnode:
-    image: offchainlabs/nitro-node:${NITRO_VERSION:-v3.1.2-309340a}
+    image: offchainlabs/nitro-node:${NITRO_VERSION:-v3.2.0-f847be0}
     stop_grace_period: 3m
     user: root
     volumes:
@@ -13,6 +13,7 @@ services:
     command:
       - --init.url=https://snapshot.arbitrum.foundation/nova/nitro-pruned.tar
       - --node.data-availability.enable
+      - --execution.caching.state-scheme=hash
       - --node.staker.enable=false
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
