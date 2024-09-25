@@ -1,0 +1,36 @@
+version: '3.1'
+
+services:
+  bsc-reth:
+    image: ghcr.io/bnb-chain/bsc-reth:v1.0.4
+    user: root
+    volumes:
+      - "reth-bsc:/data"
+      - "/slowdisk:/slowdisk"
+    expose:
+      - 64468
+      - 8545
+      - 9001
+    ports:
+      - "64468:64468"
+      - "64468:64468/udp"
+    restart: unless-stopped
+    command: node --chain bsc --datadir=/data --rpc-max-connections 429496729 --metrics 0.0.0.0:9001 --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --port 64468 --discovery.port 64468 --authrpc.addr 0.0.0.0 --http.api "debug,eth,net,trace,txpool,web3,rpc,reth" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9001"
+      - "prometheus-scrape.job_name=bsc-reth"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.bsc-reth-stripprefix.stripprefix.prefixes=/bsc-reth"
+      - "traefik.http.services.bsc-reth.loadbalancer.server.port=8545"
+      - "traefik.http.routers.bsc-reth.entrypoints=websecure"
+      - "traefik.http.routers.bsc-reth.tls.certresolver=myresolver"
+      - "traefik.http.routers.bsc-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/bsc-reth`)"
+      - "traefik.http.routers.bsc-reth.middlewares=bsc-reth-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+volumes:
+    reth-bsc:
