@@ -1,11 +1,11 @@
 version: '3.1'
 
 services:
-  bsc-reth:
+  bsc-reth-fullnode:
     image: ghcr.io/bnb-chain/bsc-reth:v1.0.4
     user: root
     volumes:
-      - "reth-bsc:/data"
+      - "reth-bsc-fullnode:/data"
       - "/slowdisk:/slowdisk"
     expose:
       - 64468
@@ -20,17 +20,17 @@ services:
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=9001"
-      - "prometheus-scrape.job_name=bsc-reth"
+      - "prometheus-scrape.job_name=bsc-fullnode-reth"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.bsc-reth-stripprefix.stripprefix.prefixes=/bsc-reth"
-      - "traefik.http.services.bsc-reth.loadbalancer.server.port=8545"
-      - "traefik.http.routers.bsc-reth.entrypoints=websecure"
-      - "traefik.http.routers.bsc-reth.tls.certresolver=myresolver"
-      - "traefik.http.routers.bsc-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/bsc-reth`)"
-      - "traefik.http.routers.bsc-reth.middlewares=bsc-reth-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.bsc-fullnode-reth-stripprefix.stripprefix.prefixes=/bsc-fullnode-reth"
+      - "traefik.http.services.bsc-fullnode-reth.loadbalancer.server.port=8545"
+      - "traefik.http.routers.bsc-fullnode-reth.entrypoints=websecure"
+      - "traefik.http.routers.bsc-fullnode-reth.tls.certresolver=myresolver"
+      - "traefik.http.routers.bsc-fullnode-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/bsc-fullnode-reth`)"
+      - "traefik.http.routers.bsc-fullnode-reth.middlewares=bsc-fullnode-reth-stripprefix, ipwhitelist"
     networks:
       - chains
 
 volumes:
-    reth-bsc:
+    reth-bsc-fullnode:

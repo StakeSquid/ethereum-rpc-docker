@@ -355,7 +355,8 @@
     ],
     "default": [
       "bsc",
-      "bsc-erigon-fullnode"
+	"bsc-erigon-fullnode",
+	"reth-bsc-fullnode"
     ]
   },
   "bartio": {
