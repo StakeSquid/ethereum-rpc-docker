@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m
     command: |
+      geth
       --alfajores
       --l2migrationblock 26384000
       --verbosity 3
