@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   celo-alfajores:
-    image: us.gcr.io/celo-org/geth:v1.8.5
+    image: us.gcr.io/celo-org/geth:1.8.5
     restart: unless-stopped
     stop_grace_period: 3m
     command: |
