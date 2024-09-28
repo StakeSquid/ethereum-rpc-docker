@@ -93,7 +93,7 @@ services:
     volumes:
       - "./celo/alfajores:/config"
     entrypoint: sh
-    command: [ -f /config/p2p_node_key_txt ] && exit 0 || cast w n | grep -i 'Private Key' | awk -F ': ' '{print $2}' | sed 's/0x//' > /config/p2p_node_key_txt
+    command: "[ -f /config/p2p_node_key_txt ] && exit 0 || cast w n | grep -i 'Private Key' | awk -F ': ' '{print $2}' | sed 's/0x//' > /config/p2p_node_key_txt"
 
     
 
