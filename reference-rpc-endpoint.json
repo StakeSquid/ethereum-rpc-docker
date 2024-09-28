@@ -203,7 +203,7 @@
     "celo-alfajores": {
 	"id": 44787,
 	"urls": ["https://alfajores-forno.celo-testnet.org"],
-	"default": ["op-celo-alfajores-fullnode"]
+	"default": ["op-celo-alfajores-fullnode","celo-alfajores-fullnode"]
     },
     "boba-eth": {
 	"id": 288,
