@@ -47,6 +47,15 @@ services:
       - chains
     restart: always
     stop_grace_period: 5m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.op-celo-alfajores-stripprefix.stripprefix.prefixes=/op-celo-alfajores"
+      - "traefik.http.services.op-celo-alfajores.loadbalancer.server.port=8545"
+      - "traefik.http.routers.op-celo-alfajores.entrypoints=websecure"
+      - "traefik.http.routers.op-celo-alfajores.tls.certresolver=myresolver"
+      - "traefik.http.routers.op-celo-alfajores.rule=Host(`$DOMAIN`) && PathPrefix(`/op-celo-alfajores`)"
+      - "traefik.http.routers.op-celo-alfajores.middlewares=op-celo-alfajores-stripprefix, ipwhitelist"
+    
 
   op-celo-alfajores-fullnode-node:
     image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node:celo9
