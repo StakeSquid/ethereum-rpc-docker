@@ -3,7 +3,7 @@ services:
     image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:celo8
     volumes:
       - "op-celo-alfajores-fullnode:/datadir"
-      - "celo/alfajores:/config"
+      - "./celo/alfajores:/config"
     command: init --datadir /datadir /config/genesis.json
     
   op-celo-alfajores-fullnode:
