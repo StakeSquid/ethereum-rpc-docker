@@ -1,6 +1,15 @@
 services:
+  init:
+    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:celo8
+    volumes:
+      - "op-celo-alfajores-fullnode:/datadir"
+      - "celo/alfajores:/config"
+    command: init --datadir /datadir /config/genesis.json
+    
   op-celo-alfajores-fullnode:
-    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:celo9
+    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:celo8
+    depends_on:
+      - init
     volumes:
       - "op-celo-alfajores-fullnode:/datadir"
       - ".jwtsecret:/jwtsecret"
@@ -43,6 +52,7 @@ services:
     image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node:celo9
     depends_on:
       - op-celo-alfajores-fullnode
+      - op-celo-alfajores-key-generator
     expose:
       - 8545     # RPC
       - 39395     # P2P TCP
@@ -60,13 +70,13 @@ services:
       --l2=http://op-celo-alfajores-fullnode:8551
       --l2.jwt-secret=/jwtsecret
       --rollup.load-protocol-versions=true
-      --rollup.config=/data/rollup.json
+      --rollup.config=/config/rollup.json
       --verifier.l1-confs=4
       --rpc.addr=0.0.0.0
       --rpc.port=9545
       --p2p.listen.tcp=39395
       --p2p.listen.udp=39395
-      --p2p.priv.path=/data/op-node_p2p_priv.txt
+      --p2p.priv.path=/config/p2p_node_key_txt
       --p2p.static=/ip4/35.197.25.52/tcp/9222/p2p/16Uiu2HAmQEdyLRSAVZDr5SqbJ1RnKmNDhtQJcEKmemrVxe4FxKwR,/ip4/34.105.22.4/tcp/9222/p2p/16Uiu2HAm1SZBDSugT5MMu7vBY8auDgfZFNhoDeXPLc9Me5FsAxwT,/ip4/34.83.209.168/tcp/9222/p2p/16Uiu2HAmGJAiUX6HLSo4nLh8T984qxzokwL23cVsYuNZy2SrK7C6,/ip4/34.83.214.149/tcp/9222/p2p/16Uiu2HAmAko2Kr3eAjM7tnshtEhYrxQYfKUvN2kwiygeFoBAoi8S,/ip4/34.169.5.52/tcp/9222/p2p/16Uiu2HAmKc6YKHzYgsjBDaj36uAufxpgZFgrzDqVBt6zTPwdhhJD
       --altda.enabled=true
       --altda.da-server=https://eigenda-proxy.alfajores.celo-testnet.org
@@ -75,8 +85,17 @@ services:
     restart: always
     volumes:
       - .jwtsecret:/jwtsecret
+      - ./celo/alfajores:/config"
     stop_grace_period: 30s
-      
+
+  op-celo-alfajores-key-generator:
+    image: ghcr.io/foundry-rs/foundry
+    volumes:
+      - "./celo/alfajores:/config"
+    entrypoint: sh
+    command: [ -f /config/p2p_node_key_txt ] && exit 0 || cast w n | grep -i 'Private Key' | awk -F ': ' '{print $2}' | sed 's/0x//' > /config/p2p_node_key_txt
+
+    
 
 volumes:
   op-celo-alfajores-fullnode:
