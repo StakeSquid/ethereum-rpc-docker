@@ -85,7 +85,7 @@ services:
     restart: always
     volumes:
       - .jwtsecret:/jwtsecret
-      - ./celo/alfajores:/config"
+      - "./celo/alfajores:/config"
     stop_grace_period: 30s
 
   op-celo-alfajores-key-generator:
