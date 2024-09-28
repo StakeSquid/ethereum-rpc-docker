@@ -4,7 +4,7 @@ services:
     volumes:
       - "op-celo-alfajores-fullnode:/datadir"
       - ".jwtsecret:/jwtsecret"
-    port:
+    ports:
       - "10955:10955"
       - "10955:10955/udp"
     command: |      
