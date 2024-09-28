@@ -59,6 +59,8 @@ services:
       - 39395/udp # P2P UDP
       - 7300     # metrics
       - 6060     # pprof
+    networks:
+      - chains
     ports:
       - "39395:39395"
       - "39395:39395/udp"
