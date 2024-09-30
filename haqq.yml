@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   haqq:                         
-    image: alhaqq/haqq:v1.8.0
+    image: alhaqq/haqq:v1.8.1
     expose: 
       # HTTP server / GraphQL API 
       - 8545
