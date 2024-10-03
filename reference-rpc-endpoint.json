@@ -421,6 +421,15 @@
 	    "op-zora-archive"
 	]
     },
+    "zora-sepolia": {
+	"id": 999999999,
+	"urls": [
+	    "https://sepolia.rpc.zora.energy"
+	],
+	"default": [
+	    "op-zora-sepolia"
+	]
+    },    
     "bob": {
 	"id": 60808,
 	"urls": ["https://rpc-bob-mainnet-0.t.conduit.xyz"],

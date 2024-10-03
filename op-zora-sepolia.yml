@@ -1,0 +1,105 @@
+services:
+  op-zora-sepolia: # this is Optimism's geth client
+    #image: stakesquid/op-zora-mainnet:v0.1
+    build:
+      context: ./op
+    expose:
+      - 8545       # RPC / Websocket      
+      - 19809     # P2P TCP (currently unused)
+      - 19809/udp # P2P UDP (currently unused)
+      - 6060       # metrics
+    ports:
+      - "19809:19809"
+      - "19809:19809/udp"
+    command: [ "sh", "./geth-entrypoint" ]
+    restart: always
+    stop_grace_period: 3m    
+    volumes:
+      - zora-mainnet:/data
+      - .jwtsecret:/jwtsecret
+    environment:
+      - "GETH_GENESIS_FILE_PATH=/app/sepolia/zora/genesis.json"
+      - "GETH_ROLLUP_SEQUENCERHTTP=https://rpc-zora-sepolia-0thyhxtf5e.t.conduit.xyz"
+      - "GETH_GCMODE=full"
+      - "GETH_NODISCOVER=true"
+      - "GETH_STATE_SCHEME=hash"
+      - "GETH_DB_ENGINE=pebble"
+      - "IP=${IP}"
+      - "P2P_PORT=19809"
+      - "WS_PORT=8545"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "HOST_IP=${IP}"
+#      - "GETH_OVERRIDE_CANYON=1704992401"
+#      - "GETH_OVERRIDE_DELTA=1708560000"
+#      - "GETH_OVERRIDE_ECOTONE=1710374401"
+#      - "GETH_OVERRIDE_FJORD=1720627201"      
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.zora-stripprefix.stripprefix.prefixes=/zora-sepolia"                      
+      - "traefik.http.services.zora.loadbalancer.server.port=8545"
+      - "traefik.http.routers.zora.entrypoints=websecure"                                              
+      - "traefik.http.routers.zora.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.zora.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-sepolia`)"                     
+      - "traefik.http.routers.zora.middlewares=zora-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+      
+  op-zora-sepolia-node:
+    #image: stakesquid/op-zora-mainnet:v0.1
+    build:
+      context: ./op
+    depends_on:
+      - op-zora-sepolia
+    expose:
+      - 8545     # RPC
+      - 3306     # P2P TCP
+      - 3306/udp # P2P UDP
+      - 7300     # metrics
+      - 6060     # pprof
+    ports:
+      - "3306:3306"
+      - "3306:3306/udp"
+    command: [ "sh", "./op-node-entrypoint" ]
+    restart: always
+    volumes:
+      - .jwtsecret:/jwtsecret
+    stop_grace_period: 30s
+    environment:
+      #- "OP_NODE_NETWORK=zora-mainnet-0"
+      - "OP_NODE_L1_ETH_RPC=${ZORA_SEPOLIA_L1_ENDPOINT}"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_ENGINE_RPC=http://op-zora-sepolia:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      #- "OP_NODE_P2P_AGENT=zora-sepolia"
+      - "OP_NODE_P2P_BOOTNODES=enode://cbabcbbc7211399990a1cf7178f3a9efebde7a7a1637f90d293c454ef5f40c367ffd1149733e5e7497657f73043a31eaad67af04737b2112d86202ea01896ee5@35.230.102.175:9222?discport=30301,enode://d25ce99435982b04d60c4b41ba256b84b888626db7bee45a9419382300fbe907359ae5ef250346785bff8d3b9d07cd3e017a27e2ee3cfda3bcbb0ba762ac9674@bootnode.conduit.xyz:0?discport=30301,enode://2d4e7e9d48f4dd4efe9342706dd1b0024681bd4c3300d021f86fc75eab7865d4e0cbec6fbc883f011cfd6a57423e7e2f6e104baad2b744c3cafaec6bc7dc92c1@34.65.43.171:0?discport=30305,enode://9d7a3efefe442351217e73b3a593bcb8efffb55b4807699972145324eab5e6b382152f8d24f6301baebbfb5ecd4127bd3faab2842c04cd432bdf50ba092f6645@34.65.109.126:0?discport=30305"
+      - "OP_NODE_P2P_STATIC=/ip4/35.230.102.175/tcp/9222/p2p/16Uiu2HAmSN33smB46ZtueBL2Hz1hsDy8tgSm1mqR38qAhwkX7ntd"
+      - "OP_NODE_P2P_AGENT=conduit"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=3306"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=3306"
+      - "OP_NODE_ROLLUP_CONFIG=/app/sepolia/zora/rollup.json"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      - "OP_NODE_L1_RPC_MAX_BATCH_SIZE=${ZORA_SEPOLIA_L1_BATCH_SIZE:-20}"
+      - "OP_NODE_L1_RPC_RATE_LIMIT=${ZORA_SEPOLIA_L1_RATE_LIMIT:-30}"
+      - "OP_NODE_L1_RPC_KIND=${ZORA_SEPOLIA_L1_ENDPOINT_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${ZORA_SEPOLIA_L1_ENDPOINT_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${ZORA_SEPOLIA_L1_BEACON_URL}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${ZORA_SEPOLIA_L1_BEACON_ARCHIVER}"
+      #- "OP_NODE_OVERRIDE_CANYON=1704992401"
+      #- "OP_NODE_OVERRIDE_DELTA=1708560000"
+      #- "OP_NODE_OVERRIDE_ECOTONE=1710374401"
+      #- "OP_NODE_OVERRIDE_FJORD=1720627201"      
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+    zora-sepolia:
