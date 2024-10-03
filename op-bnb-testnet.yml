@@ -13,10 +13,15 @@ services:
       OP_GETH_SYNCMODE: full
       OP_GETH_GCMODE: full
       OP_GETH_DB_ENGINE: pebble
-      OP_GETH_STATE_SCHEME: path      
+      OP_GETH_STATE_SCHEME: path
+      P2P_PORT: 21546
+      IP: ${IP}
     expose:
       - 8545
       - 8551
+    ports:
+      - 21546:21546
+      - 21546:21546/udp
     volumes:
       - ./op-bnb/scripts/:/scripts
       - .jwtsecret:/jwtsecret
