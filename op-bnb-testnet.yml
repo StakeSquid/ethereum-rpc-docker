@@ -9,7 +9,8 @@ services:
       BEDROCK_DATADIR: /geth
       CHAIN_ID: 5611
       L2_RPC: https://opbnb-testnet-rpc.bnbchain.org # sequencer
-      NETWORK_NAME: testnet
+      #NETWORK_NAME: testnet
+      NETWORK: opBNBTestnet
       OP_GETH_SYNCMODE: full
       OP_GETH_GCMODE: full
       OP_GETH_DB_ENGINE: pebble
