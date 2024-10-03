@@ -378,6 +378,11 @@
 	],
 	"archive": ["op-bnb-reth"]
     },
+    "opbnb-testnet": {
+	"id": 5611,
+	"urls": ["https://opbnb-testnet-rpc.bnbchain.org"],
+	"default": ["op-bnb-testnet"]
+    },
     "zksync": {
 	"id": 324,
 	"urls": ["https://1rpc.io/zksync2-era"],
