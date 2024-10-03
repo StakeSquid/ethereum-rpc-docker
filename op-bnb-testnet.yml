@@ -41,9 +41,9 @@ services:
     stop_grace_period: 5m
     entrypoint: /scripts/op-node-start.sh
     environment:
-      OP_NODE__RPC_ENDPOINT: ${OPBNB_BSC_ENDPOINT}
+      OP_NODE__RPC_ENDPOINT: ${OPBNB_TESTNET_BSC_ENDPOINT}
       P2P_PRIV_KEY: ${OPBNB_NODE_PRIV_KEY}
-      NETWORK_NAME: mainnet
+      NETWORK_NAME: testnet
       P2P_PORT: 65064
       OP_L2_HOST: op-bnb-testnet      
     expose:
