@@ -62,7 +62,8 @@
     "urls": [
       "https://rpc.playblock.io"
     ],
-    "default": [
+      "default": ["arb-playblock-pbss"],
+    "archive": [
       "arb-playblock"
     ]
   },
