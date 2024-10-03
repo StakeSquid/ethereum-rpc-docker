@@ -1,0 +1,64 @@
+services:
+
+  op-bnb-testnet:
+    image: ghcr.io/bnb-chain/op-geth:${OPBNB_GETH_IMAGE_TAG:-v0.5.0}
+    restart: unless-stopped
+    stop_grace_period: 5m
+    entrypoint: /scripts/op-geth-start.sh
+    environment:
+      BEDROCK_DATADIR: /geth
+      CHAIN_ID: 5611
+      L2_RPC: https://opbnb-testnet-rpc.bnbchain.org # sequencer
+      NETWORK_NAME: testnet
+      OP_GETH_SYNCMODE: full
+      OP_GETH_GCMODE: full
+      OP_GETH_DB_ENGINE: pebble
+      OP_GETH_STATE_SCHEME: path      
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ./op-bnb/scripts/:/scripts
+      - .jwtsecret:/jwtsecret
+      - op-bnb-testnet-geth:/geth
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.op-bnb-testnet-stripprefix.stripprefix.prefixes=/opbnb-testnet"
+      - "traefik.http.services.op-bnb-testnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.op-bnb-testnet.entrypoints=websecure"
+      - "traefik.http.routers.op-bnb-testnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.op-bnb-testnet.rule=Host(`$DOMAIN`) && PathPrefix(`/opbnb-testnet`)"
+      - "traefik.http.routers.op-bnb-testnet.middlewares=op-bnb-testnet-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+      
+  op-bnb-testnet-node:
+    image: ghcr.io/bnb-chain/op-node:${OPBNB_NODE_IMAGE_TAG:-v0.5.0}
+    depends_on:
+      - op-bnb-testnet
+    restart: unless-stopped
+    stop_grace_period: 5m
+    entrypoint: /scripts/op-node-start.sh
+    environment:
+      OP_NODE__RPC_ENDPOINT: ${OPBNB_BSC_ENDPOINT}
+      P2P_PRIV_KEY: ${OPBNB_NODE_PRIV_KEY}
+      NETWORK_NAME: mainnet
+      P2P_PORT: 65064
+      OP_L2_HOST: op-bnb-testnet      
+    expose:
+      - 65064
+    ports:
+      - ${PORT__OP_NODE_P2P:-65064}:65064
+#      - ${PORT__OP_NODE:-8546}:8546
+    volumes:
+      - ./op-bnb/scripts/:/scripts
+      - .jwtsecret:/jwtsecret
+      - op-bnb-testnet-node:/op_node
+    networks:
+      - chains
+
+
+volumes:
+  op-bnb-testnet-geth:
+  op-bnb-testnet-node:
