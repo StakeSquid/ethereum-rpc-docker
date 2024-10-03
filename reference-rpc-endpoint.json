@@ -190,7 +190,8 @@
       ],
       "default": [
 	  "avalanche-fuji-fullnode"
-      ]
+      ],
+      "archive": ["avalanche-fuji-archive"]
   },    
   "celo": {
     "id": 42220,
