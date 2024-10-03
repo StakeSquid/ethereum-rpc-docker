@@ -66,7 +66,7 @@ services:
       - "traefik.http.routers.erigon-linea-sepolia.entrypoints=websecure"
       - "traefik.http.routers.erigon-linea-sepolia.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-linea-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-linea-sepolia`)"
-      - "traefik.http.routers.erigon-linea-sepolia.middlewares=erigon-linea-stripprefix, ipwhitelist"
+      - "traefik.http.routers.erigon-linea-sepolia.middlewares=erigon-linea-sepolia-stripprefix, ipwhitelist"
       
 volumes:
     erigon-linea-sepolia:
