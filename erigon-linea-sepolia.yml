@@ -18,7 +18,7 @@ services:
       - "7408:7408/udp"
     volumes:
       - erigon-linea-sepolia:/root/.local/share/erigon
-      - ./linea/sepolia/shared:/configs/mainnet/shared
+      - ./linea/sepolia/shared:/configs/sepolia/shared
       - ./linea/erigon/scripts/entrypoint-sepolia.sh:/entrypoint.sh
     networks:
       - chains
