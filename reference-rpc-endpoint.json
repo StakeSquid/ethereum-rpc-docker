@@ -330,6 +330,15 @@
 	"reth-linea"
     ]
   },
+  "linea-sepolia": {
+    "id": 59141,
+    "urls": [
+      "https://rpc.sepoia.linea.build"
+    ],
+    "archive": [
+	"erigon-linea-sepolia"
+    ]
+  },    
   "lisk-sepolia": {
     "id": 4202,
     "urls": [

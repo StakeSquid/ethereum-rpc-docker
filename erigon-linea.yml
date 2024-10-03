@@ -61,11 +61,11 @@ services:
       - "prometheus-scrape.job_name=erigon-linea"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.erigon-linea-stripprefix.stripprefix.prefixes=/erigon-linea"
+      - "traefik.http.middlewares.erigon-linea-stripprefix.stripprefix.prefixes=/erigon-linea-mainnet"
       - "traefik.http.services.erigon-linea.loadbalancer.server.port=8545"
       - "traefik.http.routers.erigon-linea.entrypoints=websecure"
       - "traefik.http.routers.erigon-linea.tls.certresolver=myresolver"
-      - "traefik.http.routers.erigon-linea.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-linea`)"
+      - "traefik.http.routers.erigon-linea.rule=Host(`$DOMAIN`) && PathPrefix(`/erigon-linea-mainnet`)"
       - "traefik.http.routers.erigon-linea.middlewares=erigon-linea-stripprefix, ipwhitelist"
       
 volumes:
