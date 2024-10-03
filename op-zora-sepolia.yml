@@ -29,10 +29,11 @@ services:
       - "WS_PORT=8545"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "HOST_IP=${IP}"
-#      - "GETH_OVERRIDE_CANYON=1704992401"
-#      - "GETH_OVERRIDE_DELTA=1708560000"
-#      - "GETH_OVERRIDE_ECOTONE=1710374401"
-#      - "GETH_OVERRIDE_FJORD=1720627201"      
+      - "GETH_OVERRIDE_CANYON=0"
+      - "GETH_OVERRIDE_DELTA=0"
+      - "GETH_OVERRIDE_ECOTONE=1708534800"
+      - "GETH_OVERRIDE_FJORD=1716998400"
+      - "GETH_OVERRIDE_GRANITE=1723478400"
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.zora-stripprefix.stripprefix.prefixes=/zora-sepolia"                      
@@ -94,10 +95,10 @@ services:
       - "OP_NODE_L1_TRUST_RPC=${ZORA_SEPOLIA_L1_ENDPOINT_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${ZORA_SEPOLIA_L1_BEACON_URL}"
       - "OP_NODE_L1_BEACON_ARCHIVER=${ZORA_SEPOLIA_L1_BEACON_ARCHIVER}"
-      #- "OP_NODE_OVERRIDE_CANYON=1704992401"
-      #- "OP_NODE_OVERRIDE_DELTA=1708560000"
-      #- "OP_NODE_OVERRIDE_ECOTONE=1710374401"
-      #- "OP_NODE_OVERRIDE_FJORD=1720627201"      
+      - "OP_NODE_OVERRIDE_CANYON=0"
+      - "OP_NODE_OVERRIDE_ECOTONE=1708534800"
+      - "OP_NODE_OVERRIDE_FJORD=1716998400"
+      - "OP_NODE_OVERRIDE_GRANITE=1723478400"
     networks:                                                                                         
       - chains
       
