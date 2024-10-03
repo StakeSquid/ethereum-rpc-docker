@@ -15,7 +15,7 @@ services:
     restart: always
     stop_grace_period: 3m    
     volumes:
-      - zora-mainnet:/data
+      - zora-sepolia:/data
       - .jwtsecret:/jwtsecret
     environment:
       - "GETH_GENESIS_FILE_PATH=/app/sepolia/zora/genesis.json"
