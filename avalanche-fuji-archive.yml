@@ -14,10 +14,10 @@ services:
       - "58849:58849/udp"
     volumes:
       - avalanche-fuji-archive:/root/.avalanchego
-      - ./avalanche/configs/chains/C/fullnode-config.json:/root/.avalanchego/configs/chains/C/config.json
+      - ./avalanche/configs/chains/C/archive-config.json:/root/.avalanchego/configs/chains/C/config.json
     networks:
       - chains
-    command: "/avalanchego/build/avalanchego --network-id=fuji --http-host= --http-allowed-hosts=* --staking-port=58849 --public-ip=$IP"
+    command: "/avalanchego/build/avalanchego --network-id=fuji --http-host= --http-allowed-hosts=* --staking-port=58849 --public-ip=$IP --db-type=pebbledb"
     restart: unless-stopped
 
     
