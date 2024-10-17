@@ -4,6 +4,7 @@ services:
   base-archive: # this is Optimism's geth client
     image: ghcr.io/paradigmxyz/op-reth:v1.1.0
     expose:
+      - 9551
       - 8545       # RPC / Websocket      
       - 23238     # P2P TCP (currently unused)
       - 23238/udp # P2P UDP (currently unused)
@@ -62,7 +63,7 @@ services:
       - "OP_NODE_L1_ETH_RPC=${BASE_ETHEREUM_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://base-archive:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://base-archive:9551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"
