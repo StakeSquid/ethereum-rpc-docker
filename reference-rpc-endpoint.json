@@ -6,7 +6,8 @@
     ],
     "default": [
       "base-fullnode"
-    ]
+    ],
+      "archive": ["base-reth"]
   },
     "base-sepolia": {
     "id": 84532,

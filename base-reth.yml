@@ -1,59 +1,67 @@
 version: '3.1'
 
 services:
-  base-reth: # this is Optimism's geth client
-    image: stakesquid/op-reth 
+  base-archive: # this is Optimism's geth client
+    image: ghcr.io/paradigmxyz/op-reth:v1.1.0
     expose:
       - 8545       # RPC / Websocket      
-      - 12544     # P2P TCP (currently unused)
-      - 12544/udp # P2P UDP (currently unused)
+      - 23238     # P2P TCP (currently unused)
+      - 23238/udp # P2P UDP (currently unused)
       - 6060       # metrics
-      - 8551 #auth
+      - 855
     ports:
-      - "12544:12544"
-      - "12544:12544/udp"
-    command: node --chain base --rollup.sequencer-http https://sequencer.base.org --metrics 0.0.0.0:6060 --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --port 12544 --discovery.port 12544 --authrpc.addr 0.0.0.0 --authrpc.jwtsecret /jwtsecret --http.api "debug,eth,net,trace,txpool,web3,rpc,reth" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth" --http.corsdomain '*'
+      - "23238:23238"
+      - "23238:23238/udp"
+    #command: [ "sh", "./geth-entrypoint" ]
     restart: always
-    stop_grace_period: 30s    
+    user: root
+    stop_grace_period: 3m
+    command: node --chain base -port 23238 --discovery.port 23238 --rollup.sequencer-http https://mainnet-sequencer.base.org --http --ws --authrpc.port 9551 --authrpc.jwtsecret /jwtsecret --http.addr 0.0.0.0 --http.port 8545 --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000
     volumes:
-      - base-reth:/root/.local/share/reth/base/db/
-      - ".jwtsecret:/jwtsecret"
+      - base-reth-archive:/root/.local/share/reth/base
+      - .jwtsecret:/jwtsecret
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.base-reth-stripprefix.stripprefix.prefixes=/base-reth"                      
-      - "traefik.http.services.base-reth.loadbalancer.server.port=8545"
-      - "traefik.http.routers.base-reth.entrypoints=websecure"                                              
-      - "traefik.http.routers.base-reth.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.base-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/base-reth`)"                     
-      - "traefik.http.routers.base-reth.middlewares=base-reth-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.base-archive-stripprefix.stripprefix.prefixes=/base-archive"                      
+      - "traefik.http.services.base-archive.loadbalancer.server.port=8545"
+      - "traefik.http.routers.base-archive.entrypoints=websecure"                                              
+      - "traefik.http.routers.base-archive.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.base-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/base-archive`)"                     
+      - "traefik.http.routers.base-archive.middlewares=base-archive-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  base-reth-node:
-    build: ./base
+  base-archive-node:
+    build:
+      context: ./op
+      args:
+        OP_GETH_VERSION: v1.101408.0
+        OP_NODE_VERSION: v1.9.1      
     depends_on:
-      - base-reth
+      - base-archive
+    volumes:
+      - .jwtsecret:/jwtsecret
     expose:
       - 8545     # RPC
-      - 6543     # P2P TCP
-      - 6543/udp # P2P UDP
+      - 43470     # P2P TCP
+      - 43470/udp # P2P UDP
       - 7300     # metrics
       - 6060     # pprof
     ports:
-      - "6543:6543"
-      - "6543:6543/udp"
-    command: [ "sh", "./op-node-entrypoint" ]
-    command: ./op-node 
+      - "43470:43470"
+      - "43470:43470/udp"
+    #command: [ "sh", "./op-node-entrypoint" ]
+    entrypoint: ./op-node
     restart: always
     stop_grace_period: 30s
-    volumes:
-      - ".jwtsecret:/jwtsecret"
     environment:
       - "OP_NODE_NETWORK=base-mainnet"
+      - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${BASE_ETHEREUM_ENDPOINT}"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://base-reth:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://base-archive:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"
@@ -61,8 +69,8 @@ services:
       - "OP_NODE_P2P_AGENT=base"
       - "OP_NODE_P2P_BOOTNODES=enr:-J24QNz9lbrKbN4iSmmjtnr7SjUMk4zB7f1krHZcTZx-JRKZd0kA2gjufUROD6T3sOWDVDnFJRvqBBo62zuF-hYCohOGAYiOoEyEgmlkgnY0gmlwhAPniryHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQKNVFlCxh_B-716tTs-h1vMzZkSs1FTu_OYTNjgufplG4N0Y3CCJAaDdWRwgiQG,enr:-J24QH-f1wt99sfpHy4c0QJM-NfmsIfmlLAMMcgZCUEgKG_BBYFc6FwYgaMJMQN5dsRBJApIok0jFn-9CS842lGpLmqGAYiOoDRAgmlkgnY0gmlwhLhIgb2Hb3BzdGFja4OFQgCJc2VjcDI1NmsxoQJ9FTIv8B9myn1MWaC_2lJ-sMoeCDkusCsk4BYHjjCq04N0Y3CCJAaDdWRwgiQG,enr:-J24QDXyyxvQYsd0yfsN0cRr1lZ1N11zGTplMNlW4xNEc7LkPXh0NAJ9iSOVdRO95GPYAIc6xmyoCCG6_0JxdL3a0zaGAYiOoAjFgmlkgnY0gmlwhAPckbGHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQJwoS7tzwxqXSyFL7g0JM-KWVbgvjfB8JA__T7yY_cYboN0Y3CCJAaDdWRwgiQG,enr:-J24QHmGyBwUZXIcsGYMaUqGGSl4CFdx9Tozu-vQCn5bHIQbR7On7dZbU61vYvfrJr30t0iahSqhc64J46MnUO2JvQaGAYiOoCKKgmlkgnY0gmlwhAPnCzSHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQINc4fSijfbNIiGhcgvwjsjxVFJHUstK9L1T8OTKUjgloN0Y3CCJAaDdWRwgiQG,enr:-J24QG3ypT4xSu0gjb5PABCmVxZqBjVw9ca7pvsI8jl4KATYAnxBmfkaIuEqy9sKvDHKuNCsy57WwK9wTt2aQgcaDDyGAYiOoGAXgmlkgnY0gmlwhDbGmZaHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQIeAK_--tcLEiu7HvoUlbV52MspE0uCocsx1f_rYvRenIN0Y3CCJAaDdWRwgiQG"
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=6543"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=6543"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=43470"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=43470"
       - "OP_NODE_ROLLUP_CONFIG=mainnet/rollup.json"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_RPC_PORT=8545"
@@ -70,8 +78,9 @@ services:
       - "OP_NODE_VERIFIER_L1_CONFS=4"
       - "OP_NODE_L1_RPC_KIND=${BASE_ETHEREUM_ENDPOINT_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${BASE_ETHEREUM_ENDPOINT_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${BASE_ETHEREUM_ENDPOINT_BEACON}"
     networks:                                                                                         
       - chains
       
 volumes:  
-    base-reth:
+    base-reth-archive:
