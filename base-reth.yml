@@ -16,7 +16,7 @@ services:
     restart: always
     user: root
     stop_grace_period: 3m
-    command: node --chain base -port 23238 --discovery.port 23238 --rollup.sequencer-http https://mainnet-sequencer.base.org --http --ws --authrpc.port 9551 --authrpc.jwtsecret /jwtsecret --http.addr 0.0.0.0 --http.port 8545 --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000
+    command: node --chain base --port 23238 --discovery.port 23238 --rollup.sequencer-http https://mainnet-sequencer.base.org --http --ws --authrpc.port 9551 --authrpc.jwtsecret /jwtsecret --http.addr 0.0.0.0 --http.port 8545 --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000
     volumes:
       - base-reth-archive:/root/.local/share/reth/base
       - .jwtsecret:/jwtsecret
