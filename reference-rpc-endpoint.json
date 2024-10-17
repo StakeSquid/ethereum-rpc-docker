@@ -5,7 +5,7 @@
       "https://mainnet.base.org"
     ],
     "default": [
-      "base-fullnode"
+	"base-fullnode", "base-reth-fullnode"
     ],
       "archive": ["base-reth"]
   },
@@ -153,7 +153,8 @@
     "urls": [
       "https://rpc.blast.io"
     ],
-    "default": [
+      "default": ["op-blast-mainnet-fullnode"],
+    "archive": [
       "op-blast-mainnet"
     ]
   },
