@@ -244,7 +244,7 @@
 	    "https://1rpc.io/op"
 	],
 	"default": [
-	    "optimism-fullnode"
+	    "optimism-fullnode", "optimism-reth-fullnode"
 	]
     },
   "sepolia": {
