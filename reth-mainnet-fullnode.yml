@@ -1,43 +1,46 @@
 version: '3.1'
 
 services:
-  mainnet-reth-fullnode:
-    image: ghcr.io/paradigmxyz/reth:v0.1.0-alpha.21
+  mainnet-fullnode-reth:
+    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.1.0}
     user: root
     volumes:
-      - "reth-mainnet-fullnode:/root/.local/share/reth/mainnet/db"
+      - "reth-mainnet-fullnode:/root/.local/share/reth/mainnet"
+      - "/slowdisk:/slowdisk"
       - ".jwtsecret:/jwtsecret"
     expose:
-      - 28035
+      - 13025
       - 8545
       - 9001
     ports:
-      - "28035:28035"
-      - "28035:28035/udp"
+      - "13025:13025"
+      - "13025:13025/udp"
     restart: unless-stopped
-    command: node --chain mainnet --full --rpc-max-connections 429496729 --metrics 0.0.0.0:9001 --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --port 28035 --discovery.port 28035 --authrpc.addr 0.0.0.0 --authrpc.jwtsecret /jwtsecret --http.api "debug,eth,net,trace,txpool,web3,rpc,reth" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth" --http.corsdomain '*'
+    command: node --full --chain mainnet --rpc-max-connections 429496729 --metrics 0.0.0.0:9001 --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --port 13025 --discovery.port 13025 --authrpc.addr 0.0.0.0 --authrpc.jwtsecret /jwtsecret --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000
     stop_grace_period: 1m
     labels:
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=9001"
-      - "prometheus-scrape.job_name=mainnet-reth"
+      - "prometheus-scrape.job_name=mainnet-fullnode-reth"
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
       - "traefik.enable=true"
-      - "traefik.http.middlewares.mainnet-reth-stripprefix.stripprefix.prefixes=/mainnet-reth"
-      - "traefik.http.services.mainnet-reth.loadbalancer.server.port=8545"
-      - "traefik.http.routers.mainnet-reth.entrypoints=websecure"
-      - "traefik.http.routers.mainnet-reth.tls.certresolver=myresolver"
-      - "traefik.http.routers.mainnet-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-reth`)"
-      - "traefik.http.routers.mainnet-reth.middlewares=mainnet-reth-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.mainnet-fullnode-reth-stripprefix.stripprefix.prefixes=/mainnet-fullnode-reth"
+      - "traefik.http.services.mainnet-fullnode-reth.loadbalancer.server.port=8545"
+      - "traefik.http.routers.mainnet-fullnode-reth.entrypoints=websecure"
+      - "traefik.http.routers.mainnet-fullnode-reth.tls.certresolver=myresolver"
+      - "traefik.http.routers.mainnet-fullnode-reth.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-fullnode-reth`)"
+      - "traefik.http.routers.mainnet-fullnode-reth.middlewares=mainnet-fullnode-reth-stripprefix, ipwhitelist"
     networks:
       - chains
 
-  mainnet-prysm-reth-fullnode:
-    image: prysmaticlabs/prysm-beacon-chain:v4.2.1
+  mainnet-fullnode-prysm-reth:
+    image: prysmaticlabs/prysm-beacon-chain:v5.1.2
+    expose:
+      - 3500
     ports:
       #- "127.0.0.1:3500:3500"
-      - "32924:32924"
-      - "32924:32924/udp"
+      - "7120:7120"
+      - "7120:7120/udp"
     command:
       [
         "--datadir=/data",
@@ -46,10 +49,10 @@ services:
         "--rpc-host=0.0.0.0",
         "--grpc-gateway-host=0.0.0.0",
         "--monitoring-host=0.0.0.0",
-        "--p2p-tcp-port=32924",
-        "--p2p-udp-port=32924",
-        "--checkpoint-sync-url=https://mainnet-checkpoint-sync.stakely.io",
-        "--execution-endpoint=http://mainnet-reth-fullnode:8551",
+        "--p2p-tcp-port=7120",
+        "--p2p-udp-port=7120",
+        "--checkpoint-sync-url=https://beaconstate.info",
+        "--execution-endpoint=http://mainnet-fullnode-reth:8551",
         "--accept-terms-of-use"
       ]
     networks:
@@ -59,6 +62,14 @@ services:
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.mainnet-fullnode-reth-prysm-stripprefix.stripprefix.prefixes=/mainnet-fullnode-reth-prysm"
+      - "traefik.http.services.mainnet-fullnode-reth-prysm.loadbalancer.server.port=3500"
+      - "traefik.http.routers.mainnet-fullnode-reth-prysm.entrypoints=websecure"
+      - "traefik.http.routers.mainnet-fullnode-reth-prysm.tls.certresolver=myresolver"
+      - "traefik.http.routers.mainnet-fullnode-reth-prysm.rule=Host(`$DOMAIN`) && PathPrefix(`/mainnet-fullnode-reth-prysm`)"
+      - "traefik.http.routers.mainnet-fullnode-reth-prysm.middlewares=mainnet-fullnode-reth-prysm-stripprefix, ipwhitelist"
 
 volumes:
     reth-mainnet-fullnode:

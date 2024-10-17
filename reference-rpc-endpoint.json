@@ -51,7 +51,8 @@
 	"erigon-fullnode",
 	"nethermind-mainnet",
 	"geth-mainnet",
-	"besu-fullnode"
+	"besu-fullnode",
+	"reth-mainnet-fullnode"
     ],
     "archive": [
 	"reth-mainnet",
