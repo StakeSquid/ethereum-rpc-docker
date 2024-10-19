@@ -95,7 +95,7 @@ while IFS= read -r url; do
     export TEST_URL="$RPC_URL"
     export WS_URL=$(echo "$url" | sed -e 's|^http://|ws://|' -e 's|^https://|wss://|')
     export PROVIDER=$(echo "$url" | sed -e 's|^https\?://||' -e 's|/|-|g' -e 's|\.|-|g')
-    export ID=$PROVIDER
+    export ID="id-$PROVIDER"
     
     response_file=$(mktemp)
 		
