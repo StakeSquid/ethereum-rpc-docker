@@ -21,11 +21,21 @@ services:
     environment:
       GETH_OVERRIDE_CANYON: "1726783200"
       GETH_OVERRIDE_ECOTONE: "1726783200"
+      WS_PORT: 8545
     entrypoint:
       - "/bin/sh"
       - "/entrypoint.sh"
       - "--rollup.sequencerhttp=https://manta-pacific.calderachain.xyz/http"
       - "--authrpc.jwtsecret=/config/test-jwt-secret.txt"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.manta-pacific-mainnet-stripprefix.stripprefix.prefixes=/manta-pacific-mainnet"
+      - "traefik.http.services.manta-pacific-mainnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.manta-pacific-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.manta-pacific-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.manta-pacific-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/manta-pacific-mainnet`)"
+      - "traefik.http.routers.manta-pacific-mainnet.middlewares=manta-pacific-mainnet-stripprefix, ipwhitelist"
+      
 
   manta-pacific-node:
     depends_on:
