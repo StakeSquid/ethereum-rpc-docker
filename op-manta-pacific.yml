@@ -72,8 +72,8 @@ services:
       --rpc.port=8545
       --p2p.no-discovery=false
       --p2p.listen.ip=0.0.0.0
-      --p2p.listen.tcp=9003
-      --p2p.listen.udp=9003
+      --p2p.listen.tcp=59690
+      --p2p.listen.udp=59690
       --p2p.static=/ip4/35.82.210.70/tcp/9003/p2p/16Uiu2HAmL4fvgBQi5jcuiEYDaNcg4hpGqCmyAv4DZuSM8f2USYwQ
       --p2p.priv.path=/config/p2p-node-key.txt
       --metrics.enabled
@@ -83,7 +83,7 @@ services:
       --rpc.enable-admin
     ports:
       - "7545:8545"
-      - "9003:9003"
+      - "59690:59690"
       - "7300:7300"
       - "6060:6060"
     volumes:
