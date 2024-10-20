@@ -27,30 +27,6 @@ services:
       - "--rollup.sequencerhttp=https://manta-pacific.calderachain.xyz/http"
       - "--authrpc.jwtsecret=/config/test-jwt-secret.txt"
 
-  manta-pacific-da:
-    container_name: celestia-light-node
-    stop_signal: SIGINT
-    restart: always
-    user: root
-    image: "ghcr.io/celestiaorg/celestia-node:v0.12.1"
-    command: celestia light start --gateway --core.ip consensus.lunaroasis.net --gateway.addr light --gateway.port 26659
-    networks:
-      - chains
-    environment:
-      - NODE_TYPE=light
-    volumes:
-      - manta-pacific-celestia-light:/home/celestia/.celestia-light/
-    ports:
-      - "26657:26657"
-      - "26658:26658"
-      - "26659:26659"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:26659/header/1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
   manta-pacific-node:
     depends_on:
       - manta-pacific
@@ -62,8 +38,6 @@ services:
     environment:
       OP_NODE_S3_BUCKET: "caldera-celestia-cache-prod"
       OP_NODE_NAMESPACE_ID: 866269ddf77dbc40ed9d
-      # OP_NODE_DA_RPC: "http://light:26658"
-      # OP_NODE_AUTH_TOKEN: ${OP_NODE_AUTH_TOKEN}
       OP_NODE_S3_REGION: 'us-west-2'
       CELESTIA_LEGACY_MODE: "true"
       OP_NODE_OVERRIDE_CANYON: "1726783200"
