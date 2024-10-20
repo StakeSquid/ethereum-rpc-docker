@@ -43,6 +43,7 @@ services:
       - "43471:43471"
       - "43471:43471/udp"
     command: start --minimum-gas-prices 0atom
+    #command: init cometing --chain-id bartio-beacon-80084 --consensus-key-algo bls12_381 --home /root/.beacond/
     networks:
       - chains
     volumes:
