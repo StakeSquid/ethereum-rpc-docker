@@ -7,7 +7,7 @@ volumes:
 services:
   manta-pacific:
     build:
-      context: .
+      context: ./manta-pacific
       dockerfile: Dockerfile.l2
     ports:
       - "8545:8545"
