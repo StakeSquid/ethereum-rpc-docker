@@ -10,6 +10,8 @@ services:
     ports:
       - "8545:8545"
       - "8060:6060"
+    networks:
+      - chains
     volumes:
       - "manta-pacific:/db"
       - "./manta-pacific/manta-genesis.json:/genesis.json"
@@ -27,6 +29,8 @@ services:
     user: root
     image: "ghcr.io/celestiaorg/celestia-node:v0.12.1"
     command: celestia light start --gateway --core.ip consensus.lunaroasis.net --gateway.addr light --gateway.port 26659
+    networks:
+      - chains
     environment:
       - NODE_TYPE=light
     volumes:
@@ -48,6 +52,8 @@ services:
     image: "public.ecr.aws/i6b2w2n6/op-node:5.2.0"
     stop_signal: SIGINT
     stop_grace_period: 30s
+    networks:
+      - chains
     environment:
       OP_NODE_S3_BUCKET: "caldera-celestia-cache-prod"
       OP_NODE_NAMESPACE_ID: 866269ddf77dbc40ed9d
