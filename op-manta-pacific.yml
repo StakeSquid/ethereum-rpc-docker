@@ -1,0 +1,89 @@
+version: '3.4'
+
+volumes:
+  manta-pacific-celestia-light:
+  manta-pacific:
+
+services:
+  manta-pacific:
+    build:
+      context: ./manta-pacific
+      dockerfile: Dockerfile.l2
+    ports:
+      - "8545:8545"
+      - "8060:6060"
+    volumes:
+      - "manta-pacific:/db"
+      - "./manta-pacific/manta-genesis.json:/genesis.json"
+      - "./jwtsecret:/config/test-jwt-secret.txt"
+    entrypoint:
+      - "/bin/sh"
+      - "/entrypoint.sh"
+      - "--rollup.sequencerhttp=https://manta-pacific.calderachain.xyz/http"
+      - "--authrpc.jwtsecret=/config/test-jwt-secret.txt"
+
+  manta-pacific-da:
+    container_name: celestia-light-node
+    stop_signal: SIGINT
+    restart: always
+    user: root
+    image: "ghcr.io/celestiaorg/celestia-node:v0.12.1"
+    command: celestia light start --gateway --core.ip consensus.lunaroasis.net --gateway.addr light --gateway.port 26659
+    environment:
+      - NODE_TYPE=light
+    volumes:
+      - manta-pacific-celestia-light:/home/celestia/.celestia-light/
+    ports:
+      - "26657:26657"
+      - "26658:26658"
+      - "26659:26659"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:26659/header/1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  manta-pacific-node:
+    depends_on:
+      - manta-pacific
+    image: "public.ecr.aws/i6b2w2n6/op-node:celestia-3.0.0-dencun"
+    stop_signal: SIGINT
+    stop_grace_period: 30s
+    environment:
+      OP_NODE_S3_BUCKET: "caldera-celestia-cache-prod"
+      OP_NODE_NAMESPACE_ID: 866269ddf77dbc40ed9d
+      # OP_NODE_DA_RPC: "http://light:26658"
+      # OP_NODE_AUTH_TOKEN: ${OP_NODE_AUTH_TOKEN}
+      OP_NODE_S3_REGION: 'us-west-2'
+    command: >
+      op-node
+      --l1="${MANTA_PACIFIC_ETHEREUM_MAINNET_RPC_URL}"
+      --l2=http://manta-pacific:8551
+      --l2.jwt-secret=/config/test-jwt-secret.txt 
+      --sequencer.enabled=false
+      --verifier.l1-confs=10
+      --rollup.config=/rollup.json
+      --rpc.addr=0.0.0.0
+      --rpc.port=8545
+      --p2p.no-discovery=false
+      --p2p.listen.ip=0.0.0.0
+      --p2p.listen.tcp=9003
+      --p2p.listen.udp=9003
+      --p2p.static=/ip4/35.82.210.70/tcp/9003/p2p/16Uiu2HAmL4fvgBQi5jcuiEYDaNcg4hpGqCmyAv4DZuSM8f2USYwQ
+      --p2p.priv.path=/config/p2p-node-key.txt
+      --metrics.enabled
+      --metrics.addr=0.0.0.0
+      --metrics.port=7300
+      --pprof.enabled
+      --rpc.enable-admin
+    ports:
+      - "7545:8545"
+      - "9003:9003"
+      - "7300:7300"
+      - "6060:6060"
+    volumes:
+      - "./manta-pacific/p2p-node-key.txt:/config/p2p-node-key.txt"
+      - "./jwtsecret:/config/test-jwt-secret.txt"
+      - "./manta-pacific/manta-rollup.json:/rollup.json"
+

@@ -100,7 +100,18 @@
       "archive": [
 	  "arb-alephzero-mainnet"
     ]
-  },    
+  },
+    "manta-pacific": {
+	"id": 169,
+	"urls": ["https://manta-pacific-gascap.calderachain.xyz/http"],
+	"default": ["op-manta-pacific"]
+    },
+    "manta-pacific-sepolia": {
+	"id": 3441005 ,
+	"urls": ["https://manta-testnet.calderachain.xyz/http"],
+	"default": ["op-manta-pacific-sepolia"]
+    },
+    
   "everclear-sepolia": {
     "id": 6398,
     "urls": [
