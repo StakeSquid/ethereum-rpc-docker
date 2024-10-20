@@ -85,7 +85,8 @@ for path in $pathlist; do
 					    echo "lagging"
 					    exit 0
 					else
-					    echo "syncing ($(./catchup.sh $1))" 
+					    #echo "syncing ($(./catchup.sh $1))"
+					    echo "syncing"
 					    exit 1
 					fi
 				    fi
@@ -103,7 +104,8 @@ for path in $pathlist; do
 		    echo "online"
 		    exit 0
 		else
-		    echo "behind ($(./catchup.sh $1))"
+		    echo "behind"
+		    #echo "behind ($(./catchup.sh $1))"
 		    exit 1
 		fi		
 	    elif [[ $http_status_code -eq 404 ]]; then
