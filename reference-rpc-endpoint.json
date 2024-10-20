@@ -82,8 +82,12 @@
       "https://rpc.alephzero-testnet.gelato.digital"
     ],
     "default": [
+      "arb-alephzero-sepolia-pbss"
+    ],
+      "archive": [
       "arb-alephzero-sepolia"
     ]
+
   },
   "alephzero": {
     "id": 41455,
@@ -91,7 +95,10 @@
       "https://rpc.alephzero.raas.gelato.cloud"
     ],
     "default": [
-      "arb-alephzero-mainnet"
+      "arb-alephzero-mainnet-pbss"
+    ],
+      "archive": [
+	  "arb-alephzero-mainnet"
     ]
   },    
   "everclear-sepolia": {

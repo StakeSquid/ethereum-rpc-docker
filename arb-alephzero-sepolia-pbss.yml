@@ -1,0 +1,60 @@
+version: '3.1'
+
+services:
+  arb-alephzero-sepolia:
+    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.1.0-7d1d84c}'
+    stop_grace_period: 3m
+    user: root
+    volumes:
+      - 'arb-alephzero-sepolia:/persistent'
+      - './arb/sepolia/alephzero/baseConfig.json:/baseConfig.json'      
+    expose:
+      - 8547 # http + ws
+    command:
+      - --conf.file=/baseConfig.json
+      - --persistent.ancient=/persistent/ancient
+      - --persistent.chain=/persistent/chain
+      - --persistent.global-config=/persistent/global-config
+      #- --execution.caching.archive=true
+      - --execution.caching.state-scheme=path
+      - --persistent.db-engine=pebble      
+      - --execution.forwarding-target=https://rpc.alephzero-testnet.gelato.digital
+      - --node.feed.input.url=wss://feed.alephzero-testnet.gelato.digital
+      - --parent-chain.connection.url=${ALEPHZERO_SEPOLIA_PARENT_RPC}
+      - --http.addr=0.0.0.0
+      - --http.port=8547
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --http.api=eth,net,web3,arb,txpool,debug
+      - --ws.port=8547
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+      - --ws.api=eth,net,web3,arb,txpool,debug
+      - --node.data-availability.enable=true
+      - --node.data-availability.sequencer-inbox-address=0x16Ef70c48EF4BaaCfdaa4AfdD37F69332832a0bD
+      - --node.data-availability.parent-chain-node-url=${ALEPHZERO_SEPOLIA_PARENT_RPC}
+      - --parent-chain.blob-client.beacon-url=${ALEPHZERO_SEPOLIA_PARENT_BEACON_REST}
+      - --node.data-availability.rest-aggregator.enable=true
+      - --node.data-availability.rest-aggregator.urls=https://das.alephzero-testnet.gelato.digital
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=6070
+      - --log-type=json
+      - --node.sequencer=false
+      - --execution.sequencer.enable=false
+      - --node.staker.enable=false
+      - --node.batch-poster.enable=false
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.alephzero-sepolia-stripprefix.stripprefix.prefixes=/alephzero-sepolia"                      
+      - "traefik.http.services.alephzero-sepolia.loadbalancer.server.port=8547"
+      - "traefik.http.routers.alephzero-sepolia.entrypoints=websecure"                                              
+      - "traefik.http.routers.alephzero-sepolia.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.alephzero-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/alephzero-sepolia`)"                     
+      - "traefik.http.routers.alephzero-sepolia.middlewares=alephzero-sepolia-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:  
+    arb-alephzero-sepolia:
