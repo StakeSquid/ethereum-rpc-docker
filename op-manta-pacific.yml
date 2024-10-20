@@ -16,6 +16,9 @@ services:
       - "manta-pacific:/db"
       - "./manta-pacific/manta-genesis.json:/genesis.json"
       - "./jwtsecret:/config/test-jwt-secret.txt"
+    environment:
+      GETH_OVERRIDE_CANYON: "1726783200"
+      GETH_OVERRIDE_ECOTONE: "1726783200"
     entrypoint:
       - "/bin/sh"
       - "/entrypoint.sh"
@@ -60,6 +63,11 @@ services:
       # OP_NODE_DA_RPC: "http://light:26658"
       # OP_NODE_AUTH_TOKEN: ${OP_NODE_AUTH_TOKEN}
       OP_NODE_S3_REGION: 'us-west-2'
+      CELESTIA_LEGACY_MODE: "true"
+      OP_NODE_OVERRIDE_CANYON: "1726783200"
+      OP_NODE_OVERRIDE_DELTA: "1726783200"
+      OP_NODE_OVERRIDE_ECOTONE: "1726783200"
+      OP_NODE_L1_BEACON_IGNORE: "true"      
     command: >
       op-node
       --l1="${MANTA_PACIFIC_ETHEREUM_MAINNET_RPC_URL}"
