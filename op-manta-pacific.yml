@@ -6,7 +6,9 @@ volumes:
 
 services:
   manta-pacific:
-    image: "public.ecr.aws/i6b2w2n6/op-geth:5.2.0"
+    build:
+      context: .
+      dockerfile: Dockerfile.l2
     ports:
       - "8545:8545"
       - "8060:6060"
@@ -20,6 +22,8 @@ services:
       GETH_OVERRIDE_CANYON: "1726783200"
       GETH_OVERRIDE_ECOTONE: "1726783200"
     command:
+      - "/bin/sh"
+      - "/entrypoint.sh"
       - "--rollup.sequencerhttp=https://manta-pacific.calderachain.xyz/http"
       - "--authrpc.jwtsecret=/config/test-jwt-secret.txt"
 

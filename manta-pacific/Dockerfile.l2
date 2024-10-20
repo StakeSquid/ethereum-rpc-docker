@@ -1,4 +1,4 @@
-FROM us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:optimism
+FROM public.ecr.aws/i6b2w2n6/op-geth:5.2.0
 
 RUN apk add --no-cache jq
 
