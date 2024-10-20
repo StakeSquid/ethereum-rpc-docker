@@ -19,9 +19,7 @@ services:
     environment:
       GETH_OVERRIDE_CANYON: "1726783200"
       GETH_OVERRIDE_ECOTONE: "1726783200"
-    entrypoint:
-      - "/bin/sh"
-      - "/entrypoint.sh"
+    command:
       - "--rollup.sequencerhttp=https://manta-pacific.calderachain.xyz/http"
       - "--authrpc.jwtsecret=/config/test-jwt-secret.txt"
 
