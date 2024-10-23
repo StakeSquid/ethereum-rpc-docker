@@ -13,8 +13,8 @@ services:
       - "8546"                                                                           
       - "29061"                                                                          
     volumes:                                                                             
-      - bsc-testnet:/bsc-testnet/.ethereum                                                                                                                                                
-      - ./bsc-testnet/config:/bsc-testnet/config
+      - bsc-testnet:/bsc/.ethereum                                                                                                                                                
+      - ./bsc-testnet/config:/bsc/config
     entrypoint: geth
     command: --config=/bsc-testnet/config/config.toml --ws.origins='*' --history.transactions=0 --state.scheme=path --syncmode=full --db.engine=pebble --rpc.gascap=600000000
     restart: unless-stopped
