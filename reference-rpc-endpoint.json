@@ -392,6 +392,11 @@
 	"reth-bsc-fullnode"
     ]
   },
+    "bsc-testnet": {
+	"id": 97,
+	"urls": ["https://data-seed-prebsc-1-s3.bnbchain.org:8545"],
+	"default": ["bsc-testnet"]
+    },
   "bartio": {
     "id": 80084,
     "urls": [
