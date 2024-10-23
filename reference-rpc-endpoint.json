@@ -263,7 +263,8 @@
 	],
 	"default": [
 	    "optimism-fullnode", "optimism-reth-fullnode"
-	]
+	],
+	"archive": ["optimism-reth"]
     },
   "sepolia": {
     "id": 11155111,
