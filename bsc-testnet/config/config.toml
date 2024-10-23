@@ -40,7 +40,7 @@ WSModules = ["net", "web3", "eth"]
 MaxPeers = 222
 NoDiscovery = false
 StaticNodes = []
-ListenAddr = ":29061"
+ListenAddr = ":17474"
 EnableMsgEvents = false
 
 
