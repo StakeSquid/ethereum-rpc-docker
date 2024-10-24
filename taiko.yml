@@ -1,6 +1,6 @@
 services:
   taiko:
-    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.11.1
+    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.5.0
     restart: unless-stopped
     stop_grace_period: 3m
     volumes:
@@ -48,11 +48,10 @@ services:
       - chains
 
   taiko-client-driver:
-    image: us-docker.pkg.dev/evmchain/images/taiko-client:taiko-client-v0.39.1
+    image: us-docker.pkg.dev/evmchain/images/taiko-client:taiko-client-v0.29.0
     restart: unless-stopped
     depends_on:
       - taiko
-      - taiko-beacon-proxy
     environment:
       - "TAIKO_L1_ADDRESS=0x06a9Ab27c7e2255df1815E6CC0168d7755Feb19a"
       - "TAIKO_TOKEN_L1_ADDRESS=0x10dea67478c5F8C5E2D90e5E9B26dBe60c54d800"
@@ -60,7 +59,7 @@ services:
       - "TAIKO_L2_ADDRESS=0x1670000000000000000000000000000000010001"
       - "L1_ENDPOINT_HTTP=${TAIKO_MAINNET_EXECUTION_RPC}"
       - "L1_ENDPOINT_WS=${TAIKO_MAINNET_EXECUTION_WS}"
-      - "L1_BEACON_HTTP=http://taiko-beacon-proxy/"
+      - "L1_BEACON_HTTP=${TAIKO_MAINNET_BEACON_REST}"
       - "L2_CHECKPOINT_SYNC_RPC=https://rpc.mainnet.taiko.xyz"
     volumes:
       - taiko:/data/taiko-geth
@@ -71,19 +70,6 @@ services:
       - "/script/start-driver.sh"
     networks:
       - chains
-
-  taiko-beacon-proxy:         
-    restart: unless-stopped
-    image: nginx
-    expose:  
-      - 80                                                                                            
-    environment:                                                                                      
-      TARGET_URL: ${TAIKO_MAINNET_BEACON_REST}
-    networks:               
-      - chains 
-    volumes:               
-      - ./nginx-forwarder:/etc/nginx/templates
-
       
 volumes:
   taiko:
