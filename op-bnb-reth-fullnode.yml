@@ -1,0 +1,58 @@
+services:
+
+  op-bnb-reth-fullnode:
+    image: ghcr.io/bnb-chain/op-reth:v1.0.4
+    restart: unless-stopped
+    stop_grace_period: 5m
+    command: node --datadir=/data --chain=opbnb-mainnet --rollup.sequencer-http=https://opbnb-mainnet-rpc.bnbchain.org --authrpc.addr="0.0.0.0" --authrpc.port=8551 --authrpc.jwtsecret=/jwtsecret --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000 --port 63815 --discovery.port 63815
+    volumes: 
+      - .jwtsecret:/jwtsecret      
+      - op-bnb-reth-fullnode:/data
+    expose:
+      - 8545
+      - 8551
+    ports:
+      - "63815:63815"
+      - "63815:63815/udp"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.op-bnb-reth-fullnode-stripprefix.stripprefix.prefixes=/opbnb-reth-fullnode"
+      - "traefik.http.services.op-bnb-reth-fullnode.loadbalancer.server.port=8545"
+      - "traefik.http.routers.op-bnb-reth-fullnode.entrypoints=websecure"
+      - "traefik.http.routers.op-bnb-reth-fullnode.tls.certresolver=myresolver"
+      - "traefik.http.routers.op-bnb-reth-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/opbnb-reth-fullnode`)"
+      - "traefik.http.routers.op-bnb-reth-fullnode.middlewares=op-bnb-reth-fullnode-stripprefix, ipwhitelist"
+    networks:
+      - chains
+      
+  op-bnb-reth-fullnode-node:
+    image: ghcr.io/bnb-chain/op-node:${OPBNB_NODE_IMAGE_TAG:-v0.5.0}
+    depends_on:
+      - op-bnb-reth-fullnode
+    restart: unless-stopped
+    stop_grace_period: 5m
+    entrypoint: /scripts/op-node-start.sh
+    environment:
+      OP_NODE__RPC_ENDPOINT: ${OPBNB_BSC_ENDPOINT}      
+#      OP_NODE_L1_RPC_KIND: erigon
+      OP_L2_HOST: op-bnb-reth-fullnode
+      P2P_PRIV_KEY: ${OPBNB_NODE_PRIV_KEY}
+      NETWORK_NAME: mainnet
+    expose:
+      - 34098
+    env_file:
+      - .env
+    ports:
+      - ${PORT__OP_NODE_P2P:-34098}:34098
+#      - ${PORT__OP_NODE:-8546}:8546
+    volumes:
+      - ./op-bnb/scripts/:/scripts
+      - .jwtsecret:/jwtsecret
+      - op-bnb-reth-fullnode-node:/op_node
+    networks:
+      - chains
+
+
+volumes:
+  op-bnb-reth-fullnode:
+  op-bnb-reth-fullnode-node:

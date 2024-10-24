@@ -412,7 +412,8 @@
 	    "https://opbnb-mainnet-rpc.bnbchain.org"
 	],
 	"default": [
-	    "op-bnb"
+	    "op-bnb",
+	    "op-bnb-reth-fullnode"
 	],
 	"archive": ["op-bnb-reth"]
     },
