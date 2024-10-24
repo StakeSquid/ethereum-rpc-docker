@@ -14,7 +14,7 @@ RUN git clone $OP_REPO --branch op-node/$OP_VERSION --single-branch . && \
 RUN cd op-node && \
     make op-node
 
-FROM golang:1.21 as geth
+FROM golang:1.22 as geth
 
 WORKDIR /app
 
