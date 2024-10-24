@@ -1,4 +1,4 @@
-FROM golang:1.21 as op
+FROM golang:1.22 as op
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ RUN git clone $GETH_REPO --branch $GETH_VERSION --single-branch . && \
 
 RUN go run build/ci.go install -static ./cmd/geth
 
-FROM golang:1.21
+FROM golang:1.22
 
 RUN apt-get update && \
     apt-get install -y jq curl && \
