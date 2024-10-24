@@ -73,7 +73,8 @@ services:
       - chains
 
   taiko-beacon-proxy:         
-    restart: unless-stopped           
+    restart: unless-stopped
+    image: nginx
     expose:  
       - 80                                                                                            
     environment:                                                                                      
