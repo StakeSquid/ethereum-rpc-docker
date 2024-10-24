@@ -49,7 +49,7 @@ services:
       - chains
 
   taiko-hekla-client-driver:
-    image: us-docker.pkg.dev/evmchain/images/taiko-client:taiko-client-v0.39.1
+    image: us-docker.pkg.dev/evmchain/images/taiko-client:sha-52a9362
     #pull_policy: always
     restart: unless-stopped
     depends_on:
