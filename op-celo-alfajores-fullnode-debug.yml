@@ -4,6 +4,8 @@ services:
       context: ./op
       dockerfile: Dockerfile.debug
       args:
+        OP_NODE_REPO: https://github.com/celo-org/optimism.git
+        OP_NODE_VERSION: celo9
         OP_GETH_REPO: https://github.com/celo-org/op-geth.git
         OP_GETH_VERSION: celo8
     volumes:
@@ -16,6 +18,8 @@ services:
       context: ./op
       dockerfile: Dockerfile.debug
       args:
+        OP_NODE_REPO: https://github.com/celo-org/optimism.git
+        OP_NODE_VERSION: celo9
         OP_GETH_REPO: https://github.com/celo-org/op-geth.git
         OP_GETH_VERSION: celo8
     depends_on:
@@ -74,6 +78,8 @@ services:
       args:
         OP_NODE_REPO: https://github.com/celo-org/optimism.git
         OP_NODE_VERSION: celo9
+        OP_GETH_REPO: https://github.com/celo-org/op-geth.git
+        OP_GETH_VERSION: celo8        
     depends_on:
       - op-celo-alfajores-fullnode
       - op-celo-alfajores-key-generator
