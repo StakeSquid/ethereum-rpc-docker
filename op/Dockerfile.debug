@@ -30,23 +30,23 @@ RUN apt-get update && apt-get install -y \
 ARG OP_NODE_REPO=https://github.com/ethereum-optimism/optimism.git
 ARG OP_NODE_VERSION
 ARG OP_NODE_COMMIT 
-RUN git clone $OP_NODE_REPO --branch op-node/$OP_NODE_VERSION --single-branch . && \
+RUN git clone $OP_NODE_REPO --branch $OP_NODE_VERSION --single-branch . && \
     git switch -c branch-$OP_NODE_VERSION
 
 # Install pnpm
-RUN npm install -g pnpm && \
-    curl -L https://foundry.paradigm.xyz | bash 
+#RUN npm install -g pnpm && \
+#    curl -L https://foundry.paradigm.xyz | bash 
 
-ENV PATH="${PATH}:/root/.foundry/bin"
-RUN /root/.foundry/bin/foundryup
+#ENV PATH="${PATH}:/root/.foundry/bin"
+#RUN /root/.foundry/bin/foundryup
 
 # Assuming the op-node project is located at the root of the repository
 # Install dependencies and build the project
-RUN cd op-node && pnpm install && pnpm build && ls
+#RUN cd op-node && pnpm install && pnpm build && ls
 
 
 # Now, switch to the Golang image for the rest of the operations
-FROM golang:1.21 as op-node
+FROM golang:1.22 as op-node
 
 WORKDIR /app
 
