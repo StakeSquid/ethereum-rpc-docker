@@ -1,29 +1,7 @@
 services:
-  init:
-    build:
-      context: ./op
-      dockerfile: Dockerfile.debug
-      args:
-        OP_NODE_REPO: https://github.com/celo-org/optimism.git
-        OP_NODE_VERSION: celo9
-        OP_GETH_REPO: https://github.com/celo-org/op-geth.git
-        OP_GETH_VERSION: celo8
-    volumes:
-      - "op-celo-alfajores-fullnode:/datadir"
-      - "./celo/alfajores:/config"
-    command: init --datadir /datadir /config/genesis.json
     
   op-celo-alfajores-fullnode:
-    build:
-      context: ./op
-      dockerfile: Dockerfile.debug
-      args:
-        OP_NODE_REPO: https://github.com/celo-org/optimism.git
-        OP_NODE_VERSION: celo9
-        OP_GETH_REPO: https://github.com/celo-org/op-geth.git
-        OP_GETH_VERSION: celo8
-    depends_on:
-      - init
+    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth@sha256:13fa55221309e4e453fd8c383d51aa6d065695f14a64ab25c85aa7d9301173e0
     volumes:
       - "op-celo-alfajores-fullnode:/datadir"
       - ".jwtsecret:/jwtsecret"
