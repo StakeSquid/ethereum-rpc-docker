@@ -57,7 +57,7 @@ RUN cd op-node && ls && \
     make op-node
 
 
-FROM golang:1.21 as op-wheel
+FROM golang:1.22 as op-wheel
 
 WORKDIR /app
 
@@ -67,7 +67,7 @@ COPY --from=nodebuild /app /app
 RUN  cd op-wheel && \
     make op-wheel
 
-FROM golang:1.21 as geth
+FROM golang:1.22 as geth
 
 WORKDIR /app
 ENV OP_GETH_REPO=https://github.com/ethereum-optimism/op-geth.git
@@ -80,7 +80,7 @@ RUN git clone $OP_GETH_REPO --branch $OP_GETH_VERSION --single-branch . && \
 
 RUN go run build/ci.go install -static ./cmd/geth
 
-FROM golang:1.21
+FROM golang:1.22
 
 RUN apt-get update && \
     apt-get install -y jq curl supervisor && \
