@@ -11,7 +11,7 @@ keys=$(cat $dir/$2.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
 files=()
 
 for key in $keys; do
-    volume_name="rpc_$key"
+    volume_name="rpc_$key-20" # needs to be followed by a date 2024
 
     need_to_copy_file=$($dir/list-backups.sh $1 | grep "${volume_name}" | sort | tail -n 1)
 
