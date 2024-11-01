@@ -422,6 +422,11 @@
 	"urls": ["https://opbnb-testnet-rpc.bnbchain.org"],
 	"default": ["op-bnb-testnet"]
     },
+    "goat-testnet": {
+	"id": 2345,
+	"urls": ["https://goat-testnet.drpc.org"],
+	"default": ["goat-testnet"]
+    },    
     "zksync": {
 	"id": 324,
 	"urls": ["https://1rpc.io/zksync2-era"],

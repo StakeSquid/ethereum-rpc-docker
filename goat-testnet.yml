@@ -1,0 +1,77 @@
+services:
+
+  goat-testnet:
+    image: ghcr.io/goatnetwork/goat-geth:testnet
+    pull_policy: always
+    stop_grace_period: 5m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "geth attach --exec eth.blockNumber"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - "GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
+    command:
+      - --http
+      - --http.api=eth,net,web3
+      - --http.addr=0.0.0.0
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.port=8545
+      - --ws.origins=*
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --syncmode=full
+      - --port=18141
+      - --bootnodes=enode://0d41d098846751f0f90ea66e4d7e6741591e9c4bfb6e75d14f78ca3702415fb795adad64b2805f428c86f6ae2ee5315322301e02c63c917f92756a909679599e@52.12.249.134:30303
+    expose:
+      - 8545
+      - 6060
+    ports:
+      - "18141:18141"
+      - "18141:18141/udp"
+    volumes:
+      - "goat-testnet:/root/.ethereum"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.goat-testnet-stripprefix.stripprefix.prefixes=/goat-testnet"
+      - "traefik.http.services.goat-testnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.goat-testnet.entrypoints=websecure"
+      - "traefik.http.routers.goat-testnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.goat-testnet.rule=Host(`$DOMAIN`) && PathPrefix(`/goat-testnet`)"
+      - "traefik.http.routers.goat-testnet.middlewares=goat-testnet-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+        
+  goat-testnet-node:
+    image: ghcr.io/goatnetwork/goat:testnet
+    pull_policy: always
+    stop_grace_period: 30s
+    restart: unless-stopped
+    command:
+      - --home
+      - /goat
+      - --goat.geth
+      - /geth/geth.ipc
+      - --api.enable
+      - --api.address=tcp://0.0.0.0:1317
+      - --p2p.persistent_peers
+      - c9befb6b8421b46ec5cda76171a8cf7539af20fc@52.12.249.134:26656
+    volumes:
+      - "goat-testnet-node:/goat"
+      - "goat-testnet:/geth"
+    depends_on:
+      goat-testnet:
+        condition: service_healthy
+    networks:
+      - chains
+
+volumes:
+  goat-testnet:
+  goat-testnet-node:        
