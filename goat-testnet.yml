@@ -1,10 +1,24 @@
 services:
 
+  goat-testnet-init:
+    image: ghcr.io/goatnetwork/goat-geth:testnet
+    pull_policy: always
+    entrypoint: ["sh", "-c"]
+    command: [ ! -d "/root/.ethereum/geth/chaindata" ] && geth init /genesis/geth.json
+    environment:
+      - "GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
+    volumes:
+      - goat-testnet:/root/.ethereum
+      - ./goat/testnet:/genesis
+
   goat-testnet:
     image: ghcr.io/goatnetwork/goat-geth:testnet
     pull_policy: always
     stop_grace_period: 5m
     restart: unless-stopped
+    depends_on:
+      - goat-testnet-init
     healthcheck:
       test: ["CMD-SHELL", "geth attach --exec eth.blockNumber"]
       interval: 5s
@@ -48,7 +62,16 @@ services:
     networks:
       - chains
 
-        
+  goat-testnet-node-init:
+    image: ghcr.io/goatnetwork/goat:testnet
+    pull_policy: always
+    entrypoint: ["sh", "-c"]
+    command: [ ! -f /goat/config/genesis.json ] && goatd init --home /goat testnet && cp /genesis/goat.json /goat/config/genesis.json
+    volumes:
+      - goat-testnet-node:/goat
+      - ./goat/testnet:/genesis
+
+      
   goat-testnet-node:
     image: ghcr.io/goatnetwork/goat:testnet
     pull_policy: always
@@ -69,6 +92,7 @@ services:
     depends_on:
       goat-testnet:
         condition: service_healthy
+      goat-testnet-node-init:
     networks:
       - chains
 

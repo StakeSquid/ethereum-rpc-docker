@@ -1,0 +1,341 @@
+{
+  "app_name": "goatd",
+  "app_version": "testnet-ad223b396d101427a3c6af395a2e68adc6fea91f",
+  "genesis_time": "2024-10-17T07:50:30.814372Z",
+  "chain_id": "goat-testnet-1",
+  "initial_height": 1,
+  "app_hash": null,
+  "app_state": {
+    "auth": {
+      "params": {
+        "max_memo_characters": "256",
+        "tx_sig_limit": "7",
+        "tx_size_cost_per_byte": "10",
+        "sig_verify_cost_ed25519": "590",
+        "sig_verify_cost_secp256k1": "1000"
+      },
+      "accounts": [
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "goat15mmpukanhsdnpafccn5wa4prpq62pr6nkaesg5",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A66PkCuDhG+lzL34qj6xjVT+G5HgfjT/eTcEknjfgAdm"
+          },
+          "account_number": "0",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "goat1zuymxz46ec2e38rpgv20vfgvzy5k7z9slc3q6u",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A8z26ahLLJmLOjkjwM65ec8YPMuDOaHGtLk6u+wv8O1u"
+          },
+          "account_number": "1",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "goat1wgc3ykvtzlwtatwxfqucz2v0lu6qrgs6yy94te",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A6R0NMXxVlxc2e5TUtFTMrO8z5veuL3+FeTzNlNKZ4Xz"
+          },
+          "account_number": "2",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "goat127yataz2erv2uu6xzlu5crrgj7juwnylvyleht",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A8w4PPz4pK7shRz+PGcWtXRtM2rgxM/+8ihUoYXO7L5X"
+          },
+          "account_number": "3",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "goat1ea4x6tcke5xwrdm2uxs8huxnvs4a6n5yty0g25",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "Awp6knDQsLhC9lY4ZLGU/SojsPoVHpn8WJhrUpc7sPK5"
+          },
+          "account_number": "4",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "goat12e5muz46z5wsnp3n59lsk5ntquc7y4m0j4v64m",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AiUaY2dikhS1vlWKQuGyEPWmmwEdeDRaqC7Lv0ZLcBu7"
+          },
+          "account_number": "5",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "goat1zstgatvg78ca2f7erqt0y7vc557z7qkw2eld6d",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "Al7lZ3Ag9typq8mrG2mJK5S3GGTO1Nl5npWqUiP0RdJ1"
+          },
+          "account_number": "6",
+          "sequence": "0"
+        }
+      ]
+    },
+    "bitcoin": {
+      "params": {
+        "network_name": "testnet3",
+        "confirmation_number": 1,
+        "min_deposit_amount": "10000",
+        "deposit_magic_prefix": "R1RWMQ=="
+      },
+      "block_tip": "3191651",
+      "block_hashes": ["Cl5ITwtpp8o2Yq22em+dS08kFNtKWFThV7G8DgAAAAA="],
+      "eth_tx_nonce": "0",
+      "eth_tx_queue": {
+        "block_number": "3191651",
+        "deposits": [],
+        "paid_withdrawals": [],
+        "rejected_withdrawals": []
+      },
+      "pubkey": {
+        "secp256k1": "AozQg32UFD6xlP1iXsDtq23r/KGPfwWflxh9F5Vf79Gw"
+      },
+      "deposits": [
+        {
+          "txid": "LhF6QB9Z0EzQkToexpY0iRpb8Sbsp5XTwNihjSzOgLM=",
+          "txout": 0,
+          "amount": "1000000000"
+        },
+        {
+          "txid": "OtaeLwhok3wpLVE/sQKFKwbmaBEM/IIXbhYSHmmcW1I=",
+          "txout": 0,
+          "amount": "1000000000"
+        },
+        {
+          "txid": "SvrWiKXwJQ4dncq/QEmMZbs9202aZD5FH8YEVegq+ZU=",
+          "txout": 0,
+          "amount": "1000000000"
+        },
+        {
+          "txid": "M+dSA0XuQ8KQ1bOTDimd5Jxn2OXoJMonJeugY+f2Vpc=",
+          "txout": 0,
+          "amount": "1000000000"
+        }
+      ],
+      "withdrawals": []
+    },
+    "consensus": null,
+    "goat": {
+      "params": {},
+      "eth_block": {
+        "parent_hash": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "fee_recipient": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "state_root": "8K11Q5yepZEexyKGIX88U/5JJbD6OwmbePCDHjZvF0k=",
+        "receipts_root": "VugfFxvMVab/g0XmksD4bltI4BuZbK3AAWIvteNjtCE=",
+        "logs_bloom": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "prev_randao": "AQ==",
+        "block_number": "0",
+        "gas_limit": "30000000",
+        "gas_used": "0",
+        "timestamp": "1729148722",
+        "extra_data": "AFboHxcbzFWm/4NF5pLA+G5bSOAbmWytwAFiL7XjY7Qh",
+        "base_fee_per_gas": "500000000",
+        "block_hash": "BKDX5aoWEvPzv+ayvu8rTl33mKcRUodvOXB5SQcg3jQ=",
+        "transactions": [],
+        "beacon_root": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "blob_gas_used": "0",
+        "excess_blob_gas": "0",
+        "requests": []
+      },
+      "beacon_root": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    },
+    "locking": {
+      "params": {
+        "unlock_duration": "1800s",
+        "exiting_duration": "3600s",
+        "downtime_jail_duration": "10800s",
+        "max_validators": "20",
+        "signed_blocks_window": "1200",
+        "max_missed_per_window": "200",
+        "slash_fraction_double_sign": "0.050000000000000000",
+        "slash_fraction_downtime": "0.020000000000000000",
+        "halving_interval": "42048000",
+        "initial_block_reward": "2378234400000000000"
+      },
+      "validators": [
+        {
+          "pubkey": "A66PkCuDhG+lzL34qj6xjVT+G5HgfjT/eTcEknjfgAdm",
+          "power": "120000",
+          "locking": [
+            {
+              "denom": "btc",
+              "amount": "10000000000000000000"
+            }
+          ],
+          "reward": "0",
+          "gas_reward": "0",
+          "status": "VALIDATOR_STATUS_ACTIVE",
+          "signing_info": {
+            "offset": "0",
+            "missed": "0"
+          },
+          "jailed_until": "0001-01-01T00:00:00Z"
+        },
+        {
+          "pubkey": "A8z26ahLLJmLOjkjwM65ec8YPMuDOaHGtLk6u+wv8O1u",
+          "power": "120000",
+          "locking": [
+            {
+              "denom": "btc",
+              "amount": "10000000000000000000"
+            }
+          ],
+          "reward": "0",
+          "gas_reward": "0",
+          "status": "VALIDATOR_STATUS_ACTIVE",
+          "signing_info": {
+            "offset": "0",
+            "missed": "0"
+          },
+          "jailed_until": "0001-01-01T00:00:00Z"
+        },
+        {
+          "pubkey": "A6R0NMXxVlxc2e5TUtFTMrO8z5veuL3+FeTzNlNKZ4Xz",
+          "power": "120000",
+          "locking": [
+            {
+              "denom": "btc",
+              "amount": "10000000000000000000"
+            }
+          ],
+          "reward": "0",
+          "gas_reward": "0",
+          "status": "VALIDATOR_STATUS_ACTIVE",
+          "signing_info": {
+            "offset": "0",
+            "missed": "0"
+          },
+          "jailed_until": "0001-01-01T00:00:00Z"
+        },
+        {
+          "pubkey": "A8w4PPz4pK7shRz+PGcWtXRtM2rgxM/+8ihUoYXO7L5X",
+          "power": "120000",
+          "locking": [
+            {
+              "denom": "btc",
+              "amount": "10000000000000000000"
+            }
+          ],
+          "reward": "0",
+          "gas_reward": "0",
+          "status": "VALIDATOR_STATUS_ACTIVE",
+          "signing_info": {
+            "offset": "0",
+            "missed": "0"
+          },
+          "jailed_until": "0001-01-01T00:00:00Z"
+        }
+      ],
+      "tokens": [
+        {
+          "denom": "btc",
+          "token": {
+            "weight": "12000",
+            "threshold": "10000000000000000000"
+          }
+        },
+        {
+          "denom": "goat",
+          "token": {
+            "weight": "1",
+            "threshold": "0"
+          }
+        }
+      ],
+      "slashed": [],
+      "eth_tx_nonce": "0",
+      "eth_tx_queue": {
+        "rewards": [],
+        "unlocks": []
+      },
+      "reward_pool": {
+        "goat": "0",
+        "gas": "0",
+        "remain": "200000000000000000000000000"
+      },
+      "unlock_queue": []
+    },
+    "relayer": {
+      "params": {
+        "electing_period": "600s",
+        "accept_proposer_timeout": "60s"
+      },
+      "relayer": {
+        "epoch": "0",
+        "proposer": "goat12e5muz46z5wsnp3n59lsk5ntquc7y4m0j4v64m",
+        "voters": [
+          "goat1ea4x6tcke5xwrdm2uxs8huxnvs4a6n5yty0g25",
+          "goat1zstgatvg78ca2f7erqt0y7vc557z7qkw2eld6d"
+        ],
+        "last_elected": "2024-10-17T07:07:31.152110Z",
+        "proposer_accepted": true
+      },
+      "sequence": "0",
+      "voters": [
+        {
+          "address": "z2ptLxbNDOG3auGge/DTZCvdToQ=",
+          "vote_key": "kQ2HeAvszmkZ351vsP+zrAOE6aP29qvWb2j77oXAasdZcQr1xkvdRCqggkzKDjc4GfGtpfxC+VWarHcaItjApSpZEwwEGZiEDmugZCHPT72AP+xSOD4a+FAGUigJs8hM",
+          "status": "VOTER_STATUS_ACTIVATED",
+          "height": "0"
+        },
+        {
+          "address": "Vmm+CroVHQmGM6F/C1JrBzHiV28=",
+          "vote_key": "lsErujE8YyzG0G3e35POnhzhRtmoQmGifMUz6QT/wqA1l1T8tbpv6b3Plt91bbfiFBPsuROfasyCDOu3Dfazk5kdieauMir/44fzAblV9BIpCcPbA3KcZcR9edn4eyrx",
+          "status": "VOTER_STATUS_ACTIVATED",
+          "height": "0"
+        },
+        {
+          "address": "FBaOrYjx8dUn2RgW8nmYpTwvAs4=",
+          "vote_key": "ub+9QxSpysm+d5xYfc992VcJ/phFKzI6923YfKgiwOVTJVuSS7zDGoHcli7Xn187ErjGZB0/ItG3z4dC24luSbUUw+3RXZzHdAH53lnIakHlIisp2phGJgCtEG+GYQzf",
+          "status": "VOTER_STATUS_ACTIVATED",
+          "height": "0"
+        }
+      ],
+      "pubkeys": [
+        {
+          "secp256k1": "AozQg32UFD6xlP1iXsDtq23r/KGPfwWflxh9F5Vf79Gw"
+        }
+      ],
+      "randao": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    },
+    "runtime": null
+  },
+  "consensus": {
+    "params": {
+      "block": {
+        "max_bytes": "6348800",
+        "max_gas": "-1"
+      },
+      "evidence": {
+        "max_age_num_blocks": "100000",
+        "max_age_duration": "172800000000000",
+        "max_bytes": "1048576"
+      },
+      "validator": {
+        "pub_key_types": ["secp256k1"]
+      },
+      "version": {
+        "app": "0"
+      },
+      "abci": {
+        "vote_extensions_enable_height": "0"
+      }
+    }
+  }
+}
