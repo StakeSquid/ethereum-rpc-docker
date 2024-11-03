@@ -1,5 +1,6 @@
 static_files
 chain/nitro/l2chaindata/ancient
+data/nitro/l2chaindata/ancient
 ancient
 geth/chaindata/ancient
 bor/chaindata/ancient
