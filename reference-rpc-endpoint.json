@@ -423,7 +423,7 @@
 	"default": ["op-bnb-testnet"]
     },
     "goat-testnet": {
-	"id": 2345,
+	"id": 48815,
 	"urls": ["https://goat-testnet.drpc.org"],
 	"default": ["goat-testnet"]
     },    
