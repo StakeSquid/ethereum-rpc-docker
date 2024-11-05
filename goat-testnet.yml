@@ -4,7 +4,7 @@ services:
     image: ghcr.io/goatnetwork/goat-geth:testnet
     pull_policy: always
     entrypoint: ["sh", "-c"]
-    command: [ ! -d "/root/.ethereum/geth/chaindata" ] && geth init /genesis/geth.json
+    command: [ ! -d /root/.ethereum/geth/chaindata ] && geth init /genesis/geth.json
     environment:
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
