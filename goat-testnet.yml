@@ -1,24 +1,11 @@
 services:
 
-  goat-testnet-init:
-    image: ghcr.io/goatnetwork/goat-geth:testnet
-    pull_policy: always
-    entrypoint: ["sh", "-c"]
-    command: [ ! -d /root/.ethereum/geth/chaindata ] && geth init /genesis/geth.json
-    environment:
-      - "GETH_STATE_SCHEME=path"
-      - "GETH_DB_ENGINE=pebble"
-    volumes:
-      - goat-testnet:/root/.ethereum
-      - ./goat/testnet:/genesis
 
   goat-testnet:
     image: ghcr.io/goatnetwork/goat-geth:testnet
     pull_policy: always
-    stop_grace_period: 5m
+    stop_grace_period: 30s
     restart: unless-stopped
-    depends_on:
-      - goat-testnet-init
     healthcheck:
       test: ["CMD-SHELL", "geth attach --exec eth.blockNumber"]
       interval: 5s
@@ -27,22 +14,21 @@ services:
     environment:
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
-    command:
-      - --http
-      - --http.api=eth,net,web3
-      - --http.addr=0.0.0.0
-      - --http.vhosts=*
-      - --http.corsdomain=*
-      - --ws
-      - --ws.addr=0.0.0.0
-      - --ws.port=8545
-      - --ws.origins=*
-      - --metrics
-      - --metrics.addr=0.0.0.0
-      - --metrics.port=6060
-      - --syncmode=full
-      - --port=18141
-      - --bootnodes=enode://0d41d098846751f0f90ea66e4d7e6741591e9c4bfb6e75d14f78ca3702415fb795adad64b2805f428c86f6ae2ee5315322301e02c63c917f92756a909679599e@52.12.249.134:30303
+      - "GETH_DISCOVERY_PORT=18141"
+      - "GETH_PORT=18141"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_API=web3,eth,admin,net"
+      - "GETH_HTTP_VHOSTS=*"
+      - "GETH_WS=true"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_API=web3,eth,net,admin"
+      - "GETH_WS_ORIGINS=*"
+      - "GETH_WS_PORT=8545"
+      - "GETH_NAT=extip:${IP}"
+      - "GETH_SYNCMODE=full"
+      - "GETH_BOOTNODES=enode://0d41d098846751f0f90ea66e4d7e6741591e9c4bfb6e75d14f78ca3702415fb795adad64b2805f428c86f6ae2ee5315322301e02c63c917f92756a909679599e@52.12.249.134:30303"
+    entrypoint: /entrypoint.sh
     expose:
       - 8545
       - 6060
@@ -51,6 +37,8 @@ services:
       - "18141:18141/udp"
     volumes:
       - "goat-testnet:/root/.ethereum"
+      - ./goat/testnet:/genesis
+      - ./goat/geth-entrypoint.sh:/entrypoint.sh
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.goat-testnet-stripprefix.stripprefix.prefixes=/goat-testnet"
@@ -62,40 +50,24 @@ services:
     networks:
       - chains
 
-  goat-testnet-node-init:
-    image: ghcr.io/goatnetwork/goat:testnet
-    pull_policy: always
-    entrypoint: ["sh", "-c"]
-    command: [ ! -f /goat/config/genesis.json ] && goatd init --home /goat testnet && cp /genesis/goat.json /goat/config/genesis.json
-    volumes:
-      - goat-testnet-node:/goat
-      - ./goat/testnet:/genesis
-
-      
   goat-testnet-node:
     image: ghcr.io/goatnetwork/goat:testnet
     pull_policy: always
     stop_grace_period: 30s
     restart: unless-stopped
-    command:
-      - --home
-      - /goat
-      - --goat.geth
-      - /geth/geth.ipc
-      - --api.enable
-      - --api.address=tcp://0.0.0.0:1317
-      - --p2p.persistent_peers
-      - c9befb6b8421b46ec5cda76171a8cf7539af20fc@52.12.249.134:26656
+    entrypoint: /entrypoint.sh
+    environment:
+      - "IP=${IP}"
     volumes:
       - "goat-testnet-node:/goat"
       - "goat-testnet:/geth"
+      - ./goat/testnet:/genesis
+      - ./goat/node-entrypoint.sh:/entrypoint.sh
     depends_on:
-      goat-testnet:
-        condition: service_healthy
-      goat-testnet-node-init:
+      - goat-testnet
     networks:
       - chains
 
 volumes:
   goat-testnet:
-  goat-testnet-node:        
+  goat-testnet-node:
