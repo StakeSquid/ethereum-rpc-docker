@@ -1,0 +1,49 @@
+services:
+  rsk-fullnode:
+    image: rsksmart/rskj:ARROWHEAD-6.4.0
+    stop_grace_period: 5m
+    user: root
+    ulimits:
+      nofile: 1048576
+    expose:
+      - "3234"
+      - "4444"
+    ports:
+      - "3234:3234/tcp"
+      - "3234:3234/udp"
+    volumes:
+      - rsk-fullnode:/var/lib/rsk/database/mainnet
+      - ./rsk/mainnet/node.conf:/etc/rsk/node.conf
+    networks:
+      - chains
+    restart: unless-stopped
+
+    
+  rsk-fullnode-proxy:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - rsk-fullnode
+    expose:  
+      - 80                                                                                            
+    environment:                                                                                      
+      PROXY_HOST: rsk-fullnode
+      RPC_PORT: 4444
+      RPC_PATH: /
+      WS_PORT: 4445
+      WS_PATH: /
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.rsk-fullnode-stripprefix.stripprefix.prefixes=/rsk-fullnode"
+      - "traefik.http.services.rsk-fullnode.loadbalancer.server.port=80"
+      - "traefik.http.routers.rsk-fullnode.entrypoints=websecure"
+      - "traefik.http.routers.rsk-fullnode.tls.certresolver=myresolver"
+      - "traefik.http.routers.rsk-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/rsk-fullnode`)"      
+      - "traefik.http.routers.rsk-fullnode.middlewares=rsk-fullnode-stripprefix, ipwhitelist"
+      
+volumes:
+  rsk-fullnode:

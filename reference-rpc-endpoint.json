@@ -432,6 +432,16 @@
 	"urls": ["https://1rpc.io/zksync2-era"],
 	"default": ["zksync-mainnet-fullnode"]
     },
+    "rootstock": {
+	"id": 30,
+	"urls": ["https://public-node.rsk.co"],
+	"default": ["rsk"]
+    },
+    "rootstock-testnet": {
+	"id": 31,
+	"urls": ["https://public-node.testnet.rsk.co"],
+	"default": ["rsk-testnet"]
+    },    
     "polygon-amoy": {
 	"id": 80002,
 	"urls": [
