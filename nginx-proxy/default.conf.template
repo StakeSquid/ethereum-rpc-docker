@@ -26,16 +26,17 @@ server {
         # Disable buffering for real-time traffic
         proxy_buffering off;
 
+        set $proxy_read_timeout 60s;
+        set $proxy_send_timeout 60s;
+
+        # If it's a websocket, change timeouts
         if ($is_websocket) {
-            # Timeouts for WebSocket
-            proxy_read_timeout 3600s;
-            proxy_send_timeout 3600s;
+            set $proxy_read_timeout 3600s;
+            set $proxy_send_timeout 3600s;
         }
-        else {
-            # Timeouts for regular HTTP requests
-            proxy_read_timeout 60s;
-            proxy_send_timeout 60s;
-        }
+
+        proxy_read_timeout $proxy_read_timeout;
+        proxy_send_timeout $proxy_send_timeout;
     }
 }
 
