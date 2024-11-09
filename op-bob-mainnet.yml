@@ -22,6 +22,7 @@ services:
     environment:
       - "GETH_GENESIS_FILE_PATH=/app/mainnet/bob/genesis.json"
       - "GETH_ROLLUP_SEQUENCERHTTP=https://rpc-bob-mainnet-0.t.conduit.xyz"
+      - "GETH_RPC_GASCAP=600000000"
       - "GETH_GCMODE=full"
       - "GETH_NODISCOVER=true"
       - "GETH_STATE_SCHEME=hash"
