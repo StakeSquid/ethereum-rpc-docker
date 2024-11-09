@@ -3,6 +3,11 @@ map $http_upgrade $proxy_connection {
     websocket "ws_backend${WS_PATH}";
 }
 
+map $http_upgrade $is_websocket {
+    default 0;
+    websocket 1;
+}
+
 server {
     listen 80;
     server_name _;
@@ -17,9 +22,9 @@ server {
         proxy_set_header Connection $http_connection;  # Forward Connection header
 
         # Ensure the connection stays open indefinitely on websockets
-        proxy_read_timeout $http_upgrade websocket 3600s;
-        proxy_send_timeout $http_upgrade websocket 3600s;
-	
+        proxy_read_timeout $is_websocket ? 3600s : 60s;
+        proxy_send_timeout $is_websocket ? 3600s : 60s;
+
         proxy_connect_timeout 60s;
 
         # Disable buffering for real-time traffic
