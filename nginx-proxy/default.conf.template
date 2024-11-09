@@ -21,14 +21,21 @@ server {
 	proxy_set_header Upgrade $http_upgrade;  # Forward Upgrade header
         proxy_set_header Connection $http_connection;  # Forward Connection header
 
-        # Ensure the connection stays open indefinitely on websockets
-        proxy_read_timeout $is_websocket ? 3600s : 60s;
-        proxy_send_timeout $is_websocket ? 3600s : 60s;
-
         proxy_connect_timeout 60s;
 
         # Disable buffering for real-time traffic
         proxy_buffering off;
+
+        if ($is_websocket) {
+            # Timeouts for WebSocket
+            proxy_read_timeout 3600s;
+            proxy_send_timeout 3600s;
+        }
+        else {
+            # Timeouts for regular HTTP requests
+            proxy_read_timeout 60s;
+            proxy_send_timeout 60s;
+        }
     }
 }
 
