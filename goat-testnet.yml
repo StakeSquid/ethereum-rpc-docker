@@ -2,7 +2,7 @@ services:
 
 
   goat-testnet:
-    image: ghcr.io/goatnetwork/goat-geth:v0.1.0
+    image: ghcr.io/goatnetwork/goat-geth:testnet2
     stop_grace_period: 5m
     restart: unless-stopped
     healthcheck:
@@ -50,7 +50,7 @@ services:
       - chains
 
   goat-testnet-node:
-    image: ghcr.io/goatnetwork/goat:v0.1.1
+    image: ghcr.io/goatnetwork/goat:testnet2
     stop_grace_period: 30s
     restart: unless-stopped
     entrypoint: /entrypoint.sh
