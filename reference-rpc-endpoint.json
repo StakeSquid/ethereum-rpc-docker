@@ -424,7 +424,7 @@
     },
     "goat-testnet": {
 	"id": 48815,
-	"urls": ["https://goat-testnet.drpc.org"],
+	"urls": ["https://rpc.testnet3.goat.network"],
 	"default": ["goat-testnet"]
     },    
     "zksync": {
