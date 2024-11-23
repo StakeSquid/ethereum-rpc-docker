@@ -2,7 +2,7 @@ services:
 
 
   goat-testnet:
-    image: ghcr.io/goatnetwork/goat-geth:v0.1.0
+    image: ghcr.io/goatnetwork/goat-geth:v0.1.1
     stop_grace_period: 5m
     restart: unless-stopped
     healthcheck:
@@ -26,7 +26,7 @@ services:
       - "GETH_WS_PORT=8545"
       - "GETH_NAT=extip:${IP}"
       - "GETH_SYNCMODE=full"
-      - "GETH_BOOTNODES=enode://0d41d098846751f0f90ea66e4d7e6741591e9c4bfb6e75d14f78ca3702415fb795adad64b2805f428c86f6ae2ee5315322301e02c63c917f92756a909679599e@52.12.249.134:30303"
+#      - "GETH_BOOTNODES=enode://0d41d098846751f0f90ea66e4d7e6741591e9c4bfb6e75d14f78ca3702415fb795adad64b2805f428c86f6ae2ee5315322301e02c63c917f92756a909679599e@52.12.249.134:30303"
     entrypoint: /entrypoint.sh
     expose:
       - 8545
@@ -36,8 +36,8 @@ services:
       - "18141:18141/udp"
     volumes:
       - "goat-testnet:/root/.ethereum"
-      - ./goat/testnet:/genesis
-      - ./goat/geth-entrypoint.sh:/entrypoint.sh
+ #     - ./goat/testnet:/genesis
+      - ./goat/testnet3/geth-entrypoint.sh:/entrypoint.sh
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.goat-testnet-stripprefix.stripprefix.prefixes=/goat-testnet"
@@ -50,7 +50,7 @@ services:
       - chains
 
   goat-testnet-node:
-    image: ghcr.io/goatnetwork/goat:v0.1.0
+    image: ghcr.io/goatnetwork/goat:v0.1.1
     stop_grace_period: 30s
     restart: unless-stopped
     entrypoint: /entrypoint.sh
@@ -59,8 +59,8 @@ services:
     volumes:
       - "goat-testnet-node:/goat"
       - "goat-testnet:/geth"
-      - ./goat/testnet:/genesis
-      - ./goat/node-entrypoint.sh:/entrypoint.sh
+#      - ./goat/testnet:/genesis
+      - ./goat/testnet3/node-entrypoint.sh:/entrypoint.sh
     depends_on:
       - goat-testnet
     networks:
