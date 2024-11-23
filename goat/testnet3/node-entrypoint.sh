@@ -23,4 +23,4 @@ else
 fi
 
 # Pass control to the final command specified in docker-compose.yml
-goatd start --home /goat --chain-id=goat-testnet3 --goat.geth /geth/geth.ipc --api.enable --api.address=tcp://0.0.0.0:1317 --p2p.persistent_peers c9befb6b8421b46ec5cda76171a8cf7539af20fc@52.12.249.134:26656 --p2p.external-address $IP:40258 --p2p.laddr 0.0.0.0:40258
+goatd start --home /goat --chain-id=goat-testnet3 --goat.geth /geth/geth.ipc --api.enable --api.address=tcp://0.0.0.0:1317 --p2p.external-address $IP:40258 --p2p.laddr 0.0.0.0:40258
