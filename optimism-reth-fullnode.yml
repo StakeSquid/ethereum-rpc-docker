@@ -17,7 +17,7 @@ services:
     restart: always
     user: root
     stop_grace_period: 3m
-    command: node --full --chain optimism --port 2214 --discovery.port 2214 --rollup.sequencer-http https://mainnet-sequencer.optimism.org --http --ws --authrpc.addr 0.0.0.0 --authrpc.port 9551 --authrpc.jwtsecret /jwtsecret --http.addr 0.0.0.0 --http.port 8545 --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000
+    command: node --full --chain optimism --port 2214 --discovery.port 2214 --rollup.sequencer-http https://mainnet-sequencer.optimism.org --http --ws --authrpc.addr 0.0.0.0 --authrpc.port 9551 --authrpc.jwtsecret /jwtsecret --http.addr 0.0.0.0 --http.port 8545 --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000 --nat extip:$IP
     volumes:
       - optimism-reth-fullnode:/root/.local/share/reth/optimism
       - /slowdisk:/slowdisk
