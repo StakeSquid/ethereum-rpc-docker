@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   mainnet-fullnode-reth:
-    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.1.1}
+    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.1.2}
     user: root
     volumes:
       - "reth-mainnet-fullnode:/root/.local/share/reth/mainnet"
@@ -11,6 +11,7 @@ services:
     expose:
       - 13025
       - 8545
+      - 8551
       - 9001
     ports:
       - "13025:13025"
