@@ -4,7 +4,7 @@ WORKDIR /app
 
 ARG OP_REPO=https://github.com/ethereum-optimism/optimism.git
 ARG OP_VERSION=v1.9.4
-# for verification:
+ARG OP_PATCH
 
 
 RUN git clone $OP_REPO --branch op-node/$OP_VERSION --single-branch . && \
