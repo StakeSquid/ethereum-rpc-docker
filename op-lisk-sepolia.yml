@@ -2,8 +2,12 @@ version: '3.1'
 
 services:
   op-lisk-sepolia: # this is Optimism's geth client
-    #image: stakesquid/op-lisk-sepolia:v0.1
-    build: ./op    
+    build:
+      context: ./op
+      dockerfile: Dockerfile
+      args:
+        OP_VERSION: 1.10.0
+        GETH_VERSION: v1.101411.2
     expose:
       - 8545       # RPC / Websocket      
       - 54521     # P2P TCP (currently unused)
@@ -13,8 +17,6 @@ services:
       - "54521:54521"
       - "54521:54521/udp"
     command: [ "sh", "./geth-entrypoint" ]
-    #entrypoint: ./geth
-    #command: --datadir=/data --rollup.sequencerhttp=https://rpc.sepolia-api.lisk.com --verbosity=3 --http --http.corsdomain=* --http.vhosts=* --http.addr=0.0.0.0 --http.port=8545 --http.api=web3,debug,eth,net,engine --authrpc.addr=0.0.0.0 --authrpc.port=8551 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --ws --ws.addr=0.0.0.0 --ws.port=8545 --ws.origins=* --ws.api=debug,eth,net,engine --bootnodes=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIyuDdWRwgiMr --override.fjord=1716998400 --override.ecotone=1708534800 --override.canyon=0 --maxpeers=0
     restart: always
     stop_grace_period: 3m    
     volumes:
@@ -36,6 +38,7 @@ services:
       - "GETH_OVERRIDE_ECOTONE=1708534800"
       - "GETH_OVERRIDE_FJORD=1716998400"
       - "GETH_OVERRIDE_GRANITE=1723478400"
+      - "GETH_OVERRIDE_HOLOCENE=1732633200"      
       - "GETH_BOOTNODES=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIy\
 uDdWRwgiMr"
     labels:                     
@@ -51,8 +54,12 @@ uDdWRwgiMr"
 
       
   op-lisk-sepolia-node:
-    #image: stakesquid/op-lisk-sepolia:v0.1
-    build: ./op
+    build:
+      context: ./op
+      dockerfile: Dockerfile
+      args:
+        OP_VERSION: 1.10.0
+        GETH_VERSION: v1.101411.2
     depends_on:
       - op-lisk-sepolia
     expose:
@@ -103,6 +110,7 @@ uDdWRwgiMr"
       - "OP_NODE_OVERRIDE_ECOTONE=1708534800"
       - "OP_NODE_OVERRIDE_FJORD=1716998400"
       - "OP_NODE_OVERRIDE_GRANITE=1723478400"
+      - "OP_NODE_OVERRIDE_HOLOCENE=1732633200"
     networks:                                                                                         
       - chains
       

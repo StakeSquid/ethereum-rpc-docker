@@ -10,6 +10,12 @@ ARG OP_VERSION=v1.9.4
 RUN git clone $OP_REPO --branch op-node/$OP_VERSION --single-branch . && \
     git switch -c branch-$OP_VERSION
 
+# Apply patch if provided and valid
+RUN if [[ -n "$OP_PATCH" && -f "$OP_PATCH" ]]; then \
+        git apply "$OP_PATCH"; \
+    else \
+        echo "No valid patch file found in \$OP_PATCH"; \
+    fi
 
 RUN cd op-node && \
     make op-node
