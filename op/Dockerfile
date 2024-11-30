@@ -11,10 +11,13 @@ RUN git clone $OP_REPO --branch op-node/$OP_VERSION --single-branch . && \
     git switch -c branch-$OP_VERSION
 
 # Apply patch if provided and valid
-RUN if [[ -n "$OP_PATCH" && -f "$OP_PATCH" ]]; then \
-        git apply "$OP_PATCH"; \
+COPY ${OP_PATCH:-empty.patch} /tmp/my-patch.patch
+RUN if [ -n "$OP_PATCH" ]; then \
+      echo "Using patch file: $OP_PATCH"; \
+      cd op-node && git apply --verbose /tmp/my-patch.patch || \
+      (echo "Patch failed to apply!" && exit 1); \
     else \
-        echo "No valid patch file found in \$OP_PATCH"; \
+      echo "No patch file provided. Skipping."; \
     fi
 
 RUN cd op-node && \
