@@ -8,4 +8,4 @@ arbitrum-classic
 hagall
 public
 backup
--node
+\-node
