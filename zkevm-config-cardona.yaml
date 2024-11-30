@@ -1,0 +1,37 @@
+datadir: /home/erigon/.local/share/erigon
+chain: hermez-cardona
+http: true
+private.api.addr: localhost:9092
+zkevm.l2-chain-id: 2442
+zkevm.l2-sequencer-rpc-url: https://rpc.cardona.zkevm-rpc.com/
+zkevm.l2-datastreamer-url: datastream.cardona.zkevm-rpc.com:6900
+zkevm.l1-chain-id: 11155111
+zkevm.l1-rpc-url: https://rpc.sepolia.org
+
+zkevm.address-sequencer: "0x761d53b47334bee6612c0bd1467fb881435375b2"
+zkevm.address-zkevm: "0xA13Ddb14437A8F34897131367ad3ca78416d6bCa"
+zkevm.address-admin: "0xff6250d0e86a2465b0c1bf8e36409503d6a26963"
+zkevm.address-rollup: "0x32d33d5137a7cffb54c5bf8371172bcec5f310ff"
+zkevm.address-ger-manager: "0xAd1490c248c5d3CbAE399Fd529b79B42984277DF"
+
+zkevm.default-gas-price: 1000000000
+zkevm.max-gas-price: 0
+zkevm.gas-price-factor: 0.12
+
+zkevm.l1-rollup-id: 1
+zkevm.l1-block-range: 20000
+zkevm.l1-query-delay: 6000
+zkevm.l1-first-block: 4789190
+zkevm.rpc-ratelimit: 250
+txpool.disable: true
+torrent.port: 42070
+zkevm.datastream-version: 2
+
+# debug.timers: true # Uncomment to enable timers
+
+externalcl: true
+http.api: [eth, debug, net, trace, web3, erigon, zkevm]
+http.addr: 0.0.0.0
+http.vhosts: any
+http.corsdomain: any
+ws: true
