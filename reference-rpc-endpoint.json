@@ -422,7 +422,7 @@
 	"urls": ["https://opbnb-testnet-rpc.bnbchain.org"],
 	"default": ["op-bnb-testnet"]
     },
-    "goat-testnet": {
+    "goat-testnet3": {
 	"id": 48816,
 	"urls": ["https://rpc.testnet3.goat.network"],
 	"default": ["goat-testnet"]
