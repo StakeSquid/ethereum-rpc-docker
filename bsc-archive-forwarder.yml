@@ -1,0 +1,22 @@
+services:
+  bsc-archive-forwarder:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - op-zircuit-client
+    expose:  
+      - 80                                                                                    
+    environment:                                                                                      
+      TARGET_URL: ${BSC_ARCHIVE_FORWARDER_URL}
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-forwarder:/etc/nginx/templates            
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.bsc-archive-forwarder-stripprefix.stripprefix.prefixes=/bsc-archive-forwarder"
+      - "traefik.http.services.bsc-archive-forwarder.loadbalancer.server.port=80"
+      - "traefik.http.routers.bsc-archive-forwarder.entrypoints=websecure"
+      - "traefik.http.routers.bsc-archive-forwarder.tls.certresolver=myresolver"
+      - "traefik.http.routers.bsc-archive-forwarder.rule=Host(`$DOMAIN`) && PathPrefix(`/bsc-archive-forwarder`)"
+      - "traefik.http.routers.bsc-archive-forwarder.middlewares=bsc-archive-forwarder-stripprefix, ipwhitelist"
