@@ -2,8 +2,6 @@ services:
   bsc-archive-forwarder:         
     restart: unless-stopped           
     image: nginx
-    depends_on:
-      - op-zircuit-client
     expose:  
       - 80                                                                                    
     environment:                                                                                      
