@@ -1,10 +1,10 @@
 services:
 
   op-bnb-reth-fullnode:
-    image: ghcr.io/bnb-chain/op-reth:v1.0.4
+    image: ghcr.io/bnb-chain/op-reth:v1.1.0
     restart: unless-stopped
     stop_grace_period: 5m
-    command: node --datadir=/data --chain=opbnb-mainnet --rollup.sequencer-http=https://opbnb-mainnet-rpc.bnbchain.org --authrpc.addr="0.0.0.0" --authrpc.port=8551 --authrpc.jwtsecret=/jwtsecret --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000 --port 63815 --discovery.port 63815
+    command: node --datadir=/data --chain=opbnb-mainnet --rollup.sequencer-http=https://opbnb-mainnet-rpc.bnbchain.org --authrpc.addr="0.0.0.0" --authrpc.port=8551 --authrpc.jwtsecret=/jwtsecret --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --http.api "debug,eth,net,trace,txpool,web3,rpc,reth" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000 --port 63815 --discovery.port 63815 --full
     volumes: 
       - .jwtsecret:/jwtsecret      
       - op-bnb-reth-fullnode:/data
@@ -26,7 +26,7 @@ services:
       - chains
       
   op-bnb-reth-fullnode-node:
-    image: ghcr.io/bnb-chain/op-node:${OPBNB_NODE_IMAGE_TAG:-v0.5.0}
+    image: ghcr.io/bnb-chain/op-node:${OPBNB_NODE_IMAGE_TAG:-v0.5.1}
     depends_on:
       - op-bnb-reth-fullnode
     restart: unless-stopped
