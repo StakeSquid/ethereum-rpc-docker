@@ -1,6 +1,6 @@
 services:
   rsk-fullnode:
-    image: rsksmart/rskj:ARROWHEAD-6.4.0
+    image: rsksmart/rskj:ARROWHEAD-6.5.0
     stop_grace_period: 5m
     user: root
     ulimits:
@@ -8,6 +8,7 @@ services:
     expose:
       - "3234"
       - "4444"
+      - "4445"
     ports:
       - "3234:3234/tcp"
       - "3234:3234/udp"

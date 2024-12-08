@@ -1,6 +1,6 @@
 services:
   rsk-testnet-fullnode:
-    image: rsksmart/rskj:ARROWHEAD-6.4.0
+    image: rsksmart/rskj:ARROWHEAD-6.5.0
     stop_grace_period: 5m
     user: root
     ulimits:
@@ -8,12 +8,13 @@ services:
     expose:
       - "16093"
       - "4444"
+      - "4445"
     ports:
       - "16093:16093/tcp"
       - "16093:16093/udp"
     volumes:
       - rsk-testnet-fullnode:/var/lib/rsk/database/testnet
-      - ./rsk/testnet/node.conf:/etc/rsk/node.conf
+      - ./rsk/testnet/node.conf:/etc/rsk/node.conf:ro
     networks:
       - chains
     restart: unless-stopped
