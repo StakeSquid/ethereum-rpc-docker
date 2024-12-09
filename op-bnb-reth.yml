@@ -34,7 +34,8 @@ services:
     entrypoint: /scripts/op-node-start.sh
     environment:
       OP_NODE__RPC_ENDPOINT: ${OPBNB_BSC_ENDPOINT}      
-      OP_NODE_L1_RPC_KIND: ${OPBNB_BSC_ENDPOINT_KIND:-basic}
+      OP_NODE__RPC_ENDPOINT: ${OPBNB_BSC_ENDPOINT}
+      OP_NODE__RPC_ENDPOINT_KIND: ${OPBNB_BSC_ENDPOINT_KIND:-basic}      
       OP_L2_HOST: op-bnb-reth
       P2P_PRIV_KEY: ${OPBNB_NODE_PRIV_KEY}
       NETWORK_NAME: mainnet
