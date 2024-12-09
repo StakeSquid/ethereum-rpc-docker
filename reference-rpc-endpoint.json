@@ -164,7 +164,8 @@
       "https://arbitrum-sepolia.blockpi.network/v1/rpc/public"
     ],
     "default": [
-      "arbitrum-sepolia-fullnode"
+	"arbitrum-sepolia-fullnode",
+	"arbitrum-sepolia-fullnode-pebble"	
     ],
       "archive": ["arbitrum-sepolia-archive"]
   },
