@@ -145,7 +145,8 @@
       "https://arbitrum-one.public.blastapi.io"
     ],
     "default": [
-      "arbitrum-fullnode"
+	"arbitrum-fullnode",
+	"arbitrum-fullnode-pebble"
     ]
   },
   "arbitrum-nova": {
