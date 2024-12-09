@@ -12,13 +12,13 @@ services:
       - 8547 # http + ws
     command:
       - --init.latest=pruned
-      - --chain.name=sepolia      
+      - --chain.name=sepolia-rollup
+      - --chain.id=421614
       - --node.staker.enable=false
       - --persistent.chain=/arbitrum-node/data/
       - --persistent.global-config=/arbitrum-node/
       - --parent-chain.connection.url=${ARBITRUM_SEPOLIA_URL}
       - --parent-chain.blob-client.beacon-url=${ARBITRUM_SEPOLIA_BEACON_URL}
-      - --chain.id=421614
       - --http.api=net,web3,eth,debug 
       - --http.corsdomain=* 
       - --http.addr=0.0.0.0 
