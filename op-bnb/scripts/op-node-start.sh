@@ -37,7 +37,6 @@ exec op-node \
   --rpc.enable-admin \
   --l1=$OP_NODE__RPC_ENDPOINT \
   --l1.rpckind=$OP_NODE__RPC_ENDPOINT_KIND \
-  --l1.trustrpc=true \
   --l2=http://${OP_L2_HOST:-op-bnb}:8551 \
   --l2.jwt-secret=/jwtsecret \
   --l2.skip-sync-start-check=true \
