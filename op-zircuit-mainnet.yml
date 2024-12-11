@@ -13,6 +13,7 @@ services:
       - "--authrpc.jwtsecret=/jwtsecret"
       - "--rollup.sequencerhttp=${ZIRCUIT_SEQUENCER_HTTP}"
       - "--rollup.disabletxpoolgossip=true"
+      - "--http.api=eth,net,web3,debug"
     environment:
       FORK_TRIGGER: "false"
       ETH_STATS_ENABLED: 1
