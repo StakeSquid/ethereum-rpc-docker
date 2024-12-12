@@ -20,7 +20,7 @@ services:
       ETH_STATS_NODE: "d${DOMAIN}"
       ETH_STATS_SERVER: ethstats-ap.mainnet.zircuit.com
       ETH_STATS_SERVER_PORT: 443
-      WS_SECRET: ${ZIRCUIT_WS_SECRET}
+      WS_SECRET: ${ZIRCUIT__MAINNET_WS_SECRET}
     networks:
       - chains
 
@@ -87,7 +87,7 @@ services:
       OP_NODE_P2P_LISTEN_UDP_PORT: 43778
       OP_NODE_P2P_PEER_SCORING: light
       OP_NODE_P2P_PEER_BANNING: "true"
-      OP_NODE_P2P_STATIC: ${ZIRCUIT_STATIC_PEERS}
+      OP_NODE_P2P_STATIC: ${ZIRCUIT_MAINNET_STATIC_PEERS}
       OP_NODE_P2P_PRIV_PATH: /config/p2p_node_key_txt
       OP_NODE_P2P_ADVERTISE_IP: ${IP}
       OP_NODE_LOG_LEVEL: info
