@@ -498,7 +498,8 @@
 	    "https://mainnet.mode.network"
 	],
 	"default": [
-	    "op-mode-mainnet"
+	    "op-mode-mainnet",
+	    "op-mode-mainnet-pbss"
 	]
     },
     "core": {
