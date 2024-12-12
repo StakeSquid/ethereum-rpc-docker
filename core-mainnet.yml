@@ -9,7 +9,7 @@ services:
     volumes:
       - core-mainnet:/data
       - ./core-chain/mainnet:/core/config
-    command: --ws.origins='*' --history.transactions=0 --state.scheme=path --syncmode=full --db.engine=pebble --rpc.gascap=600000000
+    command: --ws.origins='*' --history.transactions=0 --state.scheme=hash --syncmode=full --db.engine=leveldb --rpc.gascap=600000000
     networks:
       - chains
     labels:
