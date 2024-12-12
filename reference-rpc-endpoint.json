@@ -175,7 +175,7 @@
     "urls": [
       "https://rpc.blast.io"
     ],
-      "default": ["op-blast-mainnet-fullnode"],
+      "default": ["op-blast-mainnet-fullnode", "op-blast-mainnet-pbss"],
     "archive": [
       "op-blast-mainnet"
     ]

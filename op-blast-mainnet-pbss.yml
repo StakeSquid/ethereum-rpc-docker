@@ -1,0 +1,88 @@
+version: '3.1'
+
+services:
+
+  op-blast-mainnet-fullnode:
+    image: blastio/blast-geth:v1.1.0-mainnet
+    volumes:
+      - blast-mainnet-fullnode:/data      
+      - ./blast-io:/config:rw
+      - .jwtsecret:/jwtsecret
+    environment:
+      - "GETH_ROLLUP_SEQUENCERHTTP=https://sequencer.blast.io"
+      - "GETH_GCMODE=full"
+      - "GETH_SYNCMODE=snap"
+      - "GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
+      - "GETH_NODISCOVER=true"
+      - "GETH_DATADIR=/data"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_PORT=9545"
+      - "GETH_HTTP_VHOSTS=*"
+      - "GETH_HTTP_CORSDOMAIN=*"
+      - "GETH_HTTP_API=web3,debug,eth,txpool,net,engine"
+      - "GETH_WS_PORT=9545"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_ORIGINS=*"
+      - "GETH_WS=true"
+      - "GETH_AUTHRPC_VHOSTS=*"
+      - "GETH_AUTHRPC_ADDR=0.0.0.0"
+      - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
+      - "GETH_LIGHT_MAXPEERS=0"
+      - "GETH_MAXPEERS=0"
+      - "GETH_OVERRIDE_CANYON=0"
+      - "GETH_OVERRIDE_DELTA=1716843599"
+      - "GETH_OVERRIDE_ECOTONE=1716843599"
+    expose:
+      - 9545
+    restart: always
+    stop_grace_period: 30s          
+    entrypoint: /bin/sh
+    command: -c "[ ! -d /data/geth ] && /usr/local/bin/geth init /config/mainnet/genesis.json || /usr/local/bin/geth --rollup.disabletxpoolgossip=true"
+    networks:
+      - chains
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.blast-stripprefix.stripprefix.prefixes=/blast-mainnet-fullnode"                      
+      - "traefik.http.services.blast.loadbalancer.server.port=9545"
+      - "traefik.http.routers.blast.entrypoints=websecure"                                              
+      - "traefik.http.routers.blast.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.blast.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-mainnet-fullnode`)"                     
+      - "traefik.http.routers.blast.middlewares=blast-stripprefix, ipwhitelist"                           
+      
+  op-blast-mainnet-fullnode-node:
+    image: blastio/blast-optimism:v1.1.0-mainnet
+    volumes:
+      - ./blast-io:/config
+      - .jwtsecret:/jwtsecret
+    ports:
+      - "25037:25037"
+      - "25037:25037/udp"
+    environment:
+      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_P2P_BOOTNODES=enr:-J64QGwHl9uYLfC_cnmxSA6wQH811nkOWJDWjzxqkEUlJoZHWvI66u-BXgVcPCeMUmg0dBpFQAPotFchG67FHJMZ9OSGAY3d6wevgmlkgnY0gmlwhANizeSHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaECg4pk0cskPAyJ7pOmo9E6RqGBwV-Lex4VS9a3MQvu7PWDdGNwgnZhg3VkcIJ2YQ,enr:-J64QDge2jYBQtcNEpRqmKfci5E5BHAhNBjgv4WSdwH1_wPqbueq2bDj38-TSW8asjy5lJj1Xftui6Or8lnaYFCqCI-GAY3d6wf3gmlkgnY0gmlwhCO2D9yHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaEDo4aCTq7pCEN8om9U5n_VyWdambGnQhwHNwKc8o-OicaDdGNwgnZhg3VkcIJ2YQ"
+      - "OP_NODE_L1_RPC_RATE_LIMIT=0"
+      - "OP_NODE_L1_RPC_MAX_BATCH_SIZE=20"
+      - "OP_NODE_L1_RPC_KIND=${BLAST_MAINNET_L1_ENDPOINT_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${BLAST_MAINNET_L1_ENDPOINT_TRUST:-false}"
+      - "OP_NODE_L1_ETH_RPC=${BLAST_MAINNET_L1_ENDPOINT}"
+      - "OP_NODE_L1_BEACON=${BLAST_MAINNET_L1_BEACON}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${BLAST_MAINNET_L1_BEACON_ARCHIVER}"      
+      - "OP_NODE_L1_TRUST_RPC=true"
+      - "OP_NODE_L2_ENGINE_RPC=http://op-blast-mainnet-fullnode:8551"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_SKIP_SYNC_START_CHECK=true"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=25037"
+      - "OP_NODE_ROLLUP_CONFIG=/config/mainnet/rollup.json"
+      - "OP_NODE_OVERRIDE_DELTA=1716843599"
+      - "OP_NODE_OVERRIDE_ECOTONE=1716843599"
+    command: >
+      op-node
+    depends_on:
+      - op-blast-mainnet-fullnode
+    networks:
+      - chains
+
+volumes:  
+    blast-mainnet-fullnode:      
