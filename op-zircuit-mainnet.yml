@@ -20,7 +20,7 @@ services:
       ETH_STATS_NODE: "d${DOMAIN}"
       ETH_STATS_SERVER: ethstats-ap.mainnet.zircuit.com
       ETH_STATS_SERVER_PORT: 443
-      WS_SECRET: ${ZIRCUIT__MAINNET_WS_SECRET}
+      WS_SECRET: ${ZIRCUIT_MAINNET_WS_SECRET}
     networks:
       - chains
 
