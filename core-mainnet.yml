@@ -1,6 +1,6 @@
 services:
   core:
-    image: stakesquid/core-chain:v1.0.8
+    image: stakesquid/core-chain:v1.0.12
     user: root
     restart: unless-stopped
     ports:
