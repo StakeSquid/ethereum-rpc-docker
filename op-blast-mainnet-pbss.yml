@@ -14,7 +14,6 @@ services:
       - "GETH_SYNCMODE=snap"
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
-      - "GETH_NODISCOVER=true"
       - "GETH_DATADIR=/data"
       - "GETH_HTTP=true"
       - "GETH_HTTP_ADDR=0.0.0.0"
