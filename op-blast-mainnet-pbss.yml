@@ -10,6 +10,8 @@ services:
       - .jwtsecret:/jwtsecret
     environment:
       - "GETH_ROLLUP_SEQUENCERHTTP=https://sequencer.blast.io"
+      - "GETH_PORT=20002"
+      - "GETH_NAT=extip:${IP}"
       - "GETH_GCMODE=full"
       - "GETH_SYNCMODE=snap"
       - "GETH_STATE_SCHEME=path"
@@ -35,6 +37,9 @@ services:
       - "GETH_OVERRIDE_ECOTONE=1716843599"
     expose:
       - 9545
+    ports:
+      - "20002:20002"
+      - "20002:20002/udp"
     restart: always
     stop_grace_period: 30s          
     entrypoint: /bin/sh
