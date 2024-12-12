@@ -71,7 +71,7 @@ services:
       - "OP_NODE_L1_TRUST_RPC=true"
       - "OP_NODE_L2_ENGINE_RPC=http://op-blast-mainnet-fullnode:8551"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      #- "OP_NODE_L2_SKIP_SYNC_START_CHECK=true"
+      - "OP_NODE_L2_SKIP_SYNC_START_CHECK=true"
       - "OP_NODE_P2P_LISTEN_TCP_PORT=25037"
       - "OP_NODE_ROLLUP_CONFIG=/config/mainnet/rollup.json"
       - "OP_NODE_OVERRIDE_DELTA=1716843599"
