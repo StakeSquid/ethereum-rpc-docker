@@ -6,6 +6,7 @@ services:
     ports:
       - "65047:65047"
       - "65047:65047/udp"
+    command: --nat=extip:${IP}
     volumes:
       - core-mainnet:/data
       - ./core-chain/mainnet:/core/config
