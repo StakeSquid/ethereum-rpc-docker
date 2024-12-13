@@ -34,7 +34,6 @@ OracleThreshold = 1000
 [Node]
 DataDir = "/data"
 IPCPath = "geth.ipc"
-HTTPHost = "localhost"
 NoUSB = true
 InsecureUnlockAllowed = false
 HTTPHost = "0.0.0.0"
