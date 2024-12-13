@@ -24,9 +24,9 @@ for path in $pathlist; do
     if $include; then
         RPC_URL="https://$DOMAIN$path"
 
-	curl -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq -r '.result.number, .result.hash' | awk '{if (NR==1) print "Block Number:", strtonum($0); else print "Block Hash:", $0}'
-
-	if $? -ne 0; then
+	if curl -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq -r '.result.number, .result.hash' | awk '{if (NR==1) print "Block Number:", strtonum($0); else print "Block Hash:", $0}'; then
+	    exit 0
+	else
 	    curl -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq
 	fi
     fi
