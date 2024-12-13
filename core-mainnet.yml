@@ -4,12 +4,11 @@ services:
     user: root
     restart: unless-stopped
     ports:
-      - "53848:53848"
-      - "53848:53848/udp"
+      - "65047:65047"
+      - "65047:65047/udp"
     volumes:
       - core-mainnet:/data
       - ./core-chain/mainnet:/core/config
-    command: --ws.origins='*' --history.transactions=0 --state.scheme=hash --syncmode=full --db.engine=leveldb --rpc.gascap=600000000
     networks:
       - chains
     labels:
