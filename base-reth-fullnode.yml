@@ -37,9 +37,9 @@ services:
   base-fullnode-node:
     build:
       context: ./op
-      args:
-        OP_GETH_VERSION: v1.101408.0
-        OP_NODE_VERSION: v1.9.1      
+#      args:
+#        OP_GETH_VERSION: v1.101408.0
+#        OP_NODE_VERSION: v1.9.1      
     depends_on:
       - base-fullnode
     volumes:
