@@ -32,6 +32,7 @@ Percentile = 60
 OracleThreshold = 1000
 
 [Node]
+DataDir = "/data"
 IPCPath = "geth.ipc"
 HTTPHost = "localhost"
 NoUSB = true
