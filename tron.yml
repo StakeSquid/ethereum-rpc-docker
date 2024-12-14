@@ -23,8 +23,9 @@ services:
       - "traefik.http.services.tron-fullnode.loadbalancer.server.port=8545"
       - "traefik.http.routers.tron-fullnode.entrypoints=websecure"
       - "traefik.http.routers.tron-fullnode.tls.certresolver=myresolver"
-      - "traefik.http.routers.tron-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/tron-fullnode`)"      
-      - "traefik.http.routers.tron-fullnode.middlewares=tron-fullnode-set-path,ipwhitelist"
+      - "traefik.http.routers.tron-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/tron-fullnode`)"
+      - "traefik.http.middlewares.tron-fullnode-strip-trailing-slash.stripprefixregex.regex=/$"
+      - "traefik.http.routers.tron-fullnode.middlewares=tron-fullnode-set-path, tron-fullnode-strip-trailing-slash, ipwhitelist"
       
 volumes:
   tron-fullnode-db:
