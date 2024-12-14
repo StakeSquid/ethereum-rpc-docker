@@ -20,11 +20,12 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.tron-fullnode-stripprefix.stripprefix.prefixes=/tron-fullnode"
+      - "traefik.http.middlewares.tron-fullnode-addprefix.addprefix.prefix=/jsonrpc"
       - "traefik.http.services.tron-fullnode.loadbalancer.server.port=8545"
       - "traefik.http.routers.tron-fullnode.entrypoints=websecure"
       - "traefik.http.routers.tron-fullnode.tls.certresolver=myresolver"
       - "traefik.http.routers.tron-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/tron-fullnode`)"      
-      - "traefik.http.routers.tron-fullnode.middlewares=tron-fullnode-stripprefix, ipwhitelist"
+      - "traefik.http.routers.tron-fullnode.middlewares=tron-fullnode-stripprefix, tron-fullnode-addprefix, ipwhitelist"
       
 volumes:
   tron-fullnode-db:
