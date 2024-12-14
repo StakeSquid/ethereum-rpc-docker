@@ -179,7 +179,7 @@
     "archive": [
       "op-blast-mainnet"
     ]
-  },
+  },    
   "blast-sepolia": {
     "id": 168587773,
     "urls": [
@@ -198,6 +198,11 @@
       "fuse"
     ]
   },
+    "tron": {
+	"id": 728126428,
+	"urls": ["https://tron-evm-rpc.publicnode.com"],
+	"default": ["tron"]
+    },
   "avalanche": {
     "id": 43114,
     "urls": [
