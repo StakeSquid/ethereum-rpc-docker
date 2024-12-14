@@ -53,6 +53,7 @@ services:
       --rpc.returndata.limit=1000000
       --rpc.gascap=5000000000
       --ws
+      --ws.port=8545
     restart: unless-stopped
     stop_grace_period: 1m
     labels:
