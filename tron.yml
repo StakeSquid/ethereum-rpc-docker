@@ -10,7 +10,7 @@ services:
       - "25814:25814/tcp"
       - "25814:25814/udp"
     volumes:
-      - tron-fullnode-db:/java-tron/output-directory/database
+      - tron-fullnode-db:/java-tron/output-directory
       - tron-fullnode-logs:/java-tron/logs
       - ./tron/config:/java-tron/config
     command: -c /java-tron/config/main_net_config.conf
