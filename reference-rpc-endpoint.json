@@ -208,6 +208,11 @@
 	"urls": ["https://rpc.viction.xyz"],
 	"default": ["viction"]
     },
+    "thundercore": {
+	"id": 108,
+	"urls": ["https://mainnet-rpc.thundercore.com"],
+	"default": ["thundercore"]	
+    },
   "avalanche": {
     "id": 43114,
     "urls": [

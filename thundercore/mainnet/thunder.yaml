@@ -1,0 +1,45 @@
+# thunder configuration file
+# all configurations in here are case insensitive
+# debug | info | note | warn | error | crit
+logLevel:
+  /: info
+accel:
+  txpool:
+    PriceLimit: 1 # 1 ella
+    AccountSlots: 1024
+    AccountQueue: 4096
+    GlobalSlots: 50000
+    GlobalQueue: 10000
+    Lifetime: 36s
+    EvictionInterval: 12s
+  blockmaker:
+    TimePerBlock: 1s
+    TxPerBlockLimit: -1
+  alivePrivKey: 645243f2f15b09d2e343e919d01e33755274973b21c917083beb438a6bca5376
+
+bidder:
+  bidaddress: "0x30d87bd4D1769437880c64A543bB649a693EB348"
+
+full_node:
+  client:
+    HostIp: 0.0.0.0:8887
+    ConnectTimeout: 15s
+    TxRetryDelay: 1s
+    TxRequestTimeout: 10h
+
+chain:
+  chainID: 19 # TestnetChainID is Testnet's chain ID.
+auxnet:
+  yellAddress: ff9A2eAcF66049B3822cC8720B868031782cf45f
+  aliveAddress: 0e67BD382068fb13ae3E54b443FAaeB2EC27c329
+
+logFile: "/logs/thunder.log"
+verboseLogFile: "/logs/thunder.verbose.log"
+
+resourceMonitor:
+  enable: true
+  interval: 10s
+
+profiling:
+  enable: true
+  port: 9999

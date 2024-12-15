@@ -1,0 +1,32 @@
+{
+    "SlowChainHeight": 1000800,
+    "AccelId": 0,
+    "MemberInfo": [],
+    "AccelInfo": [
+        {
+            "Stake": 0,
+            "PubVoteKey": "XR0EM8lkJj2aTvI1LBqNNMl93ytLjtVVRlRYmojTYUU0wYpJ665m/uncUeRUHYWFIeunYT7kpEdOHYWqTKTDmRAPlxbsFJ2RSAF/chMqp2wAt86YQlMwEWVG2vB0W/TiRfVlYn2wGzJLSKGGwdWPUf6bjGs4xgbPnDiWJ4rOqm8=",
+            "Coinbase": "0x0000000000000000000000000000000000000001",
+            "GasPrice": 0,
+            "AccelCert": {
+                "Version": 1,
+                "SerialNumber": 750714844479374298272887339141372286161724054766,
+                "NotBefore": 1550613136,
+                "NotAfter": 1866232336,
+                "IssueDate": 1550613136,
+                "PublicKey": "XR0EM8lkJj2aTvI1LBqNNMl93ytLjtVVRlRYmojTYUU0wYpJ665m/uncUeRUHYWFIeunYT7kpEdOHYWqTKTDmRAPlxbsFJ2RSAF/chMqp2wAt86YQlMwEWVG2vB0W/TiRfVlYn2wGzJLSKGGwdWPUf6bjGs4xgbPnDiWJ4rOqm8=",
+                "SignatureAlgorithm": 10,
+                "Issuer": "Thunder Token Inc.",
+                "Subject": "ThunderCore Accelerator 0",
+                "KeyUsage": 1,
+                "Signature": {
+                    "R": 38822515550128523563496916361799009729802034062930529690443239091605397785242,
+                    "S": 13359114805527818547549749513065210684575348027219889569658278926015051598974
+                }
+            },
+            "URI": "cdnserver_0:8889",
+            "HostPort": "zeus-prod-proposer-us-east-1-0.prod.tt-eng.com:8888",
+            "TxPoolAddr": "accel_0:8887"
+        }
+    ]
+}

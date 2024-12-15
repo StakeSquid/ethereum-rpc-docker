@@ -1,0 +1,44 @@
+{
+    "config": {
+        "chainId": 108,
+        "homesteadBlock": 0,
+        "eip150Block": 0,
+        "eip155Block": 0,
+        "eip158Block": 0,
+        "byzantiumBlock": 0,
+        "thunder": {}
+    },
+    "nonce": "0x0",
+    "timestamp": "0x0",
+    "extraData": "0x",
+    "gasLimit": "0x5f5e100",
+    "difficulty": "0x1",
+    "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "coinbase": "0x0000000000000000000000000000000000000000",
+    "alloc": {
+        "0x0153b99C3d3B9602c481F49bEa816Ff7F483ADB6": {
+            "balance": "0x33b2e3c9fd0803ce8000000"
+        },
+        "0x04d6E58239899af26d35e16365271f3b3A0A31D3": {
+            "balance": "0x4d8c55aefb8c05b5c000000"
+        },
+        "0x34f12F96FC671c5BA874CC0fE51d6e07b539e08b": {
+            "balance": "0x4d8c55aefb8c05b5c000000"
+        },
+        "0x59Ec13C2A3B794e188C62B48673da2dac5a3aE21": {
+            "balance": "0x85b16cce702186c5a000000"
+        },
+        "0x7DcbD3F649f10521CEAFcd5fe389AE67b40020d6": {
+            "balance": "0x4d8c55aefb8c05b5c000000"
+        },
+        "0x8c5Beb5aA9229D23BAd3BC2465a153aDc7cAD844": {
+            "balance": "0x626f3aed214275d70000000"
+        },
+        "0x51652c4E665B8B20cDAC61D19Aa4caC07c68Bd31": {
+            "balance": "0x84595161401484a000000"
+        }
+    },
+    "number": "0x0",
+    "gasUsed": "0x0",
+    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+}
