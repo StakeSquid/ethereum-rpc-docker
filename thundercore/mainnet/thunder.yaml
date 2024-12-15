@@ -33,6 +33,9 @@ auxnet:
   yellAddress: ff9A2eAcF66049B3822cC8720B868031782cf45f
   aliveAddress: 0e67BD382068fb13ae3E54b443FAaeB2EC27c329
 
+rpc:
+  modules: ["eth" "thunder" "net" "web3" "debug"]
+  
 logFile: "/logs/thunder.log"
 verboseLogFile: "/logs/thunder.verbose.log"
 
