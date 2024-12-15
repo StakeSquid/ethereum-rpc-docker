@@ -28,7 +28,8 @@ for part in "${parts[@]}"; do
     
     if $include; then
 
-	pathlist=$(cat $BASEPATH/$part | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
+	#pathlist=$(cat $BASEPATH/$part | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
+        pathlist=$(cat $BASEPATH/$part | grep -oP "(?<=PathPrefix).*\"" | cut -d'`' -f2-2)
 
 	for path in $pathlist; do
 	    path_include=true

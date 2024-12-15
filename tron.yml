@@ -1,6 +1,7 @@
 services:
   tron-fullnode:
     image: tronprotocol/java-tron:GreatVoyage-v4.7.7
+    user: root
     stop_grace_period: 5m
     ulimits:
       nofile: 1048576

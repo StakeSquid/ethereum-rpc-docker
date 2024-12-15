@@ -9,7 +9,8 @@ while IFS= read -r line; do
     blacklist+=("$line")
 done < "$BASEPATH/path-blacklist.txt"
 
-pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
+#pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
+pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=PathPrefix).*\"" | cut -d'`' -f2-2)
 
 for path in $pathlist; do
     include=true
