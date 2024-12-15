@@ -203,6 +203,11 @@
 	"urls": ["https://tron-evm-rpc.publicnode.com"],
 	"default": ["tron"]
     },
+    "viction": {
+	"id": 88,
+	"urls": ["https://rpc.viction.xyz"],
+	"default": ["viction"]
+    },
   "avalanche": {
     "id": 43114,
     "urls": [
