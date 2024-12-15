@@ -34,7 +34,7 @@ auxnet:
   aliveAddress: 0e67BD382068fb13ae3E54b443FAaeB2EC27c329
 
 rpc:
-  modules: ["eth" "thunder" "net" "web3" "debug"]
+  modules: ["eth", "thunder", "net", "web3", "debug"]
   
 logFile: "/logs/thunder.log"
 verboseLogFile: "/logs/thunder.verbose.log"
