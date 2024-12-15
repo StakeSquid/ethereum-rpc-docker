@@ -21,7 +21,7 @@ services:
       NETSTATS_HOST: "stats.viction.xyz"
       NETSTATS_PORT: 443
       WS_SECRET: getty-site-pablo-auger-room-sos-blair-shin-whiz-delhi
-    command: --port 11072 --wsport 8545 --syncmode snap
+    command: --port 11072 --wsport 8545 --syncmode full
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
