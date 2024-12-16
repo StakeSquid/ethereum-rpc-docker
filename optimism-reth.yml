@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  optimism-archive: # this is Optimism's geth client
+  optimism-archive:
     image: ghcr.io/paradigmxyz/op-reth:v1.1.4
     expose:
       - 9551
@@ -13,7 +13,6 @@ services:
     ports:
       - "8990:8990"
       - "8990:8990/udp"
-    #command: [ "sh", "./geth-entrypoint" ]
     restart: always
     user: root
     stop_grace_period: 3m
@@ -37,9 +36,6 @@ services:
   optimism-archive-node:
     build:
       context: ./op
-#      args:
-#        OP_GETH_VERSION: v1.101408.0
-#        OP_NODE_VERSION: v1.9.1      
     depends_on:
       - optimism-archive
     volumes:
@@ -53,7 +49,6 @@ services:
     ports:
       - "65369:65369"
       - "65369:65369/udp"
-    #command: [ "sh", "./op-node-entrypoint" ]
     entrypoint: ./op-node
     restart: always
     stop_grace_period: 30s
@@ -64,7 +59,7 @@ services:
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "OP_NODE_L2_ENGINE_RPC=http://optimism-archive:9551"
-      - "OP_NODE_L2_ENGINE_KIND=reth"\      
+      - "OP_NODE_L2_ENGINE_KIND=reth"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"
@@ -74,7 +69,6 @@ services:
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
       - "OP_NODE_P2P_LISTEN_TCP_PORT=65369"
       - "OP_NODE_P2P_LISTEN_UDP_PORT=65369"
-      #- "OP_NODE_ROLLUP_CONFIG=mainnet/rollup.json"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_RPC_PORT=8545"
       - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
