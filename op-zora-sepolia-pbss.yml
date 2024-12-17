@@ -69,7 +69,7 @@ services:
       - .jwtsecret:/jwtsecret
     stop_grace_period: 30s
     environment:
-      - "OP_NODE_NETWORK=zora-sepolia-0thyhxtf5e"
+      #- "OP_NODE_NETWORK=zora-sepolia-0thyhxtf5e"
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ZORA_SEPOLIA_L1_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
