@@ -15,9 +15,6 @@ services:
       - okt-chain:/datadir
     networks:
       - chains
-    entrypoint: [ "/sbin/tini", "--", "/entrypoint.sh" ]
-    environment:
-      PORT: 35885
     restart: unless-stopped
 
   okt-chain:         
