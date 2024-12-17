@@ -1,7 +1,7 @@
 #!/bin/bash
         
 if [ ! -d "/datadir/config" ]; then
-    exchaind init fullnode --chain-id exchain-66
+    exchaind init fullnode --chain-id exchain-66 --home /datadir
     wget https://raw.githubusercontent.com/okex/mainnet/main/genesis.json -O /datadir/config/genesis.json
 fi      
         
