@@ -23,7 +23,6 @@ services:
       - "GETH_CHAINID=999999999"
       - "GETH_GCMODE=full"
       - "GETH_SYNCMODE=snap"
-      - "GETH_NODISCOVER=true"
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
       - "IP=${IP}"
