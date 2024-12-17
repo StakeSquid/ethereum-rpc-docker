@@ -18,7 +18,7 @@ services:
       - zora-sepolia:/data
       - .jwtsecret:/jwtsecret
     environment:
-      #- "GETH_GENESIS_FILE_PATH=/app/sepolia/zora/genesis.json"
+      - "GETH_GENESIS_FILE_PATH=/app/sepolia/zora/genesis.json"
       - "GETH_ROLLUP_SEQUENCERHTTP=https://rpc-zora-sepolia-0thyhxtf5e.t.conduit.xyz"
       - "GETH_CHAINID=999999999"
       - "GETH_GCMODE=full"
