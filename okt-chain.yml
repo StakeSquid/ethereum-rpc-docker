@@ -1,4 +1,3 @@
-docker run -d --name exchain-mainnet-fullnode -v ~/.exchaind/data:/root/.exchaind/data/ -p 8545:8545 -p 26656:26656 okexchain/fullnode-mainnet:latest
 services:
   okt-chain-client:
     image: okexchain/fullnode-mainnet:v1.7.0.5
