@@ -7,7 +7,8 @@ fi
         
 exchaind start \
 	 --chain-id exchain-66 \
-	 --db_dir /data \
+	 --home /datadir \
 	 --rest.laddr tcp://0.0.0.0:8545 \
+	 --p2p.laddr=tcp://0.0.0.0:35885 \
 	 --db_backend rocksdb
 

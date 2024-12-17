@@ -13,7 +13,7 @@ services:
       - "35885:35885/udp"
     volumes:
       - ./okt-chain/mainnet:/root
-      - okt-chain-db:/data
+      - okt-chain:/datadir
     networks:
       - chains
     entrypoint: [ "/sbin/tini", "--", "/entrypoint.sh" ]
@@ -48,5 +48,5 @@ services:
       - "traefik.http.routers.okt-chain.middlewares=okt-chain-stripprefix, ipwhitelist"
       
 volumes:
-  okt-chain-db:
+  okt-chain:
 
