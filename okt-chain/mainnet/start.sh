@@ -1,8 +1,8 @@
 #!/bin/bash
         
-if [ ! -d "/data/config" ]; then
+if [ ! -d "/datadir/config" ]; then
     exchaind init fullnode --chain-id exchain-66
-    wget https://raw.githubusercontent.com/okex/mainnet/main/genesis.json -O /data/config/genesis.json
+    wget https://raw.githubusercontent.com/okex/mainnet/main/genesis.json -O /datadir/config/genesis.json
 fi      
         
 exchaind start \
