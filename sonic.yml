@@ -16,23 +16,24 @@ services:
     networks:
       - chains
     restart: unless-stopped
-    command: |
-      --port=34894 \
-      --maxpeers=200 \
-      --http \
-      --http.addr=0.0.0.0 \
-      --http.port=18544 \
-      --http.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc,trace \
-      --http.corsdomain="*" \
-      --http.vhosts="*" \
-      --ws \
-      --ws.addr=0.0.0.0 \
-      --ws.port=18544 \
-      --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc \
-      --ws.origins="*" \
-      --nousb \
-      --rpc.gascap=600000000 \
-      --db.preset pbl-1 \      
+    command: >-
+      
+      --port=34894
+      --maxpeers=200
+      --http
+      --http.addr=0.0.0.0
+      --http.port=18544
+      --http.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc,trace
+      --http.corsdomain="*"
+      --http.vhosts="*"
+      --ws
+      --ws.addr=0.0.0.0
+      --ws.port=18544
+      --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc
+      --ws.origins="*"
+      --nousb
+      --rpc.gascap=600000000
+      --db.preset pbl-1   
       --cache=${CACHE_SIZE:-16000}
     labels:
       - "traefik.enable=true"
