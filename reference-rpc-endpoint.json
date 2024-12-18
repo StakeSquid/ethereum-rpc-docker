@@ -275,6 +275,15 @@
       "fantom-testnet"
     ]
   },
+    "sonic": {
+    "id": 146,
+    "urls": [
+      "https://rpc.soniclabs.com"
+    ],
+    "archive": [
+      "sonic"
+    ]
+  },
     "optimism": {
 	"id": 10,
 	"urls": [
