@@ -6,7 +6,7 @@ ARG OP_REPO=https://github.com/ethereum-optimism/optimism.git
 ARG OP_VERSION=v1.10.2
 ARG OP_PATCH
 
-RUN curl -fsSL https://github.com/casey/just/releases/latest/download/just-x86_64-unknown-linux-gnu.tar.gz | tar -xzf - -C /usr/local/bin
+RUN curl -fsSL https://github.com/casey/just/releases/latest/download/just-x86_64-unknown-linux-musl.tar.gz | tar -xzf - -C /usr/local/bin
 
 RUN git clone $OP_REPO --branch op-node/$OP_VERSION --single-branch . && \
     git switch -c branch-$OP_VERSION
