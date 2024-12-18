@@ -53,7 +53,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 2m
     depends_on:
-      - metis-dtl
+      - metis-archive-dtl
     environment:
       DATADIR: "/root/.ethereum"
       NO_USB: true
