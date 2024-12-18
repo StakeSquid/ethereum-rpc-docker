@@ -6,9 +6,9 @@ services:
       context: ./op
       dockerfile: Dockerfile
       args:
-        OP_VERSION: v1.10.0
+        OP_VERSION: v1.10.2
         OP_PATCH: sepolia/lisk/op-node.patch        
-        GETH_VERSION: v1.101411.2
+        GETH_VERSION: v1.101411.4
     expose:
       - 8545       # RPC / Websocket      
       - 54521     # P2P TCP (currently unused)
@@ -59,9 +59,9 @@ uDdWRwgiMr"
       context: ./op
       dockerfile: Dockerfile
       args:
-        OP_VERSION: v1.10.0
+        OP_VERSION: v1.10.2
         OP_PATCH: sepolia/lisk/op-node.patch
-        GETH_VERSION: v1.101411.2
+        GETH_VERSION: v1.101411.4
     depends_on:
       - op-lisk-sepolia
     expose:
