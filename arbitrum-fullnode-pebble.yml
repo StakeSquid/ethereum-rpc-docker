@@ -28,6 +28,7 @@ services:
       - --ws.port=8547
       - --ws.addr=0.0.0.0
       - --ws.origins=*
+      - --execution.rpc.gas-cap=600000000
     restart: unless-stopped                 
     labels:                     
       - "traefik.enable=true"
