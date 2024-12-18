@@ -21,7 +21,7 @@ RUN if [ -n "$OP_PATCH" ]; then \
     fi
 
 RUN cd op-node && \
-    make op-node
+    just op-node
 
 FROM golang:1.22 as geth
 
