@@ -107,15 +107,15 @@ services:
     networks:
       - chains
 
-  metis-proxy:         
+  metis-archive-proxy:         
     restart: unless-stopped           
     image: nginx
     depends_on:
-      - metis
+      - metis-archive
     expose:  
       - 80                                                                                            
     environment:                                                                                      
-      PROXY_HOST: metis
+      PROXY_HOST: metis-archive
       RPC_PORT: 8545
       RPC_PATH: ""
       WS_PORT: 8546
@@ -126,12 +126,12 @@ services:
       - ./nginx-proxy:/etc/nginx/templates      
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.metis-stripprefix.stripprefix.prefixes=/metis"
-      - "traefik.http.services.metis.loadbalancer.server.port=80"
-      - "traefik.http.routers.metis.entrypoints=websecure"
-      - "traefik.http.routers.metis.tls.certresolver=myresolver"
-      - "traefik.http.routers.metis.rule=Host(`$DOMAIN`) && PathPrefix(`/metis`)"
-      - "traefik.http.routers.metis.middlewares=metis-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.metis-archive-stripprefix.stripprefix.prefixes=/metis-archive"
+      - "traefik.http.services.metis-archive.loadbalancer.server.port=80"
+      - "traefik.http.routers.metis-archive.entrypoints=websecure"
+      - "traefik.http.routers.metis-archive.tls.certresolver=myresolver"
+      - "traefik.http.routers.metis-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/metis-archive`)"
+      - "traefik.http.routers.metis-archive.middlewares=metis-archive-stripprefix, ipwhitelist"
 
 volumes:
   metis-archive:
