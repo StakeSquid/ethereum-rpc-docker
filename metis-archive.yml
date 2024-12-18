@@ -1,14 +1,14 @@
 version: "3.1"
 
 services:
-  metis-dtl:
+  metis-archive-dtl:
     image: metisdao/dtl:v0.1.2
     restart: unless-stopped
     stop_grace_period: 30s
     environment:
       URL: "https://metisprotocol.github.io/metis-networks/andromeda-mainnet/addresses.json"
       DATA_TRANSPORT_LAYER__L1_RPC_ENDPOINT: "${METIS_L1_RPC:-https://eth.llamarpc.com}"
-      DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT: "andromeda.metis.io/?owner=1088"
+      DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT: "https://andromeda.metis.io"
       DATA_TRANSPORT_LAYER__SYNC_FROM_L1: true
       DATA_TRANSPORT_LAYER__SYNC_FROM_L2: true
       DATA_TRANSPORT_LAYER__L2_CHAIN_ID: 1088
@@ -47,7 +47,7 @@ services:
     networks:
       - chains
 
-  metis:
+  metis-archive:
     image: metisdao/l2geth:v0.3.3
     #entrypoint: ["sh", "/scripts/geth.sh"]
     restart: unless-stopped
@@ -71,7 +71,7 @@ services:
       ETH1_SYNC_SERVICE_ENABLE: false
 
       ROLLUP_BACKEND: "l1"
-      ROLLUP_CLIENT_HTTP: "http://metis-dtl:7878"
+      ROLLUP_CLIENT_HTTP: "http://metis-archive-dtl:7878"
       ROLLUP_TIMESTAMP_REFRESH: "10s"
       ROLLUP_POLL_INTERVAL_FLAG: "10s"
       ROLLUP_ENFORCE_FEES: true
