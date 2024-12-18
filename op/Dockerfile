@@ -6,6 +6,7 @@ ARG OP_REPO=https://github.com/ethereum-optimism/optimism.git
 ARG OP_VERSION=v1.10.2
 ARG OP_PATCH
 
+RUN apt update && apt install -y just 
 
 RUN git clone $OP_REPO --branch op-node/$OP_VERSION --single-branch . && \
     git switch -c branch-$OP_VERSION
