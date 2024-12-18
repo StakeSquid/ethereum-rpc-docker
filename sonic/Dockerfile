@@ -9,7 +9,7 @@ FROM golang:1.22 as builder
 
 RUN apt-get update && apt-get install -y git musl-dev make
 
-RUN cd /go && git clone https://github.com/Fantom-foundation/Sonic.git && git fetch --tags && git checkout -b v2.0.1 tags/v2.0.1
+RUN cd /go && git clone https://github.com/Fantom-foundation/Sonic.git && cd Sonic && git fetch --tags && git checkout -b v2.0.1 tags/v2.0.1
 
 WORKDIR /go/Sonic
 
