@@ -1,0 +1,29 @@
+version: "3.1"
+services:
+  sonic:
+    build:
+      context: ./sonic
+      dockerfile: Dockerfile
+    stop_grace_period: 3m
+    volumes:
+      - "sonic:/var/sonic"
+    expose:
+      - "18544"
+      - "19921"
+    ports:
+      - "19921:19921"
+      - "19921:19921/udp"
+    networks:
+      - chains
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.sonic-stripprefix.stripprefix.prefixes=/sonic"
+      - "traefik.http.services.sonic.loadbalancer.server.port=18544"
+      - "traefik.http.routers.sonic.entrypoints=websecure"
+      - "traefik.http.routers.sonic.tls.certresolver=myresolver"
+      - "traefik.http.routers.sonic.rule=Host(`$DOMAIN`) && PathPrefix(`/sonic`)"
+      - "traefik.http.routers.sonic.middlewares=sonic-stripprefix, ipwhitelist"
+
+volumes:
+  sonic:
