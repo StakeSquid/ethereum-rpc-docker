@@ -16,8 +16,7 @@ services:
     networks:
       - chains
     restart: unless-stopped
-    command: >-
-      
+    command: >
       --port=34894
       --maxpeers=200
       --http
@@ -31,7 +30,6 @@ services:
       --ws.port=18544
       --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc
       --ws.origins="*"
-      --nousb
       --rpc.gascap=600000000
       --db.preset pbl-1   
       --cache=${CACHE_SIZE:-16000}
