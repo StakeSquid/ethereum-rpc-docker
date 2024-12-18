@@ -28,4 +28,4 @@ EXPOSE 18545 18546 5050 5050/udp
 
 VOLUME /var/sonic
 
-ENTRYPOINT ["bash", "entrypoint.sh"]
+ENTRYPOINT ["bash", "/entrypoint.sh"]
