@@ -23,7 +23,8 @@
 	"urls": [
 	    "https://andromeda.metis.io/?owner=1088"
 	],
-	"default": ["metis"]
+	"default": ["metis"],
+	"archive": ["metis-archive"]
     },
     "taiko": {
 	"id": 167000,
