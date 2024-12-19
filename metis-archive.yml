@@ -54,6 +54,7 @@ services:
     stop_grace_period: 2m
     depends_on:
       - metis-archive-dtl
+    command: --mine=false --miner.noverify --cache.noprefetch=true
     environment:
       DATADIR: "/root/.ethereum"
       NO_USB: true
@@ -74,7 +75,7 @@ services:
       ROLLUP_CLIENT_HTTP: "http://metis-archive-dtl:7878"
       ROLLUP_TIMESTAMP_REFRESH: "10s"
       ROLLUP_POLL_INTERVAL_FLAG: "10s"
-      ROLLUP_ENFORCE_FEES: true
+      ROLLUP_ENFORCE_FEES: false
 
       ROLLUP_STATE_DUMP_PATH: "https://metisprotocol.github.io/metis-networks/andromeda-mainnet/state-dump.latest.json"
       BLOCK_SIGNER_KEY: "6587ae678cf4fc9a33000cdbf9f35226b71dcc6a4684a31203241f9bcfd55d27"
