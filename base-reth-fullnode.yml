@@ -81,6 +81,7 @@ services:
       - "OP_NODE_L1_RPC_KIND=${BASE_ETHEREUM_ENDPOINT_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${BASE_ETHEREUM_ENDPOINT_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${BASE_ETHEREUM_ENDPOINT_BEACON}"
+      - "OP_NODE_L2_SKIP_SYNC_START_CHECK=true"
     networks:                                                                                         
       - chains
       
