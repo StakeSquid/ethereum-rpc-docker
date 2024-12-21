@@ -25,5 +25,23 @@ if [ "$3" = "--print-timestamp-only" ]; then
 fi
 
 base_url="$1"
-aria2c -c -Z -x8 -j8 -s8 -d "$LOCAL_DIR" "${files[@]/#/$base_url}"
+
+if [ ! -d "$backup_dir" ]; then
+    echo "WARN: /backup directory does not exist - extracting directly"
+
+    for file in "${files[@]}"; do
+	echo "Processing: $file"
+	curl -# "${base_url}${file}" | zstd -d | tar -xvf - -C /
+
+	if [ $? -ne 0 ]; then
+	    echo "Error processing $file"
+	    exit 1
+	else
+	    echo "$file successfully processed."
+	fi
+    done
+else
+    aria2c -c -Z -x8 -j8 -s8 -d "$LOCAL_DIR" "${files[@]/#/$base_url}"    
+fi
+
 

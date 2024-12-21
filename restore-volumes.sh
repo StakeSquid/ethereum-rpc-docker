@@ -7,11 +7,6 @@ backup_dir="/backup"
 # Path to the volume directory
 volume_dir="/var/lib/docker/volumes"
 
-if [ ! -d "$backup_dir" ]; then
-    echo "Error: /backup directory does not exist"
-    exit 1
-fi
-
 if [ ! -d "$volume_dir" ]; then
     echo "Error: /var/lib/docker/volumes directory does not exist"
     exit 1
@@ -20,6 +15,12 @@ fi
 if [[ -n $2 ]]; then
     echo "download backup from http"
     $dir/clone-backup.sh $2 $1
+
+else
+    if [ ! -d "$backup_dir" ]; then
+	echo "Error: /backup directory does not exist"
+	exit 1
+    fi
 fi
 
 calculate_required_space() {
