@@ -48,7 +48,8 @@
     "urls": [
       "https://ethereum-rpc.publicnode.com"
     ],
-    "default": [
+      "default": [
+	  "erigon-mainnet-minimal",
 	"erigon-fullnode",
 	"nethermind-mainnet",
 	"geth-mainnet",
