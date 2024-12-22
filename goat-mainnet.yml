@@ -12,8 +12,8 @@ services:
     environment:
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
-      - "GETH_DISCOVERY_PORT=18141"
-      - "GETH_PORT=18141"
+      - "GETH_DISCOVERY_PORT=47980"
+      - "GETH_PORT=47980"
       - "GETH_HTTP=true"
       - "GETH_HTTP_ADDR=0.0.0.0"
       - "GETH_HTTP_API=web3,eth,admin,net"
@@ -30,8 +30,8 @@ services:
       - 8545
       - 6060
     ports:
-      - "18141:18141"
-      - "18141:18141/udp"
+      - "47980:47980"
+      - "47980:47980/udp"
     volumes:
       - "goat-mainnet:/root/.ethereum"
       - ./goat/mainnet/geth-entrypoint.sh:/entrypoint.sh
