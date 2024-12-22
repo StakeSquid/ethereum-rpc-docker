@@ -3,10 +3,10 @@ version: '3.1'
 services:                             
                                                    
   erigon-gnosis:        
-    image: thorax/erigon:2.60.6-amd64
+    image: erigontech/erigon:v3.0.0-alpha7
     user: root
     volumes:                  
-      - "gnosis-archive_data:/datadir"
+      - "gnosis-erigon:/datadir"
       - .jwtsecret:/jwtsecret
     expose:  
       - "20947"
@@ -47,7 +47,7 @@ services:
 
 
   lodestar-gnosis:
-    image: chainsafe/lodestar:v1.12.0
+    image: chainsafe/lodestar:v1.24.0
     restart: always
     networks:
       - chains
@@ -58,7 +58,7 @@ services:
       - 4000
       - 5054
     volumes:
-      - lodestar-gnosis:/data
+      - gnosis-erigon-lodestar:/data
       - .jwtsecret:/jwt.hex:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
@@ -92,5 +92,5 @@ services:
 
       
 volumes:
-  gnosis-archive_data:
-  lodestar-gnosis:    
+  gnosis-erigon:
+  gnosis-erigon-lodestar:   
