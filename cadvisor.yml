@@ -1,0 +1,23 @@
+services:
+  cadvisor:
+    image: ${CADVISOR_IMAGE:-gcr.io/cadvisor/cadvisor:v0.49.1}
+    container_name: cadvisor
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      #- /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
+    restart: unless-stopped
+    expose:
+      - 8080
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8080"
+      - "prometheus-scrape.job_name=cadvisor"
+      - "org.label-schema.group=monitoring"
+    networks:
+      - monitoring

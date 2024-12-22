@@ -1,0 +1,23 @@
+services:
+  nodeexporter:
+    image: prom/node-exporter:v1.2.2
+    container_name: nodeexporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    expose:
+      - 9100
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9100"
+      - "prometheus-scrape.job_name=nodeexporter"
+      - "org.label-schema.group=monitoring"
+    networks:
+      - monitoring
