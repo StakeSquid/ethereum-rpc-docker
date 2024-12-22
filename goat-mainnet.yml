@@ -1,0 +1,68 @@
+services:
+
+  goat-mainnet:
+    image: ghcr.io/goatnetwork/goat-geth:v0.2.0
+    stop_grace_period: 5m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "geth attach --exec eth.blockNumber"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - "GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
+      - "GETH_DISCOVERY_PORT=18141"
+      - "GETH_PORT=18141"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_API=web3,eth,admin,net"
+      - "GETH_HTTP_VHOSTS=*"
+      - "GETH_WS=true"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_API=web3,eth,net,admin"
+      - "GETH_WS_ORIGINS=*"
+      - "GETH_WS_PORT=8545"
+      - "GETH_NAT=extip:${IP}"
+      - "GETH_SYNCMODE=full"
+    entrypoint: /entrypoint.sh
+    expose:
+      - 8545
+      - 6060
+    ports:
+      - "18141:18141"
+      - "18141:18141/udp"
+    volumes:
+      - "goat-mainnet:/root/.ethereum"
+      - ./goat/mainnet/geth-entrypoint.sh:/entrypoint.sh
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.goat-mainnet-stripprefix.stripprefix.prefixes=/goat-mainnet"
+      - "traefik.http.services.goat-mainnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.goat-mainnet.entrypoints=websecure"
+      - "traefik.http.routers.goat-mainnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.goat-mainnet.rule=Host(`$DOMAIN`) && PathPrefix(`/goat-mainnet`)"
+      - "traefik.http.routers.goat-mainnet.middlewares=goat-mainnet-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+  goat-mainnet-node:
+    image: ghcr.io/goatnetwork/goat:v0.2.0
+    stop_grace_period: 30s
+    restart: unless-stopped
+    entrypoint: /entrypoint.sh
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - "goat-mainnet-node:/goat"
+      - "goat-mainnet:/geth"
+      - ./goat/mainnet/node-entrypoint.sh:/entrypoint.sh
+    depends_on:
+      goat-mainnet:
+        condition: service_healthy
+    networks:
+      - chains
+
+volumes:
+  goat-mainnet:
+  goat-mainnet-node:
