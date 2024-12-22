@@ -1,5 +1,3 @@
-version: '3.1'                              
-                                                   
 services:                             
                                                    
   erigon-gnosis:        
@@ -23,7 +21,7 @@ services:
       - "17938:17938"
       - "17938:17938/udp"
     restart: unless-stopped
-    command: --chain=gnosis --nat=stun --authrpc.addr=0.0.0.0 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,trace,web3,erigon --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=20947 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1000000 --p2p.protocol=66 --p2p.protocol 67 --p2p.protocol 68 --p2p.allowed-ports 28806 --p2p.allowed-ports 16393 --p2p.allowed-ports 17938
+    command: --chain=gnosis --prune.mode=archive --nat=stun --authrpc.addr=0.0.0.0 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,trace,web3,erigon --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=20947 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1000000 --p2p.protocol=66 --p2p.protocol 67 --p2p.protocol 68 --p2p.allowed-ports 28806 --p2p.allowed-ports 16393 --p2p.allowed-ports 17938
     stop_grace_period: 1m                         
     labels:                                      
       - "prometheus-scrape.enabled=true"
@@ -39,58 +37,7 @@ services:
       - "traefik.http.routers.erigon-gnosis.middlewares=erigon-gnosis-stripprefix, ipwhitelist"
     networks:   
       - chains        
-    logging:
-      options:
-        max-file: '1'
-        compress: 'false'
-      driver: local
-
-
-  lodestar-gnosis:
-    image: chainsafe/lodestar:v1.24.0
-    restart: always
-    networks:
-      - chains
-    ports:
-      - 8598:8598/tcp # p2p
-      - 8598:8598/udp # p2p
-    expose:
-      - 4000
-      - 5054
-    volumes:
-      - gnosis-erigon-lodestar:/data
-      - .jwtsecret:/jwt.hex:ro
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      - NODE_OPTIONS=--max-old-space-size=6144
-    command: |
-      beacon
-      --network=gnosis
-      --dataDir=/data
-      --preset=gnosis
-      --eth1=true
-      --execution.urls=http://erigon-gnosis:8551
-      --jwt-secret=/jwt.hex
-      --logFile=/data/logs/beacon.log
-      --logFileLevel=info
-      --port=8598
-      --rest=true
-      --rest.address=0.0.0.0
-      --rest.port=4000
-      --rest.cors=*
-      --discv5=true
-      --targetPeers=50
-      --metrics=true
-      --metrics.port=5054
-      --checkpointSyncUrl=https://checkpoint.gnosischain.com/    
-    labels:
-      - "prometheus-scrape.enabled=true"
-      - "prometheus-scrape.port=5054"
-      - "prometheus-scrape.job_name=lodestar-gnosis"
-      - "prometheus-scrape.metrics_path=/metrics"
-
       
 volumes:
   gnosis-erigon:
-  gnosis-erigon-lodestar:   
+
