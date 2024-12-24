@@ -44,7 +44,7 @@ services:
       - "traefik.http.routers.rsk-fullnode.entrypoints=websecure"
       - "traefik.http.routers.rsk-fullnode.tls.certresolver=myresolver"
       - "traefik.http.routers.rsk-fullnode.rule=Host(`$DOMAIN`) && PathPrefix(`/rsk-fullnode`)"      
-      - "traefik.http.routers.rsk-fullnode.middlewares=rsk-fullnode-stripprefix, ipwhitelist"
+      - "traefik.http.routers.rsk-fullnode.middlewares=rsk-fullnode-stripprefix"
       
 volumes:
   rsk-fullnode:
