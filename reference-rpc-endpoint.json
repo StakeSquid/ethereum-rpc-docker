@@ -457,7 +457,7 @@
 	"urls": ["https://rpc.testnet3.goat.network"],
 	"default": ["goat-testnet"]
     },
-    "goat": {
+    "goat-mainnet-alpha": {
 	"id": 2345,
 	"urls": ["https://rpc.goat.network"],
 	"default": ["goat-mainnet"]
