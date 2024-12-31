@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+  polygon-erigon:
+    image: erigontech/erigon:v2.60.9
+    user: root
+    stop_grace_period: 10m
+    volumes:
+      - "polygon-erigon:/datadir"
+      - "/slowdisk:/slowdisk"
+    expose:
+      - 8545
+    ports:
+      - "6625:6625"
+      - "6625:6625/udp"
+      - "37521:37521"
+      - "37521:37521/udp"
+      - "57814:57814"
+      - "57814:57814/udp"
+      - "13809:13809"
+      - "13809:13809/udp"
+      - "58967:58967"
+      - "58967:58967/udp"      
+    restart: unless-stopped
+    command: --chain=bor-mainnet --nat=stun --bor.heimdall=https://polygon-heimdall-rest.publicnode.com --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,trace,web3,erigon,bor --ws --ws.port=8545 --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --db.pagesize=16k --batchSize=2048MB --port=6625 --p2p.protocol=66 --p2p.protocol 67 --p2p.protocol 68 --p2p.allowed-ports 13809 --p2p.allowed-ports 57814 --p2p.allowed-ports 37521 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1100000 --db.size.limit=12t --snapshots=true --torrent.port 58967 --torrent.download.rate 1000mb --torrent.upload.rate 10mb
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=polygon-erigon"
+      - "prometheus--scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.polygon-erigon-stripprefix.stripprefix.prefixes=/polygon-erigon"
+      - "traefik.http.services.polygon-erigon.loadbalancer.server.port=8545"
+      - "traefik.http.routers.polygon-erigon.entrypoints=websecure"
+      - "traefik.http.routers.polygon-erigon.tls.certresolver=myresolver"
+      - "traefik.http.routers.polygon-erigon.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-erigon`)"
+      - "traefik.http.routers.polygon-erigon.middlewares=polygon-erigon-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+volumes:
+    polygon-erigon:
