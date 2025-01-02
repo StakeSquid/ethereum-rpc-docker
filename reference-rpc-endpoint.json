@@ -326,7 +326,7 @@
 	"erigon-gnosis-fullnode",
 	"nethermind-gnosis"
     ],
-      "archive": ["erigon-gnosis"]
+      "archive": ["erigon-gnosis", "reth-gnosis"]
   },
     "gnosis-chiado": {
 	"id": 10200,
