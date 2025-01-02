@@ -34,14 +34,14 @@ services:
       - chains
 
       
-  nimbus-gnosis:
+  nimbus-gnosis-reth:
     build:
       context: ./gnosis/nimbus
     restart: unless-stopped
     stop_grace_period: 1m
     user: root
     volumes:
-      - nimbus-gnosis:/data
+      - nimbus-reth-gnosis:/data
       - .jwtsecret:/jwt:ro
     environment:
       CHECKPOINT_SYNC_URL: "https://checkpoint.gnosischain.com/"
@@ -82,4 +82,4 @@ services:
       
 volumes:
     reth-gnosis:
-    prysm-reth-gnosis:
+    nimbus-reth-gnosis:
