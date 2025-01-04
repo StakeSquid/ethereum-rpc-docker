@@ -10,11 +10,11 @@ services:
       - /backup:/webdav
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.backup-server-stripprefix.stripprefix.prefixes=/backup"                      
-      - "traefik.http.services.backup-server.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.backup-server-stripprefix.stripprefix.prefixes=/dev/null"                      
+      - "traefik.http.services.backup-server.loadbalancer.server.nport=80"
       - "traefik.http.routers.backup-server.entrypoints=websecure"                                              
       - "traefik.http.routers.backup-server.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.backup-server.rule=Host(`$DOMAIN`) && PathPrefix(`/backup`)"                     
+      - "traefik.http.routers.backup-server.rule=Host(`$DOMAIN`) && PathPrefix(`/dev/null`)"                     
       - "traefik.http.routers.backup-server.middlewares=backup-server-stripprefix"                           
     networks:                                                                                         
       - chains
