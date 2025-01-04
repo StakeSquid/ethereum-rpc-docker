@@ -11,28 +11,26 @@ done < "$BASEPATH/path-blacklist.txt"
 
 # Parse Docker Compose file to get all services
 services=$(cat $BASEPATH/$1.yml | yaml2json | jq -r '.services | keys | .[]')
-echo $services
+
 for service in $services; do
 
-    IFS=$'\t' read -r -a labels <<< $(cat "$BASEPATH/$1.yml" | yaml2json | jq -r ".services[\"$service\"].labels[]")
+    labels=($(cat "$BASEPATH/$1.yml" | yaml2json | jq -r ".services[\"$service\"].labels[]"))
     
     for label in "${labels[@]}"; do
 	if [[ "$label" == *"stripprefix.prefixes"* ]]; then
-echo $label
 	    path=$(echo "$label" | cut -d "=" -f 2)
             break  # Stop looping after finding the first match
 	fi
     done
-
     include=true
     for word in "${blacklist[@]}"; do
         if echo "$path" | grep -qE "$word"; then
             include=false
         fi
     done
-    
-    if $include; then
 
+    if $include; then
+#	IFS=$'\t' read -r -a labels <<< $(cat "$BASEPATH/$1.yml" | yaml2json | jq -r ".services[\"$service\"].labels[]")
         for label in "${labels[@]}"; do
             if [[ "$label" == *"loadbalancer.server.port"* ]]; then
 		port=$(echo "$label" | cut -d "=" -f 2)
