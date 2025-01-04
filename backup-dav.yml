@@ -11,7 +11,7 @@ services:
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.backup-server-stripprefix.stripprefix.prefixes=/dav"                      
-      - "traefik.http.services.backup-server.loadbalancer.server.nport=80"
+      - "traefik.http.services.backup-server.loadbalancer.server.port=80"
       - "traefik.http.routers.backup-server.entrypoints=websecure"                                              
       - "traefik.http.routers.backup-server.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.backup-server.rule=Host(`$DOMAIN`) && PathPrefix(`/dav`)"                     
