@@ -2,19 +2,19 @@ version: '3.1'
 
 services:
   backup-dav:
-    image: hurlenko/webdav:latest
+    image: 117503445/go_webdav:latest
     restart: unless-stopped
     environment:
-      - "WEBDAV_AUTH=false"
+      - "dav=/null,/webdav,null,null,false"
     volumes:
       - /backup:/webdav
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.backup-server-stripprefix.stripprefix.prefixes=/dev/null"                      
+      - "traefik.http.middlewares.backup-server-stripprefix.stripprefix.prefixes=/dav"                      
       - "traefik.http.services.backup-server.loadbalancer.server.nport=80"
       - "traefik.http.routers.backup-server.entrypoints=websecure"                                              
       - "traefik.http.routers.backup-server.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.backup-server.rule=Host(`$DOMAIN`) && PathPrefix(`/dev/null`)"                     
+      - "traefik.http.routers.backup-server.rule=Host(`$DOMAIN`) && PathPrefix(`/dav`)"                     
       - "traefik.http.routers.backup-server.middlewares=backup-server-stripprefix"                           
     networks:                                                                                         
       - chains
