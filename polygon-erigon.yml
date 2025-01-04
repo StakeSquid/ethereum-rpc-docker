@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   polygon-erigon:
-    image: erigontech/erigon:v2.60.9
+    image: erigontech/erigon:v2.60.10
     user: root
     stop_grace_period: 10m
     volumes:
