@@ -40,8 +40,8 @@ for key in $keys; do
     #echo "$target_file"
 
     if [[ -n $2 ]]; then
-	tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd | curl -X PUT --data-binary @- "https://$2.stakesquid.eu/dev/null/uploading-$target_file"
-        curl -X MOVE -H "Destination: https://$2.stakesquid.eu/dev/null/$target_file" "https://$2.stakesquid.eu/dev/null/uploading-$target_file"
+	tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd | curl -X PUT --data-binary @- "https://$2.stakesquid.eu/dav/null/uploading-$target_file"
+        curl -X MOVE -H "Destination: https://$2.stakesquid.eu/dev/null/$target_file" "https://$2.stakesquid.eu/dav/null/uploading-$target_file"
     else    
         tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd -o "/backup/uploading-$target_file"
         mv "/backup/uploading-$target_file" "/backup/$target_file"
