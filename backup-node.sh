@@ -1,8 +1,12 @@
 #!/bin/bash
 
-if [ ! -d "/backup" ]; then
-    echo "Error: /backup directory does not exist"
-    exit 1
+if [[ -n $2 ]]; then
+    echo "upload backup via webdav"
+else
+    if [ ! -d "$backup_dir" ]; then
+	echo "Error: /backup directory does not exist"
+	exit 1
+    fi
 fi
 
 # Read the JSON input and extract the list of keys
@@ -34,6 +38,12 @@ for key in $keys; do
     target_file="rpc_$key-$(date +'%Y-%m-%d-%H-%M-%S')-${folder_size_gb}G.tar.zst"
 
     #echo "$target_file"
-    tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd -o "/backup/uploading-$target_file"
-    mv "/backup/uploading-$target_file" "/backup/$target_file"
+
+    if [[ -n $2 ]]; then
+	tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd | curl -X PUT --data-binary @- "https://$2.stakesquid.eu/dev/null/uploading-$target_file"
+        curl -X MOVE -H "Destination: https://$2.stakesquid.eu/dev/null/$target_file" "https://$2.stakesquid.eu/dev/null/uploading-$target_file"
+    else    
+        tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd -o "/backup/uploading-$target_file"
+        mv "/backup/uploading-$target_file" "/backup/$target_file"
+    fi
 done
