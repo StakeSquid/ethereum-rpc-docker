@@ -9,12 +9,16 @@ while IFS= read -r line; do
     blacklist+=("$line")
 done < "$BASEPATH/path-blacklist.txt"
 
-# Parse Docker Compose file to get all services
-services=$(yaml2json $BASEPATH/$1.yml | jq -r '.services | keys | .[]')
+y2j() {
+    python3 -c 'import sys, yaml, json; print(json.dumps(yaml.safe_load(sys.stdin.read())))' < "$1"
+}
 
+# Parse Docker Compose file to get all services
+services=$(y2j $BASEPATH/$1.yml | jq -r '.services | keys | .[]')
+echo $services
 for service in $services; do
 
-    IFS=$'\t' read -r -a labels <<< $(yaml2json "$BASEPATH/$1.yml" | jq -r ".services[\"$service\"].labels | @tsv")
+    IFS=$'\t' read -r -a labels <<< $(y2j "$BASEPATH/$1.yml" | jq -r ".services[\"$service\"].labels | @tsv")
     
     for label in "${labels[@]}"; do
 	if [[ "$label" == *"stripprefix.prefixes"* ]]; then
