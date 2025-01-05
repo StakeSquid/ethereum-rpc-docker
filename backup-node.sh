@@ -43,7 +43,7 @@ for key in $keys; do
 
     if [[ -n $2 ]]; then
 	tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd | curl -X PUT --upload-file - "$2/null/uploading-$target_file"
-        curl -X MOVE -H "Destination: /null/$target_file" "$2/uploading-$target_file"
+        curl -X MOVE -H "Destination: /null/$target_file" "$2/null/uploading-$target_file"
     else    
         tar -cf - "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd -o "/backup/uploading-$target_file"
         mv "/backup/uploading-$target_file" "/backup/$target_file"
