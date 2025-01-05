@@ -17,4 +17,21 @@ services:
     networks:                                                                                         
       - chains
     
+  backup-dav:
+    image: 117503445/go_webdav:latest
+    restart: unless-stopped
+    environment:
+      - "dav=/null,/webdav,null,null,false"
+    volumes:
+      - /backup:/webdav
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.backup-storage-stripprefix.stripprefix.prefixes=/dav"                      
+      - "traefik.http.services.backup-storage.loadbalancer.server.port=80"
+      - "traefik.http.routers.backup-storage.entrypoints=websecure"                                              
+      - "traefik.http.routers.backup-storage.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.backup-storage.rule=Host(`$DOMAIN`) && PathPrefix(`/dav`)"                     
+      - "traefik.http.routers.backup-storage.middlewares=backup-storage-stripprefix"                           
+    networks:                                                                                         
+      - chains
 
