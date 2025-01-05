@@ -8,5 +8,5 @@ arbitrum-classic
 hagall
 public
 backup
-backup-dav
+dav
 \-node
