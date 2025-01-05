@@ -1,5 +1,7 @@
 #!/bin/bash
 
+backup_dir="/backup"
+
 if [[ -n $2 ]]; then
     echo "upload backup via webdav to $2"
 else
