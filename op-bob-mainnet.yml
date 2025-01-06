@@ -35,7 +35,9 @@ services:
       - "GETH_OVERRIDE_CANYON=1704992401"
       - "GETH_OVERRIDE_DELTA=1708560000"
       - "GETH_OVERRIDE_ECOTONE=1710374401"
-      - "GETH_OVERRIDE_FJORD=1720627201"      
+      - "GETH_OVERRIDE_FJORD=1720627201"
+      - "GETH_OVERRIDE_GRANITE=1736272801"
+      - "GETH_OVERRIDE_HOLOCENE=1736445601"
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.bob-stripprefix.stripprefix.prefixes=/bob-mainnet"                      
@@ -100,6 +102,8 @@ services:
       - "OP_NODE_OVERRIDE_DELTA=1708560000"
       - "OP_NODE_OVERRIDE_ECOTONE=1710374401"
       - "OP_NODE_OVERRIDE_FJORD=1720627201"
+      - "OP_NODE_OVERRIDE_GRANITE=1736272801"
+      - "OP_NODE_OVERRIDE_HOLOCENE=1736445601"      
     networks:                                                                                         
       - chains
       
