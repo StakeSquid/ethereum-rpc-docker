@@ -523,7 +523,8 @@
     "bob": {
 	"id": 60808,
 	"urls": ["https://rpc-bob-mainnet-0.t.conduit.xyz"],
-	"default": ["op-bob-mainnet"]
+	"default": ["op-bob-mainnet"],
+	"archive": ["op-bob-mainnet-archive"]
     },
     "mode": {
 	"id": 34443,
