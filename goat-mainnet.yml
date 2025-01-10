@@ -4,11 +4,11 @@ services:
     image: ghcr.io/goatnetwork/goat-geth:v0.2.0
     stop_grace_period: 5m
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "geth attach --exec eth.blockNumber"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    #healthcheck:
+    #  test: ["CMD-SHELL", "geth attach --exec eth.blockNumber"]
+    #  interval: 5s
+    #  timeout: 5s
+    #  retries: 5
     environment:
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
