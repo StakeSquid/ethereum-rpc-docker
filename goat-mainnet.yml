@@ -59,7 +59,7 @@ services:
       - ./goat/mainnet/node-entrypoint.sh:/entrypoint.sh
     depends_on:
       goat-mainnet:
-        condition: service_healthy
+     #   condition: service_healthy
     networks:
       - chains
 
