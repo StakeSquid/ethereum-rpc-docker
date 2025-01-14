@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   mainnet-reth:
-    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.1.1}
+    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.1.5}
     user: root
     volumes:
       - "reth-mainnet:/root/.local/share/reth/mainnet"
@@ -34,7 +34,7 @@ services:
       - chains
 
   mainnet-prysm-reth:
-    image: prysmaticlabs/prysm-beacon-chain:v5.0.4
+    image: prysmaticlabs/prysm-beacon-chain:${PRYSM_VERSION:-v5.2.0}
     expose:
       - 3500
     ports:
