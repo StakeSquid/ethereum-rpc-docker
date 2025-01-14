@@ -103,6 +103,7 @@ services:
       - "OP_NODE_P2P_PEER_BANNING=false"
       - "OP_NODE_P2P_PEER_SCORING=none"
       - "OP_NODE_OVERRIDE_FJORD=1720627201"
+      - "OP_NODE_OVERRIDE_GRANITE=1726070401"
       - "OP_NODE_OVERRIDE_HOLOCENE=1736445601"
     networks:                                                                                         
       - chains
