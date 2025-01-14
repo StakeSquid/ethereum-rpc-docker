@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   bsc-testnet:                                                                                                                                                            
-    image: ghcr.io/bnb-chain/bsc:1.4.16
+    image: ghcr.io/bnb-chain/bsc:${BSC_VERSION:-1.5.3-beta}
     user: root
     ports:
       - "17474:17474"
