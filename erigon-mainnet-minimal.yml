@@ -1,6 +1,6 @@
 services:
   erigon-mainnet-minimal:
-    image: erigontech/erigon:v3.0.0-alpha7
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-alpha7}
     user: root
     expose:
       - "16630"

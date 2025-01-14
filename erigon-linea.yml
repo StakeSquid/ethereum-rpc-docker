@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-linea:
-    image: erigontech/erigon:v2.60.10
+    image: erigontech/erigon:${ERIGON2_VERSION:-v2.61.0}
     user: root
     expose:
       - "51262"

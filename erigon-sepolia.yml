@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-sepolia:
-    image: erigontech/erigon:2.60.8
+    image: erigontech/erigon:${ERIGON2_VERSION:-v2.61.0}
     user: root
     expose:
       - "31337"

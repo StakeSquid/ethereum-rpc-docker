@@ -1,7 +1,7 @@
 services:                             
 
   erigon-chiado:
-    image: thorax/erigon:2.60.6-amd64
+    image: erigontech/erigon:${ERIGON2_VERSION:-v2.61.0}
     user: root
     expose:
       - "27374"
@@ -59,7 +59,7 @@ services:
 
       
   lodestar-gnosis-chiado:
-    image: chainsafe/lodestar:v1.19.0
+    image: chainsafe/lodestar:${LODESTAR_VERSION:-v1.24.0}
     restart: always
     networks:
       - chains

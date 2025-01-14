@@ -1,7 +1,7 @@
 services:                             
                                                    
   erigon-gnosis:        
-    image: erigontech/erigon:v3.0.0-alpha7
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-alpha7}
     user: root
     volumes:                  
       - "gnosis-erigon:/datadir"
