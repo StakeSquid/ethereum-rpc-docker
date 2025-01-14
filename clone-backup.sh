@@ -4,7 +4,7 @@ dir="$(dirname "$0")"
 # FTP server details
 LOCAL_DIR="/backup"
 
-mkdir -p "$LOCAL_DIR"
+#mkdir -p "$LOCAL_DIR"
 
 keys=$(cat $dir/$2.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
 
@@ -26,7 +26,7 @@ fi
 
 base_url="$1"
 
-if [ ! -d "$backup_dir" ]; then
+if [ ! -d "$LOCAL_DIR" ]; then
     echo "WARN: /backup directory does not exist - extracting directly"
 
     for file in "${files[@]}"; do
