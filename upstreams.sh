@@ -91,7 +91,7 @@ done
 
 if [[ -f $BASEPATH/external-rpcs.txt ]]; then
 while IFS= read -r url; do
-
+    #echo $url
     export RPC_URL="$url"
     export TEST_URL="$RPC_URL"
     export WS_URL=$(echo "$url" | sed -e 's|^http://|ws://|' -e 's|^https://|wss://|')
@@ -99,9 +99,12 @@ while IFS= read -r url; do
     export ID="id-$PROVIDER"
     
     response_file=$(mktemp)
-		
-    http_status_code=$(curl --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL)
 
+    http_status_code=$(curl --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL < /dev/null)
+    # if I do not echo that one then the script doesn't iterate over the list of urls properly ^^
+    echo "$(cat $response_file)" >&2
+    #echo $http_status_code
+    
     if [ $? -eq 0 ] && [[ $http_status_code -ne 200 ]]; then
 	echo "have error response from $TEST_URL: $(cat $response_file)" >&2
 	rm "$response_file"
@@ -111,11 +114,13 @@ while IFS= read -r url; do
     chain_id=$(cat "$response_file" | jq -r '.result')		
     rm "$response_file"
     
-    #echo "$TEST_URL $chain_id" >&2
+    echo "$TEST_URL $chain_id" >&2
     chain_id_decimal=$((16#${chain_id#0x}))
     export CHAIN=$($BASEPATH/get-shortname.sh $chain_id_decimal)
 
     input_file="$BASEPATH/$(echo $url | sed -E 's|https?://([^.]+\.)*([^.]+\.[^.]+).*|\2|').cfg"
+
+    #echo "$input_file"
     
     [ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
 		
