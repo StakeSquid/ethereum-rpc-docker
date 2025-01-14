@@ -14,7 +14,7 @@ version: '3.4'
 
 services:
   op-boba:
-    image:  us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon:v1.2.7
+    image:  us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon:v1.2.11
     user: root
     command: |
       --datadir=/db
@@ -60,7 +60,7 @@ services:
   op-boba-node:
     depends_on:
       - op-boba
-    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node:v1.6.12
+    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node:v1.6.15
     command: >
       op-node
       --l2=http://op-boba:8551
