@@ -2,12 +2,12 @@ version: '3.1'
 
 services:
   optimism-archive:
-    image: ghcr.io/paradigmxyz/op-reth:v1.1.4
+    image: ghcr.io/paradigmxyz/op-reth:${RETH_VERSION:-v1.1.5}
     expose:
-      - 9551
+      - 9551      # consensus
       - 8545       # RPC / Websocket      
-      - 8990     # P2P TCP (currently unused)
-      - 8990/udp # P2P UDP (currently unused)
+      - 8990     # P2P TCP
+      - 8990/udp # P2P UDP
       - 6060       # metrics
       - 855
     ports:
