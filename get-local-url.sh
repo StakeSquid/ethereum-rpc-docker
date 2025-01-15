@@ -10,11 +10,11 @@ while IFS= read -r line; do
 done < "$BASEPATH/path-blacklist.txt"
 
 # Parse Docker Compose file to get all services
-services=$(cat $BASEPATH/$1.yml | yaml2json | jq -r '.services | keys | .[]')
+services=$(cat $BASEPATH/$1.yml | yaml2json - | jq -r '.services | keys | .[]')
 
 for service in $services; do
 
-    labels=($(cat "$BASEPATH/$1.yml" | yaml2json | jq -r ".services[\"$service\"].labels[]"))
+    labels=($(cat "$BASEPATH/$1.yml" | yaml2json - | jq -r ".services[\"$service\"].labels[]"))
     
     for label in "${labels[@]}"; do
 	if [[ "$label" == *"stripprefix.prefixes"* ]]; then
