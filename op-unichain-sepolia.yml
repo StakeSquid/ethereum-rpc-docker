@@ -1,0 +1,128 @@
+services:
+  op-unichain-sepolia: # this is Optimism's geth client
+    build:
+      context: ./op
+      dockerfile: Dockerfile
+    expose:
+      - 8545      # RPC / Websocket      
+      - 6638      # P2P TCP (currently unused)
+      - 54521/udp # P2P UDP (currently unused)
+      - 6060      # metrics
+    ports:
+      - "6638:6638/tcp"
+      - "6638:6638/udp"      
+      - 8545:8545/tcp
+      - 8546:8546/tcp
+    command: [ "sh", "./geth-entrypoint" ]
+    restart: always
+    stop_grace_period: 3m    
+    volumes:
+      - unichain-sepolia:/data
+      - .jwtsecret:/jwtsecret
+      - ./op/sepolia/unichain/rollup.json:/app/sepolia/unichain/rollup.json
+      - ./op/sepolia/unichain/genesis.json:/app/sepolia/unichain/genesis.json
+    environment:
+      - "GETH_GENESIS_FILE_PATH=/app/sepolia/unichain/genesis.json"
+      - "GETH_OP_NETWORK=unichain-sepolia"
+      - "GETH_ROLLUP_SEQUENCERHTTP=https://sepolia-sequencer.unichain.org"
+      - "GETH_BOOTNODES=enode://9e138a8ec4291c4f2fe5851aaee44fc73ae67da87fb26b75e3b94183c7ffc15b2795afc816b0aa084151b95b3a3553f1cd0d1e9dd134dcf059a84d4e0b429afc@3.146.117.118:30303,enode://34d87d649e5c58a17a43c1d59900a2020bd82d5b12ea39467c3366bee2946aaa9c759c77ede61089624691291fb2129eeb2a47687b50e2463188c78e1f738cf2@52.15.54.8:30303,enode://c2405194166fe2c0e6c61ee469745fed1a6802f51c8fc39e1c78c21c9a6a15a7c55304f09ee37e430da9a1ce8117ca085263c6b0f474f6946811e398347611ef@3.146.213.65:30303"
+      - "GETH_LOG_FORMAT=logfmt"
+      - "GETH_VERBOSITY=3"
+      - "GETH_DATADIR=/data"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_VHOSTS='*'"
+      - "GETH_HTTP_CORSDOMAIN='*'"
+      - "GETH_HTTP_API=web3,debug,eth,txpool,net,admin,rpc"
+      - "GETH_WS=true"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_API=web3,debug,eth,txpool,net,admin,rpc"
+      - "GETH_AUTHRPC_JWTSECRET=/jwtsecret/jwt.hex"
+      - "GETH_AUTHRPC_PORT=8551"
+      - "GETH_AUTHRPC_VHOSTS='*'"
+      - "GETH_AUTHRPC_ADDR=0.0.0.0"
+      - "GETH_METRICS=true"
+      - "GETH_METRICS_ADDR=0.0.0.0"
+      - "GETH_ROLLUP_DISABLETXPOOLGOSSIP=true"
+      - "GETH_TXPOOL_NOLOCALS=true"
+      - "GETH_SYNCMODE=snap"
+      - "IP=${IP}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret/jwt.hex"
+      - "GETH_AUTHRPC_PORT=8551"
+      - "GETH_RPC_PORT=8545"
+      - "WS_PORT=8545" 
+      - "P2P_PORT=6638"
+     
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.unichain-sepolia-stripprefix.stripprefix.prefixes=/unichain-sepolia"                      
+      - "traefik.http.services.unichain-sepolia.loadbalancer.server.port=8545"
+      - "traefik.http.routers.unichain-sepolia.entrypoints=websecure"                                              
+      - "traefik.http.routers.unichain-sepolia.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.unichain-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/unichain-sepolia`)"                     
+      - "traefik.http.routers.unichain-sepolia.middlewares=unichain-sepolia-stripprefix"                           
+    networks:                                                                                         
+      - chains
+      
+  op-unichain-sepolia-node:
+    build:
+      context: ./op
+      dockerfile: Dockerfile
+      # args:
+      #   OP_VERSION: v1.10.1
+      #   GETH_VERSION: v1.101411.2
+    depends_on:
+      - op-unichain-sepolia
+    expose:
+      - 8545     # RPC
+      - 18660     # P2P TCP
+      - 18660/udp # P2P UDP
+      - 7300     # metrics
+      - 6060     # pprof
+    ports:
+      - "18660:18660"
+      - "18660:18660/udp"
+      - "9222:9222"
+      - "9222:9222/udp"
+      - 9545:9545/tcp
+    command: [ "sh", "./op-node-entrypoint" ]
+    restart: always
+    volumes:
+      - .jwtsecret:/jwtsecret
+      - ./opnode-data:/data
+      - ./op/sepolia/unichain/rollup.json:/app/sepolia/unichain/rollup.json
+      - ./op/sepolia/unichain/genesis.json:/app/sepolia/unichain/genesis.json
+    stop_grace_period: 30s
+    environment:      
+      - "OP_NODE_NETWORK=unichain-sepolia"
+      - "OP_NODE_L1_ETH_RPC=${UNICHAIN_SEPOLIA_L1_ENDPOINT}"
+      - "OP_NODE_L1_BEACON=${UNICHAIN_SEPOLIA_L1_BEACON}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret/jwt.hex"
+      - "OP_NODE_L2_ENGINE_RPC=http://op-unichain-sepolia:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_LOG_FORMAT=logfmt"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      - "OP_NODE_P2P_BOOTNODES=enr:-J24QIHsjbBldFkaVUTEkEdwYa51AeCOAWd8bJbUOqGqsWDhScaPGnPERVfRgcCJbK2X8vI-9eB-VTDDNRl7S4e1zPyGAZKhaRjagmlkgnY0gmlwhAOSdXaHb3BzdGFja4OVCgCJc2VjcDI1NmsxoQI0_WNHeARGz-kjyK_s7MjZkTf5xYSHrm7nL4C5LwbyJ4N0Y3CCJAaDdWRwgiQG,enr:-J24QH_0BbED1p4R8lZe0Wk6V9pFonqXMw48X_IVKQhbNsekdWlDkKUUaDWV4FHqWVQpfGPI5IjeqKOaIrTBnup8Ro2GAZKhZyO6gmlkgnY0gmlwhDQPNgiHb3BzdGFja4OVCgCJc2VjcDI1NmsxoQOKqwdtPsP4czpXIFwx56PmThevWwxQJ78gY0QaQxNdU4N0Y3CCJAaDdWRwgiQG,enr:-J24QKCDaIQdjhYZAvhLp__sApHypx1zgiKaFAiSP55klZCpVpiFLvaR8LKSICO0sc_xE3SL-rW2JBbQrtXg9yGcFQuGAZKhaBnzgmlkgnY0gmlwhAOS1UGHb3BzdGFja4OVCgCJc2VjcDI1NmsxoQL0xHUDIhXHIn_8yAKupnuK3c2TbqDdhRIn-IiYV2Wxe4N0Y3CCJAaDdWRwgiQG"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=9222"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=9222"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_RPC_PORT=9545"
+      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      - "OP_NODE_P2P_NAT=true"
+      - "OP_NODE_P2P_DISCOVERY_PATH=/data/opnode_discovery_db"
+      - "OP_NODE_P2P_PEERSTORE_PATH=/data/opnode_peerstore_db"
+      - "OP_NODE_P2P_PRIV_PATH=/data/opnode_p2p_priv.txt"
+      # Execution Layer Sync
+      # op-node can drive the Execution Client to sync from the EL layer. This enables Snap Sync in op-geth or staged sync in op-reth.
+      # This requires the EL Client to be peered.
+      # By default, OP geth uses snap sync, but can use full sync (executes every block) while OP_NODE_SYNCMODE=execution-layer as well.
+      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
+
+    networks:                                                                                         
+      - chains
+volumes:  
+    unichain-sepolia:

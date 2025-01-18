@@ -1,0 +1,64 @@
+services:
+  zksync-mainnet-archive-node:
+    image: "matterlabs/external-node:latest2.0"
+    ports:
+      - "127.0.0.1:3060:3060"
+      - "127.0.0.1:3061:3061"
+      - "127.0.0.1:3081:3081"
+    volumes:
+      - zksync-mainnet-archive-node:/db1
+    expose:
+      - 3322
+      - 3060
+      - 3061
+    environment:
+      DATABASE_URL: "postgres://zksync_user:notsecurepassword@host.docker.internal:5432/zks_era_mainnet"
+      DATABASE_POOL_SIZE: 30
+
+      EN_HTTP_PORT: 3060
+      EN_WS_PORT: 3061
+      EN_HEALTHCHECK_PORT: 3081
+      EN_PROMETHEUS_PORT: 322
+      EN_ETH_CLIENT_URL: ${ZKSYNC_MAINNET_L1_URL:-https://ethereum-rpc.publicnode.com}
+      EN_MAIN_NODE_URL: https://zksync2-mainnet.zksync.io
+      EN_L1_CHAIN_ID: 1
+      EN_L2_CHAIN_ID: 324
+      # EN_PRUNING_ENABLED: true
+
+      EN_STATE_CACHE_PATH: "./db1/ext-node/state_keeper"
+      EN_MERKLE_TREE_PATH: "./db1/ext-node/lightweight"
+
+      RUST_LOG: "debug,zksync=info,zksync_core::metadata_calculator=debug,zksync_state=debug,zksync_utils=debug,zksync_web3_decl::client=error"
+    networks:
+      - chains
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  zksync-mainnet-archive:
+    restart: unless-stopped
+    image: nginx
+    depends_on:
+      - zksync-mainnet-archive-node
+    expose:
+      - 80
+    environment:
+      PROXY_HOST: zksync-mainnet-archive-node
+      RPC_PORT: 3060
+      RPC_PATH: ""
+      WS_PORT: 3061
+      WS_PATH: ""
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.zksync-mainnet-archive-stripprefix.stripprefix.prefixes=/zksync-mainnet-archive"
+      - "traefik.http.services.zksync-mainnet-archive.loadbalancer.server.port=80"
+      - "traefik.http.routers.zksync-mainnet-archive.entrypoints=websecure"
+      - "traefik.http.routers.zksync-mainnet-archive.tls.certresolver=myresolver"
+      - "traefik.http.routers.zksync-mainnet-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/zksync-mainnet-archive`)"
+      - "traefik.http.routers.zksync-mainnet-archive.middlewares=zksync-mainnet-archive-stripprefix"
+
+volumes:
+  zksync-mainnet-archive-node: {}
