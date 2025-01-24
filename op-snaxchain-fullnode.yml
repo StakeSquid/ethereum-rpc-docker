@@ -23,7 +23,7 @@ services:
       - "GETH_GENESIS_FILE_PATH=/app/mainnet/snaxchain/genesis.json"
       - "GETH_ROLLUP_SEQUENCERHTTP=https://mainnet.snaxchain.io"
       - "GETH_GCMODE=full"
-      - "GETH_SYNCMODE=snap"
+      #- "GETH_SYNCMODE=snap"
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
       - "GETH_DISCOVERY_PORT=55677"
