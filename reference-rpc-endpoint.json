@@ -9,6 +9,15 @@
     ],
       "archive": ["base-reth"]
   },
+  "snaxchain": {
+    "id": 2192,
+    "urls": [
+      "https://mainnet.snaxchain.io"
+    ],
+    "default": [
+	"op-snaxchain-fullnode"
+    ]
+  },    
     "base-sepolia": {
     "id": 84532,
     "urls": [
@@ -409,7 +418,8 @@
       "https://rpc.api.lisk.com"
     ],
     "default": [
-      "op-lisk-mainnet"
+	"op-lisk-mainnet",
+	"op-lisk-mnainnet-pebble"
     ]
   },    
   "bsc": {
