@@ -32,6 +32,7 @@ services:
       - "WS_PORT=8545"
       - "IP=${IP}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "GETH_NODISCOVER=true"
       #- "GETH_OVERRIDE_CANYON=1704992401"
       #- "GETH_OVERRIDE_DELTA=1708560000"
       #- "GETH_OVERRIDE_ECOTONE=1710374401"
@@ -67,7 +68,7 @@ services:
       - .jwtsecret:/jwtsecret
     stop_grace_period: 30s
     environment:
-      - "OP_NODE_SYNCMODE=execution-layer"
+      #- "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${SNAXCHAIN_ETHEREUM_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "OP_NODE_L2_ENGINE_RPC=http://snaxchain-fullnode:8551"
