@@ -15,6 +15,7 @@ services:
     volumes:                                                                             
       - bsc:/bsc/.ethereum                                                                                                                                                
       - ./bsc/config:/bsc/config
+      - /slowdisk:/slowdisk
     entrypoint: geth
     command: --config=/bsc/config/config.toml --ws.origins='*' --history.transactions=0 --state.scheme=path --syncmode=full --db.engine=pebble --rpc.gascap=600000000
     restart: unless-stopped
