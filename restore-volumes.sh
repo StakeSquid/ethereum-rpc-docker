@@ -120,7 +120,7 @@ for folder in $cleanup_folders; do
 done
 
 for file in $restore_files; do    
-    tar -I zstd -xf "$file" -C /
+    tar -I zstd -xf "$file" --dereference -C /
     echo "Backup '$file' restored"        
 done
 
