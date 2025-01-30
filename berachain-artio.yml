@@ -36,12 +36,25 @@ services:
     networks:
       - chains
 
-  berachain-artio-node-init:
+  berachain-artio-node-prepare:
     image: icculp/berachain_beacon:v0.2.0-alpha.6
-    command: init someting --chain-id bartio-beacon-80084 --consensus-key-algo bls12_381 --home /root/.beacond/
+    environment:
+      - "MONIKER=d${DOMAIN}"
+    command: init ${MONIKER} --chain-id bartio-beacon-80084 --consensus-key-algo bls12_381 --home /root/.beacond/ --overwrite
     volumes:
       - "berachain-artio-node:/root/.beacond/data"
       - "./berachain/artio/config:/root/.beacond/config"
+
+  berachain-artio-node-init:
+    image: alpine:latest
+    depends_on:
+      - "berachain-artio-node-prepare"
+    environment:
+      - "MONIKER=d${DOMAIN}"
+    volumes:
+      - "./berachain/artio/script/init.sh:/init.sh"
+      - "./berachain/artio/config:/root/.beacond/config"
+    entrypoint: [ "sh", "-c", "apk add --no-cache curl && sh /init.sh" ]
 
   berachain-artio-node:
     image: icculp/berachain_beacon:v0.2.0-alpha.6
@@ -52,7 +65,7 @@ services:
     ports:
       - "43471:43471"
       - "43471:43471/udp"
-    command: start --minimum-gas-prices 0atom --beacon-kit.engine.jwt-secret-path /jwtsecret --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json --beacon-kit.engine.rpc-dial-url http://berachain-artio:8551
+    command: start --minimum-gas-prices 0atom --beacon-kit.engine.jwt-secret-path /jwtsecret --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json
     #command: init cometing --chain-id bartio-beacon-80084 --consensus-key-algo bls12_381 --home /root/.beacond/
     networks:
       - chains
