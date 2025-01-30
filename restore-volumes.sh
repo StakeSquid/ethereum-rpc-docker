@@ -12,117 +12,73 @@ if [ ! -d "$volume_dir" ]; then
     exit 1
 fi
 
-if [[ -n $2 ]]; then
-    echo "download backup from http"
-    $dir/clone-backup.sh $2 $1
-
-else
-    if [ ! -d "$backup_dir" ]; then
-	echo "Error: /backup directory does not exist"
-	exit 1
-    fi
-fi
-
-calculate_required_space() {
-    # Extract the size from the filename
-    size=$(echo "$1" | grep -oE '[0-9]+G')
-
-    # Remove 'G' from the size and convert it to bytes
-    size_bytes=$(echo "$size" | sed 's/G//')
-    if [[ $size_bytes == 0* ]]; then
-      # this happens when the size is smalleer than 1 GB
-      size_bytes=1
-    fi
-
-    size_bytes=$(echo "$size_bytes * 1024 * 1024 * 1024" | bc)
-
-    # Calculate 10% of the size and add it to the required space
-    ten_percent=$(echo "$size_bytes / 10" | bc)
-    required_space=$(echo "$size_bytes + $ten_percent" | bc)
-    #required_space=$(( size_bytes + ten_percent ))
-
-    echo "$required_space"
-}
-
 # Read the JSON input and extract the list of keys
 keys=$(cat $dir/$1.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]' | grep -E '^["'\'']?[0-9a-z]')
-
-# Iterate over the list of keys
-
-total_space=0
-cleanup_space=0
 
 restore_files=()
 cleanup_folders=()
 
-for key in $keys; do
+echo "$keys"
+
+while IFS= read -r key; do
     volume_name="rpc_$key"
-
-    newest_file=$(ls -1 "$backup_dir"/"${volume_name}"-[0-9]*G.tar.zst 2>/dev/null | sort | tail -n 1)
+    declare newest_file
+    
+    if [[ -n $2 ]]; then
+	volume_name="rpc_$key-20" # needs to be followed by a date 2024
+	newest_file=$($dir/list-backups.sh $2 | grep "${volume_name}" | sort | tail -n 1)
+    else
+	newest_file=$(ls -1 "$backup_dir"/"${volume_name}"-[0-9]*G.tar.zst 2>/dev/null | sort | tail -n 1)	
+    fi
+    
     directory="$volume_dir/rpc_$key/_data/"
-    [ -d "$directory" ] && existing_size=$(du -sb "$directory" | awk '{ total += $1 } END { print total }') || existing_size=0
-
-    #echo "$newest_file"
-    #echo "$directory: $existing_size"
 
     if [ -z "$newest_file" ]; then
-	if [[ "$2" = "--print-size-only" && $existing_size -gt 0 ]]; then
-	    # I only want to have a theoretical file size
-	    status=$($dir/sync-status.sh "$1")
-	    if [ $? -eq 0 ]; then
-		# 0 means it's synced
-		required_space=$existing_size
-	    else
-		echo "Error: No backup and unfisnished syncing '$volume_name'"
+	echo "Error: No backup found for volume '$volume_name'"
+	exit 1
+    else
+	restore_files+=("$newest_file")
+	cleanup_folders+=("$directory")      
+    fi
+done <<< "$keys"
+
+echo "${cleanup_folders[@]}"
+
+for folder in "${cleanup_folders[@]}"; do
+    echo "delete '$folder'"
+    [ -d "$folder" ] && rm -rf "$folder"/*
+done
+
+echo "done cleanup"
+
+for file in "${restore_files[@]}"; do
+    echo "Processing: $file"
+    
+    if [[ -n $2 ]]; then
+	if [ ! -d "$backup_dir" ]; then
+	    echo "Error: /backup directory does not exist. download from http and extract directly to /var/lib/docker"
+
+
+	    curl -# "${2}${file}" | zstd -d | tar -xvf - --dereference -C /
+
+	    if [ $? -ne 0 ]; then
+		echo "Error processing $file"
 		exit 1
+	    else
+		echo "$file successfully processed."
 	    fi
-	    #GB=$(echo "$existing_size / 1024 / 1024 / 1024" | bc )
-	    #echo "$GB"
-	    #exit 0
 	else
-	    echo "Error: No backup found for volume '$volume_name'"
-	    exit 1
+	    if [ -e "$file" ]; then
+		aria2c -c -Z -x8 -j8 -s8 -d "$backup_dir" "${2}${file}"
+	    fi
+	    tar -I zstd -xf "$file" --dereference -C /
+	    echo "Backup '$file' processed"
 	fi
     else
-      restore_files+=("$newest_file")
-      cleanup_folders+=("$directory")
-
-      #echo "bleb"
-      required_space=$(calculate_required_space "$(basename "$newest_file")")
+	tar -I zstd -xf "$file" --dereference -C /
+	echo "Backup '$file' restored"        
     fi
-
-    #echo "$volume_name: $required_space"
-    #echo "blab: $total_space + $required_space"
-    total_space=$(echo "$total_space + $required_space" | bc)
-    #echo "blub"
-    cleanup_space=$(echo "$cleanup_space + existing_size" | bc)
-    #echo "blob"
-done
-
-if [ "$2" = "--print-size-only" ]; then
-    GB=$(echo "$total_space / 1024 / 1024 / 1024" | bc )
-    #echo "blib"
-    echo "$GB"
-    exit 0
-fi
-
-available_space=$(df --output=avail -B1 "$volume_dir" | tail -n 1)
-available_space=$((available_space + cleanup_space))
-
-if [ "$available_space" -lt "$total_space" ]; then
-    echo "Error: Not enough free space in $volume_dir"
-    exit 1
-fi
-
-for folder in $cleanup_folders; do
-    echo "delete $folder"
-    [ -d "$folder" ] && rm -rf "$folder/*"
-done
-
-for file in $restore_files; do    
-    tar -I zstd -xf "$file" --dereference -C /
-    echo "Backup '$file' restored"        
+    
 done
 
 echo "node $1 restored."
-    
