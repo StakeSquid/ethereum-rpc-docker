@@ -1,6 +1,14 @@
 services:
+  berachain-artio-init:
+    image: alpine:latest
+    volumes:
+      - "berachain-artio-reth:/data"
+    entrypoint: [ "sh", "-c", "rm /data/discovery-secret" ]
+
   berachain-artio:
     image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.0.6}
+    depends_on:
+      - berachain-artio-init
     user: root
     volumes:
       - "berachain-artio-reth:/data"
