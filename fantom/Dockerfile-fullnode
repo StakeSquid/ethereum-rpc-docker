@@ -2,7 +2,7 @@
 FROM golang:1.19-alpine as builder
 
 # Install packages we need
-RUN apk add --no-cache make gcc musl-dev linux-headers git openssl xxd
+RUN apk add --no-cache make gcc musl-dev linux-headers git
 
 # Make a folder to work in
 RUN mkdir /fantom
@@ -19,7 +19,7 @@ RUN cd /fantom && make
 # Pull Fantom into a second stage deploy alpine container
 FROM alpine:latest
 
-RUN apk add --no-cache ca-certificates wget tzdata
+RUN apk add --no-cache ca-certificates wget tzdata openssl xxd
 COPY --from=builder /fantom/build/opera /usr/local/bin/
 
 # Set entrypoint
