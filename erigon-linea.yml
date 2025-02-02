@@ -34,6 +34,7 @@ services:
       --txpool.globalslots 50000
       --txpool.pricelimit 1000000000
       --txpool.nolocals
+      --nodekey /configs/mainnet/shared/nodekey
       --nat=extip:${IP}
       --snapshots=false
       --port=30319
