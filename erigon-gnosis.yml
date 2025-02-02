@@ -1,7 +1,16 @@
 services:                             
-                                                   
+  erigon-gnosis-init:
+    image: alpine:latest
+    entrypoint: ["/bin/sh", "-c"]
+    command: rm /datadir/nodekey
+    volumes:
+      - "gnosis-erigon:/datadir"
+    init: true
+  
   erigon-gnosis:        
     image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-beta1}
+    depends_on:
+      - erigon-gnosis-init
     user: root
     volumes:                  
       - "gnosis-erigon:/datadir"
