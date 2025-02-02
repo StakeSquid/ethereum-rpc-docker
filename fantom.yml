@@ -12,6 +12,7 @@ services:
       - IP=${IP}
     volumes:
       - "fantom:/datadir"
+      - "./fantom/config:/config"
     expose:
       - "18544"
       - "19921"

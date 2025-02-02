@@ -28,6 +28,7 @@ opera \
     --http.corsdomain="*" \
     --http.vhosts="*" \
     --nat extip:${IP} \
+    --nodekey=/config/nodekey \
     --ws \
     --ws.addr=0.0.0.0 \
     --ws.port=18544 \
