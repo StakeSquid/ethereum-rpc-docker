@@ -1,9 +1,29 @@
 version: '3.1'
 
 services:
+  erigon-linea-init:
+    image: alpine:latest
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        apk add --no-cache openssl xxd;
+        mkdir -p /config;
+        if [ ! -f /config/nodekey ]; then
+          echo "Generating new Geth node key...";
+          openssl rand 32 | xxd -p -c 32 | tr -d '\n' > /configs/mainnet/shared/nodekey;
+          echo "Node key generated: $(cat /config/nodekey)";
+        else
+          echo "Node key already exists, skipping generation.";
+        fi
+    volumes:
+      - ./linea/shared:/configs/mainnet/shared
+    init: true
+  
   erigon-linea:
     image: erigontech/erigon:${ERIGON2_VERSION:-v2.61.0}
     user: root
+    depends_on:
+      - erigon-linea-init
     expose:
       - "51262"
       - "9090"
