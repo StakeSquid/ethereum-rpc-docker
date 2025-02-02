@@ -23,6 +23,8 @@ services:
     networks:
       - chains
     entrypoint: /entrypoint.sh
+    environment:
+      - "IP=${IP}"
     command: >
       --chain=mainnet
       --networkid=59144
@@ -32,7 +34,7 @@ services:
       --txpool.globalslots 50000
       --txpool.pricelimit 1000000000
       --txpool.nolocals
-      --nat=stun
+      --nat=extip:${IP}
       --snapshots=false
       --port=30319
       --p2p.allowed-ports 18025                                                                                                                                             
