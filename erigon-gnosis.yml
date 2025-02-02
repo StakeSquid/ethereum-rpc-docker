@@ -30,8 +30,10 @@ services:
       - "17938:17938"
       - "17938:17938/udp"
     restart: unless-stopped
-    command: --chain=gnosis --prune.mode=archive --nat=stun --authrpc.addr=0.0.0.0 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,trace,web3,erigon --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=20947 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1000000 --p2p.protocol=66 --p2p.protocol 67 --p2p.protocol 68 --p2p.allowed-ports 28806 --p2p.allowed-ports 16393 --p2p.allowed-ports 17938
-    stop_grace_period: 1m                         
+    command: --chain=gnosis --prune.mode=archive --nat=stun --authrpc.addr=0.0.0.0 --authrpc.vhosts=* --authrpc.jwtsecret=/jwtsecret --http --http.addr=0.0.0.0 --http.port=8545 --http.compression --http.vhosts='*' --http.corsdomain='*' --http.api=eth,debug,net,trace,web3,erigon --ws --ws.compression --rpc.gascap=300000000 --metrics --metrics.addr=0.0.0.0 --metrics.port=6060 --bodies.cache=5G --rpc.batch.limit=200000 --batchSize=2048MB --port=20947 --datadir=/datadir --ethash.dagdir=/datadir/ethash --rpc.returndata.limit=1000000 --p2p.protocol=66 --p2p.protocol 67 --p2p.protocol 68 --p2p.allowed-ports 28806 --p2p.allowed-ports 16393 --p2p.allowed-ports 17938 --nat:extip:${IP}
+    stop_grace_period: 1m
+    environment:
+      - "IP=${IP}"
     labels:                                      
       - "prometheus-scrape.enabled=true"
       - "prometheus-scrape.port=6060"                                                                 
