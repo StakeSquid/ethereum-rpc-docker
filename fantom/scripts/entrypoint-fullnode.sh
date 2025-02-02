@@ -16,7 +16,14 @@ fi
 # uncomment the next line and do docker-compose build in case you have to try to fix the db after unclean shutdown etc.
 # opera --db.preset pbl-1 --datadir=$FANTOM_HOME db heal --experimental
 
-[ -f /config/nodekey ] || openssl rand -hex 32 > /config/nodekey
+# Generate nodekey only if it doesn't exist
+if [ ! -f /config/nodekey ]; then
+    echo "Generating new Geth node key..."
+    openssl rand 32 | xxd -p -c 32 | tr -d '\n' > /config/nodekey
+    echo "Node key generated: $(cat /config/nodekey)"
+else
+    echo "Node key already exists, skipping generation."
+fi
 
 opera \
     --genesis=$FANTOM_HOME/mainnet-171200-no-history.g \

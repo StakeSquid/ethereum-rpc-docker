@@ -2,7 +2,7 @@
 FROM golang:1.19-alpine as builder
 
 # Install packages we need
-RUN apk add --no-cache make gcc musl-dev linux-headers git openssl
+RUN apk add --no-cache make gcc musl-dev linux-headers git openssl xxd
 
 # Make a folder to work in
 RUN mkdir /fantom
