@@ -1,6 +1,6 @@
 services:
   op-zircuit-testnet-client:
-    image: zircuit1/l2-geth:756a85619b063c7e08d5ba7db0c032831091cd11
+    image: zircuit1/l2-geth:94186328850b5def97c195a2737c1d28265ef74b
     volumes:
       - "op-zircuit-testnet:/db"
       - "./zircuit/testnet/genesis.json:/genesis.json"
@@ -53,7 +53,7 @@ services:
   op-zircuit-testnet-node:
     depends_on:
       - op-zircuit-testnet-client
-    image: zircuit1/op-node:756a85619b063c7e08d5ba7db0c032831091cd11
+    image: zircuit1/op-node:94186328850b5def97c195a2737c1d28265ef74b
     ports:
       - "20209:20209"
       - "20209:20209/udp"
