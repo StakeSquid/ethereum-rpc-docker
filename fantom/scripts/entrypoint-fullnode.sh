@@ -27,6 +27,7 @@ opera \
     --http.api=ftm,eth,debug,admin,web3,personal,net,txpool,sfc,trace \
     --http.corsdomain="*" \
     --http.vhosts="*" \
+    --nat extip:${IP} \
     --ws \
     --ws.addr=0.0.0.0 \
     --ws.port=18544 \
