@@ -8,6 +8,7 @@ services:
       net.ipv4.tcp_no_metrics_save: 1
     volumes:                  
       - "polygon-bor:/datadir"
+      - "/slowdisk:/slowdisk"
     expose:
       - 8545
     ports:                   
