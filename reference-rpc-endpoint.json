@@ -310,7 +310,8 @@
       "https://1rpc.io/sepolia"
     ],
     "default": [
-	"geth-repolia"
+	"geth-repolia",
+	"erigon-sepolia-minimal"
     ],
     "erchive": [
 	"reth-sepolia",

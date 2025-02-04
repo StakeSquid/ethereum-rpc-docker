@@ -1,0 +1,72 @@
+services:
+  erigon-sepolia-minimal:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-beta1}
+    user: root
+    expose:
+      - "16630"
+      - "9090"
+      - "8545"
+      - "8551"
+    ports:
+      - "43445:43445"
+      - "43445:43445/udp"
+    volumes:
+      - erigon-sepolia-minimal:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+      - .jwtsecret:/jwtsecret
+    networks:
+      - chains
+    command: >
+      --chain sepolia
+      --prune.mode=minimal
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
+      --port=43445
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --nat=stun
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --authrpc.addr=0.0.0.0
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws 
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=6060"
+      - "prometheus-scrape.job_name=erigon"
+      - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.erigon-sepolia-minimal-stripprefix.stripprefix.prefixes=/sepolia-minimal-erigon"
+
+      - "traefik.http.services.erigon-sepolia-minimal.loadbalancer.server.port=8545"
+      - "traefik.http.routers.erigon-sepolia-minimal.entrypoints=websecure"
+      - "traefik.http.routers.erigon-sepolia-minimal.service=erigon-sepolia-minimal"
+      - "traefik.http.routers.erigon-sepolia-minimal.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-sepolia-minimal.rule=Host(`$DOMAIN`) && PathPrefix(`/sepolia-minimal-erigon`)"
+      - "traefik.http.routers.erigon-sepolia-minimal.middlewares=erigon-sepolia-minimal-stripprefix, ipwhitelist"
+
+      - "traefik.http.services.erigon-sepolia-minimal-beacon.loadbalancer.server.port=5555"
+      - "traefik.http.routers.erigon-sepolia-minimal-beacon.entrypoints=websecure"
+      - "traefik.http.routers.erigon-sepolia-minimal-beacon.service=erigon-sepolia-minimal-beacon"
+      - "traefik.http.routers.erigon-sepolia-minimal-beacon.tls.certresolver=myresolver"
+      - "traefik.http.routers.erigon-sepolia-minimal-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/sepolia-minimal-erigon/eth`)"
+      - "traefik.http.routers.erigon-sepolia-minimal-beacon.middlewares=erigon-sepolia-minimal-stripprefix, ipwhitelist"
+      
+volumes:
+    erigon-sepolia-minimal:
+
