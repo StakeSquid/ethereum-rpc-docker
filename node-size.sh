@@ -3,7 +3,7 @@
 # Read the JSON input and extract the list of keys
 keys=$(cat /root/rpc/$1.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
 
-total_size=0
+1total_size=0
 
 # Iterate over the list of keys
 for key in $keys; do
@@ -28,7 +28,7 @@ for key in $keys; do
 
     folder_size_gb=$(printf "%.0f" "$folder_size")
     
-    $total_size=$((total_size + folder_size))
+    total_size=$((total_size + folder_size))
 
 done
 
