@@ -1,4 +1,4 @@
-FROM golang:1.22 as op
+FROM golang:1.24 as op
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ RUN if [ -n "$OP_PATCH" ]; then \
 RUN cd op-node && \
     just op-node
 
-FROM golang:1.22 as geth
+FROM golang:1.24 as geth
 
 WORKDIR /app
 
