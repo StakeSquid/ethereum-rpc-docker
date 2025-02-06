@@ -7,8 +7,6 @@ keys=$(cat /root/rpc/$1.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
 
 # Iterate over the list of keys
 for key in $keys; do
-    echo "Executing command with key: /var/lib/docker/volumes/rpc_$key/_data"
-
     source_folder="/var/lib/docker/volumes/rpc_$key/_data"
     folder_size=$(du -shL "$source_folder" | awk '{
      size = $1
