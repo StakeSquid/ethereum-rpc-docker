@@ -1,4 +1,4 @@
-FROM golang:1.23 as op
+FROM golang:1.22 as op
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ RUN if [ -n "$OP_PATCH" ]; then \
 RUN cd op-node && \
     just op-node
 
-FROM golang:1.23 as geth
+FROM golang:1.22 as geth
 
 WORKDIR /app
 
@@ -37,7 +37,7 @@ RUN git clone $GETH_REPO --branch $GETH_VERSION --single-branch . && \
 
 RUN go run build/ci.go install -static ./cmd/geth
 
-FROM golang:1.23
+FROM golang:1.22
 
 RUN apt-get update && \
     apt-get install -y jq curl && \
