@@ -29,7 +29,7 @@ FROM golang:1.22 as geth
 WORKDIR /app
 
 ARG GETH_REPO=https://github.com/ethereum-optimism/op-geth.git
-ARG GETH_VERSION=v1.101411.5
+ARG GETH_VERSION=v1.101411.6
 
 # avoid depth=1, so the geth build can read tags
 RUN git clone $GETH_REPO --branch $GETH_VERSION --single-branch . && \
