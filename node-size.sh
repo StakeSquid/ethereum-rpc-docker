@@ -3,7 +3,7 @@
 # Read the JSON input and extract the list of keys
 keys=$(cat /root/rpc/$1.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
 
-1total_size=0
+total_size=0
 
 # Iterate over the list of keys
 for key in $keys; do
