@@ -26,7 +26,7 @@ for key in $keys; do
 
     folder_size_gb=$(printf "%.0f" "$folder_size")
     
-    total_size=$((total_size + folder_size))
+    total_size=$((total_size + folder_size_gb))
 
 done
 
