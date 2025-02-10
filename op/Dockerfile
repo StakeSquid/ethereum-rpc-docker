@@ -39,9 +39,11 @@ RUN go run build/ci.go install -static ./cmd/geth
 
 FROM golang:1.22
 
-RUN apt-get update && \
-    apt-get install -y jq curl && \
-    rm -rf /var/lib/apt/lists
+# not sure why that was in here ... maybe some script expecting it to clone peers ...
+# but it broke the build on a server in japan for whatever reason. 
+#RUN apt-get update && \
+#    apt-get install -y jq curl && \
+#    rm -rf /var/lib/apt/lists
 
 WORKDIR /app
 
