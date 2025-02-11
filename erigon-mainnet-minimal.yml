@@ -12,6 +12,10 @@ services:
       - "53282:53282/udp"
       - "30193:30193/udp"
       - "39540:39540"
+      - "51326:51326"
+      - "51326:51326/udp"
+      - "9221:9221"
+      - "9221:9221/udp"
     environment:
       - "IP=${IP}"
     volumes:
@@ -27,6 +31,7 @@ services:
       --beacon.api.addr=0.0.0.0
       --beacon.api.cors.allow-origins=*      
       --port=53282
+      --port=9221
       --caplin.discovery.addr=0.0.0.0
       --caplin.discovery.port=30193
       --caplin.discovery.tcpport=39540
@@ -34,6 +39,7 @@ services:
       --private.api.addr=0.0.0.0:9090
       --torrent.upload.rate="1250mb"
       --torrent.download.rate="1250mb"
+      --torrent.port=51326
       --nat=extip:${IP}      
       --pprof
       --pprof.addr=0.0.0.0
