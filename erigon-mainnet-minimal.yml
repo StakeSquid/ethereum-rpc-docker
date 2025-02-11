@@ -31,7 +31,7 @@ services:
       --beacon.api.addr=0.0.0.0
       --beacon.api.cors.allow-origins=*      
       --port=53282
-      --port=9221
+      --p2p.allowed-ports=9221
       --caplin.discovery.addr=0.0.0.0
       --caplin.discovery.port=30193
       --caplin.discovery.tcpport=39540
