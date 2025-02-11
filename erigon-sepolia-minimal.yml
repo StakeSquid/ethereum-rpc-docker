@@ -12,6 +12,10 @@ services:
       - "43445:43445/udp"
       - "55192:55192/udp"
       - "11098:11098"
+      - "39138:39138"
+      - "39138:39138/udp"
+      - "51395:51395"
+      - "51395:51395/udp"
     volumes:
       - erigon-sepolia-minimal:/root/.local/share/erigon
       - /slowdisk:/slowdisk
@@ -27,6 +31,7 @@ services:
       --beacon.api.addr=0.0.0.0
       --beacon.api.cors.allow-origins=*      
       --port=43445
+      --p2p.allowed-ports=51395
       --caplin.discovery.addr=0.0.0.0
       --caplin.discovery.port=55192
       --caplin.discovery.tcpport=11098
@@ -34,6 +39,7 @@ services:
       --private.api.addr=0.0.0.0:9090
       --torrent.upload.rate="1250mb"
       --torrent.download.rate="1250mb"
+      --torrent.port=39138      
       --nat=extip:${IP}
       --pprof
       --pprof.addr=0.0.0.0
