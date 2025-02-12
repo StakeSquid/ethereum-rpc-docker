@@ -4,6 +4,20 @@ version: '3.1'
 # DOCKER_IMAGE_NM_CLIENT
 
 services:
+
+services:
+  fuse-health-checker:
+    build: 
+      context: ./check-health/
+      dockerfile: Dockerfile
+    environment:
+      - RPC_URL=http://fuse-nethermind:8545
+      - REF_URL=https://fuse-pokt.nodies.app  # optional
+      - CHECK_INTERVAL=30  # in seconds
+    volumes:
+      - .:/repo:ro
+      - fuse-nethermind-health:/health:rw
+  
   fuse-nethermind:
     image: fusenet/node:nethermind-1.25.4-v6.0.2
     expose:
@@ -56,3 +70,4 @@ volumes:
     fuse-nethermind-keystore:
     fuse-nethermind-logs:
     fuse-nethermind-db:
+    fuse-nethermind-health:
