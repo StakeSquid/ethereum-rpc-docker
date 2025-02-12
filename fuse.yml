@@ -8,7 +8,7 @@ services:
   fuse-health-checker:
     depends_on:
       - fuse-nethermind
-    build: 
+    build:
       context: ./check-health/
       dockerfile: Dockerfile
     environment:
@@ -18,16 +18,16 @@ services:
     volumes:
       - .:/repo:ro
       - fuse-nethermind-health:/health:rw
-    networks: 
+    networks:
       - chains
-  
+
   fuse-nethermind:
     image: fusenet/node:nethermind-1.25.4-v6.0.2
     healthcheck:
-      test: ["CMD", "cat", "/health/status", "|", "grep", "-q", "online"]
+      test: ["CMD", "sh", "-c", "while read -r status; do [ \"$$status\" = \"online\" -o \"$$status\" = \"lagging\" ] && exit 0; done < /health/status; exit 1"]
       interval: 30s
       timeout: 1s
-      retries: 3
+      retries: 1
     expose:
       - "35045"
       - "8545"
