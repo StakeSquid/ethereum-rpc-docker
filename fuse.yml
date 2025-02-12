@@ -16,6 +16,8 @@ services:
     volumes:
       - .:/repo:ro
       - fuse-nethermind-health:/health:rw
+    networks: 
+      - chains
   
   fuse-nethermind:
     image: fusenet/node:nethermind-1.25.4-v6.0.2
