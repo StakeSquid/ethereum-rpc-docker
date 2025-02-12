@@ -5,7 +5,6 @@ version: '3.1'
 
 services:
 
-services:
   fuse-health-checker:
     build: 
       context: ./check-health/
