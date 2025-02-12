@@ -6,6 +6,8 @@ version: '3.1'
 services:
 
   fuse-health-checker:
+    depends_on:
+      - fuse-nethermind
     build: 
       context: ./check-health/
       dockerfile: Dockerfile
@@ -21,6 +23,11 @@ services:
   
   fuse-nethermind:
     image: fusenet/node:nethermind-1.25.4-v6.0.2
+    healthcheck:
+      test: ["CMD", "cat", "/health/status", "|", "grep", "-q", "online"]
+      interval: 30s
+      timeout: 1s
+      retries: 3
     expose:
       - "35045"
       - "8545"
@@ -32,6 +39,7 @@ services:
       - fuse-nethermind-keystore:/nethermind/keystore
       - fuse-nethermind-logs:/nethermind/logs
       - fuse-nethermind-db:/nethermind/nethermind_db
+      - fuse-nethermind-health:/health:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
