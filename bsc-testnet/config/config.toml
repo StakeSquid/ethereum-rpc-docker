@@ -2,10 +2,6 @@
 NetworkId = 97
 
 [Eth.Miner]
-GasCeil = 70000000
-GasPrice = 1000000000
-Recommit = 10000000000
-
 GasCeil = 140000000
 GasPrice = 1000000000
 Recommit = 10000000000
