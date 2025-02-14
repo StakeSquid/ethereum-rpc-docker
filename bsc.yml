@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   bsc:                                                                                                                                                            
-    image: ghcr.io/bnb-chain/bsc:${BSC_VERSION:-1.5.3-beta}
+    image: ghcr.io/bnb-chain/bsc:${BSC_VERSION:-1.5.5}
     user: root
     ports:
       - "29061:29061"
