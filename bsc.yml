@@ -17,7 +17,7 @@ services:
       - ./bsc/config:/bsc/config
       - /slowdisk:/slowdisk
     entrypoint: geth
-    command: --config=/bsc/config/config.toml --ws.origins='*' --history.transactions=0 --state.scheme=path --syncmode=full --db.engine=pebble --rpc.gascap=600000000
+    command: --config=/bsc/config/config.toml --ws.origins='*' --history.transactions=0 --state.scheme=path --syncmode=full --db.engine=pebble --rpc.gascap=600000000 --nat=extip:${IP}
     restart: unless-stopped
     stop_grace_period: 3m
     networks: 
