@@ -44,7 +44,7 @@ services:
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
-      - "scroll-mainnet:/root/.ethereum"
+      - "${SCROLL_MAINNET_DATA:-scroll-mainnet}:/root/.ethereum"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 5m
