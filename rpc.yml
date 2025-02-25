@@ -9,6 +9,7 @@ services:
       - "8082"
     ports:
       - "443:443"
+      - "80:80"
       - "3042:3042"
     command:
       - "--api=true"
@@ -18,7 +19,8 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.filename=/dynamic_config.yml"
-      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.address=:${HTTP_PORT:-443}"
+      - "--entrypoints.websecure.http.tls=${USE_HTTPS:-true}"
       - "--entryPoints.metrics.address=:8082"
       - "--entryPoints.grpc.address=:3042"
       - "--metrics.prometheus.entryPoint=metrics"
