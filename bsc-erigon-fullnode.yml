@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   bsc-erigon-fullnode:
-    image: chainstack/bsc-erigon:1.2.11
+    image: chainstack/bsc-erigon:1.2.12
     user: root
     volumes:
       - "bsc-erigon-fullnode:/datadir"
