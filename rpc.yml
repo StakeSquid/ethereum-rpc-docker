@@ -24,7 +24,7 @@ services:
       - "--entryPoints.metrics.address=:8082"
       - "--entryPoints.grpc.address=:3042"
       - "--metrics.prometheus.entryPoint=metrics"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=${USE_HTTPS:-true}"
       # TESTING
       # - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.myresolver.acme.email=$MAIL"
