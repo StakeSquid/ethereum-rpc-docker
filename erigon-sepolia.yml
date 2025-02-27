@@ -20,7 +20,6 @@ services:
       - chains
     command: >
       --chain sepolia
-      --externalcl
       --port=31337
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
