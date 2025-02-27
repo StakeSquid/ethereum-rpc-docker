@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-sepolia:
-    image: erigontech/erigon:${ERIGON2_VERSION:-v2.61.0}
+    image: erigontech/erigon:${ERIGON2_VERSION:-v2.61.1}
     user: root
     expose:
       - "31337"
@@ -20,14 +20,15 @@ services:
       - chains
     command: >
       --chain sepolia
-      --internalcl
-      --caplin.archive
-      --caplin.backfilling
-      --caplin.backfilling.blob
-      --caplin.backfilling.blob.no-pruning
-      --beacon.api.port=5555
-      --beacon.api.addr=0.0.0.0
-      --beacon.api.cors.allow-origins=*      
+      --externalcl
+#      --internalcl
+#      --caplin.archive
+#      --caplin.backfilling
+#      --caplin.backfilling.blob
+#      --caplin.backfilling.blob.no-pruning
+#      --beacon.api.port=5555
+#      --beacon.api.addr=0.0.0.0
+#      --beacon.api.cors.allow-origins=*      
       --port=31337
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
@@ -44,7 +45,7 @@ services:
       --http.vhosts=*
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
-      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+#      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       --rpc.returndata.limit=1100000
       --rpc.gascap=5000000000
       --ws.port=8545
@@ -72,6 +73,42 @@ services:
       - "traefik.http.routers.erigon-sepolia-beacon.tls.certresolver=myresolver"
       - "traefik.http.routers.erigon-sepolia-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/sepolia-erigon/eth`)"
       - "traefik.http.routers.erigon-sepolia-beacon.middlewares=erigon-sepolia-stripprefix, ipwhitelist"
+
+
+  prysm-erigon-sepolia:
+    image: prysmaticlabs/prysm-beacon-chain:v5.3.0
+    ports:
+      #- "127.0.0.1:3500:3500"
+      - "13000:13000"
+      - "12000:12000/udp"
+    command:
+      [                                                                                               
+        "--datadir=/data",
+        "--sepolia",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--checkpoint-sync-url=https://beaconstate-sepolia.chainsafe.io",
+        "--execution-endpoint=http://erigon-sepolia:8551",
+        "--accept-terms-of-use"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "prysm-erigon-sepolia:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.prysm-erigon-sepolia-stripprefix.stripprefix.prefixes=/prysm-erigon-sepolia"
+      - "traefik.http.services.prysm-erigon-sepolia.loadbalancer.server.port=3500"
+      - "traefik.http.routers.prysm-erigon-sepolia.entrypoints=websecure"
+      - "traefik.http.routers.prysm-erigon-sepolia.tls.certresolver=myresolver"
+      - "traefik.http.routers.prysm-erigon-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/prysm-erigon-sepolia`)"
+      - "traefik.http.routers.prysm-erigon-sepolia.middlewares=prysm-erigon-sepolia-stripprefix, ipwhitelist"
+
       
 volumes:
     erigon-sepolia:
