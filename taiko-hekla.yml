@@ -1,6 +1,6 @@
 services:
   taiko-hekla:
-    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.11.1
+    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.12.0
     restart: unless-stopped
     #pull_policy: always
     stop_grace_period: 3m
@@ -49,7 +49,7 @@ services:
       - chains
 
   taiko-hekla-client-driver:
-    image: us-docker.pkg.dev/evmchain/images/taiko-client:taiko-alethia-client-v0.43.1
+    image: us-docker.pkg.dev/evmchain/images/taiko-client:taiko-alethia-client-v0.43.2
     #pull_policy: always
     restart: unless-stopped
     depends_on:

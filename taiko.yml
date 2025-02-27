@@ -1,6 +1,6 @@
 services:
   taiko:
-    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.11.1
+    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.12.0
     restart: unless-stopped
     stop_grace_period: 3m
     volumes:
@@ -48,7 +48,7 @@ services:
       - chains
 
   taiko-client-driver:
-    image: us-docker.pkg.dev/evmchain/images/taiko-client:taiko-client-v0.39.2
+    image: us-docker.pkg.dev/evmchain/images/taiko-client:taiko-alethia-client-v0.43.1
     restart: unless-stopped
     depends_on:
       - taiko
