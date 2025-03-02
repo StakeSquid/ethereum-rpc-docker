@@ -65,9 +65,8 @@ services:
   prysm-mainnet:
     image: prysmaticlabs/prysm-beacon-chain:v5.0.1
     ports:
-      #- "127.0.0.1:3500:3500"
-      - "13000:13000"
-      - "12000:12000/udp"
+      - "61332:61332"
+      - "57369:57369/udp"
     command:
       [                                                                                               
         "--datadir=/data",
@@ -77,10 +76,16 @@ services:
         "--monitoring-host=0.0.0.0",
         "--checkpoint-sync-url=https://sync-mainnet.beaconcha.in",
         "--execution-endpoint=http://nethermind-mainnet:8551",
+        "--p2p-host-ip=${IP}",
+        "--p2p-quic-port=61332",
+        "--p2p-tcp-port=61332",
+        "--p2p-udp-port=57369",
         "--accept-terms-of-use"
       ]                                                                                               
-    networks:                            
-      - chains                                                                                        
+    networks:      
+      - chains
+    environment:
+      - "IP=${IP}"
     volumes:                                                                                          
       - "prysm-mainnet:/data"
       - ".jwtsecret:/jwtsecret"
