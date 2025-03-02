@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   erigon-holesky:
-    image: erigontech/erigon:${ERIGON2_VERSION:-v2.61.0}
+    image: erigontech/erigon:${ERIGON2_VERSION:-v2.61.1}
     user: root
     expose:
       - "16630"
@@ -21,14 +21,6 @@ services:
       - chains
     command: >
       --chain holesky
-      --internalcl
-      --caplin.archive
-      --caplin.backfilling
-      --caplin.backfilling.blob
-      --caplin.backfilling.blob.no-pruning
-      --beacon.api.port=5555
-      --beacon.api.addr=0.0.0.0
-      --beacon.api.cors.allow-origins=*
       --port=15432
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
@@ -45,7 +37,6 @@ services:
       --http.vhosts=*
       --http.corsdomain=*
       --http.api=eth,erigon,web3,net,debug,trace,txpool
-      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       --rpc.returndata.limit=1100000
       --rpc.gascap=5000000000
       --ws
@@ -67,13 +58,42 @@ services:
       - "traefik.http.routers.erigon-holesky.rule=Host(`$DOMAIN`) && PathPrefix(`/holesky-erigon`)"
       - "traefik.http.routers.erigon-holesky.middlewares=erigon-holesky-stripprefix, ipwhitelist"
 
-      - "traefik.http.services.erigon-holesky-beacon.loadbalancer.server.port=5555"
-      - "traefik.http.routers.erigon-holesky-beacon.entrypoints=websecure"
-      - "traefik.http.routers.erigon-holesky-beacon.service=erigon-holesky-beacon"
-      - "traefik.http.routers.erigon-holesky-beacon.tls.certresolver=myresolver"
-      - "traefik.http.routers.erigon-holesky-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/holesky-erigon/eth`)"
-      - "traefik.http.routers.erigon-holesky-beacon.middlewares=erigon-holesky-stripprefix, ipwhitelist"
+
+  prysm-erigon-holesky:
+    image: prysmaticlabs/prysm-beacon-chain:v5.3.0
+    ports:
+      #- "127.0.0.1:3500:3500"
+      - "13000:13000"
+      - "12000:12000/udp"
+    command:
+      [                                                                                               
+        "--datadir=/data",
+        "--holesky",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--checkpoint-sync-url=https://beaconstate-holesky.chainsafe.io",
+        "--execution-endpoint=http://erigon-holesky:8551",
+        "--accept-terms-of-use"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "prysm-erigon-holesky:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.prysm-erigon-holesky-stripprefix.stripprefix.prefixes=/prysm-erigon-holesky"
+      - "traefik.http.services.prysm-erigon-holesky.loadbalancer.server.port=3500"
+      - "traefik.http.routers.prysm-erigon-holesky.entrypoints=websecure"
+      - "traefik.http.routers.prysm-erigon-holesky.tls.certresolver=myresolver"
+      - "traefik.http.routers.prysm-erigon-holesky.rule=Host(`$DOMAIN`) && PathPrefix(`/prysm-erigon-holesky`)"
+      - "traefik.http.routers.prysm-erigon-holesky.middlewares=prysm-erigon-holesky-stripprefix, ipwhitelist"
+
       
 volumes:
     erigon-holesky:
-
+    prysm-erigon-holesky:
