@@ -63,8 +63,8 @@ services:
     image: ethpandaops/prysm-beacon-chain:hackSync-fd41691
     ports:
       #- "127.0.0.1:3500:3500"
-      - "13000:13000"
-      - "12000:12000/udp"
+      - "6632:6632"
+      - "46495:46495/udp"
     command:
       [                                                                                               
         "--datadir=/data",
@@ -76,8 +76,14 @@ services:
         "--checkpoint-sync-url=https://beaconstate-holesky.chainsafe.io",
         "--execution-endpoint=http://erigon-holesky:8551",
         "--bootstrap-node=enr:-Mq4QFuhZwXIAtXdj7DpD-KARK9Q1dPwPgfZUXr8GlqbiyEHVu4sVlbGQs7VbUjKq_fz18uhqRz-1anjrZW7SNIIIneGAZVB0eklh2F0dG5ldHOIAAAAAAAAAACEZXRoMpABniGtBwFwAP__________gmlkgnY0gmlwhE-JZV6EcXVpY4IyyIlzZWNwMjU2azGhAq9OfKYbLyFfMIaIw71_P3jiUJGg4IwiOQ2zNq8nu9YXiHN5bmNuZXRzAIN0Y3CCZIyDdWRwgmSM",
-        "--accept-terms-of-use"
-      ]                                                                                               
+        "--accept-terms-of-use",
+        "--p2p-host-ip=${IP}",
+        "--p2p-quic-port=6632",
+        "--p2p-tcp-port=6632",
+        "--p2p-udp-port=46495"        
+      ]
+    environment:
+      - "IP=${IP}"
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
