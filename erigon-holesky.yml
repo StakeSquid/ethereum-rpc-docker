@@ -60,7 +60,7 @@ services:
 
 
   prysm-erigon-holesky:
-    image: prysmaticlabs/prysm-beacon-chain:v5.3.0
+    image: ethpandaops/prysm-beacon-chain:hackSync-fd41691
     ports:
       #- "127.0.0.1:3500:3500"
       - "13000:13000"
