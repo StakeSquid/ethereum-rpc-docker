@@ -63,7 +63,7 @@ services:
 
       
   prysm-mainnet:
-    image: prysmaticlabs/prysm-beacon-chain:v5.0.1
+    image: prysmaticlabs/prysm-beacon-chain:${PRYSM_VERSION:-v5.0.1}
     ports:
       - "61332:61332"
       - "57369:57369/udp"
