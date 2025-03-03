@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   scroll-sepolia:                         
-    image: scrolltech/l2geth:${SCROLL_GETH_VERSION:scroll-v5.8.15}
+    image: scrolltech/l2geth:${SCROLL_GETH_VERSION:-scroll-v5.8.15}
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
