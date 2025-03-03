@@ -3,7 +3,7 @@ version: '3.1'
 services:                             
                                                    
   nethermind-gnosis-chiado:        
-    image: nethermind/nethermind:1.29.1
+    image: nethermind/nethermind:${NETHERMIND_VERSION:-1.31.2}
     user: root
     volumes:                  
       - "gnosis-chiado-nethermind-fullnode:/data"
@@ -61,7 +61,7 @@ services:
       driver: local
 
   lodestar-gnosis-chiado:
-    image: chainsafe/lodestar:v1.19.0
+    image: chainsafe/lodestar:${LODESTAR_VERSION:-v1.27.1}
     restart: always
     networks:
       - chains
