@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   scroll-fullnode:                         
-    image: scrolltech/l2geth:scroll-v5.7.25
+    image: scrolltech/l2geth:scroll-v${SCROLL_GETH_VERSION:-5.8.15}
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
