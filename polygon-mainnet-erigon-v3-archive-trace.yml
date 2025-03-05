@@ -22,7 +22,7 @@ services:
       - chains
     command: >
       --prune.mode=archive
-      --bor.heimdall=https://polygon-heimdall-rest.publicnode.com
+      --bor.heimdall=${POLYGON_HEIMDALL_REST:-https://polygon-heimdall-rest.publicnode.com}
       --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.polygon-peers.io
       --rpc.evmtimeout=30m0s
       --rpc.overlay.getlogstimeout=30m0s
