@@ -1,5 +1,3 @@
-version: '3.1'
-
 services:
   moonriver-archive-trace:
     image: moonbeamfoundation/moonbeam-tracing:v0.43.0-3501-latest
@@ -36,13 +34,13 @@ services:
     stop_grace_period: 1m
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.moonriver-stripprefix.stripprefix.prefixes=/moonriver-archive"
-      - "traefik.http.services.moonriver.loadbalancer.server.port=9944"
-      - "${NO_SSL:-traefik.http.routers.moonriver.entrypoints=websecure}"
-      - "${NO_SSL:-traefik.http.routers.moonriver.tls.certresolver=myresolver}"
-      - "${NO_SSL:-traefik.http.routers.moonriver.rule=Host(`$DOMAIN`) && PathPrefix(`/moonriver-archive`)}"
-      - "${NO_SSL:+traefik.http.routers.moonriver.rule=PathPrefix(`/moonriver-archive`)}"      
-      - "traefik.http.routers.moonriver.middlewares=moonriver-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.moonriver-archive-trace-stripprefix.stripprefix.prefixes=/moonriver-archive-trace"
+      - "traefik.http.services.moonriver-archive-trace.loadbalancer.server.port=9944"
+      - "${NO_SSL:-traefik.http.routers.moonriver-archive-trace.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.moonriver-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.moonriver-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/moonriver-archive-trace`)}"
+      - "${NO_SSL:+traefik.http.routers.moonriver-archive-trace.rule=PathPrefix(`/moonriver-archive-trace`)}"      
+      - "traefik.http.routers.moonriver-archive-trace.middlewares=moonriver-archive-trace-stripprefix, ipwhitelist"
     networks:
       - chains
 

@@ -1,0 +1,48 @@
+services:
+  moonbeam-archive-trace:
+    image: moonbeamfoundation/moonbeam-tracing:v0.43.0-3501-latest
+    user: root
+    volumes:
+      - ${MOONBEAM_ARCHIVE_TRACE_DATA:-moonbeam-archive-trace}:/data
+    expose:
+      - 9944 # rpc + ws para
+      - 9945 # rpc + ws relay
+      - 9615 # prometheus para
+      - 9616 # prometheus relay 
+    ports:
+      - "12067:12067"
+      - "55237:55237"
+    restart: unless-stopped
+    command: >
+      --rpc-cors all
+      --unsafe-ws-external
+      --unsafe-rpc-external
+      --trie-cache-size 1073741824
+      --base-path=/data
+      --chain moonbeam
+      --state-pruning archive
+      --db-cache ${MOONBEAM_ARCHIVE_TRACE_DB_CACHE_MB:-2000}
+      --ethapi=debug,trace,txpool
+      --wasm-runtime-overrides=/moonbeam/moonbeam-substitutes-tracing
+      --runtime-cache-size 64
+      --port 12067
+      --
+      --execution wasm
+      --no-private-ip
+      --no-mdns
+      --port 55237
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.moonbeam-archive-trace-stripprefix.stripprefix.prefixes=/moonbeam-archive-trace"
+      - "traefik.http.services.moonbeam-archive-trace.loadbalancer.server.port=9944"
+      - "${NO_SSL:-traefik.http.routers.moonbeam-archive-trace.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.moonbeam-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.moonbeam-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/moonbeam-archive-trace`)}"
+      - "${NO_SSL:+traefik.http.routers.moonbeam-archive-trace.rule=PathPrefix(`/moonbeam-archive-trace`)}"      
+      - "traefik.http.routers.moonbeam-archive-trace.middlewares=moonbeam-archive-trace-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+volumes:
+    moonbeam-archive-trace:
