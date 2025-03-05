@@ -1,0 +1,45 @@
+version: '3.1'
+
+services:
+  arbitrum-classic:
+    image: 'offchainlabs/arb-node:v1.4.5-e97c1a4'
+    restart: always
+    stop_grace_period: 30s
+    user: root
+    volumes:
+      - ${ARBITRUM_CLASSIC_GETH_ARCHIVE_TRACE_DATA:-arbitrum-classic-geth-archive-trace}:/root/.arbitrum/mainnet
+      - ./arbitrum/classic-entrypoint.sh:/entrypoint.sh
+    expose:
+      - 8547
+      - 8548
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    command: >
+        --l1.url=http://eth.drpc.org
+        --core.checkpoint-gas-frequency=156250000
+        --node.rpc.enable-l1-calls
+        --node.cache.allow-slow-lookup
+        --node.rpc.tracing.enable
+        --node.rpc.addr=0.0.0.0
+        --node.rpc.tracing.namespace=trace
+        --node.chain-id=42161
+        --metrics
+        --metrics-server.addr=0.0.0.0
+        --metrics-server.port=7070
+        --l2.disable-upstream
+        --persistent.chain=/mnt/data/classic/datadir/
+        --persistent.global-config=/mnt/data/classic/
+    restart: unless-stopped         
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.arbitrum-classic-geth-archive-trace-stripprefix.stripprefix.prefixes=/arbitrum-classic"                      
+      - "traefik.http.services.arbitrum-classic-geth-archive-trace.loadbalancer.server.port=8547"
+      - "${NO_SSL:-traefik.http.routers.arbitrum-classic-geth-archive-trace.entrypoints=websecure}"                           
+      - "${NO_SSL:-traefik.http.routers.arbitrum-classic-geth-archive-trace.tls.certresolver=myresolver}"                                        
+      - "${NO_SSL:-traefik.http.routers.arbitrum-classic-geth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-classic`)}"
+      - "${NO_SSL:+traefik.http.routers.arbitrum-classic-geth-archive-trace.rule=PathPrefix(`/arbitrum-classic`)}"      
+      - "traefik.http.routers.arbitrum-classic-geth-archive-trace.middlewares=arbitrum-classic-geth-archive-trace-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+    arbitrum-classic-geth-archive-trace:
