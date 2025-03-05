@@ -44,9 +44,10 @@ services:
       - "traefik.enable=true"
       - "traefik.http.middlewares.scroll-mainnet-archive-stripprefix.stripprefix.prefixes=/scroll"                  
       - "traefik.http.services.scroll-mainnet-archive.loadbalancer.server.port=8545"                                 
-      - "traefik.http.routers.scroll-mainnet-archive.entrypoints=websecure"                                          
-      - "traefik.http.routers.scroll-mainnet-archive.tls.certresolver=myresolver"                                    
-      - "traefik.http.routers.scroll-mainnet-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll`)"                 
+      - "${NO_SSL:-traefik.http.routers.scroll-mainnet-archive.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.scroll-mainnet-archive.tls.certresolver=myresolver}"                                    
+      - "${NO_SSL:-traefik.http.routers.scroll-mainnet-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll`)}"
+      - "${NO_SSL:+traefik.http.routers.scroll-mainnet-archive.rule=PathPrefix(`/scroll`)}"      
       - "traefik.http.routers.scroll-mainnet-archive.middlewares=scroll-mainnet-archive-stripprefix, ipwhitelist"
 
 volumes:
