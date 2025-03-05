@@ -50,6 +50,10 @@ services:
       --rpc.gascap=5000000000
       --ws.port=8545
       --ws
+      --rpc.batch.concurrency=96
+      --db.read.concurrency=9000
+      --trace.maxtraces=2000
+      --trace.compat
     restart: unless-stopped
     stop_grace_period: 1m
     labels:
