@@ -1,0 +1,51 @@
+services:
+  arbitrum-one:
+    image: offchainlabs/nitro-node:${NITRO_VERSION:-v3.2.1-d81324d}
+    stop_grace_period: 3m
+    user: root
+    volumes:
+      - '${ARBITRUM_ONE_NITRO_ARCHIVE_DATA:-arbitrum-one-nitro-archive:/arbitrum-node'
+      - './tmp/arbitrum-archive:/tmp' # only used to initialize from scratch and the download is HUGE
+    expose:
+      - 8547
+    command: >    
+      --init.latest=archive
+      --chain.name=arb1
+      #--execution.caching.state-scheme=hash
+      #--persistent.db-engine=pebble
+      --persistent.chain=/arbitrum-node/datadir/
+      --persistent.global-config=/arbitrum-node/
+      --parent-chain.connection.url=${ARBITRUM_L1_ETHEREUM_ONE_EXECUTION_RPC}
+      --parent-chain.blob-client.beacon-url=${ARBITRUM_L1_ETHEREUM_ONE_BEACON_REST}
+      --chain.id=42161
+      --http.api=net,web3,eth,debug,arb
+      --http.corsdomain=* 
+      --http.addr=0.0.0.0 
+      --http.vhosts=*
+      --ws.port=8547
+      --ws.addr=0.0.0.0
+      --ws.origins=*
+      --execution.rpc.gas-cap=600000000
+      --execution.rpc.evm-timeout=30s
+      --http.server-timeouts.read-header-timeout=60s
+      --http.server-timeouts.read-timeout=60s
+      --http.server-timeouts.write-timeout=60s
+      --rpc.batch-request-limit=0
+      --rpc.max-batch-response-size=0
+      --execution.rpc.classic-redirect=${ARBITRUM_CLASSIC_RPC_URL}
+      #--validation.wasm.allowed-wasm-module-roots=0x260f5fa5c3176a856893642e149cf128b5a8de9f828afec8d11184415dd8dc69
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.arbitrum-one-nitro-archive-stripprefix.stripprefix.prefixes=/arbitrum-archive"                      
+      - "traefik.http.services.arbitrum-one-nitro-archive.loadbalancer.server.port=8547"
+      - "traefik.http.routers.arbitrum-one-nitro-archive.entrypoints=websecure"                                              
+      - "traefik.http.routers.arbitrum-one-nitro-archive.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.arbitrum-one-nitro-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-archive`)"                     
+      - "traefik.http.routers.arbitrum-one-nitro-archive.middlewares=arbitrum-one-nitro-archive-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:
+    arbitrum-one-nitro-archive:
+
