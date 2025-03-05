@@ -2,7 +2,7 @@ services:
 
 
   goat-testnet:
-    image: ghcr.io/goatnetwork/goat-geth:v0.1.3
+    image: ghcr.io/goatnetwork/goat-geth:v0.1.6
     stop_grace_period: 5m
     restart: unless-stopped
     healthcheck:
