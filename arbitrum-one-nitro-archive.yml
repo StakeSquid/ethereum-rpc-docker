@@ -39,9 +39,10 @@ services:
       - "traefik.enable=true"
       - "traefik.http.middlewares.arbitrum-one-nitro-archive-stripprefix.stripprefix.prefixes=/arbitrum-archive"                      
       - "traefik.http.services.arbitrum-one-nitro-archive.loadbalancer.server.port=8547"
-      - "traefik.http.routers.arbitrum-one-nitro-archive.entrypoints=websecure"                                              
-      - "traefik.http.routers.arbitrum-one-nitro-archive.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.arbitrum-one-nitro-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-archive`)"                     
+      - "${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive.entrypoints=websecure}"                                              
+      - "${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive.tls.certresolver=myresolver}"                                        
+      - "${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-archive`)}"
+      - "${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-archive.rule=PathPrefix(`/arbitrum-archive`)}"                           
       - "traefik.http.routers.arbitrum-one-nitro-archive.middlewares=arbitrum-one-nitro-archive-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
