@@ -1,6 +1,6 @@
 services:
 
-  blast-mainnet-archive:
+  blast-archive:
     image: blastio/blast-geth:v1.1.0-mainnet
     volumes:
       - ${BLAST_MAINNET_GETH_ARCHIVE_DATA:-blast-mainnet-geth-archive}:/data      
@@ -42,12 +42,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.middlewares.blast-mainnet-geth-archive-stripprefix.stripprefix.prefixes=/blast-mainnet-archive"                      
       - "traefik.http.services.blast-mainnet-geth-archive.loadbalancer.server.port=9545"
-      - "traefik.http.routers.blast-mainnet-geth-archive.entrypoints=websecure"                                              
-      - "traefik.http.routers.blast-mainnet-geth-archive.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.blast-mainnet-geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-mainnet-archive`)"                     
+      - "${NO_SSL:-traefik.http.routers.blast-mainnet-geth-archive.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.blast-mainnet-geth-archive.tls.certresolver=myresolver}"      
+      - "${NO_SSL:-traefik.http.routers.blast-mainnet-geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-mainnet-archive`)}"
+      - "${NO_SSL:+traefik.http.routers.blast-mainnet-geth-archive.rule=PathPrefix(`/blast-mainnet-archive`)}"      
       - "traefik.http.routers.blast-mainnet-geth-archive.middlewares=blast-mainnet-geth-archive-stripprefix, ipwhitelist"                           
       
-  blast-mainnet-archive-node:
+  blast-archive-node:
     image: blastio/blast-optimism:v1.1.0-mainnet
     volumes:
       - ./blast-io:/config
@@ -75,7 +76,7 @@ services:
     command: >
       op-node
     depends_on:
-      - op-blast-mainnet-archive
+      - blast-archive
     networks:
       - chains
 
