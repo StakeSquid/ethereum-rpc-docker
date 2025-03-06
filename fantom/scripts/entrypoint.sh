@@ -22,7 +22,7 @@ fi
 # uncomment the next line and do docker-compose build in case you have to try to fix the db after unclean shutdown etc.
 # opera --db.preset pbl-1 --datadir=$FANTOM_HOME db heal --experimental
 
-opera \
+exec opera \
     --genesis=$FANTOM_HOME/mainnet-5577-full-mpt.g \
     --port=5050 \
     --maxpeers=200 \

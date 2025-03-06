@@ -25,7 +25,7 @@ else
     echo "Node key already exists, skipping generation."
 fi
 
-opera \
+exec opera \
     --genesis=$FANTOM_HOME/mainnet-171200-no-history.g \
     --port=19921 \
     --maxpeers=200 \
