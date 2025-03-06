@@ -64,7 +64,7 @@ services:
   nimbus-gnosis:
     build:
       context: ./nimbus
-       args:
+      args:
         UPSTREAM_VERSION: ${NIMBUS_VERSION:-v25.3.0}
     restart: unless-stopped
     stop_grace_period: 1m
