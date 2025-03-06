@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy the Go files into the container
 COPY . .
 
+# Initialize the Go module
+RUN go mod init drpc-beacon-proxy
+
 # Build the Go application
 RUN go build -o proxy-server .
 
