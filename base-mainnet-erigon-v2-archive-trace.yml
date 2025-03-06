@@ -1,0 +1,88 @@
+services:
+
+  base-erigon:
+    image: testinprod/op-erigon:${OP_ERIGON_VERSION:-v2.61.1-0.8.3}
+    restart: unless-stopped
+    stop_grace_period: 5m
+    expose:
+      - "9090"
+      - "8545"
+      - "8551"
+    command: >
+      --private.api.addr=localhost:9090
+      --http.api=eth,debug,net,trace,web3,erigon
+      --http.addr=0.0.0.0
+      --http.port=8545
+      --http.corsdomain="*"
+      --http.vhosts="*"
+      --authrpc.addr=0.0.0.0
+      --authrpc.port=8551
+      --authrpc.vhosts="*"
+      --authrpc.jwtsecret=/jwtsecret      
+      --rollup.sequencerhttp=https://mainnet-sequencer.base.org"
+      --chain=base-mainnet
+      --ws
+      --nodiscover
+    volumes:
+      - ${BASE_MAINNET_ERIGON_V2_ARCHIVE_TRACE:-base-mainnet-erigon-v2-archive-trace}:/root/.local/share/erigon
+      - .jwtsecret:/jwtsecret
+    networks:
+      - chains
+    labels:
+       - "traefik.enable=true"
+      - "traefik.http.middlewares.base-mainnet-erigon-v2-archive-trace-stripprefix.stripprefix.prefixes=/base-erigon"
+      - "traefik.http.services.base-mainnet-erigon-v2-archive-trace.loadbalancer.server.port=8545"
+      - "${NO_SSL:-traefik.http.routers.base-mainnet-erigon-v2-archive-trace.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.base-mainnet-erigon-v2-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.base-mainnet-erigon-v2-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/base-erigon`)}"
+      - "${NO_SSL:+traefik.http.routers.base-mainnet-erigon-v2-archive-trace.rule=PathPrefix(`/base-erigon`)}"      
+      - "traefik.http.routers.base-mainnet-erigon-v2-archive-trace.middlewares=base-mainnet-erigon-v2-archive-trace-stripprefix, ipwhitelist"
+
+
+  base-erigon-node:
+    build:
+      context: ./op
+    depends_on:
+      - base-erigon
+    volumes:
+      - .jwtsecret:/jwtsecret
+    expose:
+      - 8545     # RPC
+      - 29899     # P2P TCP
+      - 29899/udp # P2P UDP
+      - 7300     # metrics
+      - 6060     # pprof
+    ports:
+      - "29899:29899"
+      - "29899:29899/udp"
+    entrypoint: ./op-node
+    restart: always
+    stop_grace_period: 30s
+    environment:
+      - "OP_NODE_NETWORK=base-mainnet"
+      #- "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_L1_ETH_RPC=${BASE_L1_ETHEREUM_MAINNET_EXECUTION_RPC}"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_ENGINE_RPC=http://base-erigon:9551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      - "OP_NODE_P2P_AGENT=optimism"
+      - "OP_NODE_P2P_BOOTNODES=enr:-J24QNz9lbrKbN4iSmmjtnr7SjUMk4zB7f1krHZcTZx-JRKZd0kA2gjufUROD6T3sOWDVDnFJRvqBBo62zuF-hYCohOGAYiOoEyEgmlkgnY0gmlwhAPniryHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQKNVFlCxh_B-716tTs-h1vMzZkSs1FTu_OYTNjgufplG4N0Y3CCJAaDdWRwgiQG,enr:-J24QH-f1wt99sfpHy4c0QJM-NfmsIfmlLAMMcgZCUEgKG_BBYFc6FwYgaMJMQN5dsRBJApIok0jFn-9CS842lGpLmqGAYiOoDRAgmlkgnY0gmlwhLhIgb2Hb3BzdGFja4OFQgCJc2VjcDI1NmsxoQJ9FTIv8B9myn1MWaC_2lJ-sMoeCDkusCsk4BYHjjCq04N0Y3CCJAaDdWRwgiQG,enr:-J24QDXyyxvQYsd0yfsN0cRr1lZ1N11zGTplMNlW4xNEc7LkPXh0NAJ9iSOVdRO95GPYAIc6xmyoCCG6_0JxdL3a0zaGAYiOoAjFgmlkgnY0gmlwhAPckbGHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQJwoS7tzwxqXSyFL7g0JM-KWVbgvjfB8JA__T7yY_cYboN0Y3CCJAaDdWRwgiQG,enr:-J24QHmGyBwUZXIcsGYMaUqGGSl4CFdx9Tozu-vQCn5bHIQbR7On7dZbU61vYvfrJr30t0iahSqhc64J46MnUO2JvQaGAYiOoCKKgmlkgnY0gmlwhAPnCzSHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQINc4fSijfbNIiGhcgvwjsjxVFJHUstK9L1T8OTKUjgloN0Y3CCJAaDdWRwgiQG,enr:-J24QG3ypT4xSu0gjb5PABCmVxZqBjVw9ca7pvsI8jl4KATYAnxBmfkaIuEqy9sKvDHKuNCsy57WwK9wTt2aQgcaDDyGAYiOoGAXgmlkgnY0gmlwhDbGmZaHb3BzdGFja4OFQgCJc2VjcDI1NmsxoQIeAK_--tcLEiu7HvoUlbV52MspE0uCocsx1f_rYvRenIN0Y3CCJAaDdWRwgiQG"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=29899"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=29899"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      - "OP_NODE_L1_RPC_KIND=${BASE_L1_ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${BASE_L1_ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${BASE_L1_ETHEREUM_MAINNET_BEACON_REST}"
+    networks:                                                                                         
+      - chains
+      
+volumes:
+  base-mainnet-erigon-v2-archive-trace:
