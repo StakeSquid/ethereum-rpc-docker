@@ -25,11 +25,10 @@ def proxy(subpath):
 
     # Forward headers (except Host), remove Accept-Encoding to force uncompressed response
     headers = {k: v for k, v in request.headers if k.lower() != "host"}
-    headers.pop("Accept-Encoding", None)  # Prevent gzip response from upstream
+    headers.pop("Accept-Encoding", None)  # Prevents receiving gzip response
 
     data = request.get_data() if request.method in ["POST", "PUT", "PATCH"] else None
 
-    # Debug logs
     logging.debug(f"Incoming request: {request.method} {request.path}")
     logging.debug(f"Forwarding request to: {url}")
     logging.debug(f"Headers: {headers}")
@@ -43,24 +42,28 @@ def proxy(subpath):
             method=request.method, url=url, params=params, headers=headers, data=data, stream=True
         )
 
-        # Handle gzip responses
+        # Get encoding info
         content_encoding = resp.headers.get("Content-Encoding", "")
-        if "gzip" in content_encoding:
+        is_gzip = "gzip" in content_encoding.lower()
+        response_content = resp.content
+
+        # Only decompress if data is actually gzip
+        if is_gzip and response_content[:2] == b"\x1f\x8b":
             logging.debug("Decompressing Gzip response")
-            buffer = io.BytesIO(resp.content)
+            buffer = io.BytesIO(response_content)
             with gzip.GzipFile(fileobj=buffer, mode="rb") as gzipped_file:
-                decompressed_content = gzipped_file.read()
+                response_content = gzipped_file.read()
         else:
-            decompressed_content = resp.content
+            logging.debug("Response is not Gzip, forwarding as-is.")
 
         logging.debug(f"Response Status: {resp.status_code}")
         logging.debug(f"Response Headers: {dict(resp.headers)}")
-        logging.debug(f"Response Body (first 500 chars): {decompressed_content[:500]}")
+        logging.debug(f"Response Body (first 500 chars): {response_content[:500]}")
 
         # Remove gzip encoding from response headers
         response_headers = {k: v for k, v in resp.headers.items() if k.lower() != "content-encoding"}
 
-        return Response(decompressed_content, resp.status_code, response_headers.items())
+        return Response(response_content, resp.status_code, response_headers.items())
 
     except requests.RequestException as e:
         logging.error(f"Request failed: {e}")
@@ -69,4 +72,3 @@ def proxy(subpath):
 if __name__ == "__main__":
     logging.info(f"Starting proxy on port 80, forwarding to {TARGET_URL}")
     app.run(host="0.0.0.0", port=80, debug=True)
-
