@@ -1,13 +1,13 @@
 package main
 
 import (
-	"bytes"
+	// "bytes"
 	"compress/gzip"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"net/url"
+	// "net/url"
 	"os"
 )
 
