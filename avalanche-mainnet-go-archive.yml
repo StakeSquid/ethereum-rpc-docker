@@ -1,0 +1,51 @@
+services:
+  avalanche-archive-client:
+    image: avaplatform/avalanchego:${AVALANCHEGO_VERSION:-v1.12.2}
+    ulimits:
+      nofile: 1048576
+    expose:
+      - "9650"
+      - "30720"
+    ports:
+      - "30720:30720/tcp"
+      - "30720:30720/udp"
+    volumes:
+      - ${AVALANCHE_MAINNET_GO_ARCHIVE_DATA:-avalanche-mainnet-go-archive}:/root/.avalanchego
+      - ./avalanche/configs/chains/C/archive-config.json:/root/.avalanchego/configs/chains/C/config.json
+    environment:
+      - "IP=${IP}"
+    networks:
+      - chains
+    command: "/avalanchego/build/avalanchego --http-host= --http-allowed-hosts=* --staking-port=30720 --public-ip=$IP"
+    restart: unless-stopped
+
+    
+  avalanche-archive:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - avalanche-fuji
+    expose:  
+      - 80                                                                                            
+    environment:                                                                                      
+      PROXY_HOST: avalanche-archive-client
+      RPC_PORT: 9650
+      RPC_PATH: /ext/bc/C/rpc
+      WS_PORT: 9650
+      WS_PATH: /ext/bc/C/ws
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.avalanche-mainnet-go-archive-stripprefix.stripprefix.prefixes=/avalanche-archive"
+      - "traefik.http.services.avalanche-mainnet-go-archive.loadbalancer.server.port=80"
+      - "${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-archive.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-archive.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-archive`)}"
+      - "${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-archive.rule=PathPrefix(`/avalanche-archive`)}"            
+      - "traefik.http.routers.avalanche-mainnet-go-archive.middlewares=avalanche-mainnet-go-archive-stripprefix, ipwhitelist"
+      
+volumes:
+  avalanche-mainnet-go-archive:
