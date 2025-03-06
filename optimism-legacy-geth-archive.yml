@@ -1,0 +1,39 @@
+services:
+
+  optimism-legacy:
+    image: ethereumoptimism/l2geth:${IMAGE_TAG__L2GETH:-latest}
+    restart: unless-stopped
+    stop_grace_period: 3m
+    user: root
+    entrypoint:
+      - /bin/sh
+      - -c
+      - "/scripts/l2geth-init.sh && /scripts/l2geth-start.sh"
+    env_file:
+      - ./optimism/env/l2geth.env
+      - .env
+    volumes:
+      - ${OPTIMISM_LEGACY_GETH_ARCHIVE:-optimism-legacy-geth-archive}:/geth
+      - ./optimism/scripts/:/scripts/
+    expose:
+      - 8545 # http
+      - 8546 # ws
+      - 33289 # P2P
+    environment:
+      - "NODE_TYPE=archive"
+      - "SYNC_SOURCE=l2"
+      - "WS_PORT=8546"
+    networks:                                                                                         
+      - chains
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.optimism-legacy-geth-archive-stripprefix.stripprefix.prefixes=/optimism-legacy-geth-archive"
+      - "traefik.http.services.optimism-legacy-geth-archive.loadbalancer.server.port=8545"
+      - "${NO_SSL:-traefik.http.routers.optimism-legacy-geth-archive.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.optimism-legacy-geth-archive.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.optimism-legacy-geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-legacy-geth-archive`)}"
+      - "${NO_SSL:-traefik.http.routers.optimism-legacy-geth-archive.rule=PathPrefix(`/optimism-legacy-geth-archive`)}"      
+      - "traefik.http.routers.optimism-legacy-geth-archive.middlewares=optimism-legacy-geth-archive-stripprefix, ipwhitelist"
+        
+volumes:
+  optimism-legacy-geth-archive:
