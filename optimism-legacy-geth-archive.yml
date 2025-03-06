@@ -1,6 +1,6 @@
 services:
 
-  optimism-legacy:
+  optimism-legacy-archive:
     image: ethereumoptimism/l2geth:${IMAGE_TAG__L2GETH:-latest}
     restart: unless-stopped
     stop_grace_period: 3m
@@ -27,11 +27,11 @@ services:
       - chains
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.optimism-legacy-geth-archive-stripprefix.stripprefix.prefixes=/optimism-legacy-geth-archive"
+      - "traefik.http.middlewares.optimism-legacy-geth-archive-stripprefix.stripprefix.prefixes=/optimism-legacy-archive"
       - "traefik.http.services.optimism-legacy-geth-archive.loadbalancer.server.port=8545"
       - "${NO_SSL:-traefik.http.routers.optimism-legacy-geth-archive.entrypoints=websecure}"
       - "${NO_SSL:-traefik.http.routers.optimism-legacy-geth-archive.tls.certresolver=myresolver}"
-      - "${NO_SSL:-traefik.http.routers.optimism-legacy-geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-legacy-geth-archive`)}"
+      - "${NO_SSL:-traefik.http.routers.optimism-legacy-geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-legacy-archive`)}"
       - "${NO_SSL:-traefik.http.routers.optimism-legacy-geth-archive.rule=PathPrefix(`/optimism-legacy-geth-archive`)}"      
       - "traefik.http.routers.optimism-legacy-geth-archive.middlewares=optimism-legacy-geth-archive-stripprefix, ipwhitelist"
         
