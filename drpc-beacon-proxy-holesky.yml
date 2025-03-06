@@ -1,5 +1,5 @@
 services:
-  beacon-proxy:
+  drpc-beacon-proxy-holesky:
     build: ./drpc-beacon-proxy/
     expose:
       - "80:80"
