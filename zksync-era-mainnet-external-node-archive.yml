@@ -73,7 +73,7 @@ services:
     restart: unless-stopped           
     image: nginx
     depends_on:
-      - zksync-era-archive-client
+      - zksync-eraexternal-node-archive-client
     expose:  
       - 80                                                                                    
     environment:                                                                                      
