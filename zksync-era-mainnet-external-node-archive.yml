@@ -1,5 +1,5 @@
 services:
-  zksync-era-archive-db:
+  zksync-era-external-node-archive-db:
     image: "postgres:14"
     command: >
       postgres
@@ -18,7 +18,7 @@ services:
     expose:
       - 5430
     volumes:
-      - ${ZKSYNC_ERA_MAINNET_ARCHIVE__DB_DATA:-zksync-era-mainnet-archive_db}:/var/lib/postgresql/data
+      - ${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_ARCHIVE__DB_DATA:-zksync-era-mainnet-external-node-archive_db}:/var/lib/postgresql/data
     healthcheck:
       interval: 1s
       timeout: 3s
@@ -33,7 +33,7 @@ services:
     networks:
       - chains
 
-  zksync-era-archive-client:
+  zksync-era-external-node-archive-client:
     image: "matterlabs/external-node:v24.23.0"
     depends_on:
       zksync-era-archive-db:
@@ -43,7 +43,7 @@ services:
       - "127.0.0.1:3061:3061"
       - "127.0.0.1:3081:3081"
     volumes:
-      - ${ZKSYNC_ERA_MAINNET_ARCHIVE__CLIENT_DATA:-zksync-era-mainnet-archive_client}:/db
+      - ${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_ARCHIVE__CLIENT_DATA:-zksync-era-mainnet-external-node-archive_client}:/db
     expose:
       - 3322
     environment:
@@ -69,7 +69,7 @@ services:
     networks:
       - chains
 
-  zksync-era-archive:         
+  zksync-era-external-node-archive:
     restart: unless-stopped           
     image: nginx
     depends_on:
@@ -77,7 +77,7 @@ services:
     expose:  
       - 80                                                                                    
     environment:                                                                                      
-      PROXY_HOST: zksync-era-archive-client
+      PROXY_HOST: zksync-era-external-node-archive-client
       RPC_PORT: 3060
       RPC_PATH: ""
       WS_PORT: 3061
@@ -88,15 +88,15 @@ services:
       - ./nginx-proxy:/etc/nginx/templates            
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.zksync-era-mainnet-archive-stripprefix.stripprefix.prefixes=/zksync-era-archive"
-      - "traefik.http.services.zksync-era-mainnet-archive.loadbalancer.server.port=3060"
-      - "${NO_SSL:-traefik.http.routers.zksync-era-mainnet-archive.entrypoints=websecure}"
-      - "${NO_SSL:-traefik.http.routers.zksync-era-mainnet-archive.tls.certresolver=myresolver}"
-      - "${NO_SSL:-traefik.http.routers.zksync-era-mainnet-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/zksync-era-archive`)}"
-      - "${NO_SSL:+traefik.http.routers.zksync-era-mainnet-archive.rule=PathPrefix(`/zksync-era-archive`)}"      
-      - "traefik.http.routers.zksync-era-mainnet-archive.middlewares=zksync-era-mainnet-archive-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.zksync-era-mainnet-external-node-archive-stripprefix.stripprefix.prefixes=/zksync-era-archive"
+      - "traefik.http.services.zksync-era-mainnet-external-node-archive.loadbalancer.server.port=3060"
+      - "${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-archive.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-archive.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/zksync-era-archive`)}"
+      - "${NO_SSL:+traefik.http.routers.zksync-era-mainnet-external-node-archive.rule=PathPrefix(`/zksync-era-archive`)}"      
+      - "traefik.http.routers.zksync-era-mainnet-external-node-archive.middlewares=zksync-era-mainnet-external-node-archive-stripprefix, ipwhitelist"
 
 
 volumes:
-  zksync-era-mainnet-archive_db: {}
-  zksync-era-mainnet-archive_client: {}
+  zksync-era-mainnet-external-node-archive_db: {}
+  zksync-era-mainnet-external-node-archive_client: {}
