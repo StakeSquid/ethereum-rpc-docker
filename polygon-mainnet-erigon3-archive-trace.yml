@@ -1,5 +1,5 @@
 services:
-  polygon-erigon:
+  polygon-erigon3:
     image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-alpha7}
     user: root
     expose:
@@ -15,7 +15,7 @@ services:
     environment:
       - "IP=${IP}"
     volumes:
-      - ${POLYGON_MAINNET_ERIGON_V3_ARCHIVE_TRACE_DATA:-polygon-mainnet-erigon-v3-archive-trace}:/root/.local/share/erigon
+      - ${POLYGON_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-polygon-mainnet-erigon3-archive-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
       - .jwtsecret:/jwtsecret
     networks:
@@ -58,15 +58,15 @@ services:
     stop_grace_period: 1m
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.polygon-mainnet-erigon-v3-archive-trace-stripprefix.stripprefix.prefixes=/polygon-erigon-v3"
-      - "traefik.http.services.polygon-mainnet-erigon-v3-archive-trace.loadbalancer.server.port=8545"
-      - "${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon-v3-archive-trace.entrypoints=websecure}"
-      - "traefik.http.routers.polygon-mainnet-erigon-v3-archive-trace.service=polygon-mainnet-erigon-v3-archive-trace"
-      - "${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon-v3-archive-trace.tls.certresolver=myresolver}"
-      - "${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon-v3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-erigon-v3`)}"
-      - "${NO_SSL:+traefik.http.routers.polygon-mainnet-erigon-v3-archive-trace.rule=PathPrefix(`/polygon-erigon-v3`)}"
-      - "traefik.http.routers.polygon-mainnet-erigon-v3-archive-trace.middlewares=polygon-mainnet-erigon-v3-archive-trace-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.polygon-mainnet-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/polygon-erigon3"
+      - "traefik.http.services.polygon-mainnet-erigon3-archive-trace.loadbalancer.server.port=8545"
+      - "${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-archive-trace.entrypoints=websecure}"
+      - "traefik.http.routers.polygon-mainnet-erigon3-archive-trace.service=polygon-mainnet-erigon3-archive-trace"
+      - "${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-erigon3`)}"
+      - "${NO_SSL:+traefik.http.routers.polygon-mainnet-erigon3-archive-trace.rule=PathPrefix(`/polygon-erigon3`)}"
+      - "traefik.http.routers.polygon-mainnet-erigon3-archive-trace.middlewares=polygon-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist"
       
 volumes:
-    polygon-mainnet-erigon-v3-archive-trace:
+    polygon-mainnet-erigon3-archive-trace:
 

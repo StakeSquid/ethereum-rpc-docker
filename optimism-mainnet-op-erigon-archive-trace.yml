@@ -25,26 +25,26 @@ services:
       --ws
       --nodiscover
     volumes:
-      - ${OPTIMISM_MAINNET_ERIGON_V2_ARCHIVE_TRACE:-optimism-mainnet-erigon-v2-archive-trace}:/root/.local/share/erigon
+      - ${OPTIMISM_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-optimism-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
       - .jwtsecret:/jwtsecret
     networks:
       - chains
     labels:
        - "traefik.enable=true"
-      - "traefik.http.middlewares.optimism-mainnet-erigon-v2-archive-trace-stripprefix.stripprefix.prefixes=/optimism-erigon"
-      - "traefik.http.services.optimism-mainnet-erigon-v2-archive-trace.loadbalancer.server.port=8545"
-      - "${NO_SSL:-traefik.http.routers.optimism-mainnet-erigon-v2-archive-trace.entrypoints=websecure}"
-      - "${NO_SSL:-traefik.http.routers.optimism-mainnet-erigon-v2-archive-trace.tls.certresolver=myresolver}"
-      - "${NO_SSL:-traefik.http.routers.optimism-mainnet-erigon-v2-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-erigon`)}"
-      - "${NO_SSL:+traefik.http.routers.optimism-mainnet-erigon-v2-archive-trace.rule=PathPrefix(`/optimism-erigon`)}"      
-      - "traefik.http.routers.optimism-mainnet-erigon-v2-archive-trace.middlewares=optimism-mainnet-erigon-v2-archive-trace-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.optimism-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/optimism-erigon"
+      - "traefik.http.services.optimism-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545"
+      - "${NO_SSL:-traefik.http.routers.optimism-mainnet-op-erigon-archive-trace.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.optimism-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.optimism-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/optimism-erigon`)}"
+      - "${NO_SSL:+traefik.http.routers.optimism-mainnet-op-erigon-archive-trace.rule=PathPrefix(`/optimism-erigon`)}"      
+      - "traefik.http.routers.optimism-mainnet-op-erigon-archive-trace.middlewares=optimism-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist"
 
 
   optimism-erigon-node:
     build:
       context: ./op
     depends_on:
-      - optimism-erigone
+      - optimism-erigon
     volumes:
       - .jwtsecret:/jwtsecret
     expose:
@@ -86,4 +86,4 @@ services:
       - chains
       
 volumes:
-  optimism-mainnet-erigon-v2-archive-trace:
+  optimism-mainnet-op-erigon-archive-trace:

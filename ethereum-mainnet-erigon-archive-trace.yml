@@ -1,0 +1,85 @@
+services:
+  ethereum-erigon:
+    image: erigontech/erigon:${ERIGON_VERSION:-v2.6.1}
+    user: root
+    expose:
+      - "16630"
+      - "9090"
+      - "8545"
+      - "8551"
+    ports:
+      - "42087:42087"
+      - "42087:42087/udp"
+      - "29553:29553/udp"
+      - "45209:45209"
+      - "42137:42137"
+      - "42137:42137/udp"
+      - "52538:52538"
+      - "52538:52538/udp"
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - ${ETHEREUM_MAINNET_ERIGON_ARCHIVE_TRACE_DATA:-ethereum-mainnet-erigon-archive-trace}:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+      - .jwtsecret:/jwtsecret
+    networks:
+      - chains
+    command: >
+      --prune.mode=archive
+      --rpc.evmtimeout=30m0s
+      --rpc.overlay.getlogstimeout=30m0s
+      --rpc.overlay.replayblocktimeout=30m0s
+      --chain mainnet
+      --internalcl
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
+      --port=42087
+      --p2p.allowed-ports=52538
+      --caplin.discovery.addr=0.0.0.0
+      --caplin.discovery.port=29553
+      --caplin.discovery.tcpport=45209
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.port=42137
+      --nat=extip:${IP}      
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --authrpc.addr=0.0.0.0
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ethereum-mainnet-erigon-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-erigon"
+
+      - "traefik.http.services.ethereum-mainnet-erigon-archive-trace.loadbalancer.server.port=8545"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon-archive-trace.entrypoints=websecure}"
+      - "traefik.http.routers.ethereum-mainnet-erigon-archive-trace.service=ethereum-mainnet-erigon-archive-trace"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-erigon`)}"
+      - "${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon-archive-trace.rule=PathPrefix(`/ethereum-erigon`)}"
+      - "traefik.http.routers.ethereum-mainnet-erigon-archive-trace.middlewares=ethereum-mainnet-erigon-archive-trace-stripprefix, ipwhitelist"
+
+      - "traefik.http.services.ethereum-mainnet-erigon-archive-trace-beacon.loadbalancer.server.port=5555"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon-archive-trace-beacon.entrypoints=websecure}"
+      - "traefik.http.routers.ethereum-mainnet-erigon-archive-trace-beacon.service=ethereum-mainnet-erigon-archive-trace-beacon"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon-archive-trace-beacon.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon-archive-trace-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-erigon/eth`)}"
+      - "${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon-archive-trace-beacon.rule=PathPrefix(`/ethereum-erigon/eth`)}"      
+      - "traefik.http.routers.ethereum-mainnet-erigon-archive-trace-beacon.middlewares=ethereum-mainnet-erigon-archive-trace-stripprefix, ipwhitelist"
+      
+volumes:
+    ethereum-mainnet-erigon-archive-trace:
+
