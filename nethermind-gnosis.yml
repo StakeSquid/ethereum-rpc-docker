@@ -74,7 +74,7 @@ services:
       - .jwtsecret:/jwt:ro
     environment:
       CHECKPOINT_SYNC_URL: "https://checkpoint.gnosischain.com/"
-    command: |
+    command: >
         --data-dir=/data
         --web3-url=http://nethermind-gnosis:8551
         --jwt-secret=/jwt
