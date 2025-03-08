@@ -6,6 +6,6 @@ USER root
 RUN apt update && apt install curl jq -y
 
 COPY entrypoint.sh /usr/bin/entrypoint.sh
-COPY auth-token /home/user/nimbus-eth2/build/data/auth-token
+COPY auth-token /auth-token
 
 ENTRYPOINT [ "/usr/bin/entrypoint.sh" ]

@@ -5,7 +5,7 @@ VALIDATOR_PORT=3500
 
 DATA_DIR="/home/user/nimbus-eth2/build/data"
 VALIDATORS_DIR="${DATA_DIR}/validators"
-TOKEN_FILE="${DATA_DIR}/auth-token"
+TOKEN_FILE="/auth-token"
 
 mkdir -p ${VALIDATORS_DIR}
 
