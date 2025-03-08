@@ -78,6 +78,7 @@ services:
       P2P_TCP_PORT: 54356
       P2P_UDP_PORT: 54356
       NETWORK: "gnosis"
+      LOG_TYPE: INFO
       EXTRA_OPTS: --history=prune
     networks:
       - chains
