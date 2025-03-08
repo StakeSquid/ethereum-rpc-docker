@@ -70,22 +70,15 @@ services:
     stop_grace_period: 1m
     user: root
     volumes:
-      - nimbus-gnosis:/data
-      - .jwtsecret:/jwt:ro
+      - nimbus-gnosis:/home/user/nimbus-eth2/build/data
+      - .jwtsecret:/jwt.hex:ro
     environment:
       CHECKPOINT_SYNC_URL: "https://checkpoint.gnosischain.com/"
-    command: >
-        --data-dir=/data
-        --web3-url=http://nethermind-gnosis:8551
-        --jwt-secret=/jwt
-        --light-client-data-serve=true
-        --light-client-data-import-mode=full
-        --tcp-port=54356
-        --udp-port=54356
-        --rest
-        --rest-address=0.0.0.0
-        --network=gnosis
-        --history=prune
+      EXECUTION_ENDPOINT: "http://nethermind-gnosis:8551"
+      P2P_TCP_PORT: 54356
+      P2P_UDP_PORT: 54356
+      NETWORK: "gnosis"
+      EXTRA_OPTS: --history=prune
     networks:
       - chains
     ports:
