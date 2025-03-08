@@ -30,7 +30,7 @@ services:
         "--http.vhosts=*",
         "--l1.endpoint=${SCROLL_SEPOLIA_L1_ENDPOINT}",
         #"--da.blob.beaconnode=${SCROLL_SEPOLIA_L1_BEACON}",
-        "--da.blob.blobscan https://api.sepolia.blobscan.com/blobs/",
+        #"--da.blob.blobscan https://api.sepolia.blobscan.com/blobs/",
         "--rollup.verify",
         # Enable GraphQL on the HTTP-RPC server. Note that GraphQL can only be started if an HTTP server is started as well.                                                                               
         "--graphql",                               
