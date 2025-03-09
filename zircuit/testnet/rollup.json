@@ -29,5 +29,8 @@
   "canyon_time": 1711297396,
   "delta_time": 1720008000,
   "ecotone_time": 1720008000,
-  "protocol_versions_address": "0x0000000000000000000000000000000000000000"
+  "protocol_versions_address": "0x0000000000000000000000000000000000000000",
+  "hyrax_time": 1741557600,
+  "l2cancun_time": 1741557600,
+  "prevrandao_disabling_time": 1741557600
 }
