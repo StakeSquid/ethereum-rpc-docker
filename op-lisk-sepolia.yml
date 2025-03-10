@@ -39,7 +39,8 @@ services:
       - "GETH_OVERRIDE_ECOTONE=1708534800"
       - "GETH_OVERRIDE_FJORD=1716998400"
       - "GETH_OVERRIDE_GRANITE=1723478400"
-      - "GETH_OVERRIDE_HOLOCENE=1732633200"      
+      - "GETH_OVERRIDE_HOLOCENE=1732633200"
+      - "GETH_OVERRIDE_PECTRA=1741159776"
       - "GETH_BOOTNODES=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIy\
 uDdWRwgiMr"
     labels:                     
@@ -113,6 +114,7 @@ uDdWRwgiMr"
       - "OP_NODE_OVERRIDE_FJORD=1716998400"
       - "OP_NODE_OVERRIDE_GRANITE=1723478400"
       - "OP_NODE_OVERRIDE_HOLOCENE=1732633200"
+      - "OP_NODE_OVERRICE_PECTRA=1741159776"
     networks:                                                                                         
       - chains
       
