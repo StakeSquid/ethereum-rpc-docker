@@ -33,7 +33,7 @@ rpc:
       - net
       - web3
   maxDelayBlock: 120
-  suspendBuffer: 60s
+  suspendBuffer: 31622400s
   logs:
     blockRange: -1
   logRequests: True
