@@ -1,6 +1,6 @@
 services:
   nodeexporter:
-    image: prom/node-exporter:v1.2.2
+    image: prom/node-exporter:v1.3.1
     container_name: nodeexporter
     volumes:
       - /proc:/host/proc:ro
