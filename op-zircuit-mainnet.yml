@@ -1,6 +1,6 @@
 services:
   op-zircuit-client:
-    image: zircuit1/l2-geth:94186328850b5def97c195a2737c1d28265ef74b
+    image: zircuit1/l2-geth:e81568966f2a42a57b1347fb1dffdd5257dde73a
     volumes:
       - "op-zircuit:/db"
       - "./zircuit/mainnet/genesis.json:/genesis.json"
@@ -54,7 +54,7 @@ services:
   op-zircuit-node:
     depends_on:
       - op-zircuit-client
-    image: zircuit1/op-node:94186328850b5def97c195a2737c1d28265ef74b
+    image: zircuit1/op-node:e81568966f2a42a57b1347fb1dffdd5257dde73a
     ports:
       - "43778:43778"
       - "43778:43778/udp"
