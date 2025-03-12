@@ -15,7 +15,7 @@ services:
       - "--rollup.disabletxpoolgossip=true"
       - "--http.api=eth,net,web3,debug"
     environment:
-      FORK_TRIGGER: "false"
+      FORK_TRIGGER: "true"
       ETH_STATS_ENABLED: 1
       ETH_STATS_NODE: "d${DOMAIN}"
       ETH_STATS_SERVER: ethstats-ap.mainnet.zircuit.com
