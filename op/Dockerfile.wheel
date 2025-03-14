@@ -20,7 +20,7 @@ git switch -c branch-$OP_VERSION
 WORKDIR /app/optimism/op-wheel
 
 # Build the op-wheel binary
-RUN make build
+RUN make op-wheel
 
 # Set the entrypoint to the op-wheel binary
 ENTRYPOINT ["./bin/op-wheel"]
