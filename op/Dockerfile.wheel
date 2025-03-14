@@ -1,0 +1,20 @@
+# Use an official Golang image as the base
+FROM golang:1.20-alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Install necessary dependencies
+RUN apk add --no-cache git make gcc musl-dev
+
+# Clone the Optimism repository
+RUN git clone --depth 1 --branch main https://github.com/ethereum-optimism/optimism.git
+
+# Navigate to the op-wheel directory
+WORKDIR /app/optimism/op-wheel
+
+# Build the op-wheel binary
+RUN make build
+
+# Set the entrypoint to the op-wheel binary
+ENTRYPOINT ["./bin/op-wheel"]
