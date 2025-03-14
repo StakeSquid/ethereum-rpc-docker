@@ -5,7 +5,7 @@ services:
       - "80:80"
     environment:
       DKEY: "${DRPC_API_KEY}"
-      NETWORK: "sepolia"
+      TARGET_URL: https://lb.drpc.org/rest/eth-beacon-chain-sepolia
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.drpc-beacon-proxy-sepolia-stripprefix.stripprefix.prefixes=/drpc-beacon-proxy-sepolia"
