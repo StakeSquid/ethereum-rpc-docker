@@ -1,13 +1,13 @@
 services:
   init:
-    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth@sha256:13fa55221309e4e453fd8c383d51aa6d065695f14a64ab25c85aa7d9301173e0
+    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth::celo-v2.0.0-rc4
     volumes:
       - "op-celo-alfajores-fullnode:/datadir"
       - "./celo/alfajores:/config"
     command: init --datadir /datadir /config/genesis.json
     
   op-celo-alfajores-fullnode:
-    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth@sha256:13fa55221309e4e453fd8c383d51aa6d065695f14a64ab25c85aa7d9301173e0
+    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:celo-v2.0.0-rc4
     depends_on:
       - init
     volumes:
@@ -58,7 +58,7 @@ services:
     
 
   op-celo-alfajores-fullnode-node:
-    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node:celo9
+    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node:celo-v2.0.0-rc4
     depends_on:
       - op-celo-alfajores-fullnode
       - op-celo-alfajores-key-generator
