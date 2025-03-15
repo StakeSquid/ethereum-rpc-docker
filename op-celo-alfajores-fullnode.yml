@@ -81,13 +81,13 @@ services:
       - OP_NODE_ALTDA_DA_SERVICE=true
       - OP_NODE_ALTDA_VERIFY_ON_READ=false
       - OP_NODE_ALTDA_DA_SERVER=https://eigenda-proxy.alfajores.celo-testnet.org
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
     command: >
       op-node
       --l1="${OP_CELO_ALFAJORES_HOLESKY_RPC:-https://ethereum-holesky-rpc.publicnode.com}"
       --l2=http://op-celo-alfajores-fullnode:8551
       --rpc.addr=0.0.0.0
       --rpc.port=9545
-      --l2.jwt-secret=/jwtsecret
       --l1.trustrpc
       --l1.rpckind=basic
       --l1.beacon="${OP_CELO_ALFAJORES_HOLESKY_BEACON_REST:-https://ethereum-holesky-beacon-api.publicnode.com}"
