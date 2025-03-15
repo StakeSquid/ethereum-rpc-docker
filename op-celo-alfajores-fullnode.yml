@@ -39,7 +39,6 @@ services:
       --authrpc.addr=0.0.0.0
       --authrpc.port=8551
       --authrpc.jwtsecret=/jwtsecret
-      --authrpc.api=engine,eth,debug
       --rollup.sequencerhttp=https://sequencer.alfajores.celo-testnet.org
       --rollup.disabletxpoolgossip=true
       --port="10955"
