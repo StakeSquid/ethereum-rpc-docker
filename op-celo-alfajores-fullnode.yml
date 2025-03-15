@@ -16,7 +16,7 @@ services:
     ports:
       - "10955:10955"
       - "10955:10955/udp"
-    command: |      
+    command: >      
       --datadir=/datadir
       --networkid=44787 
       --gcmode=full 
@@ -73,7 +73,7 @@ services:
     ports:
       - "39395:39395"
       - "39395:39395/udp"
-    command: |
+    command: >
       op-node
       --l1.trustrpc=true
       --l1=${OP_CELO_ALFAJORES_HOLESKY_RPC:-https://ethereum-holesky-rpc.publicnode.com}
