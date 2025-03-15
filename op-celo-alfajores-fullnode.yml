@@ -95,7 +95,7 @@ services:
       --metrics.port=7300
       --syncmode=execution-layer
       --p2p.priv.path=/shared/op-node_p2p_priv.txt
-      --network=alfajores
+      --networkid=44787
       --rollup.load-protocol-versions=true
       --rollup.halt=major
     restart: always
