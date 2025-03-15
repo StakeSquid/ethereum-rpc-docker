@@ -39,6 +39,7 @@ services:
       --authrpc.addr=0.0.0.0
       --authrpc.port=8551
       --authrpc.jwtsecret=/jwtsecret
+      --authrpc.api=engine,eth,debug"
       --rollup.sequencerhttp=https://sequencer.alfajores.celo-testnet.org
       --rollup.disabletxpoolgossip=true
       --port="10955"
@@ -74,8 +75,8 @@ services:
       - "39395:39395/udp"
     environment:
       - HEALTHCHECK__REFERENCE_RPC_PROVIDER=https://alfajores-forno.celo-testnet.org
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=39395"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=39395"
+      - OP_NODE_P2P_LISTEN_TCP_PORT=39395
+      - OP_NODE_P2P_LISTEN_UDP_PORT=39395
       - OP_NODE_P2P_STATIC=/ip4/35.197.25.52/tcp/9222/p2p/16Uiu2HAmQEdyLRSAVZDr5SqbJ1RnKmNDhtQJcEKmemrVxe4FxKwR,/ip4/34.105.22.4/tcp/9222/p2p/16Uiu2HAm1SZBDSugT5MMu7vBY8auDgfZFNhoDeXPLc9Me5FsAxwT,/ip4/34.83.209.168/tcp/9222/p2p/16Uiu2HAmGJAiUX6HLSo4nLh8T984qxzokwL23cVsYuNZy2SrK7C6,/ip4/34.83.214.149/tcp/9222/p2p/16Uiu2HAmAko2Kr3eAjM7tnshtEhYrxQYfKUvN2kwiygeFoBAoi8S,/ip4/34.169.5.52/tcp/9222/p2p/16Uiu2HAmKc6YKHzYgsjBDaj36uAufxpgZFgrzDqVBt6zTPwdhhJD
       - OP_NODE_ALTDA_ENABLED=true
       - OP_NODE_ALTDA_DA_SERVICE=true
@@ -91,9 +92,6 @@ services:
       --l1.trustrpc
       --l1.rpckind=basic
       --l1.beacon="${OP_CELO_ALFAJORES_HOLESKY_BEACON_REST:-https://ethereum-holesky-beacon-api.publicnode.com}"
-      --metrics.enabled
-      --metrics.addr=0.0.0.0
-      --metrics.port=7300
       --syncmode=execution-layer
       --p2p.priv.path=/chainconfigs/p2p_node_key_txt
       --rollup.config=/chainconfigs/rollup.json
