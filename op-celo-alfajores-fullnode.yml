@@ -4,6 +4,7 @@ services:
     volumes:
       - "op-celo-alfajores-fullnode:/datadir"
       - ".jwtsecret:/jwtsecret"
+      - "./celo/alfajores/:/chainconfig"
     ports:
       - "10955:10955"
       - "10955:10955/udp"
