@@ -34,7 +34,7 @@ services:
       --http.vhosts='*'
       --http.corsdomain='*'
       --ws
-      --rollup.historicalrpc=https://alfajores-forno.cel1.alfajores.celo-testnet.org
+      --rollup.historicalrpc=https://alfajores-forno.celo-testnet.org
       --ws.addr=0.0.0.0
       --ws.port=8545
       --ws.api=eth,net,web3,debug,txpool,engine,admin
