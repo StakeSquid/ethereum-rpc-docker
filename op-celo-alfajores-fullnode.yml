@@ -95,12 +95,13 @@ services:
       --metrics.port=7300
       --syncmode=execution-layer
       --p2p.priv.path=/shared/op-node_p2p_priv.txt
-      --networkid=44787
+      --rollup.config=/chainconfigs/rollup.json
       --rollup.load-protocol-versions=true
       --rollup.halt=major
     restart: always
     volumes:
       - .jwtsecret:/jwtsecret
+      - ./celo/alfajores/:/chainconfigs/
     stop_grace_period: 30s
 
 volumes:
