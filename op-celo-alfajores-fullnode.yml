@@ -91,7 +91,7 @@ services:
       - EIGENDA_PROXY_ENDPOINT=https://eigenda-proxy.alfajores.celo-testnet.org
     command: >
       op-node
-      --li=${OP_CELO_ALFAJORES_HOLESKY_RPC:-https://ethereum-holesky-rpc.publicnode.com}
+      --li="${OP_CELO_ALFAJORES_HOLESKY_RPC:-https://ethereum-holesky-rpc.publicnode.com}"
       --l2=http://op-celo-alfajores-fullnode:8551
       --rpc.addr=0.0.0.0
       --rpc.port=9545
