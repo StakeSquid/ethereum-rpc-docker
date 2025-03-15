@@ -76,8 +76,8 @@ services:
     command: >
       op-node
       --l1.trustrpc=true
-      --l1=${OP_CELO_ALFAJORES_HOLESKY_RPC:-https://ethereum-holesky-rpc.publicnode.com}
-      --l1.beacon=${OP_CELO_ALFAJORES_HOLESKY_BEACON_REST:-https://ethereum-holesky-beacon-api.publicnode.com}
+      --l1="${OP_CELO_ALFAJORES_HOLESKY_RPC:-https://ethereum-holesky-rpc.publicnode.com}"
+      --l1.beacon="${OP_CELO_ALFAJORES_HOLESKY_BEACON_REST:-https://ethereum-holesky-beacon-api.publicnode.com}"
       --l2=http://op-celo-alfajores-fullnode:8551
       --l2.jwt-secret=/jwtsecret
       --rollup.load-protocol-versions=true
