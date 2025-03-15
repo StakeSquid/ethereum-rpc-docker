@@ -51,8 +51,8 @@ services:
       - "39395:39395"
       - "39395:39395/udp"
     environment:
-      - OP_NODE__RPC_ENDPOINT=${OP_CELO_ALFAJORES_HOLESKY_RPC:-https://ethereum-holesky-rpc.publicnode.com}
-      - OP_NODE__L1_BEACON=${OP_CELO_ALFAJORES_HOLESKY_BEACON_REST:-https://ethereum-holesky-beacon-api.publicnode.com}
+      - OP_NODE__RPC_ENDPOINT="${OP_CELO_ALFAJORES_HOLESKY_RPC:-https://ethereum-holesky-rpc.publicnode.com}"
+      - OP_NODE__L1_BEACON="${OP_CELO_ALFAJORES_HOLESKY_BEACON_REST:-https://ethereum-holesky-beacon-api.publicnode.com}"
       - OP_NODE__RPC_TYPE=basic
       - HEALTHCHECK__REFERENCE_RPC_PROVIDER=https://alfajores-forno.celo-testnet.org
       - PORT__OP_NODE_P2P=39395
