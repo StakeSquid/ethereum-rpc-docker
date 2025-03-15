@@ -1,8 +1,6 @@
 services:
   op-celo-alfajores-fullnode:
     image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:celo-v2.0.0-rc4
-    depends_on:
-      - init
     volumes:
       - "op-celo-alfajores-fullnode:/datadir"
       - ".jwtsecret:/jwtsecret"
