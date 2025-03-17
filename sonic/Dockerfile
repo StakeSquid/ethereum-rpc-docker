@@ -21,8 +21,8 @@ RUN make all
 
 FROM golang:1.22
 
-COPY --from=builder /go/Sonic/build/sonicd /usr/local/bin/
-COPY --from=builder /go/Sonic/build/sonictool /usr/local/bin/
+COPY --from=builder /go/sonic/build/sonicd /usr/local/bin/
+COPY --from=builder /go/sonic/build/sonictool /usr/local/bin/
 
 COPY ./entrypoint.sh /entrypoint.sh
 
