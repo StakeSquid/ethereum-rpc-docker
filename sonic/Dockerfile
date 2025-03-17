@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y git musl-dev make
 
 RUN cd /go && git clone https://github.com/0xsoniclabs/sonic.git && cd sonic && git fetch --tags && git checkout -b ${VERSION} tags/${VERSION}
 
-WORKDIR /go/Sonic
+WORKDIR /go/sonic
 
 ARG GOPROXY
 RUN go mod download
