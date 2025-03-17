@@ -2,7 +2,6 @@ version: '3.1'
 
 services:
   op-mode-mainnet: # this is Optimism's geth client
-    #image: stakesquid/op-mode-mainnet:v0.1
     build:
       context: ./op
     expose:
@@ -24,7 +23,6 @@ services:
       - "GETH_ROLLUP_SEQUENCERHTTP=https://rpc-mode-mainnet-0.t.conduit.xyz"
       - "GETH_GCMODE=full"
       - "GETH_SYNCMODE=snap"
-      #- "GETH_NODISCOVER=true"
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
       - "P2P_PORT=34542"
@@ -35,6 +33,8 @@ services:
       - "GETH_OVERRIDE_DELTA=1708560000"
       - "GETH_OVERRIDE_ECOTONE=1710374401"
       - "GETH_OVERRIDE_FJORD=1720627201"
+      - "GETH_OVERRIDE_GRANITE=1726070401"      
+      - "GETH_OVERRIDE_HOLOCENE=1736445601"
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.mode-stripprefix.stripprefix.prefixes=/mode-mainnet"                      
@@ -68,7 +68,6 @@ services:
       - .jwtsecret:/jwtsecret
     stop_grace_period: 30s
     environment:
-      #- "OP_NODE_NETWORK=mode-mainnet-0"
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${MODE_MAINNET_L1_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
@@ -100,6 +99,8 @@ services:
       - "OP_NODE_OVERRIDE_DELTA=1708560000"
       - "OP_NODE_OVERRIDE_ECOTONE=1710374401"
       - "OP_NODE_OVERRIDE_FJORD=1720627201"
+      - "OP_NODE_OVERRIDE_GRANITE=1726070401"
+      - "OP_NODE_OVERRIDE_HOLOCENE=1736445601"
     networks:                                                                                         
       - chains
       
