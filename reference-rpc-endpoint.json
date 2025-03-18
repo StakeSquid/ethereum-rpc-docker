@@ -154,8 +154,8 @@
   },
   "arbitrum": {
     "id": 42161,
-    "urls": [
-      "https://arbitrum-one.public.blastapi.io"
+      "urls": [
+	  "https://arbitrum.drpc.org"
     ],
     "default": [
 	"arbitrum-fullnode",
