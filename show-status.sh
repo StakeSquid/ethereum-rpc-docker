@@ -35,7 +35,12 @@ for part in "${parts[@]}"; do
     if $include; then
         result=$($BASEPATH/sync-status.sh "${part%.yml}")
         if [ $? -ne 0 ]; then
-            any_failure=true
+	    if [[ "$result" == *"syncing"* && $? -eq 1 ]]; then
+		# Allow exit status 1 if result contains "syncing"
+		true
+	    else
+		any_failure=true
+	    fi
         fi
         
         echo "${part%.yml}: $result"
