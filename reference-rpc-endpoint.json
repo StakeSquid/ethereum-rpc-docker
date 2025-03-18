@@ -285,8 +285,8 @@
   },
   "fantom-testnet": {
     "id": 4002,
-    "urls": [
-      "https://fantom-testnet.public.blastapi.io"
+      "urls": [
+	  "https://rpc.testnet.fantom.network"
     ],
     "default": [
       "fantom-testnet"
