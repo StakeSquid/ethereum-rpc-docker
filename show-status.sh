@@ -46,14 +46,10 @@ for part in "${parts[@]}"; do
 		any_failure=true
 	    fi
 	fi
-
-
         
         echo "${part%.yml}: $result"
     fi
 done
-
-echo $any_failure
 
 # If any invocation failed, return a failure exit code
 if $any_failure; then
