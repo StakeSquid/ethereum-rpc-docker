@@ -15,7 +15,7 @@ fi
 model_pulled=$(docker exec -it ollama ollama pull $MODEL)
 
 # Assuming the log content is obtained from your Docker containers
-logs=$(docker compose logs --tail 10000 $(cat /root/rpc/$1.yml | yaml2json - | jq '.services' | jq -r 'keys[]' | tr '\n' ' ') | grep -iE "info" | tail -n 100)
+logs=$(docker compose logs --since "1h" --tail 10000 $(cat /root/rpc/$1.yml | yaml2json - | jq '.services' | jq -r 'keys[]' | tr '\n' ' ') | grep -iE "info" | tail -n 100)
 
 # Create the messages array with the system prompt first, then log lines as user messages
 messages=(
