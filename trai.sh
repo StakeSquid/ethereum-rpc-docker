@@ -5,7 +5,7 @@ MODEL=${2:-gemma3:4b}
 # Check if the container is already running
 if ! docker ps --filter "name=ollama" --filter "status=running" | grep -q ollama; then
     echo "Starting ollama container..."
-    docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+    docker run -d -v ollama:/root/.ollama --name ollama ollama/ollama
     docker exec -it ollama apt update
     docker exec -it ollama apt install curl
 else
