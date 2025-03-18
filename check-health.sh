@@ -69,14 +69,14 @@ if [ $? -eq 0 ]; then
                         echo "forked"
                         exit 1
                     fi
-		elif [ $curl_code -eq 28 ]; then
-		    echo "timeout"
+		else 
+		    "unverified ($http_status_code2)"
 		    exit 0
                 fi 
             fi
             
             echo "unverified ($curl_code)"
-            exit 1               
+            exit 0
         elif [ $time_difference -lt 60 ]; then
             echo "online"
             exit 0
