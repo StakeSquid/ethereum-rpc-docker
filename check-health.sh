@@ -71,7 +71,7 @@ if [ $? -eq 0 ]; then
                     fi
 		else 
 		    echo "unverified ($http_status_code2)"
-		    exit 0
+		    exit 1
                 fi 
             fi
             
