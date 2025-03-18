@@ -435,7 +435,8 @@
   },    
   "bsc": {
     "id": 56,
-    "urls": [
+      "urls": [
+	  "https://binance.nodereal.io",
       "https://bsc.drpc.org"
     ],
     "default": [
