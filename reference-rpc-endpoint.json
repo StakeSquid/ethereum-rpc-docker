@@ -85,7 +85,7 @@
     "open-campus-codex-sepolia": {
 	"id": 656476,
 	"urls": [
-	    "https://rpc.open-campus-codex.gelato.digital"
+	    "https://open-campus-codex-sepolia.drpc.org"
 	],
 	"default": ["arb-opencampuscodex"]
     },
