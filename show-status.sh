@@ -42,6 +42,7 @@ for part in "${parts[@]}"; do
 	    # Allow exit status 1 if result contains "syncing"
 	    echo "hit lagging"
 	elif [ $? -ne 0 ]; then
+	    echo "hit failure $?"
 	    any_failure=true
 	fi
 
