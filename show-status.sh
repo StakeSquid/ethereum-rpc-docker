@@ -38,6 +38,9 @@ for part in "${parts[@]}"; do
 	    if [[ "$result" == *"syncing"* && $? -eq 1 ]]; then
 		# Allow exit status 1 if result contains "syncing"
 		true
+	    elif [[ "$result" == *"lagging"* && $? -eq 1 ]]; then
+		# Allow exit status 1 if result contains "syncing"
+		true
 	    else
 		any_failure=true
 	    fi
