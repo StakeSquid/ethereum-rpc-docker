@@ -54,8 +54,8 @@
     },
   "ethereum": {
     "id": 1,
-    "urls": [
-      "https://ethereum-rpc.publicnode.com"
+      "urls": [
+	  "https://eth.drpc.org"
     ],
       "default": [
 	  "erigon-mainnet-minimal",
