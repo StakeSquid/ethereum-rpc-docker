@@ -34,17 +34,17 @@ for part in "${parts[@]}"; do
 
     if $include; then
         result=$($BASEPATH/sync-status.sh "${part%.yml}")
-        if [ $? -ne 0 ]; then
-	    if [[ "$result" == *"syncing"* && $? -eq 1 ]]; then
-		# Allow exit status 1 if result contains "syncing"
-		true
-	    elif [[ "$result" == *"lagging"* && $? -eq 1 ]]; then
-		# Allow exit status 1 if result contains "syncing"
-		true
-	    else
-		any_failure=true
-	    fi
-        fi
+
+	if [[ "$result" == *"syncing"* && $? -eq 1 ]]; then
+	    # Allow exit status 1 if result contains "syncing"
+	    true
+	elif [[ "$result" == *"lagging"* && $? -eq 1 ]]; then
+	    # Allow exit status 1 if result contains "syncing"
+	    true
+	elif [ $? -ne 0 ]; then
+	    any_failure=true
+	fi
+
         
         echo "${part%.yml}: $result"
     fi
