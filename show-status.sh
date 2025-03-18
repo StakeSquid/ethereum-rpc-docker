@@ -50,6 +50,8 @@ for part in "${parts[@]}"; do
     fi
 done
 
+echo $any_failure
+
 # If any invocation failed, return a failure exit code
 if $any_failure; then
     exit 1
