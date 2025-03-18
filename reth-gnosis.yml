@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   gnosis-reth:
-    image: stakesquid/reth-gnosis:latest
+    image: ghcr.io/gnosischain/reth_gnosis:sha256:2107522cb60a052df3039c54d215c2f861b4107193829687f80e3e07653635a9
     user: root
     volumes:
       - "reth-gnosis:/root/.local/share/reth/gnosis"
