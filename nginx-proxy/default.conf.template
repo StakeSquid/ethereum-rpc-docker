@@ -26,6 +26,7 @@ server {
 
         # Disable buffering for real-time traffic
         proxy_buffering off;
+        access_log off;
 
         #set $proxy_read_timeout 3600s;
         #set $proxy_send_timeout 3600s;
