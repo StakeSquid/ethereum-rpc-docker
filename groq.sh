@@ -15,7 +15,7 @@ if [ -z "$GROQ_API_KEY" ]; then
 fi
 
 # Validate input argument
-if [ -z "$1" ] || [ ! -f "$BASEDIR/rpc/$1.yml" ]; then
+if [ -z "$1" ] || [ ! -f "$BASEDIR/$1.yml" ]; then
     echo "Error: Either no argument provided or $BASEDIR/rpc/$1.yml does not exist."
     exit 1
 fi
@@ -24,4 +24,4 @@ fi
 docker build -t rpc_sync_checker "$BASEDIR/groq"
 
 # Run logs.sh and feed logs into the sync checker container
-"$BASEDIR/logs.sh" "$1" | docker run --rm -i -e GROQ_API_KEY="$GROQ_API_KEY" rpc_sync_checker
+docker compose logs --tail 1000 $(cat /root/rpc/$1.yml | yaml2json - | jq '.services' | jq -r 'keys[]' | tr '\n' ' ') | docker run --rm -i -e GROQ_API_KEY="$GROQ_API_KEY" rpc_sync_checker
