@@ -1,0 +1,18 @@
+services:
+  drpc-beacon-proxy-sepolia:
+    build: ./drpc-beacon-proxy/
+    expose:
+      - "80:80"
+    environment:
+      DKEY: "${DRPC_API_KEY}"
+      TARGET_URL: https://lb.drpc.org/rest/eth-beacon-chain-sepolia
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.drpc-beacon-proxy-sepolia-stripprefix.stripprefix.prefixes=/drpc-beacon-proxy-sepolia"
+      - "traefik.http.services.drpc-beacon-proxy-sepolia.loadbalancer.server.port=80"
+      - "traefik.http.routers.drpc-beacon-proxy-sepolia.entrypoints=websecure"
+      - "traefik.http.routers.drpc-beacon-proxy-sepolia.tls.certresolver=myresolver"
+      - "traefik.http.routers.drpc-beacon-proxy-sepolia.rule=Host(`$DOMAIN`) && PathPrefix(`/drpc-beacon-proxy-sepolia`)"
+      - "traefik.http.routers.drpc-beacon-proxy-sepolia.middlewares=drpc-beacon-proxy-sepolia-stripprefix, ipwhitelist"
+    networks:
+      - chains

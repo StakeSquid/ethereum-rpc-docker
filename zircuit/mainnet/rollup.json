@@ -26,9 +26,11 @@
   "canyon_time": 0,
   "delta_time": 0,
   "ecotone_time": 0,
+  "hyrax_time": 1741726801,
+  "l2cancun_time": 1741726801,
+  "prevrandao_disabling_time": 1741726801,
   "batch_inbox_address": "0xff00000000000000000000000000000000048900",
   "deposit_contract_address": "0x17bfafa932d2e23bd9b909fd5b4d2e2a27043fb1",
   "l1_system_config_address": "0x30f82a1ca89226e8b8815d6ebb728e3b18a428ff",
   "protocol_versions_address": "0x0000000000000000000000000000000000000000"
 }
-

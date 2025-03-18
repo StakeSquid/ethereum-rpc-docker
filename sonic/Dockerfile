@@ -7,11 +7,13 @@
 
 FROM golang:1.22 as builder
 
+ARG VERSION
+
 RUN apt-get update && apt-get install -y git musl-dev make
 
-RUN cd /go && git clone https://github.com/Fantom-foundation/Sonic.git && cd Sonic && git fetch --tags && git checkout -b v2.0.1 tags/v2.0.1
+RUN cd /go && git clone https://github.com/0xsoniclabs/sonic.git && cd sonic && git fetch --tags && git checkout -b ${VERSION} tags/${VERSION}
 
-WORKDIR /go/Sonic
+WORKDIR /go/sonic
 
 ARG GOPROXY
 RUN go mod download
@@ -19,8 +21,8 @@ RUN make all
 
 FROM golang:1.22
 
-COPY --from=builder /go/Sonic/build/sonicd /usr/local/bin/
-COPY --from=builder /go/Sonic/build/sonictool /usr/local/bin/
+COPY --from=builder /go/sonic/build/sonicd /usr/local/bin/
+COPY --from=builder /go/sonic/build/sonictool /usr/local/bin/
 
 COPY ./entrypoint.sh /entrypoint.sh
 

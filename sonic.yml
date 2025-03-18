@@ -4,6 +4,8 @@ services:
     build:
       context: ./sonic
       dockerfile: Dockerfile
+      args:
+        VERSION: ${SONIC_VERSION:-v2.0.3}
     stop_grace_period: 3m
     volumes:
       - "sonic:/var/sonic"
