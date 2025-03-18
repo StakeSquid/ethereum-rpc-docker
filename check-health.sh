@@ -27,7 +27,7 @@ if [ $? -eq 0 ]; then
 	    sleep 1 # to give the reference node more time to import the block if it is very current
 	    
             http_status_code2=$(curl --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file2" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$latest_block_number\", false],\"id\":1}" $ref)
-            if [ $? -eq 0 ]; then
+            if [ $? -eq 0 ]; then	    
                 if [[ $http_status_code2 -eq 200 ]]; then
                     response2=$(cat "$response_file2")
                     latest_block_hash2=$(echo "$response2" | jq -r '.result.hash')
@@ -64,7 +64,10 @@ if [ $? -eq 0 ]; then
                         echo "forked"
                         exit 1
                     fi
-                fi                
+		elif [ $? -eq 28 ]; then
+		    echo "timeout"
+		    exit 1
+                fi 
             fi
             
             echo "unverified"
