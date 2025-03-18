@@ -37,10 +37,10 @@ for part in "${parts[@]}"; do
 
 	if [[ "$result" == *"syncing"* && $? -eq 1 ]]; then
 	    # Allow exit status 1 if result contains "syncing"
-	    echo "hit syncing"
+	    #echo "hit syncing"
 	elif [[ "$result" == *"lagging"* && $? -eq 1 ]]; then
 	    # Allow exit status 1 if result contains "syncing"
-	    echo "hit lagging"
+	    #echo "hit lagging"
 	elif [ $? -ne 0 ]; then
 	    echo "hit failure $?"
 	    any_failure=true
