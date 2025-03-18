@@ -41,8 +41,10 @@ if [ $? -eq 0 ]; then
                         response_file3=$(mktemp)
 
                         http_status_code=$(curl --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file3" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}" $ref)
-                        
-                        if [ $? -eq 0 ]; then
+
+                        curl_code=$?
+
+			if [ $curl_code -eq 0 ]; then
                             if [[ $http_status_code -eq 200 ]]; then
                                 response3=$(cat "$response_file3")
                                 latest_block_timestamp3=$(echo "$response3" | jq -r '.result.timestamp')
