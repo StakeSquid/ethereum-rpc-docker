@@ -3,7 +3,7 @@
 RPC_URL="$1"
 ref="$2"
 
-timeout=2 # seconds
+timeout=5 # seconds
 
 response_file=$(mktemp)
 
