@@ -1,6 +1,6 @@
 services:
   rsk-testnet-fullnode:
-    image: rsksmart/rskj:ARROWHEAD-6.5.0
+    image: rsksmart/rskj:LOVELL-7.0.0
     stop_grace_period: 5m
     user: root
     ulimits:
