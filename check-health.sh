@@ -23,7 +23,9 @@ if [ $? -eq 0 ]; then
             latest_block_number=$(echo "$response" | jq -r '.result.number')
             latest_block_hash=$(echo "$response" | jq -r '.result.hash')            
             response_file2=$(mktemp)
-            
+
+	    sleep 1 # to give the reference node more time to import the block if it is very current
+	    
             http_status_code2=$(curl --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file2" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$latest_block_number\", false],\"id\":1}" $ref)
             if [ $? -eq 0 ]; then
                 if [[ $http_status_code2 -eq 200 ]]; then
