@@ -215,7 +215,7 @@
   },
     "tron": {
 	"id": 728126428,
-	"urls": ["https://tron-evm-rpc.publicnode.com"],
+	"urls": ["https://api.trongrid.io/jsonrpc"],
 	"default": ["tron"]
     },
     "viction": {
