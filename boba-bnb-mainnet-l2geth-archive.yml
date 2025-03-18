@@ -1,9 +1,14 @@
 services:
+  
   boba-bnb-archive-dtl:
     image: bobanetwork/data-transport-layer@sha256:33e7530795f387c660633fc855e5ea7e19de445a7985b1c8b142db26698839e6
+    stop_grace_period: 5m    
     environment:
-      DATA_TRANSPORT_LAYER__L1_RPC_ENDPOINT: 'https://bsc-dataseed.binance.org/'
-      DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT: 'https://replica.bnb.boba.network'
+      DATA_TRANSPORT_LAYER__L1_RPC_ENDPOINT: 'https://bsc-dataseed.binance.org'
+#      DATA_TRANSPORT_LAYER__L1_RPC_ENDPOINT: 'https://bsc-erigon3:8545'
+#      DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT: 'https://replica.bnb.boba.network'
+#      DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT: 'https://rpc-de-23.stakesquid.eu/bobabnb'
+      DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT: 'http://142.132.249.52:8547'
       DATA_TRANSPORT_LAYER__SYNC_FROM_L1: 'false'
       DATA_TRANSPORT_LAYER__SYNC_FROM_L2: 'true'
       DATA_TRANSPORT_LAYER__L2_CHAIN_ID: 56288
@@ -21,7 +26,7 @@ services:
       DATA_TRANSPORT_LAYER__SERVER_HOSTNAME: '0.0.0.0'
     volumes:
       - ./boba/bnb:/opt/optimism/packages/data-transport-layer/state-dumps/
-      - ${BOBA_BNB_MAINNET_GETH_ARCHIVE__DTL_DATA:-boba-bnb-geth-archive_dtl}:/db
+      - ${BOBA_BNB_MAINNET_L2GETH_ARCHIVE__DTL_DATA:-boba-bnb-l2geth-archive_dtl}:/db
     networks:
       - chains
 
@@ -30,16 +35,19 @@ services:
       - boba-bnb-archive-dtl
     image: bobanetwork/l2geth@sha256:0c5c25d1db8244f819d84517aaafafbf0e73cf3dacc98051c80310d9d01a12fd
     entrypoint: sh ./geth.sh
+    stop_grace_period: 5m    
     volumes:
-      - ${BOBA_BNB_MAINNET_GETH_ARCHIVE__CLIENT_DATA:-boba-bnb-mainnet-geth-archive_client}:/root/.ethereum/
+      - ${BOBA_BNB_MAINNET_L2GETH_ARCHIVE__CLIENT_DATA:-boba-bnb-mainnet-l2geth-archive_client}:/root/.ethereum/
     environment:
-      ETH1_HTTP: 'https://bsc-dataseed.binance.org/'
+      GETH_ALLOW_INSECURE_UNLOCK: 'true'
+#      ETH1_HTTP: 'https://bsc-dataseed.binance.org'
+      ETH1_HTTP: 'https://bsc-erigon3:8545'
       ETH1_CTC_DEPLOYMENT_HEIGHT: 1305672
       ROLLUP_TIMESTAMP_REFRESH: 5s
       ROLLUP_STATE_DUMP_PATH: http://boba-bnb-archive-dtl:8081/state-dump.latest.json
       ROLLUP_CLIENT_HTTP: http://boba-bnb-archive-dtl:7878
       ROLLUP_BACKEND: 'l2'
-      ROLLUP_VERIFIER_ENABLE: 'true'
+      ROLLUP_VERIFIER_ENABLE: 'false'
       RETRIES: 60
       # no need to keep this secret, only used internally to sign blocks
       BLOCK_SIGNER_KEY: "6587ae678cf4fc9a33000cdbf9f35226b71dcc6a4684a31203241f9bcfd55d27"
@@ -53,6 +61,7 @@ services:
       BOBA_GAS_PRICE_ORACLE_ADDRESS: "0x4200000000000000000000000000000000000024"
       # sequencer http endpoint
       SEQUENCER_CLIENT_HTTP: https://bnb.boba.network/
+#      SEQUENCER_CIENT_HTTP: http://142.132.249.52:8547
       ETH1_SYNC_SERVICE_ENABLE: true
       ETH1_CONFIRMATION_DEPTH: 0
 
@@ -90,7 +99,7 @@ services:
     restart: unless-stopped           
     image: nginx
     depends_on:
-      - op-bobabnb-archive
+      - boba-bnb-archive-client
     expose:  
       - 80                                                                                            
     environment:                                                                                      
@@ -105,15 +114,15 @@ services:
       - ./nginx-proxy:/etc/nginx/templates            
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.boba-bnb-mainnet-geth-archive-stripprefix.stripprefix.prefixes=/boba-bnb-archive"
-      - "traefik.http.services.boba-bnb-mainnet-geth-archive.loadbalancer.server.port=80"
-      - "${NO_SSL:-traefik.http.routers.boba-bnb-mainnet-geth-archive.entrypoints=websecure}"
-      - "${NO_SSL:-traefik.http.routers.boba-bnb-mainnet-geth-archive.tls.certresolver=myresolver}"
-      - "${NO_SSL:-traefik.http.routers.boba-bnb-mainnet-geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-bnb-archive`)}"
-      - "${NO_SSL:+traefik.http.routers.boba-bnb-mainnet-geth-archive.rule=PathPrefix(`/boba-bnb-archive`)}"      
-      - "traefik.http.routers.boba-bnb-mainnet-geth-archive.middlewares=boba-bnb-mainnet-geth-archive-stripprefix, ipwhitelist"      
+      - "traefik.http.middlewares.boba-bnb-mainnet-l2geth-archive-stripprefix.stripprefix.prefixes=/boba-bnb-archive"
+      - "traefik.http.services.boba-bnb-mainnet-l2geth-archive.loadbalancer.server.port=80"
+      - "${NO_SSL:-traefik.http.routers.boba-bnb-mainnet-l2geth-archive.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.boba-bnb-mainnet-l2geth-archive.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.boba-bnb-mainnet-l2geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-bnb-archive`)}"
+      - "${NO_SSL:+traefik.http.routers.boba-bnb-mainnet-l2geth-archive.rule=PathPrefix(`/boba-bnb-archive`)}"      
+      - "traefik.http.routers.boba-bnb-mainnet-l2geth-archive.middlewares=boba-bnb-mainnet-l2geth-archive-stripprefix, ipwhitelist"      
 
 
 volumes:
-  boba-bnb-mainnet-geth-archive_client:
-  boba-bnb-mainnet-geth-archive_dtl:
+  boba-bnb-mainnet-l2geth-archive_client:
+  boba-bnb-mainnet-l2geth-archive_dtl:

@@ -1,0 +1,71 @@
+services:
+  ethereum-firehose:
+    build:
+      context: ./ethereum-firehose/
+      args:
+        FIREHOSE_ETHEREUM: v2.11.1
+        FIREHOSE_GETH_VERSION: v1.15.4-fh3.0
+    command: -c /etc/firehose/config.yml start
+    environment:
+      - DOMAIN=${DOMAIN:-yourdomain.com}
+      - ETHEREUM_ARCHIVE_RPC=${ETHEREUM_ARCHIVE_RPC:-http://ethereum-erigon3:8545}
+      - S3_BLOCKS_STORE_URL=${S3_BLOCKS_STORE_URL:-/var/lib/eth-blocks}
+    expose:
+      - 8545
+      - 8551
+      - 13042
+    ports:
+      - "24465:24465/tcp"
+      - "24465:24465/udp"
+      - "13042:13042"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.ethereum-firehose.loadbalancer.server.scheme=h2c"
+      - "traefik.http.services.ethereum-firehose.loadbalancer.server.port=13042"
+      - "traefik.http.routers.ethereum-firehose.entrypoints=grpc"
+      - "traefik.http.routers.ethereum-firehose.rule=Host(`ethereum-firehose.${DOMAIN}`)"
+      - "traefik.http.routers.ethereum-firehose.middlewares=ipwhitelist"
+    networks:
+      - chains
+    volumes:
+      - ./ethereum-firehose/config.yml:/etc/firehose/config.yml:ro
+      - ${FIREHOSE_DATA_DIR:-ethereum-firehose_data}:/var/lib/firehose                # Firehose data-dir
+      - ${FIREHOSE_BLOCKS_DIR:-eth-blocks_data}:/var/lib/eth-blocks                  # Merged blocks store
+      - ${FIREHOSE_JWT_FILE:-jwtsecret_data}:/jwtsecret:ro                           # JWT for authrpc
+    restart: unless-stopped
+    stop_grace_period: 1m
+
+  ethereum-beacon-nimbus:
+    image: statusim/nimbus-eth2:multiarch-v25.3.0
+    restart: unless-stopped
+    user: root
+    command:
+      - --network=mainnet
+      - --data-dir=/data
+      - --tcp-port=9000
+      - --udp-port=9000
+      - --rest=yes
+      - --rest-port=5052
+      - --rest-address=0.0.0.0
+      - --metrics=yes
+      - --metrics-port=7071
+      - --web3-url=http://ethereum-firehose:9663
+      - --jwt-secret=/data/jwt.hex
+      - --external-beacon-api-url=https://beaconstate-mainnet.chainsafe.io
+    expose:
+      - "5052"
+      - "7071"
+    ports:
+      - "9000:9000/tcp"
+      - "9000:9000/udp"
+    networks:
+      - chains
+    volumes:
+      - ${NIMBUS_DATA_DIR:-nimbus-data}:/data                                      # Beacon node data-dir
+      - ${FIREHOSE_JWT_FILE:-jwtsecret_data}:/data/jwt.hex:ro                      # JWT (same as firehose)
+
+volumes:
+  ethereum-firehose_data:
+  eth-blocks_data:
+  jwtsecret_data:
+  nimbus-data:

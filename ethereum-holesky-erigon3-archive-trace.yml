@@ -1,0 +1,84 @@
+services:
+  ethereum-holesky-erigon3:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-rc2}
+    user: root
+    expose:
+      - "16630"
+      - "9090"
+      - "8545"
+      - "8551"
+    ports:
+      - "9725:9725"
+      - "9725:9725/udp"
+      - "19525:19525/udp"
+      - "61832:61832"
+      - "17037:17037"
+      - "17037:17037/udp"
+      - "13153:13153"
+      - "13153:13153/udp"
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - ${ETHEREUM_HOLESKY_ERIGON3_ARCHIVE_TRACE_DATA:-ethereum-holesky-erigon3-archive-trace}:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+      - .jwtsecret:/jwtsecret
+    networks:
+      - chains
+    command: >
+      --prune.mode=archive
+      --rpc.evmtimeout=30m0s
+      --rpc.overlay.getlogstimeout=30m0s
+      --rpc.overlay.replayblocktimeout=30m0s
+      --chain holesky
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
+      --port=9725
+      --p2p.allowed-ports=13153
+      --caplin.discovery.addr=0.0.0.0
+      --caplin.discovery.port=19525
+      --caplin.discovery.tcpport=61832
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.port=17037
+      --nat=extip:${IP}      
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --authrpc.addr=0.0.0.0
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ethereum-holesky-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-holesky-erigon"
+
+      - "traefik.http.services.ethereum-holesky-erigon3-archive-trace.loadbalancer.server.port=8545"
+      - "${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace.entrypoints=websecure}"
+      - "traefik.http.routers.ethereum-holesky-erigon3-archive-trace.service=ethereum-holesky-erigon3-archive-trace"
+      - "${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky-erigon`)}"
+      - "${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-archive-trace.rule=PathPrefix(`/ethereum-holesky-erigon`)}"
+      - "traefik.http.routers.ethereum-holesky-erigon3-archive-trace.middlewares=ethereum-holesky-erigon3-archive-trace-stripprefix, ipwhitelist"
+
+      - "traefik.http.services.ethereum-holesky-erigon3-archive-trace-beacon.loadbalancer.server.port=5555"
+      - "${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace-beacon.entrypoints=websecure}"
+      - "traefik.http.routers.ethereum-holesky-erigon3-archive-trace-beacon.service=ethereum-holesky-erigon3-archive-trace-beacon"
+      - "${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace-beacon.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky-erigon/eth`)}"
+      - "${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-archive-trace-beacon.rule=PathPrefix(`/ethereum-holesky-erigon/eth`)}"      
+      - "traefik.http.routers.ethereum-holesky-erigon3-archive-trace-beacon.middlewares=ethereum-holesky-erigon3-archive-trace-stripprefix, ipwhitelist"
+      
+volumes:
+    ethereum-holesky-erigon3-archive-trace:
+

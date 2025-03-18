@@ -10,7 +10,12 @@ while IFS= read -r line; do
     # Add each line to the array                                                                           
     blacklist+=("$line")                                                                                   
 done < "$BASEPATH/path-blacklist.txt"                
-                                                                                                                                                                                                                      
+
+if $NO_SSL; then
+    PROTO="http"
+    DOMAIN="0.0.0.0"
+fi
+
 pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
                                                      
 for path in $pathlist; do                                                                                  
@@ -22,9 +27,9 @@ for path in $pathlist; do
     done
 
     if $include; then
-        RPC_URL="https://$DOMAIN$path"
+        RPC_URL="${PROTO:-https}://$DOMAIN$path"
 
-	if curl -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq -r '.result.number, .result.hash' | awk '{if (NR==1) print "Block Number:", strtonum($0); else print "Block Hash:", $0}'; then
+	if curl -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq -r '.result.number, .result.hash' | gawk '{if (NR==1) print "Block Number:", strtonum($0); else print "Block Hash:", $0}'; then
 	    exit 0
 	else
 	    if curl -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq; then

@@ -24,7 +24,7 @@ services:
     restart: unless-stopped           
     image: nginx
     depends_on:
-      - avalanche-fuji
+      - avalanche-archive-client
     expose:  
       - 80                                                                                            
     environment:                                                                                      

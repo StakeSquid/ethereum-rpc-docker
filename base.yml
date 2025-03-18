@@ -1,8 +1,6 @@
-version: '3.1'
-
 networks:
   chains:
     driver: bridge
     ipam:
      config:
-       - subnet: 192.168.0.0/26
+       - subnet: ${CHAINS_SUBNET:-192.168.0.0/26}

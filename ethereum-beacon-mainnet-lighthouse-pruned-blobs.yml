@@ -1,0 +1,54 @@
+services:
+      
+  ethereum-beacon-blobs:
+    image: sigp/lighthouse:${LIGHTHOUSE_VERSION:-v6.0.1}
+    restart: unless-stopped
+    networks:
+      - chains
+    ports:
+      - 20506:20506/tcp # p2p
+      - 20506:20506/udp # p2p
+    expose:
+      - 5054 # metrics
+      - 4000 # http
+      - 20506 # p2p
+    volumes:
+      - ${ETHEREUM_BEACON_MAINNET_LIGHTHOUSE_PRUNED_BLOBS_DATA:-ethereum-beacon-mainnet-lighthouse-pruned-blobs}:/data
+      - .jwtsecret:/jwt.hex
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    command: |
+      lighthouse
+      beacon_node
+      --network=mainnet
+      --disable-upnp
+      --datadir=/data
+      --port=20506
+      --http
+      --http-address=0.0.0.0
+      --http-port=4000
+      --target-peers=50
+      --execution-endpoint=${ETHEREUM_BEACON_EXECUTION_CLIENT_MAINNET_AUTH}
+      --execution-jwt=/jwt.hex
+      --debug-level=info
+      --validator-monitor-auto
+      --metrics
+      --metrics-port=5054
+      --metrics-address=0.0.0.0
+      --disable-log-timestamp
+      --allow-insecure-genesis-sync
+      --prune-blobs=false
+      --genesis-backfill
+      --disable-backfill-rate-limiting
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ethereum-beacon-mainnet-lighthouse-pruned-blobs-stripprefix.stripprefix.prefixes=/ethereum-beacon-blobs"
+      - "traefik.http.services.ethereum-beacon-mainnet-lighthouse-pruned-blobs.loadbalancer.server.port=4000"
+      - "${NO_SSL:-traefik.http.routers.ethereum-beacon-mainnet-lighthouse-pruned-blobs.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-beacon-mainnet-lighthouse-pruned-blobs.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-beacon-mainnet-lighthouse-pruned-blobs.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-beacon-blobs`)}"
+      - "${NO_SSL:+traefik.http.routers.ethereum-beacon-mainnet-lighthouse-pruned-blobs.rule=PathPrefix(`/ethereum-beacon-blobs`)}"      
+      - "traefik.http.routers.ethereum-beacon-mainnet-lighthouse-pruned-blobs.middlewares=ethereum-beacon-mainnet-lighthouse-pruned-blobs-stripprefix, ipwhitelist"
+      
+volumes:
+    ethereum-beacon-mainnet-lighthouse-pruned-blobs:

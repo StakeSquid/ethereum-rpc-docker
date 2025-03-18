@@ -1,0 +1,38 @@
+start:
+  args:
+    - firehose
+    - reader-node
+    - merger
+    - relayer
+    - index-builder
+    - substreams-tier1
+    - substreams-tier2
+  flags:
+    data-dir: /var/lib/firehose
+    log-to-file: false
+    firehose-rate-limit-bucket-size: 200
+    firehose-rate-limit-bucket-fill-rate: 1s
+    substreams-rpc-endpoints: "http://ethereum-erigon3:8545"
+    substreams-tier1-max-subrequests: 20
+    substreams-block-execution-timeout: 30m0s
+    reader-node-path: /usr/bin/geth
+    common-merged-blocks-store-url: /var/lib/eth-blocks
+    reader-node-arguments: |
+      --datadir=/var/lib/firehose/eth-firehose
+      --networkid=1
+      --http
+      --http.api=eth,net,web3
+      --http.port=8545
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --ws
+      --ws.addr=0.0.0.0
+      --ws.port=9756
+      --metrics
+      --metrics.addr=0.0.0.0
+      --metrics.port=7070
+      --cache=8192
+      --authrpc.jwtsecret=/jwtsecret
+      --authrpc.addr=0.0.0.0
+      --authrpc.vhosts=*
+      --authrpc.port=9663

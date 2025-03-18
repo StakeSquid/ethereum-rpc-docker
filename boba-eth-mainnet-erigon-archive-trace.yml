@@ -1,5 +1,3 @@
-version: '3.4'
-
 # The erigon db can be downloaded from
 # https://boba-db.s3.us-east-2.amazonaws.com/mainnet/boba-mainnet-erigon-db-1149019.tgz
 # and extracted to the DATA_DIR
@@ -45,7 +43,7 @@ services:
       - 8551
     volumes:
       - .jwtsecret:/jwtsecret
-      - ${BOBA_ETH_MAINNET_ERIGON_ARCHIVE_TRACE:-boba-eth-mainnet-erigon-archive-trace}:/db
+      - ${BOBA_ETH_MAINNET_ERIGON_ARCHIVE_TRACE_DATA:-boba-eth-mainnet-erigon-archive-trace}:/db
     networks:                                                                                         
       - chains      
     labels:
@@ -60,8 +58,8 @@ services:
 
   boba-eth-erigon-node:
     depends_on:
-      - op-boba
-    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node:${BOBAETH_NODE_VERSION:-v1.6.15}
+      - boba-eth-erigon
+    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node:${BOBAETH_NODE_VERSION:-v1.6.16-rc.1}
     command: >
       op-node
       --l2=http://boba-eth-erigon:8551
@@ -75,7 +73,7 @@ services:
       - "OP_NODE_L1_TRUST_RPC=${BOBA_ETH_L1_ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${BOBA_ETH_L1_ETHEREUM_MAINNET_BEACON_REST}"
       - "OP_NODE_L1_BEACON_ARCHIVER=${BOBA_ETH_L1_ETHEREUM_MAINNET_BEACON_ARCHIVER}"      
-      - "OP_NODE_L1_ETH_RPC=${BOBA_ETH_L1_ETHEREUM_MAINNET_EXECUTION}"
+      - "OP_NODE_L1_ETH_RPC=${BOBA_ETH_L1_ETHEREUM_MAINNET_EXECUTION_RPC}"
     ports:
       - "45202:45202"
       - "45202:45202/udp"

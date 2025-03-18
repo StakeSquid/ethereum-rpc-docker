@@ -1,0 +1,45 @@
+services:
+  arbitrum-classic:
+    image: 'offchainlabs/arb-node:v1.4.5-e97c1a4'
+    stop_grace_period: 30s
+    user: root
+    volumes:
+      - ${ARBITRUM_ONE_MAINNET_ARBNODE_ARCHIVE_TRACE_DATA:-arbitrum-one-mainnet-arbnode-archive-trace}:/data
+      - ./arbitrum/classic-entrypoint.sh:/entrypoint.sh
+    expose:
+      - 8547
+      - 8548
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    command: >
+        --l1.url=http://eth.drpc.org
+        --core.checkpoint-gas-frequency=156250000
+        --node.rpc.enable-l1-calls
+        --node.cache.allow-slow-lookup
+        --node.rpc.tracing.enable
+        --node.rpc.addr=0.0.0.0
+        --node.rpc.port=8547        
+        --node.rpc.tracing.namespace=trace
+        --node.chain-id=42161
+        --node.ws.addr=0.0.0.0
+        --node.ws.port=8548
+        --metrics
+        --metrics-server.addr=0.0.0.0
+        --metrics-server.port=7070
+        --l2.disable-upstream
+        --persistent.chain=/data/datadir/
+        --persistent.global-config=/data/
+    restart: unless-stopped         
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.arbitrum-one-mainnet-arbnode-archive-trace-stripprefix.stripprefix.prefixes=/arbitrum-classic"                      
+      - "traefik.http.services.arbitrum-one-mainnet-arbnode-archive-trace.loadbalancer.server.port=8547"
+      - "${NO_SSL:-traefik.http.routers.arbitrum-one-mainnet-arbnode-archive-trace.entrypoints=websecure}"                           
+      - "${NO_SSL:-traefik.http.routers.arbitrum-one-mainnet-arbnode-archive-trace.tls.certresolver=myresolver}"                                        
+      - "${NO_SSL:-traefik.http.routers.arbitrum-one-mainnet-arbnode-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-classic`)}"
+      - "${NO_SSL:+traefik.http.routers.arbitrum-one-mainnet-arbnode-archive-trace.rule=PathPrefix(`/arbitrum-classic`)}"      
+      - "traefik.http.routers.arbitrum-one-mainnet-arbnode-archive-trace.middlewares=arbitrum-one-mainnet-arbnode-archive-trace-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+    arbitrum-one-mainnet-arbnode-archive-trace:

@@ -8,7 +8,7 @@ services:
     init: true
   
   erigon-gnosis:        
-    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-beta1}
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-rc2}
     depends_on:
       - erigon-gnosis-init
     user: root

@@ -15,7 +15,6 @@ services:
     restart: unless-stopped
     command: >
       --rpc-cors all
-      --unsafe-ws-external
       --unsafe-rpc-external
       --trie-cache-size 1073741824
       --base-path=/data

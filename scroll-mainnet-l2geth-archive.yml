@@ -1,8 +1,6 @@
-version: '3.1'
-
 services:
   scroll:                         
-    image: scrolltech/l2geth:${SCROLL_GETH_VERSION:-scroll-v5.8.15}
+    image: scrolltech/l2geth:${SCROLL_GETH_VERSION:-scroll-v5.7.25}
     expose: 
       - 8545                   
     ports:                      
@@ -23,7 +21,7 @@ services:
         --http.port=8545
         --http.addr=0.0.0.0
         --http.vhosts=*
-        --l1.endpoint=${SCROLL_L1_ETHEREUM_MAINNET_EXECUTION_RPC}
+        --l1.endpoint="${SCROLL_L1_ETHEREUM_MAINNET_EXECUTION_RPC}"
         --rollup.verify
         --graphql
         --graphql.vhosts=*
@@ -31,24 +29,23 @@ services:
         --metrics.addr=0.0.0.0
         --maxpeers=100
         --gpo.ignoreprice=1
-        #--cache.noprefetch
-        #--l1.confirmations finalized
+        --cache.noprefetch
     networks:                            
       - chains                                                                                        
     volumes:                                                                                          
-      - "${SCROLL_MAINNET_ARCHIVE_DATA:-scroll-mainnet-archive}:/root/.ethereum"
+      - "${SCROLL_MAINNET_L2GETH_ARCHIVE_DATA:-scroll-mainnet-l2geth-archive}:/root/.ethereum"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
     stop_grace_period: 5m
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.scroll-mainnet-archive-stripprefix.stripprefix.prefixes=/scroll"                  
-      - "traefik.http.services.scroll-mainnet-archive.loadbalancer.server.port=8545"                                 
-      - "${NO_SSL:-traefik.http.routers.scroll-mainnet-archive.entrypoints=websecure}"
-      - "${NO_SSL:-traefik.http.routers.scroll-mainnet-archive.tls.certresolver=myresolver}"                                    
-      - "${NO_SSL:-traefik.http.routers.scroll-mainnet-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll`)}"
-      - "${NO_SSL:+traefik.http.routers.scroll-mainnet-archive.rule=PathPrefix(`/scroll`)}"      
-      - "traefik.http.routers.scroll-mainnet-archive.middlewares=scroll-mainnet-archive-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.scroll-mainnet-l2geth-archive-stripprefix.stripprefix.prefixes=/scroll"                  
+      - "traefik.http.services.scroll-mainnet-l2geth-archive.loadbalancer.server.port=8545"                                 
+      - "${NO_SSL:-traefik.http.routers.scroll-mainnet-l2geth-archive.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.scroll-mainnet-l2geth-archive.tls.certresolver=myresolver}"                                    
+      - "${NO_SSL:-traefik.http.routers.scroll-mainnet-l2geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll`)}"
+      - "${NO_SSL:+traefik.http.routers.scroll-mainnet-l2geth-archive.rule=PathPrefix(`/scroll`)}"      
+      - "traefik.http.routers.scroll-mainnet-l2geth-archive.middlewares=scroll-mainnet-l2geth-archive-stripprefix, ipwhitelist"
 
 volumes:
-    scroll-mainnet-archive:
+    scroll-mainnet-l2geth-archive:

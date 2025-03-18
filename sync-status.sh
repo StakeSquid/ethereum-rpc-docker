@@ -9,6 +9,13 @@ while IFS= read -r line; do
     blacklist+=("$line")
 done < "$BASEPATH/path-blacklist.txt"
 
+if $NO_SSL; then
+    PROTO="http"
+    DOMAIN="${DOMAIN:-0.0.0.0}"
+else
+    PROTO="https"
+fi
+
 pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=PathPrefix).*\"" | cut -d'`' -f2-2)
 
 for path in $pathlist; do
@@ -20,8 +27,8 @@ for path in $pathlist; do
     done
         
     if $include; then
-        RPC_URL="https://$DOMAIN$path"
-        
+        RPC_URL="$PROTO://$DOMAIN$path"
+
         ref=''
         if [ -n "$2" ]; then
             ref="$2"

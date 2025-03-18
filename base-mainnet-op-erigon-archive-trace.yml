@@ -4,6 +4,7 @@ services:
     image: testinprod/op-erigon:${OP_ERIGON_VERSION:-v2.61.1-0.8.3}
     restart: unless-stopped
     stop_grace_period: 5m
+    user: root
     expose:
       - "9090"
       - "8545"
@@ -19,7 +20,7 @@ services:
       --authrpc.port=8551
       --authrpc.vhosts="*"
       --authrpc.jwtsecret=/jwtsecret      
-      --rollup.sequencerhttp=https://mainnet-sequencer.base.org"
+      --rollup.sequencerhttp="https://mainnet-sequencer.base.org"
       --chain=base-mainnet
       --ws
       --nodiscover
@@ -29,7 +30,7 @@ services:
     networks:
       - chains
     labels:
-       - "traefik.enable=true"
+      - "traefik.enable=true"
       - "traefik.http.middlewares.base-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/base-erigon"
       - "traefik.http.services.base-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545"
       - "${NO_SSL:-traefik.http.routers.base-mainnet-op-erigon-archive-trace.entrypoints=websecure}"
@@ -64,7 +65,7 @@ services:
       - "OP_NODE_L1_ETH_RPC=${BASE_L1_ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://base-erigon:9551"
+      - "OP_NODE_L2_ENGINE_RPC=http://base-erigon:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"

@@ -1,5 +1,3 @@
-version: '3.1'
-
 services:
   traefik:
     image: traefik:v2.11.0
@@ -15,14 +13,14 @@ services:
       - "--api=true"
       - "--api.insecure=true"
       - "--api.dashboard=true"
-      - "--log.level=DEBUG"
+      - "--log.level=info"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.filename=/dynamic_config.yml"
-      - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entryPoints.metrics.address=:8082"
       - "--entryPoints.grpc.address=:3042"
+      - "--entrypoints.web.address=:80"
       - "--metrics.prometheus.entryPoint=metrics"
       - "${NO_SSL:---entrypoints.web.http.redirections.entryPoint.to=websecure}"
       - "${NO_SSL:---entrypoints.web.http.redirections.entryPoint.scheme=https}"

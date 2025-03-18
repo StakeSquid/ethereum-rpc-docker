@@ -38,7 +38,7 @@ services:
     volumes:
       - fuse-mainnet-nethermind-archive-keystore:/nethermind/keystore
       - fuse-mainnet-nethermind-archive-logs:/nethermind/logs
-      - ${FUSE_MAINNET_NETHERMIND_ARCHIVE_DB_DATA:-fuse-mainnet-nethermind-archive-db}:/nethermind/nethermind_db
+      - ${FUSE_MAINNET_NETHERMIND_ARCHIVE__DB_DATA:-fuse-mainnet-nethermind-archive-db}:/nethermind/nethermind_db
       - fuse-mainnet-nethermind-archive-health:/health:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro

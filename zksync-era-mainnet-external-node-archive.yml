@@ -34,10 +34,9 @@ services:
       - chains
 
   zksync-era-external-node-archive-client:
-    image: "matterlabs/external-node:v24.23.0"
+    image: "matterlabs/external-node:v26.2.1"
     depends_on:
-      zksync-era-archive-db:
-        condition: service_healthy
+      - zksync-era-external-node-archive-db
     ports:
       - "127.0.0.1:3060:3060"
       - "127.0.0.1:3061:3061"
@@ -47,7 +46,7 @@ services:
     expose:
       - 3322
     environment:
-      DATABASE_URL: "postgres://postgres:notsecurepassword@zksync-archive-db:5430/zksync_local_ext_node"
+      DATABASE_URL: "postgres://postgres:notsecurepassword@zksync-era-external-node-archive-db:5430/zksync_local_ext_node"
       DATABASE_POOL_SIZE: 10
 
       EN_HTTP_PORT: 3060
@@ -73,7 +72,7 @@ services:
     restart: unless-stopped           
     image: nginx
     depends_on:
-      - zksync-eraexternal-node-archive-client
+      - zksync-era-external-node-archive-client
     expose:  
       - 80                                                                                    
     environment:                                                                                      

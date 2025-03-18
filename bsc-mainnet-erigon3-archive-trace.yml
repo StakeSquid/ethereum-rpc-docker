@@ -1,0 +1,55 @@
+services:
+  bsc-erigon3:
+    image: icculp/bsc-erigon:v1.3.2-beta2
+    user: root
+    volumes:
+      - "${BSC_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-bsc-mainnet-erigon3-archive-trace}:/datadir"
+      - "/slowdisk:/slowdisk"
+    ports:
+      - "28056:28056"
+      - "28056:28056/udp"
+      - "62912:62912"
+      - "62912:62912/udp"
+    restart: unless-stopped
+    command: >
+      --prune.mode=archive
+      --db.pagesize=16k
+      --chain=bsc
+      --http
+      --http.addr=0.0.0.0
+      --http.port=8545
+      --http.compression
+      --http.vhosts='*'
+      --http.corsdomain='*'
+      --http.api=eth,debug,net,web3,erigon,admin
+      --ws
+      --ws.compression
+      --rpc.gascap=300000000
+      --metrics
+      --metrics.addr=0.0.0.0
+      --metrics.port=6060
+      --bodies.cache=5G
+      --rpc.batch.limit=200000
+      --batchSize=2048MB
+      --port=28056
+      --datadir=/datadir
+      --ethash.dagdir=/datadir/ethash
+      --rpc.returndata.limit=1100000
+      --torrent.port=62912
+      --torrent.download.rate=80mb
+      --nat=extip:${IP}      
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.bsc-mainnet-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/bsc-erigon3"
+      - "traefik.http.services.bsc-mainnet-erigon3-archive-trace.loadbalancer.server.port=8545"
+      - "${NO_SSL:-traefik.http.routers.bsc-mainnet-erigon3-archive-trace.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.bsc-mainnet-erigon3-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.bsc-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/bsc-erigon3`)}"
+      - "${NO_SSL:+traefik.http.routers.bsc-mainnet-erigon3-archive-trace.rule=PathPrefix(`/bsc-erigon3`)}"      
+      - "traefik.http.routers.bsc-mainnet-erigon3-archive-trace.middlewares=bsc-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+volumes:
+    bsc-mainnet-erigon3-archive-trace:
