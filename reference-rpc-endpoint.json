@@ -175,8 +175,8 @@
   },
   "arbitrum-sepolia": {
     "id": 421614,
-    "urls": [
-      "https://arbitrum-sepolia.blockpi.network/v1/rpc/public"
+      "urls": [
+	  "https://arbitrum-sepolia.drpc.org"
     ],
     "default": [
 	"arbitrum-sepolia-fullnode",
