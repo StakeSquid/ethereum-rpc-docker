@@ -9,7 +9,7 @@ while IFS= read -r line; do
     blacklist+=("$line")
 done < "$BASEPATH/path-blacklist.txt"
 
-if $NO_SSL; then
+if [ -n "$NO_SSL" ]; then
     PROTO="http"
     DOMAIN="${DOMAIN:-0.0.0.0}"
 else

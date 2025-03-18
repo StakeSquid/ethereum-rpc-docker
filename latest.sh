@@ -11,9 +11,9 @@ while IFS= read -r line; do
     blacklist+=("$line")                                                                                   
 done < "$BASEPATH/path-blacklist.txt"                
 
-if $NO_SSL; then
+if [ -n "$NO_SSL" ]; then
     PROTO="http"
-    DOMAIN="0.0.0.0"
+    DOMAIN="${DOMAIN:-0.0.0.0}"
 fi
 
 pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
