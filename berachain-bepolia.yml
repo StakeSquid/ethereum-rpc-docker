@@ -52,7 +52,7 @@ services:
       - "berachain-bepolia-node:/root/.beacond/data"
       - "./berachain/bepolia/script/init.sh:/init.sh"
       - "./berachain/bepolia/config:/root/.beacond/config"
-    entrypoint: [ "sh" "/init.sh" ]
+    entrypoint: [ "sh", "/init.sh" ]
     command: init ${MONIKER} --chain-id bepolia-beacon-80069 --consensus-key-algo bls12_381 --home /root/.beacond/
 
   berachain-bepolia-node:
