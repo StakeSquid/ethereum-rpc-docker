@@ -3,7 +3,7 @@ FROM golang:1.22 as op
 WORKDIR /app
 
 ARG OP_REPO=https://github.com/ethereum-optimism/optimism.git
-ARG OP_VERSION=v1.10.3
+ARG OP_VERSION=v1.12.2
 ARG OP_PATCH
 
 RUN curl -fsSL https://github.com/casey/just/releases/download/1.38.0/just-1.38.0-x86_64-unknown-linux-musl.tar.gz | tar -xzf - -C /usr/local/bin
@@ -29,7 +29,7 @@ FROM golang:1.22 as geth
 WORKDIR /app
 
 ARG GETH_REPO=https://github.com/ethereum-optimism/op-geth.git
-ARG GETH_VERSION=v1.101411.6
+ARG GETH_VERSION=v1.101503.1
 
 # avoid depth=1, so the geth build can read tags
 RUN git clone $GETH_REPO --branch $GETH_VERSION --single-branch . && \

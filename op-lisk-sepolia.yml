@@ -115,6 +115,7 @@ uDdWRwgiMr"
       - "OP_NODE_OVERRIDE_GRANITE=1723478400"
       - "OP_NODE_OVERRIDE_HOLOCENE=1732633200"
       - "OP_NODE_OVERRICE_PECTRA=1741159776"
+      - "OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400"
     networks:                                                                                         
       - chains
       

@@ -54,8 +54,8 @@
     },
   "ethereum": {
     "id": 1,
-    "urls": [
-      "https://ethereum-rpc.publicnode.com"
+      "urls": [
+	  "https://eth.drpc.org"
     ],
       "default": [
 	  "erigon-mainnet-minimal",
@@ -85,7 +85,7 @@
     "open-campus-codex-sepolia": {
 	"id": 656476,
 	"urls": [
-	    "https://rpc.open-campus-codex.gelato.digital"
+	    "https://open-campus-codex-sepolia.drpc.org"
 	],
 	"default": ["arb-opencampuscodex"]
     },
@@ -175,8 +175,8 @@
   },
   "arbitrum-sepolia": {
     "id": 421614,
-    "urls": [
-      "https://arbitrum-sepolia.blockpi.network/v1/rpc/public"
+      "urls": [
+	  "https://arbitrum-sepolia.drpc.org"
     ],
     "default": [
 	"arbitrum-sepolia-fullnode",
@@ -215,7 +215,7 @@
   },
     "tron": {
 	"id": 728126428,
-	"urls": ["https://tron-evm-rpc.publicnode.com"],
+	"urls": ["https://api.trongrid.io/jsonrpc"],
 	"default": ["tron"]
     },
     "viction": {
@@ -285,8 +285,8 @@
   },
   "fantom-testnet": {
     "id": 4002,
-    "urls": [
-      "https://fantom-testnet.public.blastapi.io"
+      "urls": [
+	  "https://rpc.testnet.fantom.network"
     ],
     "default": [
       "fantom-testnet"
@@ -435,7 +435,8 @@
   },    
   "bsc": {
     "id": 56,
-    "urls": [
+      "urls": [
+	  "https://binance.nodereal.io",
       "https://bsc.drpc.org"
     ],
     "default": [

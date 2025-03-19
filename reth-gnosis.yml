@@ -2,10 +2,11 @@ version: '3.1'
 
 services:
   gnosis-reth:
-    image: stakesquid/reth-gnosis:latest
+    image: ghcr.io/gnosischain/reth_gnosis@sha256:2107522cb60a052df3039c54d215c2f861b4107193829687f80e3e07653635a9
     user: root
     volumes:
       - "reth-gnosis:/root/.local/share/reth/gnosis"
+      - "./gnosis/mainnet/genesis.json:/genesis.json:ro"
       - "/slowdisk:/slowdisk"
       - ".jwtsecret:/jwtsecret"
     expose:
@@ -16,7 +17,7 @@ services:
       - "23865:23865"
       - "23865:23865/udp"
     restart: unless-stopped
-    command: node --chain gnosis --rpc-max-connections 429496729 --metrics 0.0.0.0:9001 --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --port 23865 --discovery.port 23865 --authrpc.addr 0.0.0.0 --authrpc.jwtsecret /jwtsecret --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000
+    command: node --chain /genesis.json --rpc-max-connections 429496729 --metrics 0.0.0.0:9001 --http --http.addr 0.0.0.0 --http.port 8545 --ws --ws.addr 0.0.0.0 --ws.port 8545 --ws.origins '*' --port 23865 --discovery.port 23865 --authrpc.addr 0.0.0.0 --authrpc.jwtsecret /jwtsecret --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin" --http.corsdomain '*' --rpc.max-logs-per-response 1100000 --rpc.gascap 600000000
     stop_grace_period: 1m
     labels:
       - "prometheus-scrape.enabled=true"
