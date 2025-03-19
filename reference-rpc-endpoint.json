@@ -459,7 +459,16 @@
     "default": [
       "berachain-artio"
     ]
-  },    
+  },
+  "berachain-bepolia": {
+    "id": 80069,
+    "urls": [
+      "https://bepolia.rpc.berachain.com"
+    ],
+    "default": [
+      "berachain-bepolia"
+    ]
+  },        
     "opbnb": {
 	"id": 204,
 	"urls": [
