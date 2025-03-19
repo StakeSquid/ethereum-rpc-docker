@@ -1,7 +1,7 @@
 services:
 
   op-blast-mainnet-fullnode:
-    image: blastio/blast-geth:v1.1.1-mainnet
+    image: blastio/blast-geth:mainnet-v1.1.1
     volumes:
       - blast-mainnet-fullnode:/data      
       - ./blast-io:/config:rw
@@ -50,7 +50,7 @@ services:
       - "traefik.http.routers.blast.middlewares=blast-stripprefix, ipwhitelist"                           
       
   op-blast-mainnet-fullnode-node:
-    image: blastio/blast-optimism:v1.1.0-mainnet
+    image: blastio/blast-optimism:mainnet-v1.1.1
     volumes:
       - ./blast-io:/config
       - .jwtsecret:/jwtsecret
