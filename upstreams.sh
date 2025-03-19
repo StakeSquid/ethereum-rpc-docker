@@ -3,7 +3,16 @@
 BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
 
+GENERATE_ID_FROM_PATH_EXPRESSION=${GENERATE_ID_FROM_PATH_EXPRESSION:-'s/^rpc-(.*)\.stakesquid\.eu\/(.*)$/\1-\2/'}
+
 LOCAL=${1:-false}
+
+if [ -n "$NO_SSL" ]; then
+    PROTO="http"
+    DOMAIN="${DOMAIN:-0.0.0.0}"
+else
+    PROTO="https"
+fi
 
 IFS=':' read -ra parts <<< $COMPOSE_FILE
 
@@ -41,19 +50,19 @@ for part in "${parts[@]}"; do
 	    
 	    if $path_include; then
 		
-
+		#echo "LOCAL: $LOCAL"
 		if $LOCAL; then
 		    url=$("$BASEPATH/get-local-url.sh" "${part%.yml}")
-                    TEST_URL="https://$DOMAIN$path"
+                    export TEST_URL="$PROTO://$DOMAIN$path"
 		    export RPC_URL="http://$url"
 		    export WS_URL="ws://$url"		   
-		    export ID=$(echo "$DOMAIN$path" | sed -E 's/^rpc-(.*)\.stakesquid\.eu\/(.*)$/\1-\2/')
+		    export ID=$(echo "$DOMAIN$path" | sed -E "$GENERATE_ID_FROM_PATH_EXPRESSION")
 		else
 		    url="$DOMAIN$path"
-		    export RPC_URL="https://$url"
+		    export RPC_URL="$PROTO://$url"
 		    export TEST_URL="$RPC_URL"
 		    export WS_URL="wss://$url"		    
-                    export ID=$(echo "$url" | sed -E 's/^rpc-(.*)\.stakesquid\.eu\/(.*)$/\1-\2/')
+                    export ID=$(echo "$url" | sed -E "$GENERATE_ID_FROM_PATH_EXPRESSION")
 		fi
 		
 		export PROVIDER=${ORGANIZATION}-${ID}
@@ -62,13 +71,16 @@ for part in "${parts[@]}"; do
 		
 		http_status_code=$(curl --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL)
 
+		curl_status=$?
+		
 		if [ $? -eq 0 ] && [[ $http_status_code -ne 200 ]]; then
 		    echo "have error response from $TEST_URL: $(cat $response_file)" >&2
 		    rm "$response_file"
 		    continue  # Skip to the next iteration of the loop
 		fi
 		
-		chain_id=$(cat "$response_file" | jq -r '.result')		
+		chain_id=$(cat "$response_file" | jq -r '.result')
+		#echo "$http_status_code: $(cat $response_file)"
 		rm "$response_file"
 		
 		#echo "$TEST_URL $chain_id" >&2

@@ -27,7 +27,7 @@ start:
       --http.vhosts=*
       --ws
       --ws.addr=0.0.0.0
-      --ws.port=9756
+      --ws.port=8454
       --metrics
       --metrics.addr=0.0.0.0
       --metrics.port=7070
