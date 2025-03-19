@@ -44,8 +44,6 @@ services:
 
   berachain-bepolia-node-init:
     image: alpine:latest
-    depends_on:
-      - "berachain-bepolia-node-prepare"
     environment:
       - "MONIKER=d${DOMAIN}"
     volumes:
