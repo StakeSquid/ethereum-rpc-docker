@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   op-blast-sepolia:
-    image: blastio/blast-geth:sepolia
+    image: blastio/blast-geth:sepolia-v1.2.3
     pull_policy: always
     volumes:
       - blast-sepolia:/data      
@@ -33,7 +33,7 @@ services:
       - "GETH_LIGHT_MAXPEERS=0"
       - "GETH_MAXPEERS=0"
       - "GETH_OVERRIDE_CANYON=0"
-      - "GETH_OVERRIDE_DELTA=1713999600"      
+      #- "GETH_OVERRIDE_DELTA=1713999600"      
       - "GETH_OVERRIDE_ECOTONE=1713999600"
     expose:
       - 9545
@@ -53,7 +53,7 @@ services:
       - "traefik.http.routers.blast-sepolia.middlewares=blast-sepolia-stripprefix, ipwhitelist"                           
       
   op-blast-sepolia-node:
-    image: blastio/blast-optimism:sepolia
+    image: blastio/blast-optimism:sepolia-v1.2.3
     pull_policy: always
     volumes:
       - ./blast-io:/config
@@ -76,8 +76,8 @@ services:
       #- "OP_NODE_L2_SKIP_SYNC_START_CHECK=true"
       - "OP_NODE_P2P_LISTEN_TCP_PORT=12018"
       - "OP_NODE_ROLLUP_CONFIG=/config/sepolia/rollup.json"
-      - "OP_NODE_OVERRIDE_DELTA=1713999600"      
-      - "OP_NODE_OVERRIDE_ECOTONE=1713999600"
+      #- "OP_NODE_OVERRIDE_DELTA=1713999600"      
+      #- "OP_NODE_OVERRIDE_ECOTONE=1713999600"
     command: >
       op-node
     depends_on:

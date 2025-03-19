@@ -1,9 +1,7 @@
-version: '3.1'
-
 services:
 
   op-blast-mainnet-fullnode:
-    image: blastio/blast-geth:v1.1.0-mainnet
+    image: blastio/blast-geth:v1.1.1-mainnet
     volumes:
       - blast-mainnet-fullnode:/data      
       - ./blast-io:/config:rw
@@ -32,7 +30,7 @@ services:
       - "GETH_LIGHT_MAXPEERS=0"
       - "GETH_MAXPEERS=0"
       - "GETH_OVERRIDE_CANYON=0"
-      - "GETH_OVERRIDE_DELTA=1716843599"
+      #- "GETH_OVERRIDE_DELTA=1716843599"
       - "GETH_OVERRIDE_ECOTONE=1716843599"
     expose:
       - 9545
@@ -74,8 +72,8 @@ services:
       - "OP_NODE_L2_SKIP_SYNC_START_CHECK=true"
       - "OP_NODE_P2P_LISTEN_TCP_PORT=25037"
       - "OP_NODE_ROLLUP_CONFIG=/config/mainnet/rollup.json"
-      - "OP_NODE_OVERRIDE_DELTA=1716843599"
-      - "OP_NODE_OVERRIDE_ECOTONE=1716843599"
+      #- "OP_NODE_OVERRIDE_DELTA=1716843599"
+      #- "OP_NODE_OVERRIDE_ECOTONE=1716843599"
     command: >
       op-node
     depends_on:
