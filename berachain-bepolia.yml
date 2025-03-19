@@ -1,4 +1,5 @@
 services:
+
   berachain-bepolia:
     image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.3.2}
     user: root
@@ -33,39 +34,19 @@ services:
     networks:
       - chains
 
-  # berachain-bepolia-node-prepare:
-  #   image: icculp/berachain_beacon:v1.1.1
-  #   environment:
-  #     - "MONIKER=d${DOMAIN}"
-  #   command: init ${MONIKER} --chain-id bepolia-beacon-80069 --consensus-key-algo bls12_381 --home /root/.beacond/ --overwrite
-  #   volumes:
-  #     - "berachain-bepolia-node:/root/.beacond/data"
-  #     - "./berachain/bepolia/config:/root/.beacond/config"
-
-  berachain-bepolia-node-init:
-    image: alpine:latest
-    environment:
-      - "MONIKER=d${DOMAIN}"
-    volumes:
-      - "berachain-bepolia-node:/root/.beacond/data"
-      - "./berachain/bepolia/script/init.sh:/init.sh"
-      - "./berachain/bepolia/config:/root/.beacond/config"
-    entrypoint: [ "sh", "/init.sh" ]
-    command: init ${MONIKER} --chain-id bepolia-beacon-80069 --consensus-key-algo bls12_381 --home /root/.beacond/
-
   berachain-bepolia-node:
     image: icculp/berachain_beacon:v1.1.1
-    depends_on:
-      - "berachain-bepolia-node-init"
     expose:
       - 26657 #rpc
     ports:
       - "9692:9692"
       - "9692:9692/udp"
-    command: start --minimum-gas-prices 0atom --beacon-kit.engine.jwt-secret-path /jwtsecret --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json
+    entrypoint: [ "sh", "/init.sh" ]
+    command: --beacon-kit.engine.jwt-secret-path /jwtsecret
     networks:
       - chains
     volumes:
+      - "./berachain/bepolia/script/init.sh:/init.sh"      
       - "berachain-bepolia-node:/root/.beacond/data"
       - "./berachain/bepolia/config:/root/.beacond/config"
       - ".jwtsecret:/jwtsecret"
