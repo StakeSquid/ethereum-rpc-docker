@@ -29,7 +29,7 @@ services:
       - "GETH_ROLLUP_SEQUENCERHTTP=https://rpc.sepolia-api.lisk.com"
       - "GETH_GCMODE=full"
       - "GETH_NODISCOVER=true"
-      - "GETH_STATE_SCHEME=path"
+      - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
       - "P2P_PORT=54521"
       - "WS_PORT=8545"
