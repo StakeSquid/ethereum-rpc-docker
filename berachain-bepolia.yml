@@ -36,6 +36,8 @@ services:
 
   berachain-bepolia-node:
     image: icculp/berachain_beacon:v1.1.1
+    depends_on:
+      - berachain-bepolia
     expose:
       - 26657 #rpc
     ports:
