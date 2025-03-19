@@ -41,6 +41,8 @@ services:
     ports:
       - "9692:9692"
       - "9692:9692/udp"
+    environment:
+      - "MONIKER=d${DOMAIN:-local}"
     entrypoint: [ "sh", "/init.sh" ]
     command: --beacon-kit.engine.jwt-secret-path /jwtsecret
     networks:
