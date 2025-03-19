@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   geth-sepolia:                         
-    image: ethereum/client-go:v1.14.3
+    image: ethereum/client-go:${GETH_VERSION:-v1.14.3}
     expose: 
       # HTTP server / GraphQL API 
       - 8545                   
@@ -67,7 +67,7 @@ services:
       - "prometheus-scrape.metrics_path=/debug/metrics/prometheus"
 
   prysm-sepolia:
-    image: prysmaticlabs/prysm-beacon-chain:v5.0.3
+    image: prysmaticlabs/prysm-beacon-chain:${PRYSM_VERSION:-v5.0.3}
     ports:
       #- "127.0.0.1:3500:3500"
       - "13000:13000"
