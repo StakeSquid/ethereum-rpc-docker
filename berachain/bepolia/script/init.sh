@@ -2,7 +2,7 @@
 
 set -e  # Exit on failure
 
-/usr/bin/apk add --no-cache curl
+apt-get update && apt-get install -y curl
 
 # this goes first because it won't overwrite shit
 /usr/bin/beacond init ${MONIKER} --chain-id bepolia-beacon-80069 --consensus-key-algo bls12_381 --home /root/.beacond/
