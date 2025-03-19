@@ -54,7 +54,7 @@ services:
     entrypoint: [ "sh", "-c", "apk add --no-cache curl && sh /init.sh" ]
 
   berachain-bepolia-node:
-    image: icculp/berachain_beacon:v0.2.0-alpha.6
+    image: icculp/berachain_beacon:v1.1.1
     depends_on:
       - "berachain-bepolia-node-init"
     expose:
