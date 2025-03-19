@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+exec apk add --no-cache curl
 
 # Define variables
 CONFIG_DIR="/root/.beacond/config"
@@ -29,5 +31,5 @@ fi
 
 sed -i "s|^rpc-dial-url = \".*\"|rpc-dial-url = \"http://berachain-bepolia:8551\"|" "$CONFIG_DIR/app.toml";
 
-exec beacond "$@"
+exec /usr/bin/beacond "$@"
 
