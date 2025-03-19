@@ -61,7 +61,7 @@ uDdWRwgiMr"
       dockerfile: Dockerfile
       args:
         OP_VERSION: v1.12.0
-      #  OP_PATCH: sepolia/lisk/op-node.patch        
+        OP_PATCH: sepolia/lisk/op-node.patch        
         GETH_VERSION: v1.101503.0
     depends_on:
       - op-lisk-sepolia
