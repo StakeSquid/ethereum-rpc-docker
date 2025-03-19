@@ -83,6 +83,7 @@ uDdWRwgiMr"
     stop_grace_period: 30s
     environment:
       - "OP_NODE_NETWORK=lisk-sepolia"
+      - "OP_NODE_SYNCMODE=consensus-layer"
       - "OP_NODE_L1_ETH_RPC=${LISK_SEPOLIA_L1_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
