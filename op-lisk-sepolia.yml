@@ -15,6 +15,7 @@ services:
       - 54521     # P2P TCP (currently unused)
       - 54521/udp # P2P UDP (currently unused)
       - 6060       # metrics
+      - 8551 #auth
     ports:
       - "54521:54521"
       - "54521:54521/udp"
