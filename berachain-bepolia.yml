@@ -49,6 +49,7 @@ services:
     environment:
       - "MONIKER=d${DOMAIN}"
     volumes:
+      #- "berachain-bepolia-node:/root/.beacond/data"
       - "./berachain/bepolia/script/init.sh:/init.sh"
       - "./berachain/bepolia/config:/root/.beacond/config"
     entrypoint: [ "sh", "-c", "apk add --no-cache curl && sh /init.sh" ]
