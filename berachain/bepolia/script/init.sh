@@ -29,5 +29,5 @@ fi
 
 sed -i "s|^rpc-dial-url = \".*\"|rpc-dial-url = \"http://berachain-bepolia:8551\"|" "$CONFIG_DIR/app.toml";
 
+exec beacond "$@"
 
-echo "Configuration updated successfully."
