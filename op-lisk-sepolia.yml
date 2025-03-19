@@ -1,4 +1,5 @@
-version: '3.1'
+# find the patch and the versio n at https://github.com/LiskHQ/lisk-node/blob/main/geth/Dockerfile
+# find snapshots at https://snapshots.lisk.com/sepolia
 
 services:
   op-lisk-sepolia: # this is Optimism's geth client
@@ -6,9 +7,9 @@ services:
       context: ./op
       dockerfile: Dockerfile
       args:
-        OP_VERSION: v1.12.0
-      #  OP_PATCH: sepolia/lisk/op-node.patch        
-        GETH_VERSION: v1.101503.0
+        OP_VERSION: v1.12.1
+        OP_PATCH: sepolia/lisk/op-node.patch        
+        GETH_VERSION: v1.101503.1
     expose:
       - 8545       # RPC / Websocket      
       - 54521     # P2P TCP (currently unused)
@@ -28,7 +29,7 @@ services:
       - "GETH_ROLLUP_SEQUENCERHTTP=https://rpc.sepolia-api.lisk.com"
       - "GETH_GCMODE=full"
       - "GETH_NODISCOVER=true"
-      - "GETH_STATE_SCHEME=hash"
+      - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
       - "P2P_PORT=54521"
       - "WS_PORT=8545"
@@ -60,9 +61,9 @@ uDdWRwgiMr"
       context: ./op
       dockerfile: Dockerfile
       args:
-        OP_VERSION: v1.12.0
+        OP_VERSION: v1.12.1
         OP_PATCH: sepolia/lisk/op-node.patch        
-        GETH_VERSION: v1.101503.0
+        GETH_VERSION: v1.101503.1
     depends_on:
       - op-lisk-sepolia
     expose:
@@ -81,9 +82,8 @@ uDdWRwgiMr"
       - ./op/sepolia/lisk/rollup.json:/app/sepolia/lisk/rollup.json
     stop_grace_period: 30s
     environment:
-      #- "OP_NODE_NETWORK=lisk-sepolia"
+      - "OP_NODE_NETWORK=lisk-sepolia"
       - "OP_NODE_L1_ETH_RPC=${LISK_SEPOLIA_L1_ENDPOINT}"
-      #- "OP_NODE_L2_ENGINE_AUTH_RAW=688f5d737bad920bdfb2fc2f488d6b6209eebda1dae949a8de91398d932c517a"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "OP_NODE_L2_ENGINE_RPC=http://op-lisk-sepolia:8551"
@@ -96,7 +96,7 @@ uDdWRwgiMr"
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
       - "OP_NODE_P2P_LISTEN_TCP_PORT=18660"
       - "OP_NODE_P2P_LISTEN_UDP_PORT=18660"
-      - "OP_NODE_ROLLUP_CONFIG=/app/sepolia/lisk/rollup.json"
+      #- "OP_NODE_ROLLUP_CONFIG=/app/sepolia/lisk/rollup.json"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
       - "OP_NODE_P2P_STATIC=/ip4/34.34.122.138/tcp/9003/p2p/16Uiu2HAmS3JEmKYY3Wwift6FJKZxYDDnZtCjfryyeJBYT1DWH82T,/ip4/34.147.94.25/tcp/9003/p2p/16Uiu2HAmJBA5XJiHRnreCBDdt3KZusQXG7ECRYoLCBxTdokp236w,/ip4/34.34.117.160/tcp/9003/p2p/16Uiu2HAkythtCa4TQvDbKFCXY2ZxKDsPNBNbiXbapzb1EZYw717Q"
