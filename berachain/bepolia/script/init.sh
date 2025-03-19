@@ -4,6 +4,8 @@ set -e  # Exit on failure
 
 apt-get update && apt-get install -y curl
 
+echo "MONIKER: $MONIKER"
+
 # this goes first because it won't overwrite shit
 /usr/bin/beacond init ${MONIKER} --chain-id bepolia-beacon-80069 --consensus-key-algo bls12_381 --home /root/.beacond/
 
