@@ -317,7 +317,7 @@
       "https://sepolia.drpc.org"
     ],
     "default": [
-	"geth-repolia",
+	"geth-sepolia",
 	"erigon-sepolia-minimal"
     ],
     "erchive": [
