@@ -3,14 +3,13 @@ version: '3.1'
 services:
 
   bsc:                                                                                                                                                            
-    image: ghcr.io/bnb-chain/bsc:${BSC_VERSION:-1.5.5}
+    image: ghcr.io/bnb-chain/bsc:${BSC_VERSION:-1.5.7}
     user: root
     ports:
       - "29061:29061"
       - "29061:29061/udp"
     expose:                                                                              
       - "8545"                                                                           
-      - "8546"                                                                           
       - "29061"                                                                          
     volumes:                                                                             
       - bsc:/bsc/.ethereum                                                                                                                                                
