@@ -9,7 +9,32 @@ IFS=':' read -ra parts <<< $COMPOSE_FILE
 blacklist=("drpc.yml" "drpc-free.yml" "base.yml" "rpc.yml" "monitoring.yml" "ftp.yml" "backup-http.yml")
 
 # Flag to track if any invocation failed
+
 any_failure=false
+
+# Function to run the command and handle the result
+check_sync_status() {
+    local part=$1
+    result=$("$BASEPATH/sync-status.sh" "${part%.yml}")
+
+    if [ $? -ne 0 ]; then
+        if [[ "$result" == *"syncing"* ]]; then
+            # Allow exit status 1 if result contains "syncing"
+            return 0
+        elif [[ "$result" == *"lagging"* ]]; then
+            # Allow exit status 1 if result contains "lagging"
+            return 0
+        else
+            any_failure=true
+            return 1
+        fi
+    fi
+
+    echo "${part%.yml}: $result"
+    return 0
+}
+
+
 
 for part in "${parts[@]}"; do
     include=true
@@ -33,25 +58,17 @@ for part in "${parts[@]}"; do
     fi
 
     if $include; then
-        result=$($BASEPATH/sync-status.sh "${part%.yml}")
-
-	if [ $? -ne 0 ]; then
-	    if [[ "$result" == *"syncing"* ]]; then
-		# Allow exit status 1 if result contains "syncing"
-		true
-	    elif [[ "$result" == *"lagging"* ]]; then
-		# Allow exit status 1 if result contains "syncing"
-		true
-	    else
-		any_failure=true
-	    fi
-	fi
-        
-        echo "${part%.yml}: $result"
+	check_sync_status "$part" &
+        pids+=($!)  # Save the process ID for waiting later
     fi
+done
+
+# Wait for all background processes to finish
+for pid in "${pids[@]}"; do
+    wait "$pid"
 done
 
 # If any invocation failed, return a failure exit code
 if $any_failure; then
     exit 1
-fi
+fii
