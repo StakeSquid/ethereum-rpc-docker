@@ -17,21 +17,23 @@ check_sync_status() {
     local part=$1
     result=$("$BASEPATH/sync-status.sh" "${part%.yml}")
 
+    code=0
+    
     if [ $? -ne 0 ]; then
         if [[ "$result" == *"syncing"* ]]; then
             # Allow exit status 1 if result contains "syncing"
-            return 0
+            code=0
         elif [[ "$result" == *"lagging"* ]]; then
             # Allow exit status 1 if result contains "lagging"
-            return 0
+            code=0
         else
             any_failure=true
-            return 1
+            code=1
         fi
     fi
 
     echo "${part%.yml}: $result"
-    return 0
+    return "$code"
 }
 
 
@@ -71,4 +73,4 @@ done
 # If any invocation failed, return a failure exit code
 if $any_failure; then
     exit 1
-fii
+fi

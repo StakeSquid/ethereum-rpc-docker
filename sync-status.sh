@@ -33,9 +33,24 @@ for path in $pathlist; do
         if [ -n "$2" ]; then
             ref="$2"
         else
-            chain_id=$(curl --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL | jq -r '.result')
-            chain_id_decimal=$((16#${chain_id#0x}))
-            ref=$($BASEPATH/reference-rpc-endpoint.sh $chain_id_decimal)
+            chain_id_response=$(curl --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL)
+		
+	    if [ $? -eq 0 ]; then
+		chain_id=$(echo "$chain_id_response" | jq -r '.result' 2>/dev/null)
+
+		# echo "$RPC_URL: $chain_id"
+		
+		if [[ "$chain_id" =~ ^0x[0-9a-fA-F]+$ ]]; then
+		    chain_id_decimal=$((16#${chain_id#0x}))
+		    ref=$($BASEPATH/reference-rpc-endpoint.sh $chain_id_decimal)
+		else
+		    echo "error"
+		    exit 1
+		fi
+	    else
+		echo "error"
+		exit 1
+	    fi
         fi
 
         # Call the health check script with RPC_URL and ref
@@ -44,5 +59,5 @@ for path in $pathlist; do
     fi
 done
 
-echo "not found"
+echo "unverified"
 exit 1
