@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 BASEPATH="$(dirname "$0")"
