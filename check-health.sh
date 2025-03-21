@@ -28,9 +28,9 @@ if [ $? -eq 0 ]; then
 	    
             http_status_code2=$(curl --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file2" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$latest_block_number\", false],\"id\":1}" $ref)
 
-	    curl_code=$?
+	    curl_code2=$?
 	    
-            if [ $curl_code -eq 0 ]; then	    
+            if [ $curl_code2 -eq 0 ]; then	    
                 if [[ $http_status_code2 -eq 200 ]]; then
                     response2=$(cat "$response_file2")
                     latest_block_hash2=$(echo "$response2" | jq -r '.result.hash')
@@ -41,7 +41,7 @@ if [ $? -eq 0 ]; then
                         response_file3=$(mktemp)
 			status_file3=$(mktemp)
                         {
-			    curl --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file3" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}" $ref > "$status_file3"
+			    curl --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file3" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}" $ref > "$status_file3"
 			} &			
 			pid3=$!
 
@@ -49,43 +49,49 @@ if [ $? -eq 0 ]; then
 			status_file4=$(mktemp)
 
 			{
-			    curl --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file4" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL > "$status_file4"
+			    curl --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file4" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL > "$status_file4"
 			} &
 			pid4=$!
 
 			wait $pid3
 			curl_code3=$?
-			http_status_code3=$(cat "$status_file3")
+			http_status_code3=$(cat "$status_file3" | cut -d ' ' -f 1)
+			request_time3=$(cat "$status_file3" | cut -d ' ' -f 2)
 			rm "$status_file3"
 
 			wait $pid4
 			curl_code4=$?
-			http_status_code4=$(cat "$status_file4")
+			http_status_code4=$(cat "$status_file4" | cut -d ' ' -f 1)
+			request_time4=$(cat "$status_file4" | cut -d ' ' -f 2)			
 			rm "$status_file4"
 			
-			
+			echo "lets check"
 			if [ $curl_code3 -eq 0 ]; then
                             if [[ $http_status_code3 -eq 200 ]]; then
                                 response3=$(cat "$response_file3")
                                 latest_block_timestamp3=$(echo "$response3" | jq -r '.result.timestamp')
                                 latest_block_timestamp_decimal3=$((16#${latest_block_timestamp3#0x}))
 
+				echo "refer: $latest_block_timestamp_decimal3"				
                                 rm "$response_file3"
 
 				if [ $curl_code4 -eq 0 ]; then
 				    if [[ $http_status_code4 -eq 200 ]]; then
 					response4=$(cat "$response_file4")
-					latest_block_timestamp3=$(echo "$response4" | jq -r '.result.timestamp')
+					latest_block_timestamp4=$(echo "$response4" | jq -r '.result.timestamp')
 					latest_block_timestamp_decimal4=$((16#${latest_block_timestamp4#0x}))
 
+					#echo "local: $latest_block_timestamp_decimal4"
 					rm "$response_file4"
 				
-					time_difference3=$(( latest_block_timestamp_decimal3 - latest_block_timestamp_decimal4 ))
-                                
-					if [ $time_difference3 -lt 2 ]; then
+					time_difference3=$(echo "scale=6; (${latest_block_timestamp_decimal3} - ${request_time3}) - (${latest_block_timestamp_decimal4} - ${request_time4})" | bc)
+
+					#echo "diff after network latency: $time_difference3 s"
+
+					if (( $(echo "$time_difference3 < 2" | bc -l) )); then
 					    echo "online"
 					    exit 0
-					elif [ $time_difference3 -lt 5 ]; then
+					elif (( $(echo "$time_difference3 < 5" | bc -l) )); then
 					    echo "lagging"
 					    exit 0
 					else
