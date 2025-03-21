@@ -1,6 +1,6 @@
 services:
   
-  ronin-testnet:
+  ronin-saigon:
     image: ghcr.io/ronin-chain/ronin:v1.0.2-eaef5a2
     stop_grace_period: 5m
     stop_signal: SIGINT
@@ -24,12 +24,12 @@ services:
       - ETHSTATS_ENDPOINT=${DOMAIN}:WSyDMrhRBe111@$ronin-stats-ws.roninchain.com:443
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.ronin-testnet-stripprefix.stripprefix.prefixes=/ronin-testnet"
-      - "traefik.http.services.ronin-testnet.loadbalancer.server.port=8545"
-      - "traefik.http.routers.ronin-testnet.entrypoints=websecure"
-      - "traefik.http.routers.ronin-testnet.tls.certresolver=myresolver"
-      - "traefik.http.routers.ronin-testnet.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-testnet`)"
-      - "traefik.http.routers.ronin-testnet.middlewares=ronin-testnet-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.ronin-saigon-stripprefix.stripprefix.prefixes=/ronin-saigon"
+      - "traefik.http.services.ronin-saigon.loadbalancer.server.port=8545"
+      - "traefik.http.routers.ronin-saigon.entrypoints=websecure"
+      - "traefik.http.routers.ronin-saigon.tls.certresolver=myresolver"
+      - "traefik.http.routers.ronin-saigon.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-saigon`)"
+      - "traefik.http.routers.ronin-saigon.middlewares=ronin-saigon-stripprefix, ipwhitelist"
       
 volumes:
-  ronin-testnet-ronin-pruned-pebbledb-hash:
+  ronin-saigon-ronin-pruned-pebbledb-hash:
