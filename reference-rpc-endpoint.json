@@ -55,7 +55,7 @@
   "ethereum": {
     "id": 1,
       "urls": [
-	  "https://cloudflare-eth.com"
+	  "https://eth.llamarpc.com"
     ],
       "default": [
 	  "erigon-mainnet-minimal",
