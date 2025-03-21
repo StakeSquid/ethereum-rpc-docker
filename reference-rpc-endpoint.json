@@ -55,7 +55,7 @@
   "ethereum": {
     "id": 1,
       "urls": [
-	  "https://eth.drpc.org"
+	  "https://cloudflare-eth.com"
     ],
       "default": [
 	  "erigon-mainnet-minimal",
