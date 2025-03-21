@@ -1,0 +1,35 @@
+services:
+  
+  ronin-testnet:
+    image: ghcr.io/ronin-chain/ronin:v1.0.2-eaef5a2
+    stop_grace_period: 5m
+    stop_signal: SIGINT
+    ports:
+      - 2558:2558
+      - 2558:2558/udp
+    networks:
+      - chains
+    volumes:
+      - ronin:/ronin
+    environment:
+      - SYNC_MODE=full
+      - PASSWORD=stupidpassword
+      - NETWORK_ID=2020
+      - NETWORK_PORT=2558
+      - WS_PORT=8545
+      - RONIN_PARAMS=--port=2558 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com
+      - VERBOSITY=3
+      - MINE=false
+      - GASPRICE=20000000000
+      - ETHSTATS_ENDPOINT=${DOMAIN}:WSyDMrhRBe111@$ronin-stats-ws.roninchain.com:443
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ronin-testnet-stripprefix.stripprefix.prefixes=/ronin-testnet"
+      - "traefik.http.services.ronin-testnet.loadbalancer.server.port=8545"
+      - "traefik.http.routers.ronin-testnet.entrypoints=websecure"
+      - "traefik.http.routers.ronin-testnet.tls.certresolver=myresolver"
+      - "traefik.http.routers.ronin-testnet.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-testnet`)"
+      - "traefik.http.routers.ronin-testnet.middlewares=ronin-testnet-stripprefix, ipwhitelist"
+      
+volumes:
+  ronin-testnet-ronin-pruned-pebbledb-hash:
