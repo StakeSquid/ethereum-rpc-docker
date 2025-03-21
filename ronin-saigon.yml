@@ -5,8 +5,8 @@ services:
     stop_grace_period: 5m
     stop_signal: SIGINT
     ports:
-      - 2558:2558
-      - 2558:2558/udp
+      - 16086:16086
+      - 16086:16086/udp
     networks:
       - chains
     volumes:
@@ -14,10 +14,10 @@ services:
     environment:
       - SYNC_MODE=full
       - PASSWORD=stupidpassword
-      - NETWORK_ID=2020
-      - NETWORK_PORT=2558
+      - NETWORK_ID=2021
+      - NETWORK_PORT=16086
       - WS_PORT=8545
-      - RONIN_PARAMS=--port=2558 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com
+      - RONIN_PARAMS=--port=16086 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com
       - VERBOSITY=3
       - MINE=false
       - GASPRICE=20000000000
