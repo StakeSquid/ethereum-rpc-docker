@@ -72,7 +72,7 @@ if [ $? -eq 0 ]; then
                                 latest_block_timestamp3=$(echo "$response3" | jq -r '.result.timestamp')
                                 latest_block_timestamp_decimal3=$((16#${latest_block_timestamp3#0x}))
 
-				echo "refer: $latest_block_timestamp_decimal3"				
+				# echo "refer: $latest_block_timestamp_decimal3"				
                                 rm "$response_file3"
 
 				if [ $curl_code4 -eq 0 ]; then
