@@ -1,7 +1,7 @@
 services:
   
-  ronin:
-    image: ghcr.io/axieinfinity/ronin:v2.8.3-d27eb42
+  ronin-mainnet:
+    image: ghcr.io/ronin-chain/ronin:v1.0.2-eaef5a2
     stop_grace_period: 5m
     stop_signal: SIGINT
     ports:
@@ -32,4 +32,4 @@ services:
       - "traefik.http.routers.ronin-mainnet.middlewares=ronin-mainnet-stripprefix, ipwhitelist"
       
 volumes:
-  ronin:
+  ronin-mainnet-ronin-pruned-pebbledb-hash:
