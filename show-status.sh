@@ -9,7 +9,7 @@ blacklist=(
     "drpc.yml" "drpc-free.yml" "drpc-home.yml" # dshackles
     "arbitrum-one-mainnet-arbnode-archive-trace.yml" # always behind and no reference rpc
     "ethereum-beacon-mainnet-lighthouse-pruned-blobs" # can't handle beacon rest api yet
-    "rpc.yml" "monitoring.yml" "ftp.yml" "backup-http.yml" # no rpcs
+    "rpc.yml" "monitoring.yml" "ftp.yml" "backup-http.yml" "base.yml" # no rpcs
 )
 
 # Flag to track if any invocation failed for the alert scripts
