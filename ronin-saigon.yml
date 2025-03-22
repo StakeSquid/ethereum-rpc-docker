@@ -16,6 +16,8 @@ services:
       - PASSWORD=stupidpassword
       - NETWORK_ID=2021
       - NETWORK_PORT=16086
+      - DB_ENGINE=pebbledb
+      - STATE_SCHEME=hash
       - WS_PORT=8545
       - RONIN_PARAMS=--port=16086 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com
       - VERBOSITY=3
