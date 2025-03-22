@@ -1,0 +1,94 @@
+services:
+  unichain-sepolia:
+    build:
+      context: ./op
+    expose:
+      - 8545       # RPC / Websocket      
+      - 19809     # P2P TCP (currently unused)
+      - 19809/udp # P2P UDP (currently unused)
+      - 6060       # metrics
+    ports:
+      - "19809:19809"
+      - "19809:19809/udp"
+    command: [ "./geth" ]
+    restart: always
+    stop_grace_period: 3m    
+    volumes:
+      - unichain-sepolia-op-geth-pruned-pebble-path:/data
+      - .jwtsecret:/jwtsecret
+    environment:
+      - "GETH_DATADIR=/data"
+      - "GETH_OP_NETWORK=unichain-sepolia"
+      - "GETH_GCMODE=full"
+      - "GETH_SYNCMODE=snap"
+      - "GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
+      - "GETH_NAT=extip:${IP}"
+      - "GETH_PORT=19809"
+      - "GETH_WS_PORT=8545"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_HTTP_API=eth,net,debug,admin,web3"
+      - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
+      - "GETH_AUTHRPC_ADDR=0.0.0.0"
+      - "GETH_AUTHRPC_VHOSTS=*"
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.unichain-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/unichain-sepolia"                      
+      - "traefik.http.services.unichain-sepolia-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
+      - "traefik.http.routers.unichain-sepolia-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
+      - "traefik.http.routers.unichain-sepolia-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.unichain-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/unichain-sepolia`)"                     
+      - "traefik.http.routers.unichain-sepolia-op-geth-pruned-pebble-path.middlewares=unichain-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+      
+  unichain-sepolia-node:
+    build:
+      context: ./op
+    expose:
+      - 8545     # RPC
+      - 3306     # P2P TCP
+      - 3306/udp # P2P UDP
+      - 7300     # metrics
+      - 6060     # pprof
+    ports:
+      - "3306:3306"
+      - "3306:3306/udp"
+    command: [ "sh", "./op-node-entrypoint" ]
+    restart: always
+    volumes:
+      - .jwtsecret:/jwtsecret
+    stop_grace_period: 30s
+    environment:
+      - "OP_NODE_NETWORK=unichain-sepolia"
+      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_L1_ETH_RPC=${UNICHAIN_L1_ETHEREUM_SEPOLIA_EXECUTION_RPC}"
+      - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_ENGINE_RPC=http://unichain-sepolia:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      #- "OP_NODE_P2P_STATIC=/ip4/35.230.102.175/tcp/9222/p2p/16Uiu2HAmSN33smB46ZtueBL2Hz1hsDy8tgSm1mqR38qAhwkX7ntd"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=3306"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=3306"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      #- "OP_NODE_L1_RPC_MAX_BATCH_SIZE=${UNICHAIN_SEPOLIA_L1_BATCH_SIZE:-20}"
+      #- "OP_NODE_L1_RPC_RATE_LIMIT=${UNICHAIN_SEPOLIA_L1_RATE_LIMIT:-30}"
+      - "OP_NODE_L1_RPC_KIND=${UNICHAIN_L1_ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${UNICHAIN_L1_ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${UNICHAIN_L1_ETHEREUM_SEPOLIA_BEACON_REST}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${UNICHAIN_L1_ETHEREUM_SEPOLIA_BEACON_ARCHIVER}"
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+    unichain-sepolia-op-geth-pruned-pebble-path:
