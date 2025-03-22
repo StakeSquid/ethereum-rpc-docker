@@ -19,10 +19,11 @@ services:
       - DB_ENGINE=pebble
       - STATE_SCHEME=path
       - WS_PORT=8545
-      - RONIN_PARAMS=--port=16086 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com --nat=extip:${IP}
+      - RONIN_PARAMS=--port=16086 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AJCNIAXQIPO55NW3QE2NUBBDMPYZDOQUCAEUS65NHQFMUUFES5KOW@saigon.nodes.roninchain.com --nat=extip:${IP}
       - VERBOSITY=3
       - MINE=false
       - GASPRICE=20000000000
+      - DEPLOYMENT=test
       - ETHSTATS_ENDPOINT=${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
     labels:
       - "traefik.enable=true"
