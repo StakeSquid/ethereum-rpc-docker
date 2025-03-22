@@ -1,5 +1,5 @@
 services:
-  mode-mainnet:
+  base-mainnet:
     build:
       context: ./op
       args:
@@ -10,17 +10,17 @@ services:
       - 8545       
       - 6060       
     ports:
-      - "10182:10182"
-      - "10182:10182/udp"
+      - "10503:10503"
+      - "10503:10503/udp"
     entrypoint: [ "./geth" ]
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
-      - mode-mainnet-op-geth-pruned-pebble-path:/data
+      - base-mainnet-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret
     environment:
       - "GETH_DATADIR=/data"
-      - "GETH_OP_NETWORK=mode-mainnet"
+      - "GETH_OP_NETWORK=base-mainnet"
       - "GETH_GCMODE=full"
       - "GETH_SYNCMODE=snap"
       - "GETH_STATE_SCHEME=path"
@@ -36,17 +36,17 @@ services:
       - "GETH_AUTHRPC_VHOSTS=*"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.mode-mainnet-op-geth-stripprefix.stripprefix.prefixes=/mode-mainnet"                      
-      - "traefik.http.services.mode-mainnet-op-geth.loadbalancer.server.port=8545"
-      - "traefik.http.routers.mode-mainnet-op-geth.entrypoints=websecure"                                              
-      - "traefik.http.routers.mode-mainnet-op-geth.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.mode-mainnet-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/mode-mainnet`)"                     
-      - "traefik.http.routers.mode-mainnet-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.base-mainnet-op-geth-stripprefix.stripprefix.prefixes=/base-mainnet"                      
+      - "traefik.http.services.base-mainnet-op-geth.loadbalancer.server.port=8545"
+      - "traefik.http.routers.base-mainnet-op-geth.entrypoints=websecure"                                              
+      - "traefik.http.routers.base-mainnet-op-geth.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.base-mainnet-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/base-mainnet`)"                     
+      - "traefik.http.routers.base-mainnet-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  mode-mainnet-node:
+  base-mainnet-node:
     build:
       context: ./op
       args:
@@ -58,26 +58,26 @@ services:
       - 7300
       - 6060
     ports:
-      - "15182:15182"
-      - "15182:15182/udp"
+      - "15503:15503"
+      - "15503:15503/udp"
     entrypoint: [ "./op-node" ]
     restart: unless-stopped
     volumes:
       - .jwtsecret:/jwtsecret
     stop_grace_period: 30s
     environment:
-      - "OP_NODE_NETWORK=mode-mainnet"
+      - "OP_NODE_NETWORK=base-mainnet"
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://mode-mainnet:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://base-mainnet:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"
       - "OP_NODE_METRICS_PORT=7300"
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=15182"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=15182"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15503"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15503"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
       - "OP_NODE_RPC_PORT=8545"
@@ -92,4 +92,4 @@ services:
       - chains
       
 volumes:  
-    mode-mainnet-op-geth-pruned-pebble-path:
+    base-mainnet-op-geth-pruned-pebble-path:

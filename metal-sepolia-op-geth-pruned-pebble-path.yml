@@ -1,5 +1,5 @@
 services:
-  mode-mainnet:
+  metal-sepolia:
     build:
       context: ./op
       args:
@@ -10,17 +10,17 @@ services:
       - 8545       
       - 6060       
     ports:
-      - "10182:10182"
-      - "10182:10182/udp"
+      - "10439:10439"
+      - "10439:10439/udp"
     entrypoint: [ "./geth" ]
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
-      - mode-mainnet-op-geth-pruned-pebble-path:/data
+      - metal-sepolia-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret
     environment:
       - "GETH_DATADIR=/data"
-      - "GETH_OP_NETWORK=mode-mainnet"
+      - "GETH_OP_NETWORK=metal-sepolia"
       - "GETH_GCMODE=full"
       - "GETH_SYNCMODE=snap"
       - "GETH_STATE_SCHEME=path"
@@ -36,17 +36,17 @@ services:
       - "GETH_AUTHRPC_VHOSTS=*"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.mode-mainnet-op-geth-stripprefix.stripprefix.prefixes=/mode-mainnet"                      
-      - "traefik.http.services.mode-mainnet-op-geth.loadbalancer.server.port=8545"
-      - "traefik.http.routers.mode-mainnet-op-geth.entrypoints=websecure"                                              
-      - "traefik.http.routers.mode-mainnet-op-geth.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.mode-mainnet-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/mode-mainnet`)"                     
-      - "traefik.http.routers.mode-mainnet-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.metal-sepolia-op-geth-stripprefix.stripprefix.prefixes=/metal-sepolia"                      
+      - "traefik.http.services.metal-sepolia-op-geth.loadbalancer.server.port=8545"
+      - "traefik.http.routers.metal-sepolia-op-geth.entrypoints=websecure"                                              
+      - "traefik.http.routers.metal-sepolia-op-geth.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.metal-sepolia-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/metal-sepolia`)"                     
+      - "traefik.http.routers.metal-sepolia-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  mode-mainnet-node:
+  metal-sepolia-node:
     build:
       context: ./op
       args:
@@ -58,38 +58,38 @@ services:
       - 7300
       - 6060
     ports:
-      - "15182:15182"
-      - "15182:15182/udp"
+      - "15439:15439"
+      - "15439:15439/udp"
     entrypoint: [ "./op-node" ]
     restart: unless-stopped
     volumes:
       - .jwtsecret:/jwtsecret
     stop_grace_period: 30s
     environment:
-      - "OP_NODE_NETWORK=mode-mainnet"
+      - "OP_NODE_NETWORK=metal-sepolia"
       - "OP_NODE_SYNCMODE=execution-layer"
-      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
+      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://mode-mainnet:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://metal-sepolia:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"
       - "OP_NODE_METRICS_PORT=7300"
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=15182"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=15182"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15439"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15439"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
       - "OP_NODE_RPC_PORT=8545"
       - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
       - "OP_NODE_VERIFIER_L1_CONFS=4"
-      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
-      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
-      - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
-      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"
-      
+      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}"
+      - "OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400"
     networks:                                                                                         
       - chains
       
 volumes:  
-    mode-mainnet-op-geth-pruned-pebble-path:
+    metal-sepolia-op-geth-pruned-pebble-path:
