@@ -30,7 +30,7 @@ services:
       - "GETH_WS_PORT=8545"
       - "GETH_HTTP=true"
       - "GETH_HTTP_ADDR=0.0.0.0"
-      - "GETH_HTTP_CORSDOMAIN=*"
+      - "GETH_HTTP_VHOSTS=*"
       - "GETH_WS=true"
       - "GETH_WS_ADDR=0.0.0.0"
       - "GETH_WS_ORIGINS=*"
