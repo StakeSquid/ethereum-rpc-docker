@@ -19,7 +19,7 @@ services:
       - WS_PORT=8545
       - DB_ENGINE=pebble
       - STATE_SCHEME=hash      
-      - RONIN_PARAMS=--port=38198 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com
+      - RONIN_PARAMS=--port=38198 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com --nat=extip:${IP}
       - VERBOSITY=3
       - MINE=false
       - GASPRICE=20000000000
