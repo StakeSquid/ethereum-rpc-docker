@@ -41,7 +41,7 @@ services:
       - "traefik.http.routers.swell-mainnet-op-geth.entrypoints=websecure"                                              
       - "traefik.http.routers.swell-mainnet-op-geth.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.swell-mainnet-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/swell-mainnet`)"                     
-      - "traefik.http.routers.swell-mainnet-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
+      - "traefik.http.routers.swell-mainnet-op-geth.middlewares=swell-mainnet-op-geth-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 

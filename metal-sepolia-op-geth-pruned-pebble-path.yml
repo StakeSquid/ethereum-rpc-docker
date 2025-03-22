@@ -41,7 +41,7 @@ services:
       - "traefik.http.routers.metal-sepolia-op-geth.entrypoints=websecure"                                              
       - "traefik.http.routers.metal-sepolia-op-geth.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.metal-sepolia-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/metal-sepolia`)"                     
-      - "traefik.http.routers.metal-sepolia-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
+      - "traefik.http.routers.metal-sepolia-op-geth.middlewares=metal-sepolia-op-geth-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 

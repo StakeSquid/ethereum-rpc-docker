@@ -41,7 +41,7 @@ services:
       - "traefik.http.routers.base-sepolia-op-geth.entrypoints=websecure"                                              
       - "traefik.http.routers.base-sepolia-op-geth.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.base-sepolia-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/base-sepolia`)"                     
-      - "traefik.http.routers.base-sepolia-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
+      - "traefik.http.routers.base-sepolia-op-geth.middlewares=base-sepolia-op-geth-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 

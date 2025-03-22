@@ -41,7 +41,7 @@ services:
       - "traefik.http.routers.metal-mainnet-op-geth.entrypoints=websecure"                                              
       - "traefik.http.routers.metal-mainnet-op-geth.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.metal-mainnet-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/metal-mainnet`)"                     
-      - "traefik.http.routers.metal-mainnet-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
+      - "traefik.http.routers.metal-mainnet-op-geth.middlewares=metal-mainnet-op-geth-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 

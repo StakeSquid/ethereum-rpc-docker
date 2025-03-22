@@ -41,7 +41,7 @@ services:
       - "traefik.http.routers.worldchain-mainnet-op-geth.entrypoints=websecure"                                              
       - "traefik.http.routers.worldchain-mainnet-op-geth.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.worldchain-mainnet-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/worldchain-mainnet`)"                     
-      - "traefik.http.routers.worldchain-mainnet-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
+      - "traefik.http.routers.worldchain-mainnet-op-geth.middlewares=worldchain-mainnet-op-geth-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 

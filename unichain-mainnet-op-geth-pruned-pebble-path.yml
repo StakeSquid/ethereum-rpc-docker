@@ -41,7 +41,7 @@ services:
       - "traefik.http.routers.unichain-mainnet-op-geth.entrypoints=websecure"                                              
       - "traefik.http.routers.unichain-mainnet-op-geth.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.unichain-mainnet-op-geth.rule=Host(`$DOMAIN`) && PathPrefix(`/unichain-mainnet`)"                     
-      - "traefik.http.routers.unichain-mainnet-op-geth.middlewares=zora-stripprefix, ipwhitelist"                           
+      - "traefik.http.routers.unichain-mainnet-op-geth.middlewares=unichain-mainnet-op-geth-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
