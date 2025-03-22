@@ -23,7 +23,7 @@ services:
       - VERBOSITY=3
       - MINE=false
       - GASPRICE=20000000000
-      - ETHSTATS_ENDPOINT=${DOMAIN}:WSyDMrhRBe111@$ronin-stats-ws.roninchain.com:443
+      - ETHSTATS_ENDPOINT=${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.ronin-saigon-ronin-stripprefix.stripprefix.prefixes=/ronin-saigon"
