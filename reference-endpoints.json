@@ -1,0 +1,791 @@
+{
+  "alephzero": {
+    "archive": [
+      "arb-alephzero-mainnet"
+    ],
+    "default": [
+      "arb-alephzero-mainnet-pbss"
+    ],
+    "id": 41455,
+    "urls": [
+      "https://rpc.alephzero.raas.gelato.cloud"
+    ]
+  },
+  "alephzero-sepolia": {
+    "archive": [
+      "arb-alephzero-sepolia"
+    ],
+    "default": [
+      "arb-alephzero-sepolia-pbss"
+    ],
+    "id": 2039,
+    "urls": [
+      "https://rpc.alephzero-testnet.gelato.digital"
+    ]
+  },
+  "arbitrum": {
+    "archive": [
+      "arbitrum-one-nitro-archive"
+    ],
+    "default": [
+      "arbitrum-fullnode",
+      "arbitrum-fullnode-pebble"
+    ],
+    "id": 42161,
+    "urls": [
+      "https://arbitrum.drpc.org"
+    ]
+  },
+  "arbitrum-nova": {
+    "default": [
+      "arbitrum-nova-fullnode",
+      "arbitrum-nova-fullnode-pebble"
+    ],
+    "id": 42170,
+    "urls": [
+      "https://arbitrum-nova.public.blastapi.io"
+    ]
+  },
+  "arbitrum-sepolia": {
+    "archive": [
+      "arbitrum-sepolia-archive"
+    ],
+    "default": [
+      "arbitrum-sepolia-fullnode",
+      "arbitrum-sepolia-fullnode-pebble"
+    ],
+    "id": 421614,
+    "urls": [
+      "https://arbitrum-sepolia.drpc.org"
+    ]
+  },
+  "avalanche": {
+    "archive": [
+      "avalanche-mainnet-go-archive"
+    ],
+    "default": [
+      "avalanche-fullnode"
+    ],
+    "id": 43114,
+    "urls": [
+      "https://avax-pokt.nodies.app/ext/bc/C/rpc"
+    ]
+  },
+  "avalanche-fuji": {
+    "archive": [
+      "avalanche-fuji-archive"
+    ],
+    "default": [
+      "avalanche-fuji-fullnode"
+    ],
+    "id": 43113,
+    "urls": [
+      "https://api.zan.top/node/v1/avax/fuji/public/ext/bc/C/rpc"
+    ]
+  },
+  "bartio": {
+    "default": [
+      "berachain-artio"
+    ],
+    "id": 80084,
+    "urls": [
+      "https://bartio.rpc.berachain.com"
+    ]
+  },
+  "base": {
+    "archive": [
+      "base-reth",
+      "base-mainnet-op-erigon-archive-trace"
+    ],
+    "default": [
+      "base-fullnode",
+      "base-reth-fullnode"
+    ],
+    "id": 8453,
+    "urls": [
+      "https://mainnet.base.org"
+    ]
+  },
+  "base-sepolia": {
+    "default": [
+      "base-sepolia"
+    ],
+    "id": 84532,
+    "urls": [
+      "https://sepolia.base.org"
+    ]
+  },
+  "berachain-bepolia": {
+    "default": [
+      "berachain-bepolia"
+    ],
+    "id": 80069,
+    "urls": [
+      "https://bepolia.rpc.berachain.com"
+    ]
+  },
+  "blast": {
+    "archive": [
+      "op-blast-mainnet",
+      "blast-mainnet-geth-archive"
+    ],
+    "default": [
+      "op-blast-mainnet-fullnode",
+      "op-blast-mainnet-pbss"
+    ],
+    "id": 81457,
+    "urls": [
+      "https://rpc.blast.io"
+    ]
+  },
+  "blast-sepolia": {
+    "default": [
+      "op-blast-sepolia"
+    ],
+    "id": 168587773,
+    "urls": [
+      "https://sepolia.blast.io"
+    ]
+  },
+  "bob": {
+    "archive": [
+      "op-bob-mainnet-archive"
+    ],
+    "default": [
+      "op-bob-mainnet"
+    ],
+    "id": 60808,
+    "urls": [
+      "https://rpc-bob-mainnet-0.t.conduit.xyz"
+    ]
+  },
+  "boba-bnb": {
+    "default": [
+      "op-bobabnb",
+      "boba-bnb-mainnet-l2geth-archive"
+    ],
+    "id": 56288,
+    "urls": [
+      "https://replica.bnb.boba.network"
+    ]
+  },
+  "boba-eth": {
+    "default": [
+      "op-boba",
+      "boba-eth-mainnet-erigon-archive-trace"
+    ],
+    "id": 288,
+    "urls": [
+      "https://mainnet.boba.network"
+    ]
+  },
+  "bsc": {
+    "archive": [
+      "bsc-mainnet-erigon3-archive-trace"
+    ],
+    "default": [
+      "bsc",
+      "bsc-erigon-fullnode",
+      "reth-bsc-fullnode"
+    ],
+    "id": 56,
+    "urls": [
+      "https://binance.nodereal.io",
+      "https://bsc.drpc.org"
+    ]
+  },
+  "bsc-testnet": {
+    "default": [
+      "bsc-testnet"
+    ],
+    "id": 97,
+    "urls": [
+      "https://data-seed-prebsc-1-s3.bnbchain.org:8545"
+    ]
+  },
+  "celo": {
+    "archive": [
+      "celo-mainnet-geth-archive"
+    ],
+    "default": [
+      "celo-fullnode"
+    ],
+    "id": 42220,
+    "urls": [
+      "https://rpc.ankr.com/celo"
+    ]
+  },
+  "celo-alfajores": {
+    "default": [
+      "op-celo-alfajores-fullnode",
+      "celo-alfajores-fullnode"
+    ],
+    "id": 44787,
+    "urls": [
+      "https://alfajores-forno.celo-testnet.org"
+    ]
+  },
+  "core": {
+    "default": [
+      "core-mainnet"
+    ],
+    "id": 1116,
+    "urls": [
+      "https://rpc.coredao.org"
+    ]
+  },
+  "ethereum": {
+    "archive": [
+      "reth-mainnet",
+      "erigon-mainnet",
+      "ethereum-mainnet-erigon3-archive-trace",
+      "ethereum-mainnet-erigon-archive-trace"
+    ],
+    "default": [
+      "erigon-mainnet-minimal",
+      "erigon-fullnode",
+      "nethermind-mainnet",
+      "geth-mainnet",
+      "besu-fullnode",
+      "reth-mainnet-fullnode"
+    ],
+    "id": 1,
+    "urls": [
+      "https://eth.llamarpc.com"
+    ]
+  },
+  "everclear": {
+    "default": [
+      "arb-everclear-mainnet"
+    ],
+    "id": 25327,
+    "urls": [
+      "https://rpc.everclear.raas.gelato.cloud"
+    ]
+  },
+  "everclear-sepolia": {
+    "default": [
+      "arb-connext-sepolia"
+    ],
+    "id": 6398,
+    "urls": [
+      "https://rpc.connext-sepolia.gelato.digital"
+    ]
+  },
+  "fantom": {
+    "archive": [
+      "fantom-mainnet-opera-archive-trace"
+    ],
+    "default": [
+      "fantom"
+    ],
+    "id": 250,
+    "urls": [
+      "https://fantom-rpc.publicnode.com"
+    ]
+  },
+  "fantom-testnet": {
+    "default": [
+      "fantom-testnet"
+    ],
+    "id": 4002,
+    "urls": [
+      "https://rpc.testnet.fantom.network"
+    ]
+  },
+  "fuse": {
+    "default": [
+      "fuse"
+    ],
+    "id": 122,
+    "urls": [
+      "https://fuse-pokt.nodies.app"
+    ]
+  },
+  "gnosis": {
+    "archive": [
+      "erigon-gnosis",
+      "reth-gnosis",
+      "gnosis-mainnet-erigon3-archive-trace"
+    ],
+    "default": [
+      "erigon-gnosis-fullnode",
+      "nethermind-gnosis"
+    ],
+    "id": 100,
+    "urls": [
+      "https://gnosis-mainnet.public.blastapi.io"
+    ]
+  },
+  "gnosis-chiado": {
+    "archive": [
+      "erigon-gnosis-chiado"
+    ],
+    "default": [
+      "nethermind-gnosis-chiado"
+    ],
+    "id": 10200,
+    "urls": [
+      "https://rpc.chiadochain.net"
+    ]
+  },
+  "goat-mainnet-alpha": {
+    "default": [
+      "goat-mainnet"
+    ],
+    "id": 2345,
+    "urls": [
+      "https://rpc.goat.network"
+    ]
+  },
+  "goat-testnet3": {
+    "default": [
+      "goat-testnet"
+    ],
+    "id": 48816,
+    "urls": [
+      "https://rpc.testnet3.goat.network"
+    ]
+  },
+  "haqq": {
+    "default": [
+      "haqq"
+    ],
+    "id": 11235,
+    "urls": [
+      "https://evm.haqq.sh"
+    ]
+  },
+  "hashkey": {
+    "id": 117
+  },
+  "hashkey-testnet": {
+    "id": 113
+  },
+  "holesky": {
+    "archive": [
+      "ethereum-holesky-erigon3-archive-trace"
+    ],
+    "default": [
+      "geth-holesky"
+    ],
+    "id": 17000,
+    "urls": [
+      "https://holesky.drpc.org"
+    ]
+  },
+  "ink": {
+    "id": 57073
+  },
+  "ink-sepolia": {
+    "id": 763373
+  },
+  "linea": {
+    "archive": [
+      "geth-linea",
+      "erigon-linea",
+      "reth-linea",
+      "linea-mainnet-erigon-archive-trace"
+    ],
+    "default": [
+      "linea-besu"
+    ],
+    "id": 59144,
+    "urls": [
+      "https://rpc.linea.build"
+    ]
+  },
+  "linea-sepolia": {
+    "archive": [
+      "erigon-linea-sepolia"
+    ],
+    "id": 59141,
+    "urls": [
+      "https://rpc.sepoia.linea.build"
+    ]
+  },
+  "lisk-mainnet": {
+    "default": [
+      "op-lisk-mainnet",
+      "op-lisk-mnainnet-pebble"
+    ],
+    "id": 1135,
+    "urls": [
+      "https://rpc.api.lisk.com"
+    ]
+  },
+  "lisk-sepolia": {
+    "default": [
+      "op-lisk-sepolia"
+    ],
+    "id": 4202,
+    "urls": [
+      "https://rpc.sepolia-api.lisk.com"
+    ]
+  },
+  "manta-pacific": {
+    "default": [
+      "op-manta-pacific"
+    ],
+    "id": 169,
+    "urls": [
+      "https://manta-pacific-gascap.calderachain.xyz/http"
+    ]
+  },
+  "manta-pacific-sepolia": {
+    "default": [
+      "op-manta-pacific-sepolia"
+    ],
+    "id": 3441005,
+    "urls": [
+      "https://manta-testnet.calderachain.xyz/http"
+    ]
+  },
+  "mantle": {
+    "archive": [
+      "op-mantle"
+    ],
+    "default": [
+      "op-mantle-fullnode"
+    ],
+    "id": 5000,
+    "urls": [
+      "https://rpc.mantle.xyz"
+    ]
+  },
+  "metall2": {
+    "id": 1750
+  },
+  "metall2-testnet": {
+    "id": 1740
+  },
+  "metis": {
+    "archive": [
+      "metis-archive"
+    ],
+    "default": [
+      "metis"
+    ],
+    "id": 1088,
+    "urls": [
+      "https://andromeda.metis.io/?owner=1088"
+    ]
+  },
+  "mode": {
+    "default": [
+      "op-mode-mainnet",
+      "op-mode-mainnet-pbss"
+    ],
+    "id": 34443,
+    "urls": [
+      "https://mainnet.mode.network"
+    ]
+  },
+  "mode-testnet": {
+    "id": 919
+  },
+  "moonbeam": {
+    "archive": [
+      "moonbeam-archive-trace"
+    ],
+    "id": 1284,
+    "urls": [
+      "https://rpc.api.moonbeam.network"
+    ]
+  },
+  "opbnb": {
+    "archive": [
+      "op-bnb-reth"
+    ],
+    "default": [
+      "op-bnb",
+      "op-bnb-reth-fullnode"
+    ],
+    "id": 204,
+    "urls": [
+      "https://opbnb-mainnet-rpc.bnbchain.org"
+    ]
+  },
+  "opbnb-testnet": {
+    "default": [
+      "op-bnb-testnet"
+    ],
+    "id": 5611,
+    "urls": [
+      "https://opbnb-testnet-rpc.bnbchain.org"
+    ]
+  },
+  "open-campus-codex-sepolia": {
+    "default": [
+      "arb-opencampuscodex"
+    ],
+    "id": 656476,
+    "urls": [
+      "https://open-campus-codex-sepolia.drpc.org"
+    ]
+  },
+  "optimism": {
+    "archive": [
+      "optimism-reth"
+    ],
+    "default": [
+      "optimism-fullnode",
+      "optimism-reth-fullnode"
+    ],
+    "id": 10,
+    "urls": [
+      "https://mainnet.optimism.io"
+    ]
+  },
+  "optimism-sepolia": {
+    "id": 11155420
+  },
+  "playnance": {
+    "archive": [
+      "arb-playblock"
+    ],
+    "default": [
+      "arb-playblock-pbss"
+    ],
+    "id": 1829,
+    "urls": [
+      "https://rpc.playblock.io"
+    ]
+  },
+  "polygon": {
+    "archive": [
+      "polygon-erigon",
+      "polygon-mainnet-erigon3-archive-trace"
+    ],
+    "default": [
+      "polygon-erigon-fullnode"
+    ],
+    "id": 137,
+    "urls": [
+      "https://polygon-rpc.com"
+    ]
+  },
+  "polygon-amoy": {
+    "archive": [
+      "polygon-amoy-erigon-archive"
+    ],
+    "default": [
+      "polygon-amoy-erigon-fullnode"
+    ],
+    "id": 80002,
+    "urls": [
+      "https://rpc-amoy.polygon.technology/"
+    ]
+  },
+  "real": {
+    "default": [
+      "arb-real"
+    ],
+    "id": 111188,
+    "urls": [
+      "https://rpc.realforreal.gelato.digital"
+    ]
+  },
+  "ronin": {
+    "default": [
+      "ronin"
+    ],
+    "id": 2020,
+    "urls": [
+      "https://api.roninchain.com/rpc"
+    ]
+  },
+  "ronin-saigon": {
+    "id": 2021
+  },
+  "rootstock": {
+    "default": [
+      "rsk"
+    ],
+    "id": 30,
+    "urls": [
+      "https://public-node.rsk.co"
+    ]
+  },
+  "rootstock-testnet": {
+    "default": [
+      "rsk-testnet"
+    ],
+    "id": 31,
+    "urls": [
+      "https://public-node.testnet.rsk.co"
+    ]
+  },
+  "scroll": {
+    "archive": [
+      "scroll-mainnet",
+      "scroll-mainnet-l2geth-archive"
+    ],
+    "default": [
+      "scroll-mainnet"
+    ],
+    "id": 534352,
+    "urls": [
+      "https://rpc.scroll.io"
+    ]
+  },
+  "scroll-sepolia": {
+    "archive": [
+      "scroll-sepolia"
+    ],
+    "default": [
+      "scroll-sepolia"
+    ],
+    "id": 534351,
+    "urls": [
+      "https://sepolia-rpc.scroll.io"
+    ]
+  },
+  "sepolia": {
+    "default": [
+      "geth-sepolia",
+      "erigon-sepolia-minimal"
+    ],
+    "erchive": [
+      "reth-sepolia",
+      "erigon-sepolia",
+      "ethereum-sepolia-erigon3-archive-trace"
+    ],
+    "id": 11155111,
+    "urls": [
+      "https://sepolia.drpc.org"
+    ]
+  },
+  "snaxchain": {
+    "default": [
+      "op-snaxchain-fullnode"
+    ],
+    "id": 2192,
+    "urls": [
+      "https://mainnet.snaxchain.io"
+    ]
+  },
+  "sonic": {
+    "archive": [
+      "sonic"
+    ],
+    "id": 146,
+    "urls": [
+      "https://rpc.soniclabs.com"
+    ]
+  },
+  "swell": {
+    "id": 1923
+  },
+  "swell-testnet": {
+    "id": 1924
+  },
+  "taiko": {
+    "default": [
+      "taiko"
+    ],
+    "id": 167000,
+    "urls": [
+      "https://rpc.mainnet.taiko.xyz"
+    ]
+  },
+  "taiko-hekla": {
+    "default": [
+      "taiko-hekla"
+    ],
+    "id": 167009,
+    "urls": [
+      "https://rpc.hekla.taiko.xyz"
+    ]
+  },
+  "thundercore": {
+    "default": [
+      "thundercore"
+    ],
+    "id": 108,
+    "urls": [
+      "https://mainnet-rpc.thundercore.com"
+    ]
+  },
+  "tron": {
+    "default": [
+      "tron"
+    ],
+    "id": 728126428,
+    "urls": [
+      "https://api.trongrid.io/jsonrpc"
+    ]
+  },
+  "unichain": {
+    "id": 130
+  },
+  "unichain-sepolia": {
+    "id": 1301
+  },
+  "viction": {
+    "default": [
+      "viction"
+    ],
+    "id": 88,
+    "urls": [
+      "https://rpc.viction.xyz"
+    ]
+  },
+  "worldchain": {
+    "id": 480
+  },
+  "worldchain-sepolia": {
+    "id": 4801
+  },
+  "zircuit-mainnet": {
+    "default": [
+      "op-zircuit-mainnet"
+    ],
+    "id": 48900,
+    "urls": [
+      "https://zircuit1-mainnet.p2pify.com"
+    ]
+  },
+  "zircuit-testnet": {
+    "default": [
+      "op-zircuit-testnet"
+    ],
+    "id": 48899,
+    "urls": [
+      "https://zircuit1-testnet.p2pify.com"
+    ]
+  },
+  "zksync": {
+    "archive": [
+      "zksync-era-mainnet-external-node-archive"
+    ],
+    "default": [
+      "zksync-mainnet-fullnode"
+    ],
+    "id": 324,
+    "urls": [
+      "https://1rpc.io/zksync2-era"
+    ]
+  },
+  "zora": {
+    "archive": [
+      "op-zora-archive"
+    ],
+    "default": [
+      "op-zora-mainnet"
+    ],
+    "id": 7777777,
+    "urls": [
+      "https://rpc.zora.energy"
+    ]
+  },
+  "zora-sepolia": {
+    "default": [
+      "op-zora-sepolia"
+    ],
+    "id": 999999999,
+    "urls": [
+      "https://sepolia.rpc.zora.energy"
+    ]
+  }
+}
