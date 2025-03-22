@@ -17,7 +17,7 @@ services:
       - NETWORK_ID=2020
       - NETWORK_PORT=38198
       - WS_PORT=8545
-      - DB_ENGINE=pebbledb
+      - DB_ENGINE=pebble
       - STATE_SCHEME=hash      
       - RONIN_PARAMS=--port=38198 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com
       - VERBOSITY=3
