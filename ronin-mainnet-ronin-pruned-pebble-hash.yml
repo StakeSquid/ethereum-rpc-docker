@@ -1,0 +1,37 @@
+services:
+  
+  ronin-mainnet:
+    image: ghcr.io/ronin-chain/ronin:v1.0.2-eaef5a2
+    stop_grace_period: 5m
+    stop_signal: SIGINT
+    ports:
+      - 38198:38198
+      - 38198:38198/udp
+    networks:
+      - chains
+    volumes:
+      - ronin-mainnet-ronin-pruned-pebbledb-hash:/ronin
+    environment:
+      - SYNC_MODE=full
+      - PASSWORD=stupidpassword
+      - NETWORK_ID=2020
+      - NETWORK_PORT=38198
+      - WS_PORT=8545
+      - DB_ENGINE=pebbledb
+      - STATE_SCHEME=hash      
+      - RONIN_PARAMS=--port=38198 --http.api admin,eth,net,web3,consortium,txpool,debug --txpool.pricelimit 20000000000 --txpool.nolocals --discovery.dns enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com
+      - VERBOSITY=3
+      - MINE=false
+      - GASPRICE=20000000000
+      - ETHSTATS_ENDPOINT=${DOMAIN}:WSyDMrhRBe111@$ronin-stats-ws.roninchain.com:443
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ronin-mainnet-ronin-stripprefix.stripprefix.prefixes=/ronin-mainnet"
+      - "traefik.http.services.ronin-mainnet-ronin.loadbalancer.server.port=8545"
+      - "traefik.http.routers.ronin-mainnet-ronin.entrypoints=websecure"
+      - "traefik.http.routers.ronin-mainnet-ronin.tls.certresolver=myresolver"
+      - "traefik.http.routers.ronin-mainnet-ronin.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-mainnet`)"
+      - "traefik.http.routers.ronin-mainnet-ronin.middlewares=ronin-mainnet-ronin-stripprefix, ipwhitelist"
+      
+volumes:
+  ronin-mainnet-ronin-pruned-pebbledb-hash:
