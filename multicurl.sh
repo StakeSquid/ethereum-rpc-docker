@@ -47,6 +47,10 @@ for url in "${urls[@]}"; do
             continue  # Try the next URL
         fi
 
+	if [[ $output -ne 200 ]]; then
+	    continue
+	fi
+	
 	if [ -n "$original_output" ]; then
 	    #echo "$(cat $temp_file)"
 	    cat "$temp_file" > "$original_output"
