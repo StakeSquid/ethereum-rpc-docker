@@ -40,17 +40,13 @@ done
 output=""
 for url in "${urls[@]}"; do
     #echo "curl -s ${options[@]} $url"
-    output=$(eval "curl -s ${options[@]@Q} '$url'")
+    output=$(eval "curl -s ${options[@]@Q} '$url' --fail-with-body")
     if [[ $? -eq 0 ]]; then
 
         if cat "$temp_file" | jq -e 'has("error")' > /dev/null 2>&1; then
             continue  # Try the next URL
         fi
 
-	if [[ $output -ne 200 ]]; then
-	    continue
-	fi
-	
 	if [ -n "$original_output" ]; then
 	    #echo "$(cat $temp_file)"
 	    cat "$temp_file" > "$original_output"
