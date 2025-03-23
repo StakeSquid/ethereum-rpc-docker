@@ -1,7 +1,23 @@
 #!/bin/bash
 
-RPC_URL="$1"
-ref="$2"
+BASEPATH="$(dirname "$0")"
+
+if [ $# -lt 2 ]; then
+    echo "Error: At least two parameters are required."
+    exit 1
+fi
+
+RPC_URL=$1
+REF=""
+
+for url in "${@:2}"; do
+    REF+="--url $url "
+done
+
+# Optional: You can remove the trailing space if needed
+ref=${REF% }
+
+# echo "ref: $ref"
 
 timeout=5 # seconds
 
@@ -26,7 +42,7 @@ if [ $? -eq 0 ]; then
 
 	    sleep 3 # to give the reference node more time to import the block if it is very current
 	    
-            http_status_code2=$(curl --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file2" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$latest_block_number\", false],\"id\":1}" $ref)
+            http_status_code2=$($BASEPATH/multicurl.sh --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file2" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$latest_block_number\", false],\"id\":1}" $ref)
 
 	    curl_code2=$?
 	    
@@ -41,7 +57,7 @@ if [ $? -eq 0 ]; then
                         response_file3=$(mktemp)
 			status_file3=$(mktemp)
                         {
-			    curl --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file3" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}" $ref > "$status_file3"
+			    $BASEPATH/multicurl.sh --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file3" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}" $ref > "$status_file3"
 			} &			
 			pid3=$!
 
