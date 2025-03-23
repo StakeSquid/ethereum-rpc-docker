@@ -1,6 +1,6 @@
 services:
   erigon-sepolia-minimal:
-    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-beta1}
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0-beta2}
     user: root
     expose:
       - "16630"

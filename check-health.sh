@@ -66,6 +66,7 @@ if [ $? -eq 0 ]; then
 			rm "$status_file4"
 			
 			# echo "lets check"
+			
 			if [ $curl_code3 -eq 0 ]; then
                             if [[ $http_status_code3 -eq 200 ]]; then
                                 response3=$(cat "$response_file3")
