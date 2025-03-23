@@ -22,7 +22,7 @@ services:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=base-mainnet"
       - "GETH_GCMODE=archive"
-      - "GETH_SYNCMODE=full"
+      - "GETH_SYNCMODE=full"      
       - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=leveldb"
       - "GETH_NAT=extip:${IP}"

@@ -21,8 +21,8 @@ services:
     environment:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=metal-sepolia"
-      - "GETH_GCMODE="
-      - "GETH_SYNCMODE="
+      - "GETH_GCMODE=full"
+      - "GETH_SYNCMODE=snap"      
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
       - "GETH_NAT=extip:${IP}"
