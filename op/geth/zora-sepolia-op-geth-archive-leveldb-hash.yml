@@ -1,5 +1,5 @@
 services:
-  zora-sepolia:
+  zora-sepolia-archive:
     build:
       context: ./op
       args:
@@ -40,17 +40,17 @@ services:
       - "GETH_AUTHRPC_VHOSTS=*"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.zora-sepolia-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/zora-sepolia"                      
+      - "traefik.http.middlewares.zora-sepolia-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/zora-sepolia-archive"                      
       - "traefik.http.services.zora-sepolia-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545"
       - "traefik.http.routers.zora-sepolia-op-geth-archive-leveldb-hash.entrypoints=websecure"                                              
       - "traefik.http.routers.zora-sepolia-op-geth-archive-leveldb-hash.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.zora-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-sepolia`)"                     
+      - "traefik.http.routers.zora-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-sepolia-archive`)"                     
       - "traefik.http.routers.zora-sepolia-op-geth-archive-leveldb-hash.middlewares=zora-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  zora-sepolia-node:
+  zora-sepolia-archive-node:
     build:
       context: ./op
       args:
@@ -74,7 +74,7 @@ services:
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://zora-sepolia:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://zora-sepolia-archive:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"

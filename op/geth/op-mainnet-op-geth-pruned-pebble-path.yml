@@ -1,5 +1,5 @@
 services:
-  op-mainnet-pruned:
+  op-mainnet:
     build:
       context: ./op
       args:
@@ -40,17 +40,17 @@ services:
       - "GETH_AUTHRPC_VHOSTS=*"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.op-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/op-mainnet-pruned"                      
+      - "traefik.http.middlewares.op-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/op-mainnet"                      
       - "traefik.http.services.op-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
       - "traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
       - "traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/op-mainnet-pruned`)"                     
+      - "traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/op-mainnet`)"                     
       - "traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path.middlewares=op-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  op-mainnet-pruned-node:
+  op-mainnet-node:
     build:
       context: ./op
       args:
@@ -74,7 +74,7 @@ services:
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://op-mainnet-pruned:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://op-mainnet:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"

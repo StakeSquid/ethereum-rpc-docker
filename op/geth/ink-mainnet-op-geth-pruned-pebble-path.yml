@@ -1,5 +1,5 @@
 services:
-  ink-mainnet-pruned:
+  ink-mainnet:
     build:
       context: ./op
       args:
@@ -40,17 +40,17 @@ services:
       - "GETH_AUTHRPC_VHOSTS=*"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.ink-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ink-mainnet-pruned"                      
+      - "traefik.http.middlewares.ink-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ink-mainnet"                      
       - "traefik.http.services.ink-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
       - "traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
       - "traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/ink-mainnet-pruned`)"                     
+      - "traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/ink-mainnet`)"                     
       - "traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.middlewares=ink-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  ink-mainnet-pruned-node:
+  ink-mainnet-node:
     build:
       context: ./op
       args:
@@ -74,7 +74,7 @@ services:
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://ink-mainnet-pruned:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://ink-mainnet:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"

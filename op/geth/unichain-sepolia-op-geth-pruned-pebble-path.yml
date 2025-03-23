@@ -1,5 +1,5 @@
 services:
-  unichain-sepolia-pruned:
+  unichain-sepolia:
     build:
       context: ./op
       args:
@@ -40,17 +40,17 @@ services:
       - "GETH_AUTHRPC_VHOSTS=*"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.unichain-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/unichain-sepolia-pruned"                      
+      - "traefik.http.middlewares.unichain-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/unichain-sepolia"                      
       - "traefik.http.services.unichain-sepolia-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
       - "traefik.http.routers.unichain-sepolia-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
       - "traefik.http.routers.unichain-sepolia-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.unichain-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/unichain-sepolia-pruned`)"                     
+      - "traefik.http.routers.unichain-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/unichain-sepolia`)"                     
       - "traefik.http.routers.unichain-sepolia-op-geth-pruned-pebble-path.middlewares=unichain-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  unichain-sepolia-pruned-node:
+  unichain-sepolia-node:
     build:
       context: ./op
       args:
@@ -74,7 +74,7 @@ services:
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://unichain-sepolia-pruned:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://unichain-sepolia:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"

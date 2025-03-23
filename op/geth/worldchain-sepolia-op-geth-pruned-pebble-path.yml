@@ -1,5 +1,5 @@
 services:
-  worldchain-sepolia-pruned:
+  worldchain-sepolia:
     build:
       context: ./op
       args:
@@ -40,17 +40,17 @@ services:
       - "GETH_AUTHRPC_VHOSTS=*"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.worldchain-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/worldchain-sepolia-pruned"                      
+      - "traefik.http.middlewares.worldchain-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/worldchain-sepolia"                      
       - "traefik.http.services.worldchain-sepolia-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
       - "traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
       - "traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/worldchain-sepolia-pruned`)"                     
+      - "traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/worldchain-sepolia`)"                     
       - "traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path.middlewares=worldchain-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  worldchain-sepolia-pruned-node:
+  worldchain-sepolia-node:
     build:
       context: ./op
       args:
@@ -74,7 +74,7 @@ services:
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://worldchain-sepolia-pruned:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://worldchain-sepolia:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"

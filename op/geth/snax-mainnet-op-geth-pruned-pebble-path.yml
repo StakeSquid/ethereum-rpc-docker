@@ -1,5 +1,5 @@
 services:
-  snax-mainnet-pruned:
+  snax-mainnet:
     build:
       context: ./op
       args:
@@ -40,17 +40,17 @@ services:
       - "GETH_AUTHRPC_VHOSTS=*"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.snax-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/snax-mainnet-pruned"                      
+      - "traefik.http.middlewares.snax-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/snax-mainnet"                      
       - "traefik.http.services.snax-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
       - "traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
       - "traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/snax-mainnet-pruned`)"                     
+      - "traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/snax-mainnet`)"                     
       - "traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.middlewares=snax-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  snax-mainnet-pruned-node:
+  snax-mainnet-node:
     build:
       context: ./op
       args:
@@ -74,7 +74,7 @@ services:
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://snax-mainnet-pruned:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://snax-mainnet:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"
