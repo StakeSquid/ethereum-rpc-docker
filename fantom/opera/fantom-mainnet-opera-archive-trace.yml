@@ -1,0 +1,34 @@
+services:
+  fantom-archive-trace:
+    build:
+      args:
+        VERSION: release/txtracing/1.1.3-rc.5
+      context: ./fantom
+    stop_grace_period: 3m
+    environment:
+      - CACHE_SIZE=${FANTOM_ARCHIVE_TRACE_CACHE_SIZE:-16000}
+      - IP=${IP}
+    volumes:
+      - "${FANTOM_MAINNET_OPERA_ARCHIVE_TRACE_DATA:-fantom-mainnet-opera-archive-trace}:/datadir"
+      - "./fantom/config:/config"
+    expose:
+      - "18544"
+      - "19921"
+    ports:
+      - "19921:19921"
+      - "19921:19921/udp"
+    networks:
+      - chains
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.fantom-mainnet-opera-archive-trace-stripprefix.stripprefix.prefixes=/fantom-archive-trace"
+      - "traefik.http.services.fantom-mainnet-opera-archive-trace.loadbalancer.server.port=18544"
+      - "${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-archive-trace.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-archive-trace`)}"
+      - "${NO_SSL:+traefik.http.routers.fantom-mainnet-opera-archive-trace.rule=PathPrefix(`/fantom-archive-trace`)}"      
+      - "traefik.http.routers.fantom-mainnet-opera-archive-trace.middlewares=fantom-mainnet-opera-archive-trace-stripprefix, ipwhitelist"
+
+volumes:
+  fantom-mainnet-opera-archive-trace:
