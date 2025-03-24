@@ -19,7 +19,7 @@ ref=${REF% }
 
 # echo "ref: $ref"
 
-timeout=1 # seconds
+timeout=3 # seconds
 
 response_file=$(mktemp)
 
