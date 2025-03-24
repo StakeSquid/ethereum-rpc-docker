@@ -1,4 +1,3 @@
-version: "3.1"
 services:
   fantom-testnet:
     build:
@@ -10,7 +9,7 @@ services:
     environment:
       - CACHE_SIZE=${FANTOM_CACHE_SIZE:-16000}
     volumes:
-      - "fantom-testnet:/datadir"
+      - "fantom-testnet-opera-pruned-traces:/datadir"
     expose:
       - "18544"
       - "44629"
@@ -22,12 +21,12 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.fantom-testnet-stripprefix.stripprefix.prefixes=/fantom-testnet"
-      - "traefik.http.services.fantom-testnet.loadbalancer.server.port=18544"
-      - "traefik.http.routers.fantom-testnet.entrypoints=websecure"
-      - "traefik.http.routers.fantom-testnet.tls.certresolver=myresolver"
-      - "traefik.http.routers.fantom-testnet.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-testnet`)"
-      - "traefik.http.routers.fantom-testnet.middlewares=fantom-testnet-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.fantom-testnet-opera-pruned-traces-stripprefix.stripprefix.prefixes=/fantom-testnet"
+      - "traefik.http.services.fantom-testnet-opera-pruned-traces.loadbalancer.server.port=18544"
+      - "traefik.http.routers.fantom-testnet-opera-pruned-traces.entrypoints=websecure"
+      - "traefik.http.routers.fantom-testnet-opera-pruned-traces.tls.certresolver=myresolver"
+      - "traefik.http.routers.fantom-testnet-opera-pruned-traces.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-testnet`)"
+      - "traefik.http.routers.fantom-testnet-opera-pruned-traces.middlewares=fantom-testnet-opera-pruned-traces-stripprefix, ipwhitelist"
 
 volumes:
-  fantom-testnet:
+  fantom-testnet-opera-pruned-traces:
