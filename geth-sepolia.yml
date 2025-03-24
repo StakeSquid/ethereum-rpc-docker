@@ -20,13 +20,13 @@ services:
         "--cache=8192",
         # Enable the WS-RPC server         
         "--ws",
-        "--ws.api=eth,net,web3,personal,txpool",        
+        "--ws.api=eth,net,debug,web3,personal,txpool",        
         "--ws.port=8545",
         "--ws.addr=0.0.0.0",
         "--ws.origins=*",
         # Enable the HTTP-RPC server      
         "--http",
-        "--http.api=eth,net,web3,personal,txpool",
+        "--http.api=eth,net,debug,admin,web3,personal,txpool",
         "--http.port=8545",
         "--http.addr=0.0.0.0",                     
         "--http.vhosts=*",                         
