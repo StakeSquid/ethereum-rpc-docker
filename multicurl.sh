@@ -40,7 +40,7 @@ done
 output=""
 for url in "${urls[@]}"; do
     #echo "curl -s ${options[@]} $url"
-    output=$(eval "curl -s ${options[@]@Q} '$url' --fail-with-body")
+    output=$(eval "curl -s ${options[@]@Q} '$url' --fail")
     if [[ $? -eq 0 ]]; then
 
         if cat "$temp_file" | jq -e 'has("error")' > /dev/null 2>&1; then
