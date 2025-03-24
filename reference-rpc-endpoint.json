@@ -539,11 +539,7 @@
   "ronin-saigon": {
     "id": 2021,
     "urls": [
-      "https://edgeware-evm.jelliedowl.net",
-      "https://edgeware-evm0.jelliedowl.net",
-      "https://edgeware-evm1.jelliedowl.net",
-      "https://edgeware-evm2.jelliedowl.net",
-      "https://edgeware-evm3.jelliedowl.net"
+      "https://ronin-testnet.gateway.tenderly.co"
     ]
   },
   "alephzero-sepolia": {
