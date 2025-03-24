@@ -1,6 +1,17 @@
 #!/bin/bash
 
-request="{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"${2:-latest}\",false],\"id\":1}" 
+is_decimal() {
+  [[ $1 =~ ^[0-9]+$ ]]
+}
+
+block_input=${2:-latest}
+
+if is_decimal "$block_input"; then
+  # Convert decimal to hexadecimal
+  block_input=$(printf "%x" "$block_input")
+fi
+
+request="{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"${block_input}\",false],\"id\":1}" 
 
 echo "${request}"
 
