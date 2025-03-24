@@ -32,6 +32,7 @@ exec opera \
     --ws.port=18544 \
     --ws.api=ftm,eth,debug,admin,web3,personal,net,txpool \
     --ws.origins="*" \
+    --nat=extip:${IP} \
     --nousb \
     --db.migration.mode reformat \
     --db.preset pbl-1 \

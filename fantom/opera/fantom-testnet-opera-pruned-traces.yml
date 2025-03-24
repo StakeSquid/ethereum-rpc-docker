@@ -8,6 +8,7 @@ services:
     stop_grace_period: 3m
     environment:
       - CACHE_SIZE=${FANTOM_CACHE_SIZE:-16000}
+      - IP=${IP}
     volumes:
       - "fantom-testnet-opera-pruned-traces:/datadir"
     expose:
