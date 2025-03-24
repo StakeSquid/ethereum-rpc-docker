@@ -8,7 +8,7 @@ block_input=${2:-latest}
 
 if is_decimal "$block_input"; then
   # Convert decimal to hexadecimal
-  block_input=$(printf "%x" "$block_input")
+  block_input="0x$(printf "%x" "$block_input")"
 fi
 
 request="{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"${block_input}\",false],\"id\":1}" 
