@@ -60,13 +60,8 @@ services:
         "--p2p-udp-port=15710",
         "--checkpoint-sync-url=https://sepolia.beaconstate.info",
         "--execution-endpoint=http://ethereum-sepolia:8551",
-        "--prune-every=50",
-        "--prune-threshold=0.2",
-        "--slots-per-archive-point=1024",
         "--enable-historical-state-representation=false",
-        "--disable-batch-builder",
-        "--minimum-peers=10",
-        "--prune-block-roots",
+        "--beacon-db-pruning",
         "--accept-terms-of-use"
       ]                                                                                               
     networks:                            
