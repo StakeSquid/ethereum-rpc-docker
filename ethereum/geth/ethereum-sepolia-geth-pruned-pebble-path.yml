@@ -66,9 +66,11 @@ services:
       ]                                                                                               
     networks:                            
       - chains                                                                                        
-    volumes:                                                                                          
+    volumes:
+      - "ethereum-sepolia-geth-pruned-pebble-path_prysm:/data"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
 
 volumes:
   ethereum-sepolia-geth-pruned-pebble-path:
+  ethereum-sepolia-geth-pruned-pebble-path_prysm:

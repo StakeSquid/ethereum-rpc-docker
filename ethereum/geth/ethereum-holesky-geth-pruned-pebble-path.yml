@@ -66,9 +66,11 @@ services:
       ]                                                                                               
     networks:                            
       - chains                                                                                        
-    volumes:                                                                                          
+    volumes:
+      - "ethereum-holesky-geth-pruned-pebble-path_prysm:/data"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
 
 volumes:
   ethereum-holesky-geth-pruned-pebble-path:
+  ethereum-holesky-geth-pruned-pebble-path_prysm:

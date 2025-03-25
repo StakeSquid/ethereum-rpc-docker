@@ -66,9 +66,11 @@ services:
       ]                                                                                               
     networks:                            
       - chains                                                                                        
-    volumes:                                                                                          
+    volumes:
+      - "ethereum-mainnet-geth-pruned-pebble-path_prysm:/data"
       - ".jwtsecret:/jwtsecret"
     restart: unless-stopped
 
 volumes:
   ethereum-mainnet-geth-pruned-pebble-path:
+  ethereum-mainnet-geth-pruned-pebble-path_prysm:
