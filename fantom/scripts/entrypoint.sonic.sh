@@ -20,4 +20,7 @@ else
     echo "Sonic is already initialized."
 fi
 
-exec sonicd --cache "${CACHE_GB}000" --datadir "$datadir" "$@"
+echo "Generating new Geth node key..."
+openssl rand 32 | xxd -p -c 32 | tr -d '\n' > "$datadir/nodekey"
+
+exec sonicd --nodekey "$datadir/nodekey" --cache "${CACHE_GB}000" --datadir "$datadir" "$@"
