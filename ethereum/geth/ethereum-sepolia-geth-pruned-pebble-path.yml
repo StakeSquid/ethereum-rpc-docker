@@ -1,0 +1,79 @@
+services:
+  ethereum-sepolia:                         
+    image: ethereum/client-go:${GETH_VERSION:-v1.15.5}
+    expose: 
+      - 8545
+      - 8551
+    ports:                      
+      - "10710:10710"                                                                                 
+      - "10710:10710/udp"
+    environment:
+      - "GETH_DATADIR=/data"
+      - "GETH_SEPOLIA=true"
+      - "GETH_GCMODE=full"
+      - "GETH_SYNCMODE=snap"      
+      - "GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
+      - "GETH_NAT=extip:${IP}"
+      - "GETH_PORT=19809"
+      - "GETH_WS_PORT=8545"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_VHOSTS=*"
+      - "GETH_WS=true"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_ORIGINS=*"
+      - "GETH_HTTP_API=eth,net,debug,admin,web3"
+      - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
+      - "GETH_AUTHRPC_ADDR=0.0.0.0"
+      - "GETH_AUTHRPC_VHOSTS=*"
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "ethereum-sepolia-geth-pruned-pebble-path:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ethereum-sepolia-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-sepolia"                  
+      - "traefik.http.services.ethereum-sepolia-geth-pruned-pebble-path.loadbalancer.server.port=8545"                                 
+      - "traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.entrypoints=websecure"                                          
+      - "traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.tls.certresolver=myresolver"                                    
+      - "traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia`)"                 
+      - "traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.middlewares=ethereum-sepolia-geth-pruned-pebble-path-stripprefix, ipwhitelist"
+
+  ethereum-sepolia-node:
+    image: prysmaticlabs/prysm-beacon-chain:${PRYSM_VERSION:-v5.3.1}
+    ports:
+      - "15710:15710"
+      - "15710:15710/udp"
+    command:
+      [
+        "--sepolia",
+        "--datadir=/data",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--p2p-tcp-port=15710",
+        "--p2p-udp-port=15710",
+        "--checkpoint-sync-url=https://sepolia.beaconstate.info",
+        "--execution-endpoint=http://ethereum-sepolia:8551",
+        "--prune-every=50",
+        "--prune-threshold=0.2",
+        "--slots-per-archive-point=1024",
+        "--enable-historical-state-representation=false",
+        "--disable-batch-builder",
+        "--minimum-peers=10",
+        "--prune-block-roots",
+        "--accept-terms-of-use"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+
+volumes:
+  ethereum-sepolia-geth-pruned-pebble-path:
