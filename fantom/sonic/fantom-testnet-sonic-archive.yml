@@ -1,0 +1,51 @@
+services:
+  fantom-testnet-archive:
+    build:
+      context: ./fantom
+      dockerfile: Dockerfile.sonic
+      args:
+        VERSION: "${FANTOM_SONIC_VERSION:-v1.2.1-h}"
+        REPO: "https://github.com/Fantom-foundation/sonic.git"
+    stop_grace_period: 3m
+    volumes:
+      - "fantom-testnet-sonic-archive:/var/sonic"
+    expose:
+      - "8545"
+    ports:
+      - "10652:10652"
+      - "10652:10652/udp"
+    networks:
+      - chains
+    environment:
+      - "IP=${IP}"
+      - "GENESIS=https://download.fantom.network/opera/testnet/testnet-26650-rpc.g"
+      - "CACHE_GB=${FANTOM_TESTNET_SONIC_CACHE_GB:-28}"
+    restart: unless-stopped
+    command: >
+      --port=10652
+      --nat=extip:${IP}
+      --maxpeers=200
+      --http
+      --http.addr=0.0.0.0
+      --http.port=8545
+      --http.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm
+      --http.corsdomain="*"
+      --http.vhosts="*"
+      --ws
+      --ws.addr=0.0.0.0
+      --ws.port=8545
+      --ws.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm
+      --ws.origins="*"
+      --rpc.gascap=600000000
+      
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.fantom-testnet-sonic-archive-stripprefix.stripprefix.prefixes=/fantom-testnet-archive"
+      - "traefik.http.services.fantom-testnet-sonic-archive.loadbalancer.server.port=18544"
+      - "traefik.http.routers.fantom-testnet-sonic-archive.entrypoints=websecure"
+      - "traefik.http.routers.fantom-testnet-sonic-archive.tls.certresolver=myresolver"
+      - "traefik.http.routers.fantom-testnet-sonic-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-testnet-archive`)"
+      - "traefik.http.routers.fantom-testnet-sonic-archive.middlewares=fantom-testnet-sonic-archive-stripprefix, ipwhitelist"
+
+volumes:
+  fantom-testnet-sonic-archive:
