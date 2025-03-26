@@ -1,8 +1,8 @@
 services:
-  celo-mainnet:
+  celo-mainnet-archive:
     image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:celo-v2.0.0
     volumes:
-      - "celo-mainnet-op-geth-pruned-leveldb-hash:/datadir"
+      - "celo-mainnet-op-geth-archive-leveldb-hash:/datadir"
       - ".jwtsecret:/jwtsecret"
       - "./celo/mainnet/:/chainconfig"
     ports:
@@ -48,18 +48,18 @@ services:
       --rollup.historicalrpc=${OP_GETH_HISTORICAL_RPC:-https://sequencer.alfajores.celo-testnet.org}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.celo-mainnet-op-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-mainnet"
-      - "traefik.http.services.celo-mainnet-op-geth-pruned-leveldb-hash.loadbalancer.server.port=8545"
-      - "traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash.entrypoints=websecure"
-      - "traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash.tls.certresolver=myresolver"
-      - "traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-mainnet`)"
-      - "traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash.middlewares=celo-mainnet-op-geth-pruned-leveldb-hash-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.celo-mainnet-op-geth-archive-stripprefix.stripprefix.prefixes=/celo-mainnet-archive"
+      - "traefik.http.services.celo-mainnet-op-geth-archive.loadbalancer.server.port=8545"
+      - "traefik.http.routers.celo-mainnet-op-geth-archive.entrypoints=websecure"
+      - "traefik.http.routers.celo-mainnet-op-geth-archive.tls.certresolver=myresolver"
+      - "traefik.http.routers.celo-mainnet-op-geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-mainnet-archive`)"
+      - "traefik.http.routers.celo-mainnet-op-geth-archive.middlewares=celo-mainnet-op-geth-archive-stripprefix, ipwhitelist"
     
 
-  celo-mainnet-node:
+  celo-mainnet-archive-node:
     image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node:celo-v2.0.0
     depends_on:
-      - celo-mainnet
+      - celo-mainnet-archive
     expose:
       - 8545     # RPC
       - 63509     # P2P TCP
@@ -84,7 +84,7 @@ services:
     command: >
       op-node
       --l1="${CELO_L1_ETHEREUM_MAINNET_EXECUTION_RPC:-https://eth.llamarpc.com}"
-      --l2=http://celo-mainnet:8551
+      --l2=http://celo-mainnet-archive:8551
       --rpc.addr=0.0.0.0
       --rpc.port=9545
       --l1.trustrpc
@@ -101,7 +101,7 @@ services:
       - ./celo/alfajores/:/chainconfigs/
     stop_grace_period: 30s
 
-  celo-mainnet-key-generator:
+  celo-mainnet-archive-key-generator:
     image: ghcr.io/foundry-rs/foundry
     volumes:
       - "./celo/mainnet:/config"
@@ -110,6 +110,6 @@ services:
 
     
 volumes:
-  celo-mainnet-op-geth-pruned-leveldb-hash::
+  celo-mainnet-op-geth-archive-leveldb-hash::
 
     
