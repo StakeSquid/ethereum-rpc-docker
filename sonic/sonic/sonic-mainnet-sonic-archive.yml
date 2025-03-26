@@ -4,7 +4,7 @@ services:
       context: ./sonic
       dockerfile: Dockerfile.sonic
       args:
-        VERSION: "${SONIC_SONIC_VERSION:-v2.0.3}"
+        VERSION: "${SONIC_SONIC_VERSION:-None}"
         REPO: "https://github.com/0xsoniclabs/sonic.git"
     stop_grace_period: 3m
     volumes:

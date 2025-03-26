@@ -4,7 +4,7 @@ services:
       context: ./fantom
       dockerfile: Dockerfile.opera
       args:
-        VERSION: "${FANTOM_OPERA_VERSION:-v1.1.3-rc.5}"
+        VERSION: "${FANTOM_OPERA_VERSION:-None}"
         REPO: "https://github.com/Fantom-foundation/go-opera.git"
     stop_grace_period: 3m
     volumes:
@@ -38,7 +38,7 @@ services:
       --rpc.gascap=600000000
       --db.migration.mode reformat
       --db.preset pbl-1
-      --syncmode=full
+      --syncmode full
       --cache=${FANTOM_TESTNET_OPERA_ARCHIVE_CACHE_MB:-16000}
             
       --bootnodes=enode://2411cdad2780bf969c0bd6f19b53ac6683710d50f19a7604248d8a6a810d3d6369dffb08535530095c151ecad143393e4fbca2d11f62377fe15b3df4d9883053@34.172.30.235:5050,enode://6f434dc43f826f7c3c817ba7fbe7842aa47c50d1e77a6b57ec51313fd88c7f006240baa105b795712922a05e1b548d413ea6d32d8c1c8feb9ffc206a6c9e37ce@34.55.131.153:5050,enode://64e69ec1f30be48aa8d5f3e6cadf15d06d846d40918f3906e6efbc4a3421f0cc04e3e4f88569b5c90306bbc16ca15df6898ad71b8a73aa36284f1c3076f2956e@35.195.64.211:5050,enode://a76d94105f12d3fb5c31df5a59448d95b723d94543620a02f72ee990e048c43df940f4969ab06d436ef8976c49ec9c2a671c2f5af8d93af911cef63de329a8b8@35.239.100.93:5050,enode://baea3b72d091cb361283af4933da32406d707d3bb077a42c77a58cf98e27b546da837e6e9524d8588f414e1886a3b17e036b86fd2d723170db93831a22324252@35.241.219.197:5050,enode://544f06ceaddcf508a13326d95518a524e14f4980723c9dc5cb8560635a7faa7f8f91483faed19dacd7d251abf72b4a1b0bcacaced1255deb93414d097221a9bc@35.224.88.189:5050,enode://baea3b72d091cb361283af4933da32406d707d3bb077a42c77a58cf98e27b546da837e6e9524d8588f414e1886a3b17e036b86fd2d723170db93831a22324252@35.241.219.197:5050,enode://2cd3fcfe9671d81c0e8bb76bc81a430882ce5d99199c20a004da97bec48e9b03c02c3b6d95edb77498ce2dd8e090c4ce76349e775af7540b04a6e9303e5b69cd@104.155.31.23:5050

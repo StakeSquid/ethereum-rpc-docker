@@ -14,8 +14,8 @@ services:
       - 8545
       - 6060       
     ports:
-      - ":"
-      - ":/udp"
+      - "10257:10257"
+      - "10257:10257/udp"
     entrypoint: [ "./geth" ]
     restart: unless-stopped
     stop_grace_period: 3m    
@@ -30,7 +30,7 @@ services:
       - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=leveldb"
       - "GETH_NAT=extip:${IP}"
-      - "GETH_PORT="
+      - "GETH_PORT=10257"
       - "GETH_WS_PORT=8545"
       - "GETH_HTTP=true"
       - "GETH_HTTP_ADDR=0.0.0.0"
@@ -43,6 +43,8 @@ services:
       - "GETH_AUTHRPC_ADDR=0.0.0.0"
       - "GETH_AUTHRPC_VHOSTS=*"
       
+      
+            
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.op-sepolia-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/op-sepolia-archive"                      
@@ -98,6 +100,8 @@ services:
       - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}"
       - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}"
+      
+                  
       - "OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400"
     networks:                                                                                         
       - chains

@@ -1,3 +1,5 @@
+
+
 services:
   ethereum-holesky:                         
     image: ethereum/client-go:${GETH_VERSION:-v1.15.5}
@@ -58,7 +60,7 @@ services:
         "--monitoring-host=0.0.0.0",
         "--p2p-tcp-port=15993",
         "--p2p-udp-port=15993",
-        "--checkpoint-sync-url=https://holesky.beaconstate.info",
+        "--checkpoint-sync-url=",
         "--execution-endpoint=http://ethereum-holesky:8551",
         "--enable-historical-state-representation=false",
         "--beacon-db-pruning",

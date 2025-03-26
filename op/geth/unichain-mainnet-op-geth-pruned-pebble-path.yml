@@ -14,8 +14,8 @@ services:
       - 8545
       - 6060       
     ports:
-      - ":"
-      - ":/udp"
+      - "10954:10954"
+      - "10954:10954/udp"
     entrypoint: [ "./geth" ]
     restart: unless-stopped
     stop_grace_period: 3m    
@@ -30,7 +30,7 @@ services:
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
       - "GETH_NAT=extip:${IP}"
-      - "GETH_PORT="
+      - "GETH_PORT=10954"
       - "GETH_WS_PORT=8545"
       - "GETH_HTTP=true"
       - "GETH_HTTP_ADDR=0.0.0.0"
@@ -43,6 +43,8 @@ services:
       - "GETH_AUTHRPC_ADDR=0.0.0.0"
       - "GETH_AUTHRPC_VHOSTS=*"
       
+      
+            
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.unichain-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/unichain-mainnet"                      
@@ -98,6 +100,8 @@ services:
       - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
       - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"
+      
+                  
       
     networks:                                                                                         
       - chains

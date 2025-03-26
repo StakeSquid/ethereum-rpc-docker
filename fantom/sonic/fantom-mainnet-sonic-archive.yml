@@ -4,7 +4,7 @@ services:
       context: ./fantom
       dockerfile: Dockerfile.sonic
       args:
-        VERSION: "${FANTOM_SONIC_VERSION:-v1.2.1-h}"
+        VERSION: "${FANTOM_SONIC_VERSION:-None}"
         REPO: "https://github.com/Fantom-foundation/sonic.git"
     stop_grace_period: 3m
     volumes:
