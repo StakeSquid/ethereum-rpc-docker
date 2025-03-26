@@ -2,26 +2,24 @@
 
 services:
   ink-mainnet:
-    build:
-      context: ./op
-      args:
-         GETH_REPO: https://github.com/ethereum-optimism/op-geth.git
-         OP_REPO: https://github.com/ethereum-optimism/optimism.git         
-         OP_VERSION: v1.12.2
-         GETH_VERSION: v1.101503.1
-         
+    
+    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:None    
+    
     expose:
       - 8545
       - 6060       
     ports:
       - "10271:10271"
       - "10271:10271/udp"
-    entrypoint: [ "./geth" ]
+    entrypoint: /bin/sh
+    
+    command: -c "/usr/local/bin/geth --rollup.disabletxpoolgossip=true"
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
       - ink-mainnet-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret
+                  
     environment:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=ink-mainnet"
@@ -44,7 +42,8 @@ services:
       - "GETH_AUTHRPC_VHOSTS=*"
       
       
-            
+      
+                  
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.ink-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ink-mainnet"                      
@@ -58,14 +57,9 @@ services:
 
       
   ink-mainnet-node:
-    build:
-      context: ./op
-      args:
-         GETH_REPO: https://github.com/ethereum-optimism/op-geth.git
-         OP_REPO: https://github.com/ethereum-optimism/optimism.git         
-         OP_VERSION: v1.12.2
-         GETH_VERSION: v1.101503.1
-         
+    
+    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:None
+    
     expose:
       - 8545
       - 7300
@@ -77,9 +71,10 @@ services:
     restart: unless-stopped
     volumes:
       - .jwtsecret:/jwtsecret
+            
     stop_grace_period: 30s
     environment:
-      - "OP_NODE_NETWORK=ink-mainnet"
+      - OP_NODE_NETWORK={{ service_name }}
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
@@ -101,7 +96,8 @@ services:
       - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
       - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"
       
-                  
+      
+                        
       
     networks:                                                                                         
       - chains
