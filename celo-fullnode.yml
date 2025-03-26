@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   celo:
-    image: us.gcr.io/celo-org/geth:1.8
+    image: us.gcr.io/celo-org/geth:1.8.9
     restart: unless-stopped
     stop_grace_period: 3m
     command: |
