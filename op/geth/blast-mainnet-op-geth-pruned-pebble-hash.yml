@@ -1,0 +1,106 @@
+
+
+services:
+  blast-mainnet:
+    
+    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.1.0-mainnet    
+    
+    expose:
+      - 8545
+      - 6060       
+    ports:
+      - "10555:10555"
+      - "10555:10555/udp"
+    entrypoint: /bin/sh
+    command: -c "[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json || /usr/local/bin/geth --rollup.disabletxpoolgossip=true"
+    
+    restart: unless-stopped
+    stop_grace_period: 3m    
+    volumes:
+      - blast-mainnet-op-geth-pruned-pebble-hash:/data
+      - .jwtsecret:/jwtsecret
+      - ./blast-io/mainnet:/config            
+    environment:
+      - "GETH_DATADIR=/data"
+      - "GETH_OP_NETWORK=blast-mainnet"
+      - "GETH_GCMODE=full"
+      - "GETH_SYNCMODE=full"      
+      - "GETH_STATE_SCHEME=hash"
+      - "GETH_DB_ENGINE=pebble"
+      - "GETH_NAT=extip:${IP}"
+      - "GETH_PORT=10555"
+      - "GETH_WS_PORT=8545"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_VHOSTS=*"
+      - "GETH_WS=true"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_ORIGINS=*"
+      - "GETH_HTTP_API=eth,net,debug,admin,web3"
+      - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
+      - "GETH_AUTHRPC_ADDR=0.0.0.0"
+      - "GETH_AUTHRPC_VHOSTS=*"
+      - "GETH_ROLLUP_SEQUENCERHTTP=https://sequencer.blast.io"
+      
+      
+                  
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.blast-mainnet-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/blast-mainnet"                      
+      - "traefik.http.services.blast-mainnet-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545"
+      - "traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-hash.entrypoints=websecure"                                              
+      - "traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-hash.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-mainnet`)"                     
+      - "traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-hash.middlewares=blast-mainnet-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+      
+  blast-mainnet-node:
+    
+    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.0-mainnet
+    
+    expose:
+      - 8545
+      - 7300
+      - 6060
+    ports:
+      - "15555:15555"
+      - "15555:15555/udp"
+    entrypoint: [ "./op-node" ]
+    restart: unless-stopped
+    volumes:
+      - .jwtsecret:/jwtsecret
+      - ./blast-io/mainnet:/config      
+    stop_grace_period: 30s
+    environment:
+      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
+      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_ENGINE_RPC=http://blast-mainnet:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15555"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15555"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"
+      
+      
+                        
+      
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+  blast-mainnet-op-geth-pruned-pebble-hash:
