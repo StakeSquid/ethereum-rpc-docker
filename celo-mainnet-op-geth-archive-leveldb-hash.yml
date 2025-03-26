@@ -33,7 +33,7 @@ services:
       --ws.origins="*"
       --ws.api=debug,eth,txpool,net,engine,web3
       --syncmode="full"
-      --gcmode="full"
+      --gcmode="archive"
       --authrpc.vhosts="*"
       --authrpc.addr=0.0.0.0
       --authrpc.port=8551
