@@ -99,7 +99,7 @@ services:
     restart: always
     volumes:
       - .jwtsecret:/jwtsecret
-      - ./celo/alfajores/:/chainconfigs/
+      - ./celo/mainnet/:/chainconfigs/
     stop_grace_period: 30s
 
   celo-mainnet-eigenda-proxy:
