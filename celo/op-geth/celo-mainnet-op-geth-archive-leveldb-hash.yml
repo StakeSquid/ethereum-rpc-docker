@@ -2,7 +2,7 @@ services:
   celo-mainnet-archive:
     image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:${CELO_L2_VERSION:-celo-v2.0.0}
     volumes:
-      - "celo-mainnet-op-geth-archive-leveldb-hash:/datadir"
+      - "${CELO_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-celo-mainnet-op-geth-archive-leveldb-hash}:/datadir"
       - ".jwtsecret:/shared/jwt.txt"
       - "./celo/mainnet/:/chainconfig"
       - "./celo/scripts/:/scripts"
@@ -96,7 +96,7 @@ services:
       - EIGENDA_LOCAL_SVC_MANAGER_ADDR=0x870679e138bcdf293b7ff14dd44b70fc97e12fc0
       - OP_NODE__RPC_ENDPOINT=${ETHEREUM_MAINNET_EXECUTION_RPC}
     volumes:
-      - celo-mainnet-op-geth-archive-leveldb-hash_eigenda:/data
+      - ${CELO_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_DATA:-celo-mainnet-op-geth-archive-leveldb-hash_eigenda}:/data
       - ./celo/scripts:/scripts
     
   celo-mainnet-archive-key-generator:
