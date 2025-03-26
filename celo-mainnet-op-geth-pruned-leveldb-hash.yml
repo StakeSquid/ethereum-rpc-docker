@@ -45,7 +45,7 @@ services:
       --snapshot=true
       --verbosity=3
       --history.transactions=0
-      --rollup.historicalrpc=${CELO_HISTORICAL_MAINNET_RPC:-https://cel2-sequencer.celo.org}      
+      --rollup.historicalrpc=${CELO_HISTORICAL_MAINNET_RPC:-http://celo-mainnet-geth:8545}
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.celo-mainnet-op-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-mainnet"
@@ -108,12 +108,10 @@ services:
     restart: unless-stopped
     stop_grace_period: 5m
     entrypoint: /scripts/start-eigenda-proxy.sh
-    env_file:
-        - .env
     environment:
       - EIGENDA_LOCAL_DISPERSER_RPC=disperser.eigenda.xyz:443 
       - EIGENDA_LOCAL_SVC_MANAGER_ADDR=0x870679e138bcdf293b7ff14dd44b70fc97e12fc0
-      - OP_NODE__RPC_ENDPOINT=https://ethereum-rpc.publicnode.com
+      - OP_NODE__RPC_ENDPOINT=${CELO_L1_ETHEREUM_MAINNET_EXECUTION_RPC:-https://ethereum-rpc.publicnode.com}
     volumes:
       - celo-mainnet-op-geth-pruned-leveldb-hash_eigenda:/data
       - ./celo/scripts:/scripts
