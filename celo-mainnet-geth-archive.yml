@@ -1,6 +1,6 @@
 services:
   celo-mainnet-geth-archive:
-    image: us.gcr.io/celo-org/geth:1.8
+    image: us.gcr.io/celo-org/geth:1.8.9
     restart: unless-stopped
     stop_grace_period: 1m
     command: >
@@ -34,7 +34,7 @@ services:
       - "${NO_SSL:-traefik.http.routers.celo-mainnet-geth-archive.entrypoints=websecure}"
       - "${NO_SSL:-traefik.http.routers.celo-mainnet-geth-archive.tls.certresolver=myresolver}"
       - "${NO_SSL:-traefik.http.routers.celo-mainnet-geth-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-mainnet-geth-archive`)}"
-      - "${NO_SSL:+traefik.http.routers.celo-mainnet-geth-archive.rule=PathPrefix(`/celo-archive`)}"      
+      - "${NO_SSL:+traefik.http.routers.celo-mainnet-geth-archive.rule=PathPrefix(`/celo-mainnet-geth-archive`)}"      
       - "traefik.http.routers.celo-mainnet-geth-archive.middlewares=celo-mainnet-geth-archive-stripprefix, ipwhitelist"
 
 

@@ -1,0 +1,102 @@
+services:
+  ethereum-firehose:
+    build:
+      context: ./ethereum-firehose/
+      args:
+        FIREHOSE_ETHEREUM: v2.11.2
+        FIREHOSE_GETH_VERSION: v1.15.5-fh3.0
+    command: -c /etc/firehose/config.yml start
+#    environment:
+#      - DOMAIN=${DOMAIN:-yourdomain.com}
+#      - ETHEREUM_ARCHIVE_RPC=${ETHEREUM_FIREHOSE_ETHEREUM_MAINNET_ARCHIVE_EXECUTION_RPC:-http://eth.drpc.org}
+#      - S3_BLOCKS_STORE_URL=${ETHEREUM_FIREHOSE_ETHEREUM_MAINNET_S3_BLOCKS_STORE:-/var/lib/eth-blocks}
+    expose:
+      - 8545 # firegeth
+      - 8551
+      - 9663
+      - 10015 # fireeth
+      - 10016 # substreams
+    ports:
+      - "10015:10015"
+      - "10016:10016"
+      - "24465:24465/tcp"
+      - "24465:24465/udp"
+    labels:
+      - "traefik.enable=true"
+      
+      - "traefik.http.services.ethereum-mainnet-firehose-fireeth.loadbalancer.server.scheme=h2c"
+      - "traefik.http.routers.ethereum-mainnet-firehose-fireeth.service=ethereum-mainnet-firehose-fireeth"
+      - "traefik.http.services.ethereum-mainnet-firehose-fireeth.loadbalancer.server.port=10015"
+      - "traefik.http.routers.ethereum-mainnet-firehose-fireeth.entrypoints=grpc"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-firehose-fireeth.tls.certresolver=myresolver}"      
+      - "traefik.http.routers.ethereum-mainnet-firehose-fireeth.rule=Host(`ethereum-mainnet-firehose-fireeth.${DOMAIN}`)"
+      - "traefik.http.routers.ethereum-mainnet-firehose-fireeth.middlewares=ipwhitelist"
+
+      - "traefik.http.services.ethereum-mainnet-firehose-substreams.loadbalancer.server.scheme=h2c"
+      - "traefik.http.routers.ethereum-mainnet-firehose-substreams.service=ethereum-mainnet-firehose-substreams"
+      - "traefik.http.services.ethereum-mainnet-firehose-substreams.loadbalancer.server.port=10016"
+      - "traefik.http.routers.ethereum-mainnet-firehose-substreams.entrypoints=grpc"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-firehose-substreams.tls.certresolver=myresolver}"      
+      - "traefik.http.routers.ethereum-mainnet-firehose-substreams.rule=Host(`ethereum-mainnet-firehose-substreams.${DOMAIN}`)"
+      - "traefik.http.routers.ethereum-mainnet-firehose-substreams.middlewares=ipwhitelist"
+
+      - "traefik.http.middlewares.ethereum-mainnet-firehose-firegeth-stripprefix.stripprefix.prefixes=/ethereum-firehose-firegeth"
+      - "traefik.http.routers.ethereum-mainnet-firehose-firegeth.service=ethereum-mainnet-firehose-firegeth"      
+      - "traefik.http.services.ethereum-mainnet-firehose-firegeth.loadbalancer.server.port=8545"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-firehose-firegeth.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-firehose-firegeth.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-firehose-firegeth.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-firehose-firegeth`)}"
+      - "${NO_SSL:+traefik.http.routers.ethereum-mainnet-firehose-firegeth.rule=PathPrefix(`/ethereum-firehose-firegeth`)}"
+      - "traefik.http.routers.ethereum-mainnet-firehose-firegeth.middlewares=ethereum-mainnet-firehose-firegeth-stripprefix, ipwhitelist"
+      
+    networks:
+      - chains
+    volumes:
+      - ./ethereum-firehose/config.yml:/etc/firehose/config.yml:ro
+      - ${ETHEREUM_MAINNET_FIREHOSE__FIREGETH_DATA:-ethereum-mainnet-firehose-fireeth}:/var/lib/firehose                # Firehose data-dir
+      - ${ETHEREUM_MAINNET_FIREHOSE__BLOCKS_DATA:-ethereum-mainnet-firehose-blocks}:/var/lib/eth-blocks                  # Merged blocks store
+      - .jwtsecret:/jwtsecret:ro                           # JWT for authrpc
+    restart: unless-stopped
+    stop_grace_period: 5m
+
+  ethereum-firehose-beacon:
+    image: statusim/nimbus-eth2:multiarch-v25.3.0
+    restart: unless-stopped
+    user: root
+    command:
+      - --network=mainnet
+      - --data-dir=/data
+      - --tcp-port=6608
+      - --udp-port=6608
+      - --rest=yes
+      - --rest-port=5052
+      - --rest-address=0.0.0.0
+      - --metrics=yes
+      - --metrics-port=7071
+      - --web3-url=http://ethereum-firehose:9663
+      - --jwt-secret=/data/jwt.hex
+      - --external-beacon-api-url=https://beaconstate-mainnet.chainsafe.io
+    expose:
+      - "5052"
+      - "7071"
+    ports:
+      - "6608:6608/tcp"
+      - "6608:6608/udp"
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_MAINNET_FIREHOSE__NIMBUS_DATA:-ethereum-mainnet-firehose-nimbus}:/data                                      # Beacon node data-dir
+      - .jwtsecret:/data/jwt.hex:ro                      # JWT (same as firehose)
+    labels:
+      - "traefik.http.middlewares.ethereum-mainnet-firehose-beacon-stripprefix.stripprefix.prefixes=/ethereum-firehose-beacon"
+      - "traefik.http.services.ethereum-mainnet-firehose-beacon.loadbalancer.server.port=5052"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-firehose-beacon.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-firehose-beacon.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.ethereum-mainnet-firehose-beacon.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-firehose-beacon`)}"
+      - "${NO_SSL:+traefik.http.routers.ethereum-mainnet-firehose-beacon.rule=PathPrefix(`/ethereum-firehose-beacon`)}"
+      - "traefik.http.routers.ethereum-mainnet-firehose-beacon.middlewares=ethereum-mainnet-firehose-beacon-stripprefix, ipwhitelist"
+      
+volumes:
+  ethereum-mainnet-firehose-firegeth:
+  ethereum-mainnet-firehose-blocks:
+  ethereum-mainnet-firehose-nimbus:
