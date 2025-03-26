@@ -1,10 +1,3 @@
-# Running Sonic in Docker is Experimental - not recommended for production use!
-
-# Example of usage:
-# docker build -t sonic .
-# docker run --name sonic1 --entrypoint sonictool sonic --datadir=/var/sonic genesis fake 1
-# docker run --volumes-from sonic1 -p 5050:5050 -p 5050:5050/udp -p 18545:18545 sonic --fakenet 1/1 --http --http.addr=0.0.0.0
-
 FROM golang:1.22 as builder
 
 ARG VERSION
@@ -24,10 +17,11 @@ FROM golang:1.22
 COPY --from=builder /go/sonic/build/sonicd /usr/local/bin/
 COPY --from=builder /go/sonic/build/sonictool /usr/local/bin/
 
-COPY ./entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUM chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 18545 18546 5050 5050/udp
 
 VOLUME /var/sonic
 
-ENTRYPOINT ["bash", "/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

@@ -54,7 +54,7 @@ for path in $pathlist; do
         fi
 
         # Call the health check script with RPC_URL and ref
-        $BASEPATH/check-health.sh "$RPC_URL" "$ref"
+        $BASEPATH/check-health.sh "$RPC_URL" $ref
         exit $?
     fi
 done

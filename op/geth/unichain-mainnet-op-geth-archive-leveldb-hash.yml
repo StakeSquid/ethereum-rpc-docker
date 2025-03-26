@@ -1,0 +1,99 @@
+services:
+  unichain-mainnet-archive:
+    build:
+      context: ./op
+      args:
+         OP_VERSION: ${OP_NODE_VERSION:-v1.12.2}
+         GETH_VERSION: ${OP_GETH_VERSION:-v1.101503.1}
+         
+    expose:
+      - 8545       
+      - 6060       
+    ports:
+      - "10789:10789"
+      - "10789:10789/udp"
+    entrypoint: [ "./geth" ]
+    restart: unless-stopped
+    stop_grace_period: 3m    
+    volumes:
+      - unichain-mainnet-op-geth-archive-leveldb-hash:/data
+      - .jwtsecret:/jwtsecret
+    environment:
+      - "GETH_DATADIR=/data"
+      - "GETH_OP_NETWORK=unichain-mainnet"
+      - "GETH_GCMODE=archive"
+      - "GETH_SYNCMODE=full"      
+      - "GETH_STATE_SCHEME=hash"
+      - "GETH_DB_ENGINE=leveldb"
+      - "GETH_NAT=extip:${IP}"
+      - "GETH_PORT=19809"
+      - "GETH_WS_PORT=8545"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_VHOSTS=*"
+      - "GETH_WS=true"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_ORIGINS=*"
+      - "GETH_HTTP_API=eth,net,debug,admin,web3"
+      - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
+      - "GETH_AUTHRPC_ADDR=0.0.0.0"
+      - "GETH_AUTHRPC_VHOSTS=*"
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.unichain-mainnet-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/unichain-mainnet-archive"                      
+      - "traefik.http.services.unichain-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545"
+      - "traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure"                                              
+      - "traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/unichain-mainnet-archive`)"                     
+      - "traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.middlewares=unichain-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+      
+  unichain-mainnet-archive-node:
+    build:
+      context: ./op
+      args:
+         OP_VERSION: ${OP_NODE_VERSION:-v1.12.2}
+         GETH_VERSION: ${OP_GETH_VERSION:-v1.101503.1}
+         
+    expose:
+      - 8545
+      - 7300
+      - 6060
+    ports:
+      - "15789:15789"
+      - "15789:15789/udp"
+    entrypoint: [ "./op-node" ]
+    restart: unless-stopped
+    volumes:
+      - .jwtsecret:/jwtsecret
+    stop_grace_period: 30s
+    environment:
+      - "OP_NODE_NETWORK=unichain-mainnet"
+      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_ENGINE_RPC=http://unichain-mainnet-archive:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15789"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15789"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"
+      
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+  unichain-mainnet-op-geth-archive-leveldb-hash:

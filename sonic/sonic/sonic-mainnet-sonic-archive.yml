@@ -1,0 +1,51 @@
+services:
+  sonic-mainnet-archive:
+    build:
+      context: ./sonic
+      dockerfile: Dockerfile.sonic
+      args:
+        VERSION: "${SONIC_SONIC_VERSION:-v2.0.3}"
+        REPO: "https://github.com/0xsoniclabs/sonic.git"
+    stop_grace_period: 3m
+    volumes:
+      - "sonic-mainnet-sonic-archive:/var/sonic"
+    expose:
+      - "8545"
+    ports:
+      - "10658:10658"
+      - "10658:10658/udp"
+    networks:
+      - chains
+    environment:
+      - "IP=${IP}"
+      - "GENESIS=https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic-16500-full.g"
+      - "CACHE_GB=${SONIC_MAINNET_SONIC_CACHE_GB:-28}"
+    restart: unless-stopped
+    command: >
+      --port=10658
+      --nat=extip:${IP}
+      --maxpeers=200
+      --http
+      --http.addr=0.0.0.0
+      --http.port=8545
+      --http.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm
+      --http.corsdomain="*"
+      --http.vhosts="*"
+      --ws
+      --ws.addr=0.0.0.0
+      --ws.port=8545
+      --ws.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm
+      --ws.origins="*"
+      --rpc.gascap=600000000
+      
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.sonic-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/sonic-mainnet-archive"
+      - "traefik.http.services.sonic-mainnet-sonic-archive.loadbalancer.server.port=18544"
+      - "traefik.http.routers.sonic-mainnet-sonic-archive.entrypoints=websecure"
+      - "traefik.http.routers.sonic-mainnet-sonic-archive.tls.certresolver=myresolver"
+      - "traefik.http.routers.sonic-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/sonic-mainnet-archive`)"
+      - "traefik.http.routers.sonic-mainnet-sonic-archive.middlewares=sonic-mainnet-sonic-archive-stripprefix, ipwhitelist"
+
+volumes:
+  sonic-mainnet-sonic-archive:

@@ -1,25 +1,26 @@
 #!/bin/bash
 
-if [ ! -f /var/sonic/initialized ]; then
+datadir=/var/sonic
+
+if [ ! -f "$datadir/initialized" ]; then
     echo "Initializing Sonic..."
 
-    # Add your initialization commands here
-    # Example:
-    # mkdir -p /var/sonic/data
-    # touch /var/sonic/config.json
-
-    wget https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic.g
-    GOMEMLIMIT=50GiB sonictool --datadir /var/sonic --cache 12000 genesis sonic.g
-    rm sonic.g
+    url="${GENESIS:-https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic.g}"
+    filename=$(basename "$url")
     
-    # Create the file to mark initialization
-    touch /var/sonic/initialized
+    wget -P "$datadir" "$url"
+
+    GOMEMLIMIT="${CACHE_GB}GiB" sonictool --datadir "$datadir" --cache "${CACHE_GB}000" genesis "$datadir/$filename"
+    rm "$datadir/$filename"
+    
+    touch "$datadir/initialized"
 
     echo "Initialization complete."
 else
     echo "Sonic is already initialized."
 fi
 
-touch /var/sonic/initialized
+echo "Generating new Geth node key..."
+openssl rand 32 | xxd -p -c 32 | tr -d '\n' > "$datadir/nodekey"
 
-exec sonicd --datadir /var/sonic "$@"
+exec sonicd --nodekey "$datadir/nodekey" --cache "${CACHE_GB}000" --datadir "$datadir" "$@"

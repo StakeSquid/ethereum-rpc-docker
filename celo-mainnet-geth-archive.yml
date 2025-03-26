@@ -24,7 +24,7 @@ services:
       - '58395:58395/tcp' # p2p
       - '58395:58395/udp' # p2p
     volumes:
-      - ${CELO_MAINNET_GETH_ARCHIVE_DATA:-celo-archive}:/root/.celo
+      - ${CELO_MAINNET_GETH_ARCHIVE_DATA:-celo-mainnet-geth-archive}:/root/.celo
     networks:                                                                                         
       - chains
     labels:

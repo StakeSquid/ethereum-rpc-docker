@@ -1,0 +1,55 @@
+services:
+  fantom-mainnet-archive:
+    build:
+      context: ./fantom
+      dockerfile: Dockerfile.opera
+      args:
+        VERSION: "${FANTOM_OPERA_VERSION:-v1.1.3-rc.5}"
+        REPO: "https://github.com/Fantom-foundation/go-opera.git"
+    stop_grace_period: 3m
+    volumes:
+      - "fantom-mainnet-opera-archive:/datadir"
+    expose:
+      - "8545"
+    ports:
+      - "10723:10723"
+      - "10723:10723/udp"
+    networks:
+      - chains
+    environment:
+      - "IP=${IP}"
+      - "GENESIS=https://download.fantom.network/opera/mainnet/mainnet-5577-full-mpt.g"
+    restart: unless-stopped
+    command: >
+      --port=10723
+      --nat=extip:${IP}
+      --maxpeers=200
+      --http
+      --http.addr=0.0.0.0
+      --http.port=8545
+      --http.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm,sfc
+      --http.corsdomain="*"
+      --http.vhosts="*"
+      --ws
+      --ws.addr=0.0.0.0
+      --ws.port=8545
+      --ws.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm,sfc
+      --ws.origins="*"
+      --rpc.gascap=600000000
+      --db.migration.mode reformat
+      --db.preset pbl-1
+      --syncmode=full
+      --cache=${FANTOM_MAINNET_OPERA_ARCHIVE_CACHE_MB:-16000}
+            
+      --bootnodes=enode://94dfec3eb6e50187d22d12f7dd965169bab5a63022934ef0b3b82a819574e0940b5bcb471f62360f1b58cf61a89e634bd14ae7c2e29ce48088890f4a7aff44fe@75.98.207.227:5050,enode://7fb3f43273f4dfeb19c3129c6ed999e14246d2f219ff284d0ef87417cd9514c6d542abc988a654b4a77005ea896c5b4e4ca0d40f97f3bf9ee37be33cc749835f@209.172.40.68:5050,enode://27a80a1db08a40636415d4ff9bb272882b6a6f97a9a5d596006de843f35cbbc679e5252d89d3de05bd74c36cf9f5ce2446dd66cdd5dc7e942a585eb4add61124@37.27.70.18:5050,enode://946fef1538abd165f8bd2ae1c290e7689ff5e209ab6c085eaced9b91e93684b1efe05f79a9a9b460504c450065baaeda5ecb72c03f8adf7e7a559042ce4950da@136.243.252.124:5078,enode://cf762e3a68f8a96676d6383cd3286b85ef7454ef37bb39283efe00d3d573d88f05db3daab7c35a4d3ba9edd9d089e359a25de5beeb24f79f6c1b9e5341958cee@15.235.54.211:5050
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.fantom-mainnet-opera-archive-stripprefix.stripprefix.prefixes=/fantom-mainnet-archive"
+      - "traefik.http.services.fantom-mainnet-opera-archive.loadbalancer.server.port=8545"
+      - "traefik.http.routers.fantom-mainnet-opera-archive.entrypoints=websecure"
+      - "traefik.http.routers.fantom-mainnet-opera-archive.tls.certresolver=myresolver"
+      - "traefik.http.routers.fantom-mainnet-opera-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-mainnet-archive`)"
+      - "traefik.http.routers.fantom-mainnet-opera-archive.middlewares=fantom-mainnet-opera-archive-stripprefix, ipwhitelist"
+
+volumes:
+  fantom-mainnet-opera-archive:

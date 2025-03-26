@@ -34,6 +34,9 @@ check_sync_status() {
             any_failure=true
             code=1
         fi
+    else
+	code=1
+	any_failure=true
     fi
 
     echo "${part%.yml}: $result"

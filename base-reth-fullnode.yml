@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   base-fullnode: # this is Optimism's geth client
-    image: ghcr.io/paradigmxyz/op-reth:${RETH_VERSION:-v1.1.5}
+    image: ghcr.io/paradigmxyz/op-reth:${RETH_VERSION:-v1.3.2}
     expose:
       - 9551
       - 8545       # RPC / Websocket      

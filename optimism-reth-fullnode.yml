@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   optimism-fullnode: # this is Optimism's geth client
-    image: ghcr.io/paradigmxyz/op-reth:${RETH_VERSION:-v1.1.5}
+    image: ghcr.io/paradigmxyz/op-reth:${RETH_VERSION:-v1.3.2}
     expose:
       - 9551
       - 8545       # RPC / Websocket      
@@ -57,6 +57,7 @@ services:
     environment:
       - "OP_NODE_NETWORK=op-mainnet"
       - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_L2_SKIP_SYNC_START_CHECK=true"
       - "OP_NODE_L1_ETH_RPC=${OPTIMISM_ETHEREUM_ENDPOINT}"
       - "OP_NODE_L2_ENGINE_AUTH_RAW=${JWTSECRET}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
