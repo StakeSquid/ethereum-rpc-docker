@@ -5,7 +5,7 @@ services:
       - "celo-mainnet-op-geth-pruned-leveldb-hash:/datadir"
       - ".jwtsecret:/shared/jwt.txt"
       - "./celo/mainnet/:/chainconfig"
-      - "./scripts/:/scripts"
+      - "./celo/scripts/:/scripts"
     ports:
       - "10955:10955"
       - "10955:10955/udp"
