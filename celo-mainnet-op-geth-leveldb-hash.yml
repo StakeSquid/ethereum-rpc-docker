@@ -1,0 +1,115 @@
+services:
+  celo-mainnet:
+    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:celo-v2.0.0
+    volumes:
+      - "celo-mainnet-op-geth-pruned-leveldb-hash:/datadir"
+      - ".jwtsecret:/jwtsecret"
+      - "./celo/mainnet/:/chainconfig"
+    ports:
+      - "10955:10955"
+      - "10955:10955/udp"
+    expose:
+      - 8545
+      - 8546
+      - 8551
+    networks:
+      - chains
+    restart: always
+    stop_grace_period: 5m
+    environment:
+      - NETWORK_NAME=mainnet
+      #- GETH_BOOTNODES=enode://ac0f42fa46f8cc10bd02a103894d71d495537465133e7c442bc02dc76721a5f41761cc2d8c69e7ba1b33e14e28f516436864d3e0836e2dcdaf032387f72447dd@34.83.164.192:30303,enode://596002969b8b269a4fa34b4709b9600b64201e7d02e2f5f1350affd021b0cbda6ce2b913ebe24f0fb1edcf66b6c730a8a3b02cd940f4de995f73d3b290a0fc92@34.82.177.77:30303,enode://3619455064ef1ce667171bba1df80cfd4c097f018cf0205aaad496f0d509611b7c40396893d9e490ee390cd098888279e177a4d9bb09c58387bb0a6031d237f1@34.19.90.27:30303,enode://e3c54db6004a92d4ee87504f073f3234a25759b485274cc224037e3e5ee792f3b482c3f4fffcb764af6e1859a1aea9710b71e1991e32c1dee7f40352124bb182@35.233.249.87:30303,enode://674410b34fd54c8406a4f945292b96111688d4bab49aecdc34b4f1b346891f4673dcb03ed44c38ab467ef7bec0b20f6031ad88aa1d35ce1333b343d00fa19fb1@34.168.43.76:30303
+    command: >
+      --datadir=/datadir
+      --http
+      --http.corsdomain="*"
+      --http.vhosts="*"
+      --http.addr=0.0.0.0
+      --http.port=8545
+      --http.api=web3,debug,eth,txpool,net,engine
+      --ws
+      --ws.addr=0.0.0.0
+      --ws.port=8545
+      --ws.origins="*"
+      --ws.api=debug,eth,txpool,net,engine,web3
+      --syncmode="full"
+      --gcmode="full"
+      --authrpc.vhosts="*"
+      --authrpc.addr=0.0.0.0
+      --authrpc.port=8551
+      --authrpc.jwtsecret=/jwtsecret
+      --rollup.sequencerhttp=https://sequencer.forno.celo.org
+      --rollup.disabletxpoolgossip=true
+      --port="10955"
+      --discovery.port="10955"
+      --snapshot=true
+      --verbosity=3
+      --history.transactions=0
+      --rollup.historicalrpc=${OP_GETH_HISTORICAL_RPC:-https://sequencer.alfajores.celo-testnet.org}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.op-celo-alfajores-stripprefix.stripprefix.prefixes=/op-celo-alfajores"
+      - "traefik.http.services.op-celo-alfajores.loadbalancer.server.port=8545"
+      - "traefik.http.routers.op-celo-alfajores.entrypoints=websecure"
+      - "traefik.http.routers.op-celo-alfajores.tls.certresolver=myresolver"
+      - "traefik.http.routers.op-celo-alfajores.rule=Host(`$DOMAIN`) && PathPrefix(`/op-celo-alfajores`)"
+      - "traefik.http.routers.op-celo-alfajores.middlewares=op-celo-alfajores-stripprefix, ipwhitelist"
+    
+
+  celo-mainnet-node:
+    image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node:celo-v2.0.0
+    depends_on:
+      - celo-mainnet
+    expose:
+      - 8545     # RPC
+      - 63509     # P2P TCP
+      - 63509/udp # P2P UDP
+      - 7300     # metrics
+      - 6060     # pprof
+    networks:
+      - chains
+    ports:
+      - "63509:63509"
+      - "63509:63509/udp"
+    environment:
+      - HEALTHCHECK__REFERENCE_RPC_PROVIDER=https://forno.celo.org
+      - OP_NODE_P2P_LISTEN_TCP_PORT=63509
+      - OP_NODE_P2P_LISTEN_UDP_PORT=63509
+      #- OP_NODE_P2P_STATIC=/ip4/35.197.25.52/tcp/9222/p2p/16Uiu2HAmQEdyLRSAVZDr5SqbJ1RnKmNDhtQJcEKmemrVxe4FxKwR,/ip4/34.105.22.4/tcp/9222/p2p/16Uiu2HAm1SZBDSugT5MMu7vBY8auDgfZFNhoDeXPLc9Me5FsAxwT,/ip4/34.83.209.168/tcp/9222/p2p/16Uiu2HAmGJAiUX6HLSo4nLh8T984qxzokwL23cVsYuNZy2SrK7C6,/ip4/34.83.214.149/tcp/9222/p2p/16Uiu2HAmAko2Kr3eAjM7tnshtEhYrxQYfKUvN2kwiygeFoBAoi8S,/ip4/34.169.5.52/tcp/9222/p2p/16Uiu2HAmKc6YKHzYgsjBDaj36uAufxpgZFgrzDqVBt6zTPwdhhJD
+      - OP_NODE_ALTDA_ENABLED=true
+      - OP_NODE_ALTDA_DA_SERVICE=true
+      - OP_NODE_ALTDA_VERIFY_ON_READ=false
+      - OP_NODE_ALTDA_DA_SERVER=https://eigenda-proxy.forno.celo.org
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+    command: >
+      op-node
+      --l1="${OP_CELO_ETHEREUM_MAINNET_RPC:-https://eth.llamarpc.com}"
+      --l2=http://celo-mainnet:8551
+      --rpc.addr=0.0.0.0
+      --rpc.port=9545
+      --l1.trustrpc
+      --l1.rpckind=basic
+      --l1.beacon="${OP_CELO_ALFAJORES_HOLESKY_BEACON_REST:-https://ethereum-mainnet-beacon-api.publicnode.com}"
+      --syncmode=execution-layer
+      --p2p.priv.path=/chainconfigs/p2p_node_key_txt
+      --rollup.config=/chainconfigs/rollup.json
+      --rollup.load-protocol-versions=true
+      --rollup.halt=major
+    restart: always
+    volumes:
+      - .jwtsecret:/jwtsecret
+      - ./celo/alfajores/:/chainconfigs/
+    stop_grace_period: 30s
+
+  op-celo-alfajores-key-generator:
+    image: ghcr.io/foundry-rs/foundry
+    volumes:
+      - "./celo/mainnet:/config"
+    entrypoint: sh
+    command: "[ -f /config/p2p_node_key_txt ] && exit 0 || cast w n | grep -i 'Private Key' | awk -F ': ' '{print $2}' | sed 's/0x//' > /config/p2p_node_key_txt"
+
+    
+volumes:
+  celo-mainnet-op-geth-pruned-leveldb-hash::
+
+    
