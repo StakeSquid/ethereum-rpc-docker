@@ -1,7 +1,5 @@
-version: '3.1'
-
 services:
-  celo:
+  celo-mainnet-geth:
     image: us.gcr.io/celo-org/geth:1.8.9
     restart: unless-stopped
     stop_grace_period: 3m
@@ -22,21 +20,17 @@ services:
       --datadir /root/.celo
     expose:
       - 8545
-      - 8546
-    ports:
-      - '20748:20748/tcp' # p2p
-      - '20748:20748/udp' # p2p
     volumes:
       - celo:/root/.celo
     networks:                                                                                         
       - chains
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.celo-stripprefix.stripprefix.prefixes=/celo"
+      - "traefik.http.middlewares.celo-stripprefix.stripprefix.prefixes=/celo-mainnet-geth"
       - "traefik.http.services.celo.loadbalancer.server.port=8545"
       - "traefik.http.routers.celo.entrypoints=websecure"
       - "traefik.http.routers.celo.tls.certresolver=myresolver"
-      - "traefik.http.routers.celo.rule=Host(`$DOMAIN`) && PathPrefix(`/celo`)"
+      - "traefik.http.routers.celo.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-mainnet-geth`)"
       - "traefik.http.routers.celo.middlewares=celo-stripprefix, ipwhitelist"
 
 
