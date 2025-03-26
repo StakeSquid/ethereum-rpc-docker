@@ -1,17 +1,21 @@
+
+
 services:
   worldchain-sepolia:
     build:
       context: ./op
       args:
-         OP_VERSION: ${OP_NODE_VERSION:-v1.12.2}
-         GETH_VERSION: ${OP_GETH_VERSION:-v1.101503.1}
+         GETH_REPO: https://github.com/ethereum-optimism/op-geth.git
+         OP_REPO: https://github.com/ethereum-optimism/optimism.git         
+         OP_VERSION: v1.12.2
+         GETH_VERSION: v1.101503.1
          
     expose:
-      - 8545       
+      - 8545
       - 6060       
     ports:
-      - "10620:10620"
-      - "10620:10620/udp"
+      - ":"
+      - ":/udp"
     entrypoint: [ "./geth" ]
     restart: unless-stopped
     stop_grace_period: 3m    
@@ -26,7 +30,7 @@ services:
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
       - "GETH_NAT=extip:${IP}"
-      - "GETH_PORT=19809"
+      - "GETH_PORT="
       - "GETH_WS_PORT=8545"
       - "GETH_HTTP=true"
       - "GETH_HTTP_ADDR=0.0.0.0"
@@ -38,6 +42,7 @@ services:
       - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
       - "GETH_AUTHRPC_ADDR=0.0.0.0"
       - "GETH_AUTHRPC_VHOSTS=*"
+      
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.worldchain-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/worldchain-sepolia"                      
@@ -54,8 +59,10 @@ services:
     build:
       context: ./op
       args:
-         OP_VERSION: ${OP_NODE_VERSION:-v1.12.2}
-         GETH_VERSION: ${OP_GETH_VERSION:-v1.101503.1}
+         GETH_REPO: https://github.com/ethereum-optimism/op-geth.git
+         OP_REPO: https://github.com/ethereum-optimism/optimism.git         
+         OP_VERSION: v1.12.2
+         GETH_VERSION: v1.101503.1
          
     expose:
       - 8545

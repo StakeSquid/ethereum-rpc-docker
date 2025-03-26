@@ -1,14 +1,14 @@
 
 
 services:
-  unichain-sepolia-archive:
+  boba-sepolia:
     build:
       context: ./op
       args:
-         GETH_REPO: https://github.com/ethereum-optimism/op-geth.git
-         OP_REPO: https://github.com/ethereum-optimism/optimism.git         
-         OP_VERSION: v1.12.2
-         GETH_VERSION: v1.101503.1
+         GETH_REPO: https://github.com/bobanetwork/op-geth.git
+         OP_REPO: https://github.com/bobanetwork/boba.git         
+         OP_VERSION: v1.6.18
+         GETH_VERSION: v1.101411.0
          
     expose:
       - 8545
@@ -20,15 +20,15 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
-      - unichain-sepolia-op-geth-archive-leveldb-hash:/data
+      - boba-sepolia-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret
     environment:
       - "GETH_DATADIR=/data"
-      - "GETH_OP_NETWORK=unichain-sepolia"
-      - "GETH_GCMODE=archive"
-      - "GETH_SYNCMODE=full"      
-      - "GETH_STATE_SCHEME=hash"
-      - "GETH_DB_ENGINE=leveldb"
+      - "GETH_OP_NETWORK=boba-sepolia"
+      - "GETH_GCMODE=full"
+      - "GETH_SYNCMODE=snap"      
+      - "GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
       - "GETH_NAT=extip:${IP}"
       - "GETH_PORT="
       - "GETH_WS_PORT=8545"
@@ -42,53 +42,53 @@ services:
       - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
       - "GETH_AUTHRPC_ADDR=0.0.0.0"
       - "GETH_AUTHRPC_VHOSTS=*"
-      
+      - "GETH_ROLLUP_SEQUENCERHTTP=https://sepolia.boba.network"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.unichain-sepolia-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/unichain-sepolia-archive"                      
-      - "traefik.http.services.unichain-sepolia-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545"
-      - "traefik.http.routers.unichain-sepolia-op-geth-archive-leveldb-hash.entrypoints=websecure"                                              
-      - "traefik.http.routers.unichain-sepolia-op-geth-archive-leveldb-hash.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.unichain-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/unichain-sepolia-archive`)"                     
-      - "traefik.http.routers.unichain-sepolia-op-geth-archive-leveldb-hash.middlewares=unichain-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.boba-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/boba-sepolia"                      
+      - "traefik.http.services.boba-sepolia-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
+      - "traefik.http.routers.boba-sepolia-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
+      - "traefik.http.routers.boba-sepolia-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.boba-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-sepolia`)"                     
+      - "traefik.http.routers.boba-sepolia-op-geth-pruned-pebble-path.middlewares=boba-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  unichain-sepolia-archive-node:
+  boba-sepolia-node:
     build:
       context: ./op
       args:
-         GETH_REPO: https://github.com/ethereum-optimism/op-geth.git
-         OP_REPO: https://github.com/ethereum-optimism/optimism.git         
-         OP_VERSION: v1.12.2
-         GETH_VERSION: v1.101503.1
+         GETH_REPO: https://github.com/bobanetwork/op-geth.git
+         OP_REPO: https://github.com/bobanetwork/boba.git         
+         OP_VERSION: v1.6.18
+         GETH_VERSION: v1.101411.0
          
     expose:
       - 8545
       - 7300
       - 6060
     ports:
-      - "15589:15589"
-      - "15589:15589/udp"
+      - "15962:15962"
+      - "15962:15962/udp"
     entrypoint: [ "./op-node" ]
     restart: unless-stopped
     volumes:
       - .jwtsecret:/jwtsecret
     stop_grace_period: 30s
     environment:
-      - "OP_NODE_NETWORK=unichain-sepolia"
+      - "OP_NODE_NETWORK=boba-sepolia"
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://unichain-sepolia-archive:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://boba-sepolia:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"
       - "OP_NODE_METRICS_PORT=7300"
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=15589"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=15589"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15962"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15962"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
       - "OP_NODE_RPC_PORT=8545"
@@ -103,4 +103,4 @@ services:
       - chains
       
 volumes:  
-  unichain-sepolia-op-geth-archive-leveldb-hash:
+  boba-sepolia-op-geth-pruned-pebble-path:

@@ -1,14 +1,14 @@
 
 
 services:
-  metal-mainnet:
+  boba-mainnet:
     build:
       context: ./op
       args:
-         GETH_REPO: https://github.com/ethereum-optimism/op-geth.git
-         OP_REPO: https://github.com/ethereum-optimism/optimism.git         
-         OP_VERSION: v1.12.2
-         GETH_VERSION: v1.101503.1
+         GETH_REPO: https://github.com/bobanetwork/op-geth.git
+         OP_REPO: https://github.com/bobanetwork/boba.git         
+         OP_VERSION: v1.6.18
+         GETH_VERSION: v1.101411.0
          
     expose:
       - 8545
@@ -20,11 +20,11 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
-      - metal-mainnet-op-geth-pruned-pebble-path:/data
+      - boba-mainnet-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret
     environment:
       - "GETH_DATADIR=/data"
-      - "GETH_OP_NETWORK=metal-mainnet"
+      - "GETH_OP_NETWORK=boba-mainnet"
       - "GETH_GCMODE=full"
       - "GETH_SYNCMODE=snap"      
       - "GETH_STATE_SCHEME=path"
@@ -42,53 +42,53 @@ services:
       - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
       - "GETH_AUTHRPC_ADDR=0.0.0.0"
       - "GETH_AUTHRPC_VHOSTS=*"
-      
+      - "GETH_ROLLUP_SEQUENCERHTTP=https://mainnet.boba.network"
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.metal-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/metal-mainnet"                      
-      - "traefik.http.services.metal-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
-      - "traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
-      - "traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/metal-mainnet`)"                     
-      - "traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.middlewares=metal-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.boba-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/boba-mainnet"                      
+      - "traefik.http.services.boba-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
+      - "traefik.http.routers.boba-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
+      - "traefik.http.routers.boba-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.boba-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-mainnet`)"                     
+      - "traefik.http.routers.boba-mainnet-op-geth-pruned-pebble-path.middlewares=boba-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
       
-  metal-mainnet-node:
+  boba-mainnet-node:
     build:
       context: ./op
       args:
-         GETH_REPO: https://github.com/ethereum-optimism/op-geth.git
-         OP_REPO: https://github.com/ethereum-optimism/optimism.git         
-         OP_VERSION: v1.12.2
-         GETH_VERSION: v1.101503.1
+         GETH_REPO: https://github.com/bobanetwork/op-geth.git
+         OP_REPO: https://github.com/bobanetwork/boba.git         
+         OP_VERSION: v1.6.18
+         GETH_VERSION: v1.101411.0
          
     expose:
       - 8545
       - 7300
       - 6060
     ports:
-      - "15821:15821"
-      - "15821:15821/udp"
+      - "15624:15624"
+      - "15624:15624/udp"
     entrypoint: [ "./op-node" ]
     restart: unless-stopped
     volumes:
       - .jwtsecret:/jwtsecret
     stop_grace_period: 30s
     environment:
-      - "OP_NODE_NETWORK=metal-mainnet"
+      - "OP_NODE_NETWORK=boba-mainnet"
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://metal-mainnet:8551"
+      - "OP_NODE_L2_ENGINE_RPC=http://boba-mainnet:8551"
       - "OP_NODE_LOG_LEVEL=info"
       - "OP_NODE_METRICS_ADDR=0.0.0.0"
       - "OP_NODE_METRICS_ENABLED=true"
       - "OP_NODE_METRICS_PORT=7300"
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=15821"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=15821"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15624"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15624"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
       - "OP_NODE_RPC_PORT=8545"
@@ -103,4 +103,4 @@ services:
       - chains
       
 volumes:  
-  metal-mainnet-op-geth-pruned-pebble-path:
+  boba-mainnet-op-geth-pruned-pebble-path:
