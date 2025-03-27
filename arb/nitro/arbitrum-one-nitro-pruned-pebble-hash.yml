@@ -21,6 +21,7 @@ services:
       - --execution.forwarding-target=None
       - --node.feed.input.url=None
       - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}      
       - --http.addr=0.0.0.0
       - --http.port=8545
       - --http.vhosts=*

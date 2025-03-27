@@ -21,6 +21,7 @@ services:
       - --execution.forwarding-target=https://rpc.alephzero.raas.gelato.cloud
       - --node.feed.input.url=wss://feed.alephzero.raas.gelato.cloud
       - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}      
       - --http.addr=0.0.0.0
       - --http.port=8545
       - --http.vhosts=*
@@ -38,7 +39,6 @@ services:
       - --node.data-availability.enable=true
       - --node.data-availability.sequencer-inbox-address=1411949971076304187394088912578077660717096867958
       - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das.alephzero.raas.gelato.cloud
       - --node.sequencer=false
