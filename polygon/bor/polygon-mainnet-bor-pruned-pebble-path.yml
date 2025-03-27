@@ -7,15 +7,15 @@ services:
       net.ipv4.tcp_slow_start_after_idle: 0
       net.ipv4.tcp_no_metrics_save: 1
     volumes:                  
-      - "polygon-mainnet-bor-pruned-pebble-path:/datadir"
+      - "polygon-mainnet-bor-pruned-pebble-path:/root/.bor/"
       - "/slowdisk:/slowdisk"
     expose:
       - 8545
     ports:                   
       - "10961:10961"                                                                                 
       - "10961:10961/udp"
+    entrypoint: ["bor", "server"]
     command: >
-      server
       --chain=mainnet
       --datadir=/datadir
       --bor.runheimdall

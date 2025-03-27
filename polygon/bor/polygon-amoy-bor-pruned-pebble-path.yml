@@ -7,15 +7,15 @@ services:
       net.ipv4.tcp_slow_start_after_idle: 0
       net.ipv4.tcp_no_metrics_save: 1
     volumes:                  
-      - "polygon-amoy-bor-pruned-pebble-path:/datadir"
+      - "polygon-amoy-bor-pruned-pebble-path:/root/.bor/"
       - "/slowdisk:/slowdisk"
     expose:
       - 8545
     ports:                   
       - "10188:10188"                                                                                 
       - "10188:10188/udp"
+    entrypoint: ["bor", "server"]
     command: >
-      server
       --chain=amoy
       --datadir=/datadir
       --bor.runheimdall
