@@ -6,20 +6,18 @@ services:
     stop_grace_period: 3m
     user: root
     volumes:
-      - 'alephzero-mainnet-nitro-archive-leveldb-hash:/persistent'
+      - 'alephzero-mainnet-nitro-archive-leveldb-hash:/root/.arbitrum'
       - ./arb/mainnet/alephzero/:/config
       - './tmp/alephzero-mainnet-archive:/tmp'
     expose:
       - 8545
     command:
-      - --conf.file=/config/baseConfig.json
-      - --persistent.ancient=/persistent/ancient
-      - --persistent.chain=/persistent/chain
-      - --persistent.global-config=/persistent/global-config
+      - --conf.file=/config/baseConfig.json      
       - --execution.caching.state-scheme=hash
+      - --execution.rpc.gas-cap=600000000
+      - --execution.caching.archive=true
+      - --execution.sequencer.enable=false      
       - --persistent.db-engine=leveldb            
-      - --execution.forwarding-target=https://rpc.alephzero.raas.gelato.cloud
-      - --node.feed.input.url=wss://feed.alephzero.raas.gelato.cloud
       - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}      
       - --http.addr=0.0.0.0
@@ -31,25 +29,22 @@ services:
       - --ws.addr=0.0.0.0
       - --ws.origins=*
       - --ws.api=eth,net,web3,arb,txpool,debug
-      - --execution.rpc.gas-cap=600000000      
       - --metrics
       - --metrics-server.addr=0.0.0.0
       - --metrics-server.port=6070
       - --log-type=json
+      - --node.sequencer=false
+      - --node.staker.enable=false
+      - --node.batch-poster.enable=false            
       - --node.data-availability.enable=true
       - --node.data-availability.sequencer-inbox-address=1411949971076304187394088912578077660717096867958
       - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das.alephzero.raas.gelato.cloud
-      - --node.sequencer=false
-      - --execution.sequencer.enable=false
-      - --node.staker.enable=false
-      - --node.batch-poster.enable=false
-      - --execution.caching.archive=true      
-      
+      - --node.feed.input.url=wss://feed.alephzero.raas.gelato.cloud
+      - --execution.forwarding-target=https://rpc.alephzero.raas.gelato.cloud
             
-      
-      
+            
     restart: unless-stopped                 
     labels:                     
       - "traefik.enable=true"

@@ -6,20 +6,18 @@ services:
     stop_grace_period: 3m
     user: root
     volumes:
-      - 'arbitrum-one-nitro-pruned-pebble-hash:/persistent'
+      - 'arbitrum-one-nitro-pruned-pebble-hash:/root/.arbitrum'
       
       - './tmp/arbitrum-one:/tmp'
     expose:
       - 8545
     command:
-      - --chain.id=42161
-      - --persistent.ancient=/persistent/ancient
-      - --persistent.chain=/persistent/chain
-      - --persistent.global-config=/persistent/global-config
+      - --chain.id=42161      
       - --execution.caching.state-scheme=hash
+      - --execution.rpc.gas-cap=600000000
+      - --execution.caching.archive=false
+      - --execution.sequencer.enable=false      
       - --persistent.db-engine=pebble            
-      - --execution.forwarding-target=None
-      - --node.feed.input.url=None
       - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}      
       - --http.addr=0.0.0.0
@@ -31,17 +29,17 @@ services:
       - --ws.addr=0.0.0.0
       - --ws.origins=*
       - --ws.api=eth,net,web3,arb,txpool,debug
-      - --execution.rpc.gas-cap=600000000      
       - --metrics
       - --metrics-server.addr=0.0.0.0
       - --metrics-server.port=6070
       - --log-type=json
+      - --node.sequencer=false
+      - --node.staker.enable=false
+      - --node.batch-poster.enable=false            
       
-            
       
       - --init.latest=pruned      
-      
-      
+            
     restart: unless-stopped                 
     labels:                     
       - "traefik.enable=true"
