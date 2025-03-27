@@ -12,10 +12,12 @@ filename=$(basename "$url")
 if [ ! -f "$datadir/bootstrapped" ]; then
     echo "Initializing Opera..."
 
-    if [ ! -f "$datadir/$filename" ]; then
-        wget -P "$datadir" "$url"
+    if ls $datadir/*.g >/dev/null 2>&1; then
+	echo "Some genesis block seems to exist"
+    else
+	wget -P "$datadir" "$url"
     fi
-    
+
     touch "$datadir/bootstrapped"
 
     echo "Initialization complete."
