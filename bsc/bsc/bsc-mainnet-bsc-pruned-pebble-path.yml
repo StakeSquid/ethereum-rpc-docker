@@ -1,0 +1,75 @@
+
+
+services:
+  bsc-mainnet:
+    image: ghcr.io/bnb-chain/bsc:${BSC_VERSION:-1.5.8}
+    sysctls:
+      net.ipv4.tcp_slow_start_after_idle: 0
+      net.ipv4.tcp_no_metrics_save: 1
+    user: root
+    ports:
+      - "10037:10037"
+      - "10037:10037/udp"
+    expose:                                                                              
+      - "8545"                                                                           
+    volumes:                                                                             
+      - bsc-mainnet-bsc-pruned-pebble-path:/root/.ethereum
+      - /slowdisk:/slowdisk
+    entrypoint: [ "geth" ]
+    command: >      
+      --networkid=56
+      --db.engine=pebble
+      --state.scheme=path
+      --syncmode=snap
+      --gcmode=full
+      --rpc.gascap=600000000
+      --nat=extip:${IP}
+      --lightpeers=100
+      --trie.timeout=150000000000
+      --miner.gasceil=140000000
+      --miner.gasprice=1000000000
+      --miner.recommit=10000000000
+      --txpool.nolocals
+      --txpool.journal=transactions.rlp
+      --txpool.rejournal=3600000000000
+      --txpool.pricelimit=1000000000
+      --txpool.pricebump=10
+      --txpool.accountslots=200
+      --txpool.globalslots=8000
+      --txpool.accountqueue=200
+      --txpool.globalqueue=4000
+      --gpo.blocks=20
+      --history.transactions=0 
+      --gpo.percentile=60
+      --gpo.oraclethreshold=1000
+      --ipcpath=geth.ipc
+      --http
+      --http.addr=0.0.0.0
+      --http.port=8545
+      --http.vhosts=*
+      --http.api=eth,net,web3,txpool,parlia,debug,admin
+      --ws
+      --ws.addr=0.0.0.0
+      --ws.port=8545
+      --ws.origins'*
+      --ws.api=net,web3,eth,debug
+      --maxpeers=200
+      --nodiscover=false
+      --listenaddr=:10037
+      --emitcheckpoints
+            
+    restart: unless-stopped
+    stop_grace_period: 3m
+    networks: 
+      - chains
+    labels:                                                                              
+      - "traefik.enable=true"                                                            
+      - "traefik.http.middlewares.bsc-mainnet-bsc-pruned-pebble-path-stripprefix.stripprefix.prefixes=/bsc-mainnet"             
+      - "traefik.http.services.bsc-mainnet-bsc-pruned-pebble-path.loadbalancer.server.port=8545"                        
+      - "traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path.entrypoints=websecure"                                 
+      - "traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path.tls.certresolver=myresolver"                           
+      - "traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/bsc-mainnet`)"            
+      - "traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path.middlewares=bsc-mainnet-bsc-pruned-pebble-path-stripprefix, ipwhitelist"
+
+volumes:
+  bsc-mainnet-bsc-pruned-pebble-path:
