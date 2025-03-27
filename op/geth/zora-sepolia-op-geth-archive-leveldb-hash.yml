@@ -19,7 +19,9 @@ services:
     volumes:
       - zora-sepolia-op-geth-archive-leveldb-hash:/data
       - .jwtsecret:/jwtsecret
-                  
+      
+    env_file:
+      - ./zora/zora-sepolia.env
     environment:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=zora-sepolia"
@@ -73,6 +75,8 @@ services:
       - .jwtsecret:/jwtsecret
             
     stop_grace_period: 30s
+    env_file:
+      - ./zora/zora-sepolia.env
     environment:
       - OP_NODE_NETWORK={{ service_name }}
       - "OP_NODE_SYNCMODE=execution-layer"

@@ -19,7 +19,9 @@ services:
     volumes:
       - blast-mainnet-op-geth-pruned-pebble-hash:/data
       - .jwtsecret:/jwtsecret
-      - ./blast-io/mainnet:/config            
+      - ./blast-io/mainnet:/config
+    env_file:
+      - ./blast/blast-mainnet.env
     environment:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=blast-mainnet"
@@ -73,6 +75,8 @@ services:
       - .jwtsecret:/jwtsecret
       - ./blast-io/mainnet:/config      
     stop_grace_period: 30s
+    env_file:
+      - ./blast/blast-mainnet.env
     environment:
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - "OP_NODE_SYNCMODE=execution-layer"

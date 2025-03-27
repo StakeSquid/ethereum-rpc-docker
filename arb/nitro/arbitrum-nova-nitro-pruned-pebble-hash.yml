@@ -1,0 +1,57 @@
+
+
+services:
+  arbitrum-nova:
+    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.5.3-0a9c975}'
+    stop_grace_period: 3m
+    user: root
+    volumes:
+      - 'arbitrum-nova-nitro-pruned-pebble-hash:/persistent'
+      
+      - './tmp/arbitrum-nova:/tmp'
+    expose:
+      - 8545
+    command:
+      - --chain.id=42170
+      - --persistent.ancient=/persistent/ancient
+      - --persistent.chain=/persistent/chain
+      - --persistent.global-config=/persistent/global-config
+      - --execution.caching.state-scheme=hash
+      - --persistent.db-engine=pebble            
+      - --execution.forwarding-target=None
+      - --node.feed.input.url=None
+      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --http.addr=0.0.0.0
+      - --http.port=8545
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --http.api=eth,net,web3,arb,txpool,debug
+      - --ws.port=8545
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+      - --ws.api=eth,net,web3,arb,txpool,debug
+      - --execution.rpc.gas-cap=600000000      
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=6070
+      - --log-type=json
+      
+            
+      
+      - --init.latest=pruned      
+      
+      
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.arbitrum-nova-nitro-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/arbitrum-nova"                      
+      - "traefik.http.services.arbitrum-nova-nitro-pruned-pebble-hash.loadbalancer.server.port=8545"
+      - "traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.entrypoints=websecure"                                              
+      - "traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-nova`)"                     
+      - "traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.middlewares=arbitrum-nova-nitro-pruned-pebble-hash-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:  
+    arbitrum-nova-nitro-pruned-pebble-hash

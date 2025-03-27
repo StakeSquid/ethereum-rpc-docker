@@ -1,0 +1,66 @@
+
+
+services:
+  alephzero-sepolia-archive:
+    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.5.3-0a9c975}'
+    stop_grace_period: 3m
+    user: root
+    volumes:
+      - 'alephzero-sepolia-nitro-archive-leveldb-hash:/persistent'
+      - ./arb/sepolia/alephzero/:/config
+      - './tmp/alephzero-sepolia-archive:/tmp'
+    expose:
+      - 8545
+    command:
+      - --conf.file=/config/baseConfig.json
+      - --persistent.ancient=/persistent/ancient
+      - --persistent.chain=/persistent/chain
+      - --persistent.global-config=/persistent/global-config
+      - --execution.caching.state-scheme=hash
+      - --persistent.db-engine=leveldb            
+      - --execution.forwarding-target=https://rpc.alephzero-testnet.gelato.digital
+      - --node.feed.input.url=wss://feed.alephzero-testnet.gelato.digital
+      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --http.addr=0.0.0.0
+      - --http.port=8545
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --http.api=eth,net,web3,arb,txpool,debug
+      - --ws.port=8545
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+      - --ws.api=eth,net,web3,arb,txpool,debug
+      - --execution.rpc.gas-cap=600000000      
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=6070
+      - --log-type=json
+      - --node.data-availability.enable=true
+      - --node.data-availability.sequencer-inbox-address=130937498521962644184395825246273622310592356541
+      - --node.data-availability.parent-chain-node-url=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - --parent-chain.blob-client.beacon-url=${ETHEREUM_SEPOLIA_BEACON_REST}
+      - --node.data-availability.rest-aggregator.enable=true
+      - --node.data-availability.rest-aggregator.urls=https://das.alephzero-testnet.gelato.digital
+      - --node.sequencer=false
+      - --execution.sequencer.enable=false
+      - --node.staker.enable=false
+      - --node.batch-poster.enable=false
+      - --execution.caching.archive=true      
+      
+            
+      
+      
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.alephzero-sepolia-nitro-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/alephzero-sepolia-archive"                      
+      - "traefik.http.services.alephzero-sepolia-nitro-archive-leveldb-hash.loadbalancer.server.port=8545"
+      - "traefik.http.routers.alephzero-sepolia-nitro-archive-leveldb-hash.entrypoints=websecure"                                              
+      - "traefik.http.routers.alephzero-sepolia-nitro-archive-leveldb-hash.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.alephzero-sepolia-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/alephzero-sepolia-archive`)"                     
+      - "traefik.http.routers.alephzero-sepolia-nitro-archive-leveldb-hash.middlewares=alephzero-sepolia-nitro-archive-leveldb-hash-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:  
+    alephzero-sepolia-nitro-archive-leveldb-hash

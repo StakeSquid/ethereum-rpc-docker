@@ -19,7 +19,9 @@ services:
     volumes:
       - worldchain-mainnet-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret
-                  
+      
+    env_file:
+      - ./worldchain/worldchain-mainnet.env
     environment:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=worldchain-mainnet"
@@ -73,6 +75,8 @@ services:
       - .jwtsecret:/jwtsecret
             
     stop_grace_period: 30s
+    env_file:
+      - ./worldchain/worldchain-mainnet.env
     environment:
       - OP_NODE_NETWORK={{ service_name }}
       - "OP_NODE_SYNCMODE=execution-layer"

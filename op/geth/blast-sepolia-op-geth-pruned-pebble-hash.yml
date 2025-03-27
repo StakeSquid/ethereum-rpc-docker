@@ -19,7 +19,9 @@ services:
     volumes:
       - blast-sepolia-op-geth-pruned-pebble-hash:/data
       - .jwtsecret:/jwtsecret
-      - ./blast-io/sepolia:/config            
+      - ./blast-io/sepolia:/config
+    env_file:
+      - ./blast/blast-sepolia.env
     environment:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=blast-sepolia"
@@ -73,6 +75,8 @@ services:
       - .jwtsecret:/jwtsecret
       - ./blast-io/sepolia:/config      
     stop_grace_period: 30s
+    env_file:
+      - ./blast/blast-sepolia.env
     environment:
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - "OP_NODE_SYNCMODE=execution-layer"
