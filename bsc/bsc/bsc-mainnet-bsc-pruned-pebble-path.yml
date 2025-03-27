@@ -17,7 +17,7 @@ services:
       - /slowdisk:/slowdisk
     entrypoint: [ "geth" ]
     command:
-      - --networkid=56
+      - --mainnet      
       - --db.engine=pebble
       - --state.scheme=path
       - --syncmode=snap
@@ -49,9 +49,10 @@ services:
       - --ws.api=net,web3,eth,debug
       - --maxpeers=200
       - --nodiscover=false
-      - --discovery.port=10037      
+      - --discovery.port=10037     
       - --port=10037
-            
+      
+      - --pruneancient
     restart: unless-stopped
     stop_grace_period: 3m
     networks: 
