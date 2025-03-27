@@ -1,0 +1,69 @@
+
+
+services:
+  polygon-amoy-minimal:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    user: root
+    expose:
+      - "9090"
+      - "8545"
+    ports:
+      - "10307:10307"
+      - "10307:10307/udp"
+      - "15307:15307"
+      - "15307:15307/udp"
+      - "20307:20307"
+      - "20307:20307/udp"
+      - "25307:25307"
+      - "25307:25307/udp"      
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - polygon-amoy-erigon3-minimal-trace:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+    networks:
+      - chains
+    command: >
+      --chain amoy
+      --prune.mode=minimal
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
+      --port=10307
+      --p2p.allowed-ports=25307
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20307
+      --nat=extip:${IP}      
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+      --bor.heimdall=${POLYGON_HEIMDALL_REST:-None} 
+      
+
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.polygon-amoy-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/polygon-amoy-minimal"
+
+      - "traefik.http.services.polygon-amoy-erigon3-minimal-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.polygon-amoy-erigon3-minimal-trace.entrypoints=websecure"
+      - "traefik.http.routers.polygon-amoy-erigon3-minimal-trace.service=polygon-amoy-erigon3-minimal-trace"
+      - "traefik.http.routers.polygon-amoy-erigon3-minimal-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.polygon-amoy-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-amoy-minimal`)"
+      - "traefik.http.routers.polygon-amoy-erigon3-minimal-trace.middlewares=polygon-amoy-erigon3-minimal-trace-stripprefix, ipwhitelist"
+
+      
+volumes:
+    polygon-amoy-erigon3-minimal-trace:

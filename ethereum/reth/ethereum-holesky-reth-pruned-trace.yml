@@ -1,0 +1,80 @@
+services:
+  ethereum-holesky:
+    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.3.4}
+    user: root
+    volumes:
+      - "ethereum-holesky-reth-pruned-trace:/root/.local/share/reth/holesky"
+      - "/slowdisk:/slowdisk"
+      - ".jwtsecret:/jwtsecret"
+    expose:
+      - 8545
+      - 9001
+    ports:
+      - "10849:10849"
+      - "10849:10849/udp"
+    restart: unless-stopped
+    entrypoint: ["reth" "node"]
+    command: >
+      - --chain holesky
+      - --rpc-max-connections 429496729      
+      - --metrics 0.0.0.0:9001
+      - --http
+      - --http.addr 0.0.0.0
+      - --http.port 8545
+      - --ws
+      - --ws.addr 0.0.0.0
+      - --ws.port 8545
+      - --ws.origins '*'
+      - --port 10849
+      - --discovery.port 10849
+      - --authrpc.addr 0.0.0.0
+      - --authrpc.jwtsecret /jwtsecret
+      - --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin"
+      - --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin"
+      - --http.corsdomain '*'
+      - --rpc.max-logs-per-response 1100000
+      - --rpc.gascap 600000000
+      - --full
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ethereum-holesky-reth-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-holesky"
+      - "traefik.http.services.ethereum-holesky-reth-pruned-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.ethereum-holesky-reth-pruned-trace.entrypoints=websecure"
+      - "traefik.http.routers.ethereum-holesky-reth-pruned-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.ethereum-holesky-reth-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky`)"
+      - "traefik.http.routers.ethereum-holesky-reth-pruned-trace.middlewares=ethereum-holesky-reth-pruned-trace-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+  ethereum-holesky-node:
+    image: prysmaticlabs/prysm-beacon-chain:${PRYSM_VERSION:-v5.3.1}
+    ports:
+      - "15849:15849"
+      - "15849:15849/udp"
+    command:
+      [
+        "--holesky",
+        "--datadir=/data",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--p2p-tcp-port=15849",
+        "--p2p-udp-port=15849",
+        "--checkpoint-sync-url=None",
+        "--execution-endpoint=http://ethereum-holesky:8551",
+        "--enable-historical-state-representation=false",
+        "--beacon-db-pruning",
+        "--accept-terms-of-use"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:
+      - "ethereum-holesky-reth-pruned-trace_prysm:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+
+volumes:
+  ethereum-holesky-reth-pruned-trace:
+  ethereum-holesky-reth-pruned-trace_prsym:

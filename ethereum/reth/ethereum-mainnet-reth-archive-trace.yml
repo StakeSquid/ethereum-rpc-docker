@@ -1,0 +1,80 @@
+services:
+  ethereum-mainnet-archive:
+    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.3.4}
+    user: root
+    volumes:
+      - "ethereum-mainnet-reth-archive-trace:/root/.local/share/reth/mainnet"
+      - "/slowdisk:/slowdisk"
+      - ".jwtsecret:/jwtsecret"
+    expose:
+      - 8545
+      - 9001
+    ports:
+      - "10563:10563"
+      - "10563:10563/udp"
+    restart: unless-stopped
+    entrypoint: ["reth" "node"]
+    command: >
+      - --chain mainnet
+      - --rpc-max-connections 429496729      
+      - --metrics 0.0.0.0:9001
+      - --http
+      - --http.addr 0.0.0.0
+      - --http.port 8545
+      - --ws
+      - --ws.addr 0.0.0.0
+      - --ws.port 8545
+      - --ws.origins '*'
+      - --port 10563
+      - --discovery.port 10563
+      - --authrpc.addr 0.0.0.0
+      - --authrpc.jwtsecret /jwtsecret
+      - --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin"
+      - --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin"
+      - --http.corsdomain '*'
+      - --rpc.max-logs-per-response 1100000
+      - --rpc.gascap 600000000
+      
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ethereum-mainnet-reth-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-archive"
+      - "traefik.http.services.ethereum-mainnet-reth-archive-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.ethereum-mainnet-reth-archive-trace.entrypoints=websecure"
+      - "traefik.http.routers.ethereum-mainnet-reth-archive-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-archive`)"
+      - "traefik.http.routers.ethereum-mainnet-reth-archive-trace.middlewares=ethereum-mainnet-reth-archive-trace-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+  ethereum-mainnet-archive-node:
+    image: prysmaticlabs/prysm-beacon-chain:${PRYSM_VERSION:-v5.3.1}
+    ports:
+      - "15563:15563"
+      - "15563:15563/udp"
+    command:
+      [
+        "--mainnet",
+        "--datadir=/data",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--p2p-tcp-port=15563",
+        "--p2p-udp-port=15563",
+        "--checkpoint-sync-url=None",
+        "--execution-endpoint=http://ethereum-mainnet-archive:8551",
+        "--enable-historical-state-representation=false",
+        "--beacon-db-pruning",
+        "--accept-terms-of-use"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:
+      - "ethereum-mainnet-reth-archive-trace_prysm:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+
+volumes:
+  ethereum-mainnet-reth-archive-trace:
+  ethereum-mainnet-reth-archive-trace_prsym:

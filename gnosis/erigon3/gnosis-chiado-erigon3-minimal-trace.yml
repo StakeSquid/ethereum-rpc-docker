@@ -1,0 +1,77 @@
+
+
+services:
+  gnosis-chiado-minimal:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    user: root
+    expose:
+      - "9090"
+      - "8545"
+    ports:
+      - "10010:10010"
+      - "10010:10010/udp"
+      - "15010:15010"
+      - "15010:15010/udp"
+      - "20010:20010"
+      - "20010:20010/udp"
+      - "25010:25010"
+      - "25010:25010/udp"      
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - gnosis-chiado-erigon3-minimal-trace:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+    networks:
+      - chains
+    command: >
+      --chain chiado
+      --prune.mode=minimal
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
+      --port=10010
+      --p2p.allowed-ports=25010
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20010
+      --nat=extip:${IP}      
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+      
+      --caplin.discovery.addr=0.0.0.0
+      --caplin.discovery.port=15010
+      --caplin.discovery.tcpport=15010
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.gnosis-chiado-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/gnosis-chiado-minimal"
+
+      - "traefik.http.services.gnosis-chiado-erigon3-minimal-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace.entrypoints=websecure"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace.service=gnosis-chiado-erigon3-minimal-trace"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado-minimal`)"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace.middlewares=gnosis-chiado-erigon3-minimal-trace-stripprefix, ipwhitelist"
+
+      - "traefik.http.services.gnosis-chiado-erigon3-minimal-trace-node.loadbalancer.server.port=5555"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.entrypoints=websecure"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.service=gnosis-chiado-erigon3-minimal-trace-node"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.tls.certresolver=myresolver"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado-minimal/eth`)"
+      - "traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.middlewares=gnosis-chiado-erigon3-minimal-trace-stripprefix, ipwhitelist"
+volumes:
+    gnosis-chiado-erigon3-minimal-trace:

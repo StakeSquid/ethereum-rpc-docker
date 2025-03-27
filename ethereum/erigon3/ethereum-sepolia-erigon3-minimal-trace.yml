@@ -1,0 +1,77 @@
+
+
+services:
+  ethereum-sepolia-minimal:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    user: root
+    expose:
+      - "9090"
+      - "8545"
+    ports:
+      - "10087:10087"
+      - "10087:10087/udp"
+      - "15087:15087"
+      - "15087:15087/udp"
+      - "20087:20087"
+      - "20087:20087/udp"
+      - "25087:25087"
+      - "25087:25087/udp"      
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - ethereum-sepolia-erigon3-minimal-trace:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+    networks:
+      - chains
+    command: >
+      --chain sepolia
+      --prune.mode=minimal
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
+      --port=10087
+      --p2p.allowed-ports=25087
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20087
+      --nat=extip:${IP}      
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+      
+      --caplin.discovery.addr=0.0.0.0
+      --caplin.discovery.port=15087
+      --caplin.discovery.tcpport=15087
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ethereum-sepolia-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia-minimal"
+
+      - "traefik.http.services.ethereum-sepolia-erigon3-minimal-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.entrypoints=websecure"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.service=ethereum-sepolia-erigon3-minimal-trace"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-minimal`)"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist"
+
+      - "traefik.http.services.ethereum-sepolia-erigon3-minimal-trace-node.loadbalancer.server.port=5555"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.entrypoints=websecure"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.service=ethereum-sepolia-erigon3-minimal-trace-node"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.tls.certresolver=myresolver"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-minimal/eth`)"
+      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist"
+volumes:
+    ethereum-sepolia-erigon3-minimal-trace:

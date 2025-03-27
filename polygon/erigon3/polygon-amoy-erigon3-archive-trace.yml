@@ -1,0 +1,69 @@
+
+
+services:
+  polygon-amoy-archive:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    user: root
+    expose:
+      - "9090"
+      - "8545"
+    ports:
+      - "10377:10377"
+      - "10377:10377/udp"
+      - "15377:15377"
+      - "15377:15377/udp"
+      - "20377:20377"
+      - "20377:20377/udp"
+      - "25377:25377"
+      - "25377:25377/udp"      
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - polygon-amoy-erigon3-archive-trace:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+    networks:
+      - chains
+    command: >
+      --chain amoy
+      --prune.mode=archive
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
+      --port=10377
+      --p2p.allowed-ports=25377
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20377
+      --nat=extip:${IP}      
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+      --bor.heimdall=${POLYGON_HEIMDALL_REST:-None} 
+      
+
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.polygon-amoy-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/polygon-amoy-archive"
+
+      - "traefik.http.services.polygon-amoy-erigon3-archive-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.polygon-amoy-erigon3-archive-trace.entrypoints=websecure"
+      - "traefik.http.routers.polygon-amoy-erigon3-archive-trace.service=polygon-amoy-erigon3-archive-trace"
+      - "traefik.http.routers.polygon-amoy-erigon3-archive-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.polygon-amoy-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-amoy-archive`)"
+      - "traefik.http.routers.polygon-amoy-erigon3-archive-trace.middlewares=polygon-amoy-erigon3-archive-trace-stripprefix, ipwhitelist"
+
+      
+volumes:
+    polygon-amoy-erigon3-archive-trace:

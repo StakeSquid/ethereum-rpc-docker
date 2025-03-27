@@ -1,0 +1,77 @@
+
+
+services:
+  gnosis-mainnet-minimal:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    user: root
+    expose:
+      - "9090"
+      - "8545"
+    ports:
+      - "10429:10429"
+      - "10429:10429/udp"
+      - "15429:15429"
+      - "15429:15429/udp"
+      - "20429:20429"
+      - "20429:20429/udp"
+      - "25429:25429"
+      - "25429:25429/udp"      
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - gnosis-mainnet-erigon3-minimal-trace:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+    networks:
+      - chains
+    command: >
+      --chain mainnet
+      --prune.mode=minimal
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
+      --port=10429
+      --p2p.allowed-ports=25429
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20429
+      --nat=extip:${IP}      
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+      
+      --caplin.discovery.addr=0.0.0.0
+      --caplin.discovery.port=15429
+      --caplin.discovery.tcpport=15429
+      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.gnosis-mainnet-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/gnosis-mainnet-minimal"
+
+      - "traefik.http.services.gnosis-mainnet-erigon3-minimal-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.entrypoints=websecure"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.service=gnosis-mainnet-erigon3-minimal-trace"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-mainnet-minimal`)"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.middlewares=gnosis-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist"
+
+      - "traefik.http.services.gnosis-mainnet-erigon3-minimal-trace-node.loadbalancer.server.port=5555"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.entrypoints=websecure"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.service=gnosis-mainnet-erigon3-minimal-trace-node"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.tls.certresolver=myresolver"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-mainnet-minimal/eth`)"
+      - "traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.middlewares=gnosis-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist"
+volumes:
+    gnosis-mainnet-erigon3-minimal-trace:

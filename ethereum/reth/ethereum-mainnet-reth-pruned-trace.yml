@@ -1,0 +1,80 @@
+services:
+  ethereum-mainnet:
+    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.3.4}
+    user: root
+    volumes:
+      - "ethereum-mainnet-reth-pruned-trace:/root/.local/share/reth/mainnet"
+      - "/slowdisk:/slowdisk"
+      - ".jwtsecret:/jwtsecret"
+    expose:
+      - 8545
+      - 9001
+    ports:
+      - "10150:10150"
+      - "10150:10150/udp"
+    restart: unless-stopped
+    entrypoint: ["reth" "node"]
+    command: >
+      - --chain mainnet
+      - --rpc-max-connections 429496729      
+      - --metrics 0.0.0.0:9001
+      - --http
+      - --http.addr 0.0.0.0
+      - --http.port 8545
+      - --ws
+      - --ws.addr 0.0.0.0
+      - --ws.port 8545
+      - --ws.origins '*'
+      - --port 10150
+      - --discovery.port 10150
+      - --authrpc.addr 0.0.0.0
+      - --authrpc.jwtsecret /jwtsecret
+      - --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin"
+      - --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin"
+      - --http.corsdomain '*'
+      - --rpc.max-logs-per-response 1100000
+      - --rpc.gascap 600000000
+      - --full
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.ethereum-mainnet-reth-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet"
+      - "traefik.http.services.ethereum-mainnet-reth-pruned-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.ethereum-mainnet-reth-pruned-trace.entrypoints=websecure"
+      - "traefik.http.routers.ethereum-mainnet-reth-pruned-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.ethereum-mainnet-reth-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet`)"
+      - "traefik.http.routers.ethereum-mainnet-reth-pruned-trace.middlewares=ethereum-mainnet-reth-pruned-trace-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+  ethereum-mainnet-node:
+    image: prysmaticlabs/prysm-beacon-chain:${PRYSM_VERSION:-v5.3.1}
+    ports:
+      - "15150:15150"
+      - "15150:15150/udp"
+    command:
+      [
+        "--mainnet",
+        "--datadir=/data",
+        "--jwt-secret=/jwtsecret",
+        "--rpc-host=0.0.0.0",
+        "--grpc-gateway-host=0.0.0.0",
+        "--monitoring-host=0.0.0.0",
+        "--p2p-tcp-port=15150",
+        "--p2p-udp-port=15150",
+        "--checkpoint-sync-url=None",
+        "--execution-endpoint=http://ethereum-mainnet:8551",
+        "--enable-historical-state-representation=false",
+        "--beacon-db-pruning",
+        "--accept-terms-of-use"
+      ]                                                                                               
+    networks:                            
+      - chains                                                                                        
+    volumes:
+      - "ethereum-mainnet-reth-pruned-trace_prysm:/data"
+      - ".jwtsecret:/jwtsecret"
+    restart: unless-stopped
+
+volumes:
+  ethereum-mainnet-reth-pruned-trace:
+  ethereum-mainnet-reth-pruned-trace_prsym:
