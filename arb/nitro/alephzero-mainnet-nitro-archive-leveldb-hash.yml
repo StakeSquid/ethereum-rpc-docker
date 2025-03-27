@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    alephzero-mainnet-nitro-archive-leveldb-hash
+  alephzero-mainnet-nitro-archive-leveldb-hash:

@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    connext-sepolia-nitro-archive-leveldb-hash
+  connext-sepolia-nitro-archive-leveldb-hash:

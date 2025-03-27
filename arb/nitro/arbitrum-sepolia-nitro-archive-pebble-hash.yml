@@ -54,4 +54,4 @@ services:
       - chains
 
 volumes:  
-    arbitrum-sepolia-nitro-archive-pebble-hash
+  arbitrum-sepolia-nitro-archive-pebble-hash:

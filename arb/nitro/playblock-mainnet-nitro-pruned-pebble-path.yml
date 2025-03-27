@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    playblock-mainnet-nitro-pruned-pebble-path
+  playblock-mainnet-nitro-pruned-pebble-path:

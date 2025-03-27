@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    alephzero-mainnet-nitro-pruned-pebble-path
+  alephzero-mainnet-nitro-pruned-pebble-path:

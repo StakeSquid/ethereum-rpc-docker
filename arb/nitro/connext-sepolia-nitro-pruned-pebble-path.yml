@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    connext-sepolia-nitro-pruned-pebble-path
+  connext-sepolia-nitro-pruned-pebble-path:

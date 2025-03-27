@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    real-mainnet-nitro-archive-leveldb-hash
+  real-mainnet-nitro-archive-leveldb-hash:

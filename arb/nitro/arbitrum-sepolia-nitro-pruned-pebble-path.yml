@@ -54,4 +54,4 @@ services:
       - chains
 
 volumes:  
-    arbitrum-sepolia-nitro-pruned-pebble-path
+  arbitrum-sepolia-nitro-pruned-pebble-path:

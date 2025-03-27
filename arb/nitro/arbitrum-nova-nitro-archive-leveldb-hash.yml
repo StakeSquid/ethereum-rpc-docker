@@ -54,4 +54,4 @@ services:
       - chains
 
 volumes:  
-    arbitrum-nova-nitro-archive-leveldb-hash
+  arbitrum-nova-nitro-archive-leveldb-hash:

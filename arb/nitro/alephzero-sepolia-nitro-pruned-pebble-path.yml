@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    alephzero-sepolia-nitro-pruned-pebble-path
+  alephzero-sepolia-nitro-pruned-pebble-path:

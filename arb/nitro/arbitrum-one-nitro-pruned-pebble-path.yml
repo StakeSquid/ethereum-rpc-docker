@@ -54,4 +54,4 @@ services:
       - chains
 
 volumes:  
-    arbitrum-one-nitro-pruned-pebble-path
+  arbitrum-one-nitro-pruned-pebble-path:

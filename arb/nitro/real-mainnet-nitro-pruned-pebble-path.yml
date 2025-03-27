@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    real-mainnet-nitro-pruned-pebble-path
+  real-mainnet-nitro-pruned-pebble-path:

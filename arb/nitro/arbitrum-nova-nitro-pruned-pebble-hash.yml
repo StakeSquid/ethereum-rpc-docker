@@ -54,4 +54,4 @@ services:
       - chains
 
 volumes:  
-    arbitrum-nova-nitro-pruned-pebble-hash
+  arbitrum-nova-nitro-pruned-pebble-hash:

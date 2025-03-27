@@ -54,4 +54,4 @@ services:
       - chains
 
 volumes:  
-    arbitrum-one-nitro-archive-leveldb-hash
+  arbitrum-one-nitro-archive-leveldb-hash:

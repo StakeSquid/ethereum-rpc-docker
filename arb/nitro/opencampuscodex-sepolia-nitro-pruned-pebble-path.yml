@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    opencampuscodex-sepolia-nitro-pruned-pebble-path
+  opencampuscodex-sepolia-nitro-pruned-pebble-path:

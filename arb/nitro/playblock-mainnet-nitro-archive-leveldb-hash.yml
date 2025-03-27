@@ -63,4 +63,4 @@ services:
       - chains
 
 volumes:  
-    playblock-mainnet-nitro-archive-leveldb-hash
+  playblock-mainnet-nitro-archive-leveldb-hash:

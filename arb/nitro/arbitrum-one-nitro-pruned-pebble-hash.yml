@@ -54,4 +54,4 @@ services:
       - chains
 
 volumes:  
-    arbitrum-one-nitro-pruned-pebble-hash
+  arbitrum-one-nitro-pruned-pebble-hash:
