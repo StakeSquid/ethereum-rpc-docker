@@ -49,6 +49,7 @@ services:
       - --ws.api=net,web3,eth,debug
       - --maxpeers=200
       - --nodiscover=false
+      - --discovery.port=10037      
       - --port=10037
             
     restart: unless-stopped
