@@ -24,14 +24,9 @@ services:
       - --gcmode=full
       - --rpc.gascap=600000000
       - --nat=extip:${IP}
-      - --lightpeers=100
-      - --trie.timeout=150000000000
-      - --miner.gasceil=140000000
       - --miner.gasprice=1000000000
-      - --miner.recommit=10000000000
       - --txpool.nolocals
       - --txpool.journal=transactions.rlp
-      - --txpool.rejournal=3600000000000
       - --txpool.pricelimit=1000000000
       - --txpool.pricebump=10
       - --txpool.accountslots=200
@@ -41,7 +36,6 @@ services:
       - --gpo.blocks=20
       - --history.transactions=0 
       - --gpo.percentile=60
-      - --gpo.oraclethreshold=1000
       - --ipcpath=geth.ipc
       - --http
       - --http.addr=0.0.0.0
@@ -51,12 +45,11 @@ services:
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.port=8545
-      - --ws.origins'*
+      - --ws.origins=*
       - --ws.api=net,web3,eth,debug
       - --maxpeers=200
       - --nodiscover=false
-      - --listenaddr=:10037
-      - --emitcheckpoints
+      - --port=10037
             
     restart: unless-stopped
     stop_grace_period: 3m
