@@ -18,8 +18,7 @@ services:
     command: >
       --chain=mainnet
       --datadir=/datadir
-      --bor.runheimdall
-      --bor.useheimdallapp
+      --bor.heimdall=${POLYGON_HEIMDALL_REST:-https://polygon-heimdall-rest.publicnode.com}
       --db.engine=pebble
       --state.scheme=path
       --syncmode=snap

@@ -18,8 +18,7 @@ services:
     command: >
       --chain=amoy
       --datadir=/datadir
-      --bor.runheimdall
-      --bor.useheimdallapp
+      --bor.heimdall=${POLYGON_HEIMDALL_REST:-https://polygon-amoy-heimdall-rest.publicnode.com}
       --db.engine=pebble
       --state.scheme=path
       --syncmode=snap
