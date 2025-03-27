@@ -1,0 +1,58 @@
+
+
+services:
+  polygon-mainnet:
+    image: 0xpolygon/bor:${BOR_VERSION:-2.0.1}
+    sysctls:
+      net.ipv4.tcp_slow_start_after_idle: 0
+      net.ipv4.tcp_no_metrics_save: 1
+    volumes:                  
+      - "polygon-mainnet-bor-pruned-pebble-path:/datadir"
+      - "/slowdisk:/slowdisk"
+    expose:
+      - 8545
+    ports:                   
+      - "10961:10961"                                                                                 
+      - "10961:10961/udp"
+    command: >
+      server
+      --chain=mainnet
+      --datadir=/datadir
+      --bor.runheimdall
+      --bor.useheimdallapp
+      --db.engine=pebble
+      --state.scheme=path
+      --syncmode=snap
+      --gcmode=full
+      --port=10961
+      --bind=0.0.0.0
+      --nat=extip:$IP
+      --rpc.returndatalimit=10000000
+      --http
+      --http.port=8545
+      --http.vhosts=*
+      --ws
+      --ws.port=8545
+      --ws.origins=*
+      --ws.addr=0.0.0.0
+      --http.addr=0.0.0.0
+      --maxpeers=200
+      --ws.api=eth,net,web3,txpool,bor
+      --http.api=admin,eth,net,web3,txpool,bor
+      --maxpeers=200
+      --rpc.txfeecap=0
+      --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.polygon-peers.io
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.polygon-mainnet-bor-pruned-pebble-path-stripprefix.stripprefix.prefixes=/polygon-mainnet"                      
+      - "traefik.http.services.polygon-mainnet-bor-pruned-pebble-path.loadbalancer.server.port=8545"                                     
+      - "traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.entrypoints=websecure"                                              
+      - "traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-mainnet`)"                     
+      - "traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.middlewares=polygon-mainnet-bor-pruned-pebble-path-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:  
+    polygon-mainnet-bor-pruned-pebble-path:
