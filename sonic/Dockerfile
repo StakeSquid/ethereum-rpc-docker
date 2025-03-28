@@ -18,7 +18,7 @@ COPY --from=builder /go/sonic/build/sonicd /usr/local/bin/
 COPY --from=builder /go/sonic/build/sonictool /usr/local/bin/
 
 COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
-RUM chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 18545 18546 5050 5050/udp
 
