@@ -58,6 +58,7 @@ services:
     env_file:
       - ./taiko/geth.env
     environment:
+      - "L1_ENDPOINT_HTTP=${ETHEREUM_HOLESKY_EXECUTION_RPC}"
       - "TAIKO_TOKEN_L1_ADDRESS=${TAIKO_HEKLA_TOKEN_ADDRESS}"
       - "ASSIGNMENT_HOOK_L1_ADDRESS=${TAIKO_HEKLA_HOOK_ADDRESS}"
       - "L1_ADDRESS=${TAIKO_HEKLA_L1_ADDRESS}"

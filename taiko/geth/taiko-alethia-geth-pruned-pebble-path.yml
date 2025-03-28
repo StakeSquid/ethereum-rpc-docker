@@ -58,6 +58,7 @@ services:
     env_file:
       - ./taiko/geth.env
     environment:
+      - "L1_ENDPOINT_HTTP=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "TAIKO_TOKEN_L1_ADDRESS=${TAIKO_ALETHIA_TOKEN_ADDRESS}"
       - "ASSIGNMENT_HOOK_L1_ADDRESS=${TAIKO_ALETHIA_HOOK_ADDRESS}"
       - "L1_ADDRESS=${TAIKO_ALETHIA_L1_ADDRESS}"
