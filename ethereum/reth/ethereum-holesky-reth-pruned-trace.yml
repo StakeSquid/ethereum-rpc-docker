@@ -61,7 +61,7 @@ services:
         "--monitoring-host=0.0.0.0",
         "--p2p-tcp-port=15849",
         "--p2p-udp-port=15849",
-        "--checkpoint-sync-url=None",
+        "--checkpoint-sync-url=https://holesky.beaconstate.info",
         "--execution-endpoint=http://ethereum-holesky:8551",
         "--enable-historical-state-representation=false",
         "--beacon-db-pruning",

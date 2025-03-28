@@ -61,7 +61,7 @@ services:
         "--monitoring-host=0.0.0.0",
         "--p2p-tcp-port=15330",
         "--p2p-udp-port=15330",
-        "--checkpoint-sync-url=None",
+        "--checkpoint-sync-url=https://sepolia.beaconstate.info",
         "--execution-endpoint=http://ethereum-sepolia-archive:8551",
         "--enable-historical-state-representation=false",
         "--beacon-db-pruning",
