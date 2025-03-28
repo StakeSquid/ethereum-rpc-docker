@@ -13,27 +13,26 @@ services:
       - "10330:10330"
       - "10330:10330/udp"
     restart: unless-stopped
-    entrypoint: ["reth" "node"]
-    command: >
-      - --chain sepolia
-      - --rpc-max-connections 429496729      
-      - --metrics 0.0.0.0:9001
+    entrypoint: ["reth", "node"]
+    command:
+      - --chain=sepolia
+      - --metrics=0.0.0.0:9001
       - --http
-      - --http.addr 0.0.0.0
-      - --http.port 8545
+      - --http.addr=0.0.0.0
+      - --http.port=8545
       - --ws
-      - --ws.addr 0.0.0.0
-      - --ws.port 8545
-      - --ws.origins '*'
-      - --port 10330
-      - --discovery.port 10330
-      - --authrpc.addr 0.0.0.0
-      - --authrpc.jwtsecret /jwtsecret
-      - --http.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin"
-      - --ws.api "debug,eth,net,trace,txpool,web3,rpc,reth,admin"
-      - --http.corsdomain '*'
-      - --rpc.max-logs-per-response 1100000
-      - --rpc.gascap 600000000
+      - --ws.addr=0.0.0.0
+      - --ws.port=8545
+      - --ws.origins=*
+      - --port=10330
+      - --discovery.port=10330
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --http.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
+      - --ws.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
+      - --http.corsdomain=*
+      - --rpc.max-logs-per-response=1100000
+      - --rpc.gascap=600000000
       
     stop_grace_period: 1m
     labels:
