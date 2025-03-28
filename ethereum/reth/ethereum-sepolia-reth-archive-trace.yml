@@ -76,4 +76,4 @@ services:
 
 volumes:
   ethereum-sepolia-reth-archive-trace:
-  ethereum-sepolia-reth-archive-trace_prsym:
+  ethereum-sepolia-reth-archive-trace_prysm:

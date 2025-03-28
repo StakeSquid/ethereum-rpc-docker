@@ -76,4 +76,4 @@ services:
 
 volumes:
   ethereum-holesky-reth-pruned-trace:
-  ethereum-holesky-reth-pruned-trace_prsym:
+  ethereum-holesky-reth-pruned-trace_prysm:

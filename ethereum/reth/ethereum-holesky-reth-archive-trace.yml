@@ -76,4 +76,4 @@ services:
 
 volumes:
   ethereum-holesky-reth-archive-trace:
-  ethereum-holesky-reth-archive-trace_prsym:
+  ethereum-holesky-reth-archive-trace_prysm:

@@ -76,4 +76,4 @@ services:
 
 volumes:
   ethereum-sepolia-reth-pruned-trace:
-  ethereum-sepolia-reth-pruned-trace_prsym:
+  ethereum-sepolia-reth-pruned-trace_prysm:
