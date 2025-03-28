@@ -1,5 +1,6 @@
 
 
+
 services:
   gnosis-mainnet-minimal:
     image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
@@ -28,7 +29,7 @@ services:
     
     entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
     command:
-      - --chain=mainnet
+      - --chain=gnosis
       
       - --prune.mode=minimal
       - --port=10429
