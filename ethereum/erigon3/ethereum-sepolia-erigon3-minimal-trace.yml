@@ -45,8 +45,6 @@ services:
       - --ws.port=8545
       - --ws
        
-      - --torrent.upload.rate="1250mb"
-      - --torrent.download.rate="1250mb"
       - --torrent.port=20087
       
       - --beacon.api.port=5555
