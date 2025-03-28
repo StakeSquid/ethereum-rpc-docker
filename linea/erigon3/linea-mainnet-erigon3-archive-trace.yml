@@ -19,7 +19,7 @@ services:
     volumes:
       - linea-mainnet-erigon3-archive-trace:/root/.local/share/erigon
       - /slowdisk:/slowdisk
-      - ./linea/mainnet/shared:/config      
+      - ./linea/shared:/config      
     networks:
       - chains
     entrypoint: ["/bin/sh", "-c", "[ ! -f /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init /config/genesis.json; exec erigon \"$@\""]
