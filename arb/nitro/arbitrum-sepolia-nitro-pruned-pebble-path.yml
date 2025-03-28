@@ -1,0 +1,56 @@
+
+
+services:
+  arbitrum-sepolia:
+    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.5.3-0a9c975}'
+    stop_grace_period: 3m
+    user: root
+    volumes:
+      - 'arbitrum-sepolia-nitro-pruned-pebble-path:/root/.arbitrum'
+      
+      - './tmp/arbitrum-sepolia:/tmp'
+    expose:
+      - 8545
+    command:
+      - --chain.id=421614      
+      - --execution.caching.state-scheme=path
+      - --execution.rpc.gas-cap=600000000
+      - --execution.caching.archive=false
+      - --execution.sequencer.enable=false      
+      - --persistent.db-engine=pebble            
+      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --parent-chain.blob-client.beacon-url=${ETHEREUM_SEPOLIA_BEACON_REST}      
+      - --http.addr=0.0.0.0
+      - --http.port=8545
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --http.api=eth,net,web3,arb,txpool,debug
+      - --ws.port=8545
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+      - --ws.api=eth,net,web3,arb,txpool,debug
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=6070
+      - --log-type=json
+      - --node.sequencer=false
+      - --node.staker.enable=false
+      - --node.batch-poster.enable=false            
+      
+      
+            
+            
+    restart: unless-stopped                 
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.arbitrum-sepolia-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/arbitrum-sepolia"                      
+      - "traefik.http.services.arbitrum-sepolia-nitro-pruned-pebble-path.loadbalancer.server.port=8545"
+      - "traefik.http.routers.arbitrum-sepolia-nitro-pruned-pebble-path.entrypoints=websecure"                                              
+      - "traefik.http.routers.arbitrum-sepolia-nitro-pruned-pebble-path.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.arbitrum-sepolia-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-sepolia`)"                     
+      - "traefik.http.routers.arbitrum-sepolia-nitro-pruned-pebble-path.middlewares=arbitrum-sepolia-nitro-pruned-pebble-path-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+volumes:  
+  arbitrum-sepolia-nitro-pruned-pebble-path:
