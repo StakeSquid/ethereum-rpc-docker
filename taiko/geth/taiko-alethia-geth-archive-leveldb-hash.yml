@@ -48,7 +48,7 @@ services:
       - chains
 
   taiko-alethia-archive-driver:
-    image: us-docker.pkg.dev/evmchain/images/taiko-client:v1.12.0
+    image: us-docker.pkg.dev/evmchain/images/taiko-client:taiko-alethia-client-v0.43.1
     restart: unless-stopped
     depends_on:
       - taiko-alethia-archive
