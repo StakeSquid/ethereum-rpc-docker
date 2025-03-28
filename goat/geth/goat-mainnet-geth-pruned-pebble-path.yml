@@ -1,0 +1,73 @@
+
+
+services:
+  goat-mainnet:
+    image: ghcr.io/goatnetwork/goat-geth:v0.3.0
+    stop_grace_period: 5m
+    restart: unless-stopped
+    ports:
+      - "10640:10640"
+      - "10640:10640/udp"
+    environment:
+      - "GETH_GCMODE=full"
+      - "GETH_SYNCMODE=snap"      
+      - "GETH_STATE_SCHEME=path"
+      - "GETH_DB_ENGINE=pebble"
+      - "GETH_NAT=extip:${IP}"
+      - "GETH_PORT=10640"
+      - "GETH_WS_PORT=8545"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_VHOSTS=*"
+      - "GETH_WS=true"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_ORIGINS=*"
+      - "GETH_HTTP_API=eth,net,debug,admin,web3"
+    entrypoint: ["geth"]
+    command: --goat=mainnet
+    expose:
+      - 8545
+    volumes:
+      - "goat-mainnet-geth-pruned-pebble-path:/root/.ethereum"
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.goat-mainnet-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/goat-mainnet"                      
+      - "traefik.http.services.goat-mainnet-geth-pruned-pebble-path.loadbalancer.server.port=8545"
+      - "traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.entrypoints=websecure"                                              
+      - "traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/goat-mainnet`)"                     
+      - "traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.middlewares=goat-mainnet-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
+    networks:
+      - chains
+
+  goat-mainnet-node:
+    image: ghcr.io/goatnetwork/goat:v0.2.3
+    stop_grace_period: 30s
+    restart: unless-stopped
+    entrypoint: ["goatd", "start"]
+    expose:
+      - 1317
+    ports:
+      - "15640:15640"
+      - "15640:15640/udp"
+    command:
+      - --home /goat
+      - --chain-id=goat-mainnet
+      - --goat.geth /geth/geth.ipc
+      - --api.enable
+      - --api.address=tcp://0.0.0.0:1317
+      - --p2p.external-address ${IP}:15640
+      - --p2p.laddr 0.0.0.0:15640
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - "goat-mainnet-geth-pruned-pebble-path_node:/goat"
+      - "goat-mainnet-geth-pruned-pebble-path:/geth"
+    depends_on:
+      - goat-mainnet
+    networks:
+      - chains
+
+volumes:
+  goat-mainnet-geth-pruned-pebble-path:
+  goat-mainnet-geth-pruned-pebble-path_node:
