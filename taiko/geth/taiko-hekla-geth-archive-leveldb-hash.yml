@@ -1,0 +1,79 @@
+
+
+
+services:
+  taiko-hekla-archive:
+    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.14.1
+    restart: unless-stopped
+    stop_grace_period: 3m
+    volumes:
+      - taiko-hekla-geth-archive-leveldb-hash:/root/.ethereum
+    expose:
+      - 8545
+      - 8551
+    ports:
+      - "10063:10063"
+      - "10063:10063/udp"
+    command: >
+      - --taiko
+      - --networkid 167009
+      - --gcmode archive
+      - --bootnodes enode://1733a899719c64edc8ad6818598b6b9aa41889297a7ee7b9cbf3e610d4df2e207b0e04fd40060a36f020116ab5ad451201e448fc224cd38b0a0d5fcbb1d2c812@34.126.109.163:30303,enode://3c7e00eff6a98f5d49084db988b9bee9cab3338ee809d88e41318dc7ea7fb67ab8e8a923e4a9f193fecd7698ef92c0977e07ac850e10777bdd11cc25045d63bf@35.198.236.33:30303,enode://eb5079aae185d5d8afa01bfd2d349da5b476609aced2b57c90142556cf0ee4a152bcdd724627a7de97adfc2a68af5742a8f58781366e6a857d4bde98de6fe986@34.66.210.65:30303,enode://2294f526cbb7faa778192289c252307420532191438ce821d3c50232e019a797bda8c8f8541de0847e953bb03096123856935e32294de9814d15d120131499ba@34.72.186.213:30303
+      - --syncmode full
+      - --authrpc.addr "0.0.0.0"
+      - --authrpc.vhosts "*"
+      - --http
+      - --http.api admin,debug,eth,net,web3,txpool,taiko
+      - --http.addr "0.0.0.0"
+      - --http.vhosts "*"
+      - --ws
+      - --ws.api debug,eth,net,web3,txpool,taiko
+      - --ws.addr "0.0.0.0"
+      - --ws.port 8545
+      - --ws.origins "*"
+      - --gpo.defaultprice "10000000"
+      - --port 10063
+      - --discovery.port 10063
+      - --maxpeers 50
+      - --maxpendpeers 0
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.taiko-hekla-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/taiko-hekla-archive"
+      - "traefik.http.services.taiko-hekla-geth-archive-leveldb-hash.loadbalancer.server.port=8545"
+      - "traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.entrypoints=websecure"
+      - "traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.tls.certresolver=myresolver"
+      - "traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-hekla-archive`)"
+      - "traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.middlewares=taiko-hekla-geth-archive-leveldb-hash-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+  taiko-hekla-archive-driver:
+    image: us-docker.pkg.dev/evmchain/images/taiko-client:v1.14.1
+    restart: unless-stopped
+    depends_on:
+      - taiko-hekla-archive
+    env_file:
+      - ./taiko/geth.env
+    environment:
+      - "TAIKO_TOKEN_L1_ADDRESS=${TAIKO_HEKLA_ARCHIVE_TOKEN_ADDRESS}"
+      - "ASSIGNMENT_HOOK_L1_ADDRESS=${TAIKO_HEKLA_ARCHIVE_HOOK_ADDRESS}"
+      - "L1_ADDRESS=${TAIKO_HEKLA_ARCHIVE_L1_ADDRESS}"
+      - "L2_ADDRESS=${TAIKO_HEKLA_ARCHIVE_L2_ADDRESS}"           
+    volumes:
+      - ./jwtsecret:/jwtsecret
+    entrypoint: ["taiko-client", "driver"]
+    command: >
+      - --l1.ws "${ETHEREUM_HOLESKY_EXECUTION_WS}"
+      - --l2.ws "ws://:8545}
+      - --l1.beacon "${ETHEREUM_HOLESKY_BEACON_REST}"
+      - --l2.auth "http://taiko-hekla-archive:8551"
+      - --taikoL1 "${L1_ADDRESS}"
+      - --taikoL2 "${L2_ADDRESS}"
+      - --jwtSecret /jwtsecret
+      - --p2p.sync
+      - --p2p.checkPointSyncUrl "https://rpc.hekla.taiko.xyz"
+    networks:
+      - chains
+      
+volumes:
+  taiko-hekla-geth-archive-leveldb-hash:

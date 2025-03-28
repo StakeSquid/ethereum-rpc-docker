@@ -1,0 +1,79 @@
+
+
+
+services:
+  taiko-alethia:
+    image: us-docker.pkg.dev/evmchain/images/taiko-geth:v1.12.0
+    restart: unless-stopped
+    stop_grace_period: 3m
+    volumes:
+      - taiko-alethia-geth-pruned-pebble-path:/root/.ethereum
+    expose:
+      - 8545
+      - 8551
+    ports:
+      - "10251:10251"
+      - "10251:10251/udp"
+    command: >
+      - --taiko
+      - --networkid 167000
+      - --gcmode full
+      - --bootnodes enode://7a8955b27eda2ddf361b59983fce9c558b18ad60d996ac106629f7f913247ef13bc842c7cf6ec6f87096a3ea8048b04873c40d3d873c0276d38e222bddd72e88@43.153.44.186:30303,enode://704a50da7e727aa10c45714beb44ece04ca1280ad63bb46bb238a01bf55c19c9702b469fb12c63824fa90f5051f7091b1c5069df1ec9a0ba1e943978c09d270f@49.51.202.127:30303,enode://f52e4e212a15cc4f68df27282e616d51d7823596c83c8c8e3b3416d7ab531cefc7b8a493d01964e1918315e6b0c7a4806634aeabb9013642a9159a53f4ebc094@43.153.16.47:30303,enode://57f4b29cd8b59dc8db74be51eedc6425df2a6265fad680c843be113232bbe632933541678783c2a5759d65eac2e2241c45a34e1c36254bccfe7f72e52707e561@104.197.107.1:30303,enode://87a68eef46cc1fe862becef1185ac969dfbcc050d9304f6be21599bfdcb45a0eb9235d3742776bc4528ac3ab631eba6816e9b47f6ee7a78cc5fcaeb10cd32574@35.232.246.122:30303
+      - --syncmode snap
+      - --authrpc.addr "0.0.0.0"
+      - --authrpc.vhosts "*"
+      - --http
+      - --http.api admin,debug,eth,net,web3,txpool,taiko
+      - --http.addr "0.0.0.0"
+      - --http.vhosts "*"
+      - --ws
+      - --ws.api debug,eth,net,web3,txpool,taiko
+      - --ws.addr "0.0.0.0"
+      - --ws.port 8545
+      - --ws.origins "*"
+      - --gpo.defaultprice "10000000"
+      - --port 10251
+      - --discovery.port 10251
+      - --maxpeers 50
+      - --maxpendpeers 0
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.taiko-alethia-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/taiko-alethia"
+      - "traefik.http.services.taiko-alethia-geth-pruned-pebble-path.loadbalancer.server.port=8545"
+      - "traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.entrypoints=websecure"
+      - "traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.tls.certresolver=myresolver"
+      - "traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-alethia`)"
+      - "traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.middlewares=taiko-alethia-geth-pruned-pebble-path-stripprefix, ipwhitelist"
+    networks:
+      - chains
+
+  taiko-alethia-driver:
+    image: us-docker.pkg.dev/evmchain/images/taiko-client:v1.12.0
+    restart: unless-stopped
+    depends_on:
+      - taiko-alethia
+    env_file:
+      - ./taiko/geth.env
+    environment:
+      - "TAIKO_TOKEN_L1_ADDRESS=${TAIKO_ALETHIA_TOKEN_ADDRESS}"
+      - "ASSIGNMENT_HOOK_L1_ADDRESS=${TAIKO_ALETHIA_HOOK_ADDRESS}"
+      - "L1_ADDRESS=${TAIKO_ALETHIA_L1_ADDRESS}"
+      - "L2_ADDRESS=${TAIKO_ALETHIA_L2_ADDRESS}"           
+    volumes:
+      - ./jwtsecret:/jwtsecret
+    entrypoint: ["taiko-client", "driver"]
+    command: >
+      - --l1.ws "${ETHEREUM_MAINNET_EXECUTION_WS}"
+      - --l2.ws "ws://:8545}
+      - --l1.beacon "${ETHEREUM_MAINNET_BEACON_REST}"
+      - --l2.auth "http://taiko-alethia:8551"
+      - --taikoL1 "${L1_ADDRESS}"
+      - --taikoL2 "${L2_ADDRESS}"
+      - --jwtSecret /jwtsecret
+      - --p2p.sync
+      - --p2p.checkPointSyncUrl "https://rpc.mainnet.taiko.xyz"
+    networks:
+      - chains
+      
+volumes:
+  taiko-alethia-geth-pruned-pebble-path:
