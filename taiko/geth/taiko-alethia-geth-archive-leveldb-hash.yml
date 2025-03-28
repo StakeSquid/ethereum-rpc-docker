@@ -63,7 +63,7 @@ services:
       - "L1_ADDRESS=${TAIKO_ALETHIA_ARCHIVE_L1_ADDRESS}"
       - "L2_ADDRESS=${TAIKO_ALETHIA_ARCHIVE_L2_ADDRESS}"           
     volumes:
-      - ./jwtsecret:/jwtsecret
+      - .jwtsecret:/jwtsecret
     entrypoint: ["taiko-client", "driver"]
     command:
       - "--l1.ws=${ETHEREUM_MAINNET_EXECUTION_WS}"
