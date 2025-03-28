@@ -58,7 +58,7 @@ services:
       
   swell-mainnet-node:
     
-    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:None
+    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.12.2
     
     expose:
       - 8545
