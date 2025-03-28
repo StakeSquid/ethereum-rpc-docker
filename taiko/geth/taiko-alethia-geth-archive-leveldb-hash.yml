@@ -14,7 +14,8 @@ services:
     ports:
       - "10088:10088"
       - "10088:10088/udp"
-    command: >
+    entrypoint: ["geth"]
+    command:
       - --taiko
       - --networkid 167000
       - --gcmode archive
@@ -62,7 +63,7 @@ services:
     volumes:
       - ./jwtsecret:/jwtsecret
     entrypoint: ["taiko-client", "driver"]
-    command: >
+    command:
       - "--l1.ws ${ETHEREUM_MAINNET_EXECUTION_WS}"
       - "--l2.ws ws://taiko-alethia-archive:8545"
       - "--l1.beacon ${ETHEREUM_MAINNET_BEACON_REST}"
