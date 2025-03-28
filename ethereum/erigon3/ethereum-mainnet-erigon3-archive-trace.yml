@@ -27,7 +27,7 @@ services:
     networks:
       - chains
     
-    entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
+    entrypoint: ["erigon"]
     command:
       - --chain=mainnet
       
