@@ -56,7 +56,7 @@ services:
     depends_on:
       - taiko-alethia
     env_file:
-      - ./taiko/geth.env
+      - ./taiko/alethia.env
     environment:
       #- "L1_ENDPOINT_HTTP=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       #- "TAIKO_TOKEN_L1_ADDRESS=${TAIKO_ALETHIA_TOKEN_ADDRESS}"
