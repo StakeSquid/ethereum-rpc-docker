@@ -45,23 +45,18 @@ services:
     stop_grace_period: 30s
     restart: unless-stopped
     entrypoint: ["goatd", "start"]
-    expose:
-      - 1317
     ports:
       - "15891:15891"
       - "15891:15891/udp"
     command:
-      - --home /goat
-      - --chain-id=goat-mainnet
-      - --goat.geth /geth/geth.ipc
-      - --api.enable
-      - --api.address=tcp://0.0.0.0:1317
-      - --p2p.external-address ${IP}:15891
-      - --p2p.laddr 0.0.0.0:15891
+      - --chain-id goat-mainnet
+      - --goat.geth "/geth/geth.ipc"
+      - --p2p.external-address "${IP}:15891"
+      - --p2p.laddr "0.0.0.0:15891"
     environment:
       - "IP=${IP}"
     volumes:
-      - "goat-mainnet-geth-archive-leveldb-hash_node:/goat"
+      - "goat-mainnet-geth-archive-leveldb-hash_node:/root/.goat"
       - "goat-mainnet-geth-archive-leveldb-hash:/geth"
     depends_on:
       - goat-mainnet-archive
