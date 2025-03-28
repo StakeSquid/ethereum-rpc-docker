@@ -38,7 +38,7 @@ services:
       - --http.addr=0.0.0.0
       - --http.vhosts=*
       - --http.corsdomain=*
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
       - --rpc.returndata.limit=1100000
       - --rpc.gascap=5000000000
       - --ws.port=8545
