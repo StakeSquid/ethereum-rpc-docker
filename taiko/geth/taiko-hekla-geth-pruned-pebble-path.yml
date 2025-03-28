@@ -64,7 +64,7 @@ services:
     entrypoint: ["taiko-client", "driver"]
     command: >
       - --l1.ws "${ETHEREUM_HOLESKY_EXECUTION_WS}"
-      - --l2.ws "ws://:8545}
+      - --l2.ws "ws://taiko-hekla:8545"
       - --l1.beacon "${ETHEREUM_HOLESKY_BEACON_REST}"
       - --l2.auth "http://taiko-hekla:8551"
       - --taikoL1 "${L1_ADDRESS}"
