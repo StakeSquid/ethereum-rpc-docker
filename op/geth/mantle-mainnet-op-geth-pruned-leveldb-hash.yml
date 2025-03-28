@@ -1,0 +1,109 @@
+
+
+services:
+  mantle-mainnet:
+    
+    image: mantlenetworkio/mantle-op-geth:v1.1.1    
+    
+    expose:
+      - 8545
+      - 6060       
+    ports:
+      - "10067:10067"
+      - "10067:10067/udp"
+    entrypoint: ["/bin/sh", "-c", "[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json; exec /usr/local/bin/geth \"$@\""]
+    restart: unless-stopped
+    stop_grace_period: 3m    
+    volumes:
+      - mantle-mainnet-op-geth-pruned-leveldb-hash:/data
+      - .jwtsecret:/jwtsecret
+      - ./mantle/mainnet:/config
+    env_file:
+      - ./mantle/mainnet/.env
+    environment:
+      - "GETH_DATADIR=/data"
+      - "GETH_OP_NETWORK=mantle-mainnet"
+      - "GETH_GCMODE=full"
+      - "GETH_SYNCMODE=full"      
+      - "GETH_STATE_SCHEME=hash"
+      - "GETH_DB_ENGINE=leveldb"
+      - "GETH_NAT=extip:${IP}"
+      - "GETH_PORT=10067"
+      - "GETH_WS_PORT=8545"
+      - "GETH_HTTP=true"
+      - "GETH_HTTP_ADDR=0.0.0.0"
+      - "GETH_HTTP_VHOSTS=*"
+      - "GETH_WS=true"
+      - "GETH_WS_ADDR=0.0.0.0"
+      - "GETH_WS_ORIGINS=*"
+      - "GETH_HTTP_API=eth,net,debug,admin,web3"
+      - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
+      - "GETH_AUTHRPC_ADDR=0.0.0.0"
+      - "GETH_AUTHRPC_VHOSTS=*"
+      
+      
+      
+                  
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.mantle-mainnet-op-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/mantle-mainnet"                      
+      - "traefik.http.services.mantle-mainnet-op-geth-pruned-leveldb-hash.loadbalancer.server.port=8545"
+      - "traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.entrypoints=websecure"                                              
+      - "traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle-mainnet`)"                     
+      - "traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.middlewares=mantle-mainnet-op-geth-pruned-leveldb-hash-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+      
+  mantle-mainnet-node:
+    
+    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.1
+    
+    expose:
+      - 8545
+      - 7300
+      - 6060
+    ports:
+      - "15067:15067"
+      - "15067:15067/udp"
+    entrypoint: [ "./op-node" ]
+    restart: unless-stopped
+    volumes:
+      - .jwtsecret:/jwtsecret
+      - ./mantle/mainnet:/config      
+    stop_grace_period: 30s
+    env_file:
+      - ./mantle/mainnet/.env
+    environment:
+      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
+      - "OP_NODE_SYNCMODE=consensus-layer"
+      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_ENGINE_RPC=http://mantle-mainnet:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15067"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15067"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=0"
+      - "OP_NODE_STATIC_PEERS="
+      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"
+      
+      
+                        
+      
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+  mantle-mainnet-op-geth-pruned-leveldb-hash:

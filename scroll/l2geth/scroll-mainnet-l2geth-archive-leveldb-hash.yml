@@ -1,0 +1,50 @@
+
+services:
+  scroll-mainnet-archive:                         
+    image: scrolltech/l2geth:scroll-v5.7.2
+    expose: 
+      - 8545
+    ports:                      
+      - "10083:10083"                                                                                 
+      - "10083:10083/udp"  
+    command:
+      - --scroll
+      - --syncmode=full
+      - --gcmode=archive  
+      - --port=10083
+      - --nat=extip:$IP
+      - --cache=8192
+      - --ws
+      - --ws.port=8545
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+      - --http
+      - --http.port=8545
+      - --http.addr=0.0.0.0
+      - --http.vhosts=*
+      - --l1.endpoint=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --da.blob.beaconnode=${ETHEREUM_MAINNET_BEACON_REST}
+      - --rollup.verify
+      - --graphql                        
+      - --graphql.vhosts=*
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --maxpeers=100
+      - --gpo.ignoreprice=1
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "scroll-mainnet-l2geth-archive-leveldb-hash:/root/.ethereum"
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.scroll-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/scroll-mainnet-archive"                  
+      - "traefik.http.services.scroll-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545"                                 
+      - "traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.entrypoints=websecure"                                          
+      - "traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.tls.certresolver=myresolver"                                    
+      - "traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll-mainnet-archive`)"                 
+      - "traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.middlewares=scroll-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist"
+
+volumes:
+  scroll-mainnet-l2geth-archive-leveldb-hash:

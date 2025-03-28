@@ -1,0 +1,61 @@
+
+
+services:
+  linea-sepolia:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    user: root
+    expose:
+      - "9090"
+      - "8545"
+    ports:
+      - "10620:10620"
+      - "10620:10620/udp"
+      - "25620:25620"
+      - "25620:25620/udp"
+      - "30620:30620"
+      - "30620:30620/udp"
+      
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - linea-sepolia-erigon3-pruned-trace:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+    networks:
+      - chains
+    entrypoint: ["/bin/sh", "-c", "[ ! -f /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init /config/genesis.json; exec erigon \"$@\""]
+    command: >
+      --networkid=59141
+      --prune.mode=full
+      --port=10620
+      --p2p.allowed-ports=25620
+      --p2p.allowed-ports=30620      
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --nat=extip:${IP}
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+      
+      
+
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.linea-sepolia-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/linea-sepolia"
+      - "traefik.http.services.linea-sepolia-erigon3-pruned-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.linea-sepolia-erigon3-pruned-trace.entrypoints=websecure"
+      - "traefik.http.routers.linea-sepolia-erigon3-pruned-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.linea-sepolia-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-sepolia`)"
+      - "traefik.http.routers.linea-sepolia-erigon3-pruned-trace.middlewares=linea-sepolia-erigon3-pruned-trace-stripprefix, ipwhitelist"
+      
+volumes:
+    linea-sepolia-erigon3-pruned-trace:

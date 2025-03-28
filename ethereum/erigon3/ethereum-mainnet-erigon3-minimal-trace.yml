@@ -10,12 +10,14 @@ services:
     ports:
       - "10614:10614"
       - "10614:10614/udp"
+      - "25614:25614"
+      - "25614:25614/udp"
+      - "30614:30614"
+      - "30614:30614/udp"
       - "15614:15614"
       - "15614:15614/udp"
       - "20614:20614"
       - "20614:20614/udp"
-      - "25614:25614"
-      - "25614:25614/udp"      
     environment:
       - "IP=${IP}"
     volumes:
@@ -23,20 +25,17 @@ services:
       - /slowdisk:/slowdisk
     networks:
       - chains
+    
+    entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
     command: >
-      --chain mainnet
+      --chain=mainnet
       --prune.mode=minimal
-      --beacon.api.port=5555
-      --beacon.api.addr=0.0.0.0
-      --beacon.api.cors.allow-origins=*      
       --port=10614
       --p2p.allowed-ports=25614
+      --p2p.allowed-ports=30614      
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
-      --torrent.upload.rate="1250mb"
-      --torrent.download.rate="1250mb"
-      --torrent.port=20614
-      --nat=extip:${IP}      
+      --nat=extip:${IP}
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
@@ -48,7 +47,13 @@ services:
       --rpc.gascap=5000000000
       --ws.port=8545
       --ws
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20614
       
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
       --caplin.discovery.addr=0.0.0.0
       --caplin.discovery.port=15614
       --caplin.discovery.tcpport=15614
@@ -59,14 +64,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.ethereum-mainnet-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal"
-
       - "traefik.http.services.ethereum-mainnet-erigon3-minimal-trace.loadbalancer.server.port=8545"
       - "traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.entrypoints=websecure"
-      - "traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.service=ethereum-mainnet-erigon3-minimal-trace"
       - "traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver"
       - "traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-minimal`)"
       - "traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.middlewares=ethereum-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist"
-
+      - "traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.service=ethereum-mainnet-erigon3-minimal-trace"
+      
       - "traefik.http.services.ethereum-mainnet-erigon3-minimal-trace-node.loadbalancer.server.port=5555"
       - "traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace-node.entrypoints=websecure"
       - "traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace-node.service=ethereum-mainnet-erigon3-minimal-trace-node"

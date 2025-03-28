@@ -3,7 +3,7 @@
 services:
   blast-sepolia:
     
-    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:sepolia-v1.2.3    
+    image: blastio/blast-geth:sepolia-v1.2.3    
     
     expose:
       - 8545
@@ -11,9 +11,7 @@ services:
     ports:
       - "10591:10591"
       - "10591:10591/udp"
-    entrypoint: /bin/sh
-    command: -c "[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json || /usr/local/bin/geth --rollup.disabletxpoolgossip=true"
-    
+    entrypoint: ["/bin/sh", "-c", "[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json; exec /usr/local/bin/geth \"$@\""]
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
@@ -21,7 +19,7 @@ services:
       - .jwtsecret:/jwtsecret
       - ./blast-io/sepolia:/config
     env_file:
-      - ./blast/blast-sepolia.env
+      - ./blast-io/sepolia/.env
     environment:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=blast-sepolia"
@@ -76,7 +74,7 @@ services:
       - ./blast-io/sepolia:/config      
     stop_grace_period: 30s
     env_file:
-      - ./blast/blast-sepolia.env
+      - ./blast-io/sepolia/.env
     environment:
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - "OP_NODE_SYNCMODE=execution-layer"
@@ -94,7 +92,8 @@ services:
       - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
       - "OP_NODE_RPC_PORT=8545"
       - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
-      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      - "OP_NODE_VERIFIER_L1_CONFS=0"
+      - "OP_NODE_STATIC_PEERS="
       - "OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}"

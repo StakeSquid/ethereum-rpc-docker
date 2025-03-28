@@ -10,12 +10,14 @@ services:
     ports:
       - "10986:10986"
       - "10986:10986/udp"
+      - "25986:25986"
+      - "25986:25986/udp"
+      - "30986:30986"
+      - "30986:30986/udp"
       - "15986:15986"
       - "15986:15986/udp"
       - "20986:20986"
       - "20986:20986/udp"
-      - "25986:25986"
-      - "25986:25986/udp"      
     environment:
       - "IP=${IP}"
     volumes:
@@ -23,20 +25,17 @@ services:
       - /slowdisk:/slowdisk
     networks:
       - chains
+    
+    entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
     command: >
-      --chain chiado
+      --chain=chiado
       --prune.mode=archive
-      --beacon.api.port=5555
-      --beacon.api.addr=0.0.0.0
-      --beacon.api.cors.allow-origins=*      
       --port=10986
       --p2p.allowed-ports=25986
+      --p2p.allowed-ports=30986      
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
-      --torrent.upload.rate="1250mb"
-      --torrent.download.rate="1250mb"
-      --torrent.port=20986
-      --nat=extip:${IP}      
+      --nat=extip:${IP}
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
@@ -48,7 +47,13 @@ services:
       --rpc.gascap=5000000000
       --ws.port=8545
       --ws
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20986
       
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
       --caplin.discovery.addr=0.0.0.0
       --caplin.discovery.port=15986
       --caplin.discovery.tcpport=15986
@@ -59,14 +64,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.gnosis-chiado-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/gnosis-chiado-archive"
-
       - "traefik.http.services.gnosis-chiado-erigon3-archive-trace.loadbalancer.server.port=8545"
       - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.entrypoints=websecure"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.service=gnosis-chiado-erigon3-archive-trace"
       - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.tls.certresolver=myresolver"
       - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado-archive`)"
       - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipwhitelist"
-
+      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.service=gnosis-chiado-erigon3-archive-trace"
+      
       - "traefik.http.services.gnosis-chiado-erigon3-archive-trace-node.loadbalancer.server.port=5555"
       - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.entrypoints=websecure"
       - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.service=gnosis-chiado-erigon3-archive-trace-node"

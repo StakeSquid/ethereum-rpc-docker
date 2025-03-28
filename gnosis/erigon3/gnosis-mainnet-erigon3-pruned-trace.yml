@@ -10,12 +10,14 @@ services:
     ports:
       - "10147:10147"
       - "10147:10147/udp"
+      - "25147:25147"
+      - "25147:25147/udp"
+      - "30147:30147"
+      - "30147:30147/udp"
       - "15147:15147"
       - "15147:15147/udp"
       - "20147:20147"
       - "20147:20147/udp"
-      - "25147:25147"
-      - "25147:25147/udp"      
     environment:
       - "IP=${IP}"
     volumes:
@@ -23,20 +25,17 @@ services:
       - /slowdisk:/slowdisk
     networks:
       - chains
+    
+    entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
     command: >
-      --chain mainnet
+      --chain=mainnet
       --prune.mode=full
-      --beacon.api.port=5555
-      --beacon.api.addr=0.0.0.0
-      --beacon.api.cors.allow-origins=*      
       --port=10147
       --p2p.allowed-ports=25147
+      --p2p.allowed-ports=30147      
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
-      --torrent.upload.rate="1250mb"
-      --torrent.download.rate="1250mb"
-      --torrent.port=20147
-      --nat=extip:${IP}      
+      --nat=extip:${IP}
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
@@ -48,7 +47,13 @@ services:
       --rpc.gascap=5000000000
       --ws.port=8545
       --ws
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20147
       
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
       --caplin.discovery.addr=0.0.0.0
       --caplin.discovery.port=15147
       --caplin.discovery.tcpport=15147
@@ -59,14 +64,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.gnosis-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/gnosis-mainnet"
-
       - "traefik.http.services.gnosis-mainnet-erigon3-pruned-trace.loadbalancer.server.port=8545"
       - "traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.entrypoints=websecure"
-      - "traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.service=gnosis-mainnet-erigon3-pruned-trace"
       - "traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.tls.certresolver=myresolver"
       - "traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-mainnet`)"
       - "traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.middlewares=gnosis-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist"
-
+      - "traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.service=gnosis-mainnet-erigon3-pruned-trace"
+      
       - "traefik.http.services.gnosis-mainnet-erigon3-pruned-trace-node.loadbalancer.server.port=5555"
       - "traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace-node.entrypoints=websecure"
       - "traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace-node.service=gnosis-mainnet-erigon3-pruned-trace-node"

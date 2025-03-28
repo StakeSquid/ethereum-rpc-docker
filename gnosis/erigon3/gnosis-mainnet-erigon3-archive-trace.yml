@@ -10,12 +10,14 @@ services:
     ports:
       - "10974:10974"
       - "10974:10974/udp"
+      - "25974:25974"
+      - "25974:25974/udp"
+      - "30974:30974"
+      - "30974:30974/udp"
       - "15974:15974"
       - "15974:15974/udp"
       - "20974:20974"
       - "20974:20974/udp"
-      - "25974:25974"
-      - "25974:25974/udp"      
     environment:
       - "IP=${IP}"
     volumes:
@@ -23,20 +25,17 @@ services:
       - /slowdisk:/slowdisk
     networks:
       - chains
+    
+    entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
     command: >
-      --chain mainnet
+      --chain=mainnet
       --prune.mode=archive
-      --beacon.api.port=5555
-      --beacon.api.addr=0.0.0.0
-      --beacon.api.cors.allow-origins=*      
       --port=10974
       --p2p.allowed-ports=25974
+      --p2p.allowed-ports=30974      
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
-      --torrent.upload.rate="1250mb"
-      --torrent.download.rate="1250mb"
-      --torrent.port=20974
-      --nat=extip:${IP}      
+      --nat=extip:${IP}
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
@@ -48,7 +47,13 @@ services:
       --rpc.gascap=5000000000
       --ws.port=8545
       --ws
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20974
       
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
       --caplin.discovery.addr=0.0.0.0
       --caplin.discovery.port=15974
       --caplin.discovery.tcpport=15974
@@ -59,14 +64,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.gnosis-mainnet-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/gnosis-mainnet-archive"
-
       - "traefik.http.services.gnosis-mainnet-erigon3-archive-trace.loadbalancer.server.port=8545"
       - "traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.entrypoints=websecure"
-      - "traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.service=gnosis-mainnet-erigon3-archive-trace"
       - "traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.tls.certresolver=myresolver"
       - "traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-mainnet-archive`)"
       - "traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.middlewares=gnosis-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist"
-
+      - "traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.service=gnosis-mainnet-erigon3-archive-trace"
+      
       - "traefik.http.services.gnosis-mainnet-erigon3-archive-trace-node.loadbalancer.server.port=5555"
       - "traefik.http.routers.gnosis-mainnet-erigon3-archive-trace-node.entrypoints=websecure"
       - "traefik.http.routers.gnosis-mainnet-erigon3-archive-trace-node.service=gnosis-mainnet-erigon3-archive-trace-node"

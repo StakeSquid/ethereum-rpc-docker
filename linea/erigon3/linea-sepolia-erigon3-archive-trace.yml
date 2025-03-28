@@ -1,0 +1,61 @@
+
+
+services:
+  linea-sepolia-archive:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    user: root
+    expose:
+      - "9090"
+      - "8545"
+    ports:
+      - "10235:10235"
+      - "10235:10235/udp"
+      - "25235:25235"
+      - "25235:25235/udp"
+      - "30235:30235"
+      - "30235:30235/udp"
+      
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - linea-sepolia-erigon3-archive-trace:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+    networks:
+      - chains
+    entrypoint: ["/bin/sh", "-c", "[ ! -f /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init /config/genesis.json; exec erigon \"$@\""]
+    command: >
+      --networkid=59141
+      --prune.mode=archive
+      --port=10235
+      --p2p.allowed-ports=25235
+      --p2p.allowed-ports=30235      
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --nat=extip:${IP}
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+      
+      
+
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.linea-sepolia-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/linea-sepolia-archive"
+      - "traefik.http.services.linea-sepolia-erigon3-archive-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.linea-sepolia-erigon3-archive-trace.entrypoints=websecure"
+      - "traefik.http.routers.linea-sepolia-erigon3-archive-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.linea-sepolia-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-sepolia-archive`)"
+      - "traefik.http.routers.linea-sepolia-erigon3-archive-trace.middlewares=linea-sepolia-erigon3-archive-trace-stripprefix, ipwhitelist"
+      
+volumes:
+    linea-sepolia-erigon3-archive-trace:

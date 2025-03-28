@@ -10,12 +10,14 @@ services:
     ports:
       - "10930:10930"
       - "10930:10930/udp"
+      - "25930:25930"
+      - "25930:25930/udp"
+      - "30930:30930"
+      - "30930:30930/udp"
       - "15930:15930"
       - "15930:15930/udp"
       - "20930:20930"
       - "20930:20930/udp"
-      - "25930:25930"
-      - "25930:25930/udp"      
     environment:
       - "IP=${IP}"
     volumes:
@@ -23,20 +25,17 @@ services:
       - /slowdisk:/slowdisk
     networks:
       - chains
+    
+    entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
     command: >
-      --chain sepolia
+      --chain=sepolia
       --prune.mode=full
-      --beacon.api.port=5555
-      --beacon.api.addr=0.0.0.0
-      --beacon.api.cors.allow-origins=*      
       --port=10930
       --p2p.allowed-ports=25930
+      --p2p.allowed-ports=30930      
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
-      --torrent.upload.rate="1250mb"
-      --torrent.download.rate="1250mb"
-      --torrent.port=20930
-      --nat=extip:${IP}      
+      --nat=extip:${IP}
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
@@ -48,7 +47,13 @@ services:
       --rpc.gascap=5000000000
       --ws.port=8545
       --ws
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20930
       
+      --beacon.api.port=5555
+      --beacon.api.addr=0.0.0.0
+      --beacon.api.cors.allow-origins=*      
       --caplin.discovery.addr=0.0.0.0
       --caplin.discovery.port=15930
       --caplin.discovery.tcpport=15930
@@ -59,14 +64,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.ethereum-sepolia-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia"
-
       - "traefik.http.services.ethereum-sepolia-erigon3-pruned-trace.loadbalancer.server.port=8545"
       - "traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.entrypoints=websecure"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.service=ethereum-sepolia-erigon3-pruned-trace"
       - "traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.tls.certresolver=myresolver"
       - "traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia`)"
       - "traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.middlewares=ethereum-sepolia-erigon3-pruned-trace-stripprefix, ipwhitelist"
-
+      - "traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.service=ethereum-sepolia-erigon3-pruned-trace"
+      
       - "traefik.http.services.ethereum-sepolia-erigon3-pruned-trace-node.loadbalancer.server.port=5555"
       - "traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace-node.entrypoints=websecure"
       - "traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace-node.service=ethereum-sepolia-erigon3-pruned-trace-node"

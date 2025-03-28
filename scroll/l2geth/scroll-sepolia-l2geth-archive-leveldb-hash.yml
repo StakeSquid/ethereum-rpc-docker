@@ -1,0 +1,50 @@
+
+services:
+  scroll-sepolia-archive:                         
+    image: scrolltech/l2geth:scroll-v5.8.29
+    expose: 
+      - 8545
+    ports:                      
+      - "10455:10455"                                                                                 
+      - "10455:10455/udp"  
+    command:
+      - --scroll-sepolia
+      - --syncmode=full
+      - --gcmode=archive  
+      - --port=10455
+      - --nat=extip:$IP
+      - --cache=8192
+      - --ws
+      - --ws.port=8545
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+      - --http
+      - --http.port=8545
+      - --http.addr=0.0.0.0
+      - --http.vhosts=*
+      - --l1.endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - --da.blob.beaconnode=${ETHEREUM_SEPOLIA_BEACON_REST}
+      - --rollup.verify
+      - --graphql                        
+      - --graphql.vhosts=*
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --maxpeers=100
+      - --gpo.ignoreprice=1
+    networks:                            
+      - chains                                                                                        
+    volumes:                                                                                          
+      - "scroll-sepolia-l2geth-archive-leveldb-hash:/root/.ethereum"
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.scroll-sepolia-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/scroll-sepolia-archive"                  
+      - "traefik.http.services.scroll-sepolia-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545"                                 
+      - "traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.entrypoints=websecure"                                          
+      - "traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.tls.certresolver=myresolver"                                    
+      - "traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll-sepolia-archive`)"                 
+      - "traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.middlewares=scroll-sepolia-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist"
+
+volumes:
+  scroll-sepolia-l2geth-archive-leveldb-hash:

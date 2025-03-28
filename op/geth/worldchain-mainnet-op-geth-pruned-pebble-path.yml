@@ -3,7 +3,7 @@
 services:
   worldchain-mainnet:
     
-    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:None    
+    image: None:None    
     
     expose:
       - 8545
@@ -11,17 +11,15 @@ services:
     ports:
       - "10096:10096"
       - "10096:10096/udp"
-    entrypoint: /bin/sh
     
-    command: -c "/usr/local/bin/geth --rollup.disabletxpoolgossip=true"
+    entrypoint: ["/bin/sh", "-c", "exec /usr/local/bin/geth \"$@\""]
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
       - worldchain-mainnet-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret
       
-    env_file:
-      - ./worldchain/worldchain-mainnet.env
+    
     environment:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=worldchain-mainnet"
@@ -75,8 +73,7 @@ services:
       - .jwtsecret:/jwtsecret
             
     stop_grace_period: 30s
-    env_file:
-      - ./worldchain/worldchain-mainnet.env
+    
     environment:
       - OP_NODE_NETWORK={{ service_name }}
       - "OP_NODE_SYNCMODE=execution-layer"
@@ -94,7 +91,8 @@ services:
       - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
       - "OP_NODE_RPC_PORT=8545"
       - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
-      - "OP_NODE_VERIFIER_L1_CONFS=4"
+      - "OP_NODE_VERIFIER_L1_CONFS=0"
+      - "OP_NODE_STATIC_PEERS="
       - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
       - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
       - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"

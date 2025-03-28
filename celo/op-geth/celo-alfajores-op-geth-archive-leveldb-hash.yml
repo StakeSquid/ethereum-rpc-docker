@@ -30,7 +30,7 @@ services:
       - BEDROCK_SEQUENCER_HTTP=https://sequencer.alfajores.celo-testnet.org
       - PORT__OP_GETH_P2P=10895
       - IS_CUSTOM_CHAIN=true
-      - OP_GETH__HISTORICAL_RPC=${CELO_ALFAJORES_ARCHIVE_GETH:-celo-alfajores-archive-geth:8545}
+      - OP_GETH__HISTORICAL_RPC=${CELO_ALFAJORES_ARCHIVE_GETH:-http://celo-alfajores-archive-geth:8545}
 
     labels:
       - "traefik.enable=true"

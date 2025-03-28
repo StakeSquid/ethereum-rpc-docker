@@ -1,0 +1,61 @@
+
+
+services:
+  linea-mainnet-minimal:
+    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    user: root
+    expose:
+      - "9090"
+      - "8545"
+    ports:
+      - "10000:10000"
+      - "10000:10000/udp"
+      - "25000:25000"
+      - "25000:25000/udp"
+      - "30000:30000"
+      - "30000:30000/udp"
+      
+    environment:
+      - "IP=${IP}"
+    volumes:
+      - linea-mainnet-erigon3-minimal-trace:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+    networks:
+      - chains
+    entrypoint: ["/bin/sh", "-c", "[ ! -f /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init /config/genesis.json; exec erigon \"$@\""]
+    command: >
+      --networkid=59144
+      --prune.mode=minimal
+      --port=10000
+      --p2p.allowed-ports=25000
+      --p2p.allowed-ports=30000      
+      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      --private.api.addr=0.0.0.0:9090
+      --nat=extip:${IP}
+      --pprof
+      --pprof.addr=0.0.0.0
+      --pprof.port=6061
+      --http.addr=0.0.0.0
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=eth,erigon,web3,net,debug,trace,txpool
+      --rpc.returndata.limit=1100000
+      --rpc.gascap=5000000000
+      --ws.port=8545
+      --ws
+      
+      
+
+    restart: unless-stopped
+    stop_grace_period: 1m
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.linea-mainnet-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/linea-mainnet-minimal"
+      - "traefik.http.services.linea-mainnet-erigon3-minimal-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.linea-mainnet-erigon3-minimal-trace.entrypoints=websecure"
+      - "traefik.http.routers.linea-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver"
+      - "traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-mainnet-minimal`)"
+      - "traefik.http.routers.linea-mainnet-erigon3-minimal-trace.middlewares=linea-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist"
+      
+volumes:
+    linea-mainnet-erigon3-minimal-trace:

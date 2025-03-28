@@ -10,12 +10,11 @@ services:
     ports:
       - "10036:10036"
       - "10036:10036/udp"
-      - "15036:15036"
-      - "15036:15036/udp"
-      - "20036:20036"
-      - "20036:20036/udp"
       - "25036:25036"
-      - "25036:25036/udp"      
+      - "25036:25036/udp"
+      - "30036:30036"
+      - "30036:30036/udp"
+      
     environment:
       - "IP=${IP}"
     volumes:
@@ -23,20 +22,17 @@ services:
       - /slowdisk:/slowdisk
     networks:
       - chains
+    
+    entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
     command: >
-      --chain bor-mainnet
+      --chain=bor-mainnet
       --prune.mode=minimal
-      --beacon.api.port=5555
-      --beacon.api.addr=0.0.0.0
-      --beacon.api.cors.allow-origins=*      
       --port=10036
       --p2p.allowed-ports=25036
+      --p2p.allowed-ports=30036      
       --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
       --private.api.addr=0.0.0.0:9090
-      --torrent.upload.rate="1250mb"
-      --torrent.download.rate="1250mb"
-      --torrent.port=20036
-      --nat=extip:${IP}      
+      --nat=extip:${IP}
       --pprof
       --pprof.addr=0.0.0.0
       --pprof.port=6061
@@ -48,6 +44,9 @@ services:
       --rpc.gascap=5000000000
       --ws.port=8545
       --ws
+      --torrent.upload.rate="1250mb"
+      --torrent.download.rate="1250mb"
+      --torrent.port=20036
       --bor.heimdall=${POLYGON_HEIMDALL_REST:-None} 
       
 
@@ -56,14 +55,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.polygon-mainnet-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/polygon-mainnet-minimal"
-
       - "traefik.http.services.polygon-mainnet-erigon3-minimal-trace.loadbalancer.server.port=8545"
       - "traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.entrypoints=websecure"
-      - "traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.service=polygon-mainnet-erigon3-minimal-trace"
       - "traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver"
       - "traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-mainnet-minimal`)"
       - "traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.middlewares=polygon-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist"
-
       
 volumes:
     polygon-mainnet-erigon3-minimal-trace:

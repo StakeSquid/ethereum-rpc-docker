@@ -30,7 +30,7 @@ services:
       - BEDROCK_SEQUENCER_HTTP=https://cel2-sequencer.celo.org
       - PORT__OP_GETH_P2P=10111
       - IS_CUSTOM_CHAIN=true
-      - OP_GETH__HISTORICAL_RPC=${CELO_MAINNET_ARCHIVE_GETH:-celo-mainnet-archive-geth:8545}
+      - OP_GETH__HISTORICAL_RPC=${CELO_MAINNET_ARCHIVE_GETH:-http://celo-mainnet-archive-geth:8545}
 
     labels:
       - "traefik.enable=true"
