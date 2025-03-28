@@ -18,7 +18,7 @@ services:
       - --execution.caching.archive=false
       - --execution.sequencer.enable=false      
       - --persistent.db-engine=pebble            
-      - --parent-chain.connection.url=${NONE_SEPOLIA_EXECUTION_RPC}
+      - --parent-chain.connection.url=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_SEPOLIA_BEACON_REST}
       - --http.addr=0.0.0.0
       - --http.port=8545
