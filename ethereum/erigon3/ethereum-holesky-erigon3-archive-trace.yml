@@ -29,6 +29,7 @@ services:
     entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
     command:
       - --chain=holesky
+      
       - --prune.mode=archive
       - --port=10947
       - --p2p.allowed-ports=25947
@@ -42,6 +43,7 @@ services:
       - --rpc.gascap=5000000000
       - --ws.port=8545
       - --ws
+       
       - --torrent.upload.rate="1250mb"
       - --torrent.download.rate="1250mb"
       - --torrent.port=20947
