@@ -23,41 +23,42 @@ services:
     volumes:
       - ethereum-holesky-erigon3-minimal-trace:/root/.local/share/erigon
       - /slowdisk:/slowdisk
+            
     networks:
       - chains
     
     entrypoint: ["/bin/sh", "-c", "exec erigon \"$@\""]
-    command: >
-      --chain=holesky
-      --prune.mode=minimal
-      --port=10582
-      --p2p.allowed-ports=25582
-      --p2p.allowed-ports=30582      
-      --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
-      --private.api.addr=0.0.0.0:9090
-      --nat=extip:${IP}
-      --pprof
-      --pprof.addr=0.0.0.0
-      --pprof.port=6061
-      --http.addr=0.0.0.0
-      --http.vhosts=*
-      --http.corsdomain=*
-      --http.api=eth,erigon,web3,net,debug,trace,txpool
-      --rpc.returndata.limit=1100000
-      --rpc.gascap=5000000000
-      --ws.port=8545
-      --ws
-      --torrent.upload.rate="1250mb"
-      --torrent.download.rate="1250mb"
-      --torrent.port=20582
+    command:
+      - --chain=holesky
+      - --prune.mode=minimal
+      - --port=10582
+      - --p2p.allowed-ports=25582
+      - --p2p.allowed-ports=30582      
+      - --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
+      - --private.api.addr=0.0.0.0:9090
+      - --nat=extip:${IP}
+      - --pprof
+      - --pprof.addr=0.0.0.0
+      - --pprof.port=6061
+      - --http.addr=0.0.0.0
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool
+      - --rpc.returndata.limit=1100000
+      - --rpc.gascap=5000000000
+      - --ws.port=8545
+      - --ws
+      - --torrent.upload.rate="1250mb"
+      - --torrent.download.rate="1250mb"
+      - --torrent.port=20582
       
-      --beacon.api.port=5555
-      --beacon.api.addr=0.0.0.0
-      --beacon.api.cors.allow-origins=*      
-      --caplin.discovery.addr=0.0.0.0
-      --caplin.discovery.port=15582
-      --caplin.discovery.tcpport=15582
-      --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+      - --beacon.api.port=5555
+      - --beacon.api.addr=0.0.0.0
+      - --beacon.api.cors.allow-origins=*      
+      - --caplin.discovery.addr=0.0.0.0
+      - --caplin.discovery.port=15582
+      - --caplin.discovery.tcpport=15582
+      - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
 
     restart: unless-stopped
     stop_grace_period: 1m
