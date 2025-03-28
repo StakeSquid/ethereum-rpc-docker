@@ -2,7 +2,7 @@
 
 services:
   goat-testnet3:
-    image: ghcr.io/goatnetwork/goat-geth:v0.3.0
+    image: ghcr.io/goatnetwork/goat-geth:v0.1.7
     stop_grace_period: 5m
     restart: unless-stopped
     ports:
@@ -41,7 +41,7 @@ services:
       - chains
 
   goat-testnet3-node:
-    image: ghcr.io/goatnetwork/goat:v0.2.3
+    image: ghcr.io/goatnetwork/goat:testnet3
     stop_grace_period: 30s
     restart: unless-stopped
     environment:
