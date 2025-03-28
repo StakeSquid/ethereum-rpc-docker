@@ -62,7 +62,7 @@ services:
     volumes:
       - ./jwtsecret:/jwtsecret
     entrypoint: ["taiko-client", "driver"]
-    command:
+    command: >
       - "--l1.ws ${ETHEREUM_HOLESKY_EXECUTION_WS}"
       - "--l2.ws ws://taiko-hekla-archive:8545"
       - "--l1.beacon ${ETHEREUM_HOLESKY_BEACON_REST}"
