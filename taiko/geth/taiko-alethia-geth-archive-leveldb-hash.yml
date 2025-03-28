@@ -63,15 +63,15 @@ services:
       - ./jwtsecret:/jwtsecret
     entrypoint: ["taiko-client", "driver"]
     command:
-      - --l1.ws "${ETHEREUM_MAINNET_EXECUTION_WS}"
-      - --l2.ws "ws://taiko-alethia-archive:8545"
-      - --l1.beacon "${ETHEREUM_MAINNET_BEACON_REST}"
-      - --l2.auth "http://taiko-alethia-archive:8551"
-      - --taikoL1 "${L1_ADDRESS}"
-      - --taikoL2 "${L2_ADDRESS}"
-      - --jwtSecret /jwtsecret
-      - --p2p.sync
-      - --p2p.checkPointSyncUrl "https://rpc.mainnet.taiko.xyz"
+      - "--l1.ws ${ETHEREUM_MAINNET_EXECUTION_WS}"
+      - "--l2.ws ws://taiko-alethia-archive:8545"
+      - "--l1.beacon ${ETHEREUM_MAINNET_BEACON_REST}"
+      - "--l2.auth http://taiko-alethia-archive:8551"
+      - "--taikoL1 ${L1_ADDRESS}"
+      - "--taikoL2 ${L2_ADDRESS}"
+      - "--jwtSecret /jwtsecret"
+      - "--p2p.sync"
+      - "--p2p.checkPointSyncUrl https://rpc.mainnet.taiko.xyz"
     networks:
       - chains
       
