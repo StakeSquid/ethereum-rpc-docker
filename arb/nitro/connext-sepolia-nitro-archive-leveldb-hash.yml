@@ -18,8 +18,8 @@ services:
       - --execution.caching.archive=true
       - --execution.sequencer.enable=false      
       - --persistent.db-engine=leveldb            
-      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - --parent-chain.blob-client.beacon-url=${ETHEREUM_SEPOLIA_BEACON_REST}      
+      - --parent-chain.connection.url=${NONE_SEPOLIA_EXECUTION_RPC}
+      - --parent-chain.blob-client.beacon-url=${ETHEREUM_SEPOLIA_BEACON_REST}
       - --http.addr=0.0.0.0
       - --http.port=8545
       - --http.vhosts=*
@@ -38,7 +38,7 @@ services:
       - --node.batch-poster.enable=false            
       - --node.data-availability.enable=true
       - --node.data-availability.sequencer-inbox-address=727095791318912381473707332248435763608420056676
-      - --node.data-availability.parent-chain-node-url=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - --node.data-availability.parent-chain-node-url=${NONE_SEPOLIA_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das.connext-sepolia.gelato.digital
       - --node.feed.input.url=wss://feed.connext-sepolia.gelato.digital
