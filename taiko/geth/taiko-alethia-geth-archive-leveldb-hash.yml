@@ -24,7 +24,7 @@ services:
       - --syncmode=full
       - --authrpc.addr=0.0.0.0
       - --authrpc.vhosts=*
-      - --auth.jwtSecret=/jwtsecret      
+      - --authrpc.jwtsecret=/jwtsecret      
       - --http
       - --http.api=admin,debug,eth,net,web3,txpool,taiko
       - --http.addr=0.0.0.0
