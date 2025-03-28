@@ -32,7 +32,7 @@ services:
       - --ws.addr="0.0.0.0"
       - --ws.port=8545
       - --ws.origins="*"
-      - --gpo.defaultprice="10000000"
+      - --gpo.defaultprice=10000000
       - --port=10088
       - --discovery.port=10088
       - --maxpeers=50
