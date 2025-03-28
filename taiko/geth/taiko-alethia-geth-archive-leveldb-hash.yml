@@ -58,24 +58,21 @@ services:
     env_file:
       - ./taiko/geth.env
     environment:
-      - "L1_ENDPOINT_HTTP=${ETHEREUM_MAINNET_EXECUTION_RPC}"
-      - "TAIKO_TOKEN_L1_ADDRESS=${TAIKO_ALETHIA_ARCHIVE_TOKEN_ADDRESS}"
-      - "ASSIGNMENT_HOOK_L1_ADDRESS=${TAIKO_ALETHIA_ARCHIVE_HOOK_ADDRESS}"
-      - "L1_ADDRESS=${TAIKO_ALETHIA_ARCHIVE_L1_ADDRESS}"
-      - "L2_ADDRESS=${TAIKO_ALETHIA_ARCHIVE_L2_ADDRESS}"           
+      #- "L1_ENDPOINT_HTTP=${ETHEREUM_MAINNET_EXECUTION_RPC}"
+      #- "TAIKO_TOKEN_L1_ADDRESS=${TAIKO_ALETHIA_ARCHIVE_TOKEN_ADDRESS}"
+      #- "ASSIGNMENT_HOOK_L1_ADDRESS=${TAIKO_ALETHIA_ARCHIVE_HOOK_ADDRESS}"
+      - "TAIKO_L1=${TAIKO_ALETHIA_ARCHIVE_L1_ADDRESS}"
+      - "TAIKO_L2=${TAIKO_ALETHIA_ARCHIVE_L2_ADDRESS}"
+      - "L1_WS=${ETHEREUM_MAINNET_EXECUTION_WS}"
+      - "L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
+      - "L2_WS=ws://taiko-alethia-archive:8545"
+      - "L2_AUTH=http://taiko-alethia-archive:8551"
+      - "P2P_SYNC=true"
+      - "P2P_CHECK_POINT_SYNC_URL=https://rpc.mainnet.taiko.xyz"
+      - "JWT_SECRET=/jwtsecret"
     volumes:
       - .jwtsecret:/jwtsecret
     entrypoint: ["taiko-client", "driver"]
-    command:
-      - "--l1.ws=${ETHEREUM_MAINNET_EXECUTION_WS}"
-      - "--l2.ws=ws://taiko-alethia-archive:8545"
-      - "--l1.beacon=${ETHEREUM_MAINNET_BEACON_REST}"
-      - "--l2.auth=http://taiko-alethia-archive:8551"
-      - "--taikoL1=${L1_ADDRESS}"
-      - "--taikoL2=${L2_ADDRESS}"
-      - "--jwtSecret=/jwtsecret"
-      - "--p2p.sync"
-      - "--p2p.checkPointSyncUrl=https://rpc.mainnet.taiko.xyz"
     networks:
       - chains
       
