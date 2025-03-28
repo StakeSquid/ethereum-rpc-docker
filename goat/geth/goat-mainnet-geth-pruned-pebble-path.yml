@@ -44,22 +44,22 @@ services:
     image: ghcr.io/goatnetwork/goat:v0.2.3
     stop_grace_period: 30s
     restart: unless-stopped
-    entrypoint: ["goatd", "start"]
-    ports:
-      - "15640:15640"
-      - "15640:15640/udp"
-    command:
-      - --chain-id goat-mainnet
-      - --goat.geth "/geth/geth.ipc"
-      - --p2p.external-address "${IP}:15640"
-      - --p2p.laddr "0.0.0.0:15640"
     environment:
       - "IP=${IP}"
     volumes:
       - "goat-mainnet-geth-pruned-pebble-path_node:/root/.goat"
       - "goat-mainnet-geth-pruned-pebble-path:/geth"
     depends_on:
-      - goat-mainnet
+      - goat-mainnet    
+    ports:
+      - "15640:15640"
+      - "15640:15640/udp"
+    entrypoint: ["goatd", "start"]
+    command: >
+      - --chain-id goat-mainnet
+      - --goat.geth "/geth/geth.ipc"
+      - --p2p.external-address "${IP}:15640"
+      - --p2p.laddr "0.0.0.0:15640"
     networks:
       - chains
 
