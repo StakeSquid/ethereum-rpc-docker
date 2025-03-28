@@ -13,11 +13,12 @@ services:
       - 8545
     command:
       - --chain.id=421614      
-      - --execution.caching.state-scheme=path
+      - --execution.caching.state-scheme=path      
       - --execution.rpc.gas-cap=600000000
       - --execution.caching.archive=false
       - --execution.sequencer.enable=false      
-      - --persistent.db-engine=pebble            
+      - --persistent.db-engine=pebble
+      - --persistent.chain=/root/.arbitrum/arbitrum-sepolia
       - --parent-chain.connection.url=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_SEPOLIA_BEACON_REST}
       - --http.addr=0.0.0.0

@@ -13,11 +13,12 @@ services:
       - 8545
     command:
       - --conf.file=/config/baseConfig.json      
-      - --execution.caching.state-scheme=hash
+      - --execution.caching.state-scheme=hash      
       - --execution.rpc.gas-cap=600000000
       - --execution.caching.archive=true
       - --execution.sequencer.enable=false      
-      - --persistent.db-engine=leveldb            
+      - --persistent.db-engine=leveldb
+      - --persistent.chain=/root/.arbitrum/real-mainnet-archive
       - --parent-chain.connection.url=${ARBITRUM_NOVA_EXECUTION_RPC}
       
       - --http.addr=0.0.0.0
