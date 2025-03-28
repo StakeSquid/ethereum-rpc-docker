@@ -25,13 +25,13 @@ services:
       - --authrpc.vhosts="*"
       - --http
       - --http.api=admin,debug,eth,net,web3,txpool,taiko
-      - --http.addr="0.0.0.0"
-      - --http.vhosts="*"
+      - --http.addr=0.0.0.0
+      - --http.vhosts=*
       - --ws
       - --ws.api=debug,eth,net,web3,txpool,taiko
-      - --ws.addr="0.0.0.0"
+      - --ws.addr=0.0.0.0
       - --ws.port=8545
-      - --ws.origins="*"
+      - --ws.origins=*
       - --gpo.defaultprice=10000000
       - --port=10251
       - --discovery.port=10251
