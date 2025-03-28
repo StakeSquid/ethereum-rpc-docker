@@ -1218,5 +1218,11 @@
     "urls": [
       "https://rpc.arb-blueberry.gelato.digital"
     ]
+  },
+  "goat-testnet3": {
+    "id": 48816,
+    "urls": [
+      "https://rpc.testnet3.goat.network"
+    ]
   }
 }
