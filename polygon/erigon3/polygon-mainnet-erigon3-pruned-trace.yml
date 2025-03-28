@@ -5,7 +5,6 @@ services:
     image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
     user: root
     expose:
-      - "9090"
       - "8545"
     ports:
       - "10320:10320"
@@ -31,12 +30,7 @@ services:
       - --port=10320
       - --p2p.allowed-ports=25320
       - --p2p.allowed-ports=30320      
-      - --metrics --metrics.addr=0.0.0.0 --metrics.port=6060
-      - --private.api.addr=0.0.0.0:9090
       - --nat=extip:${IP}
-      - --pprof
-      - --pprof.addr=0.0.0.0
-      - --pprof.port=6061
       - --http.addr=0.0.0.0
       - --http.vhosts=*
       - --http.corsdomain=*
