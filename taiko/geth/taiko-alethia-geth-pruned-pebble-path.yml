@@ -39,6 +39,7 @@ services:
       - --discovery.port=10251
       - --maxpeers=50
       - --maxpendpeers=0
+      - --nat=extip:${IP}
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.taiko-alethia-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/taiko-alethia"

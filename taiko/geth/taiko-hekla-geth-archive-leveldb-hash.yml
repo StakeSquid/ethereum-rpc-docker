@@ -39,6 +39,7 @@ services:
       - --discovery.port=10063
       - --maxpeers=50
       - --maxpendpeers=0
+      - --nat=extip:${IP}
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.taiko-hekla-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/taiko-hekla-archive"

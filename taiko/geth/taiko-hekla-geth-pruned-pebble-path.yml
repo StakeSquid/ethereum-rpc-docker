@@ -39,6 +39,7 @@ services:
       - --discovery.port=10396
       - --maxpeers=50
       - --maxpendpeers=0
+      - --nat=extip:${IP}
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.taiko-hekla-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/taiko-hekla"
