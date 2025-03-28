@@ -19,8 +19,8 @@ services:
       - --execution.sequencer.enable=false      
       - --persistent.db-engine=pebble
       - --persistent.chain=/root/.arbitrum/playblock-mainnet
-      - --parent-chain.connection.url=${ARBITRUM_NOVA_EXECUTION_RPC}
-      
+      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
       - --http.addr=0.0.0.0
       - --http.port=8545
       - --http.vhosts=*
@@ -39,7 +39,7 @@ services:
       - --node.batch-poster.enable=false            
       - --node.data-availability.enable=true
       - --node.data-availability.sequencer-inbox-address=1297541082195356755105700451499873350464260779639
-      - --node.data-availability.parent-chain-node-url=${ARBITRUM_NOVA_EXECUTION_RPC}
+      - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das.playblock.io
       - --node.feed.input.url=wss://feed.playblock.io
