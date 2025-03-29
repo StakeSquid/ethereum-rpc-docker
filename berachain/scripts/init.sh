@@ -6,7 +6,6 @@ echo "MONIKER: $MONIKER"
 
 CHAINID=${CHAINID:-80069}
 CHAINNAME=${CHAINNAME:-bepolia}
-L2_RPC==${L2_RPC:-http://berachain-bepolia:8545}
 AUTH_RPC=${AUTH_RPC:-http://berachain-bepolia:8551} # just as example
 
 #if [ "$CHAINNAME" == "mainnet" ]; then
