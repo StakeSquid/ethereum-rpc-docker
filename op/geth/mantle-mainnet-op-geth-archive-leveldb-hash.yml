@@ -19,7 +19,7 @@ services:
       - .jwtsecret:/jwtsecret:ro
       - ./mantle/mainnet:/config
     env_file:
-      - ./mantle/mainnet/mainnet.env
+      - ./mantle/mainnet.env
     environment:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=mantle-mainnet"
