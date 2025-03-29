@@ -14,9 +14,12 @@ services:
       - "10900:10900"
       - "10900:10900/udp"
     restart: unless-stopped
-    entrypoint: ["reth", "node"]
+    environment:
+      - "IP=${IP}"
+    entrypoint: ["/bin/sh", "-c", "while [ ! -f /config/eth-genesis.json ]; do sleep 1; done; exec reth node \"$@\"", "--"]
     command:
       - --chain=/config/eth-genesis.json
+      - --nat=extip:${IP}
       - --metrics=0.0.0.0:9001
       - --http
       - --http.addr=0.0.0.0
@@ -56,6 +59,7 @@ services:
       - "15900:15900"
       - "15900:15900/udp"
     environment:
+      - "IP=${IP}"
       - "MONIKER=d${DOMAIN:-local}"
       - "P2P_PORT=15900"
       - "CHAINNAME=mainnet"
