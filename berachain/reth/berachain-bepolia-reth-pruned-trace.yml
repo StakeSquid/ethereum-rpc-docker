@@ -16,7 +16,6 @@ services:
     restart: unless-stopped
     entrypoint: ["reth", "node"]
     command:
-      - --chain=bepolia
       - --chain=/config/eth-genesis.json
       - --metrics=0.0.0.0:9001
       - --http
