@@ -5,7 +5,7 @@ services:
     volumes:
       - "berachain-bepolia-reth-archive-trace:/root/.local/share/reth"
       - "/slowdisk:/slowdisk"
-      - ".jwtsecret:/jwtsecret"
+      - ".jwtsecret:/jwtsecret:ro"
       - "./berachain/bepolia/config:/config"      
     expose:
       - 8545
@@ -48,7 +48,7 @@ services:
     networks:
       - chains
 
-  berachain-bepolia-node:
+  berachain-bepolia-archive-node:
     image: ghcr.io/berachain/beacon-kit:v1.1.3
     expose:
       - 26657 #rpc
@@ -69,7 +69,7 @@ services:
       - "./berachain/scripts/init.sh:/init.sh"
       - "berachain-bepolia-reth-archive-trace_node:/root/.beacond/data"
       - "./berachain/bepolia/config:/root/.beacond/config"
-      - ".jwtsecret:/root/.beacond/config/jwt.hex"
+      - ".jwtsecret:/root/.beacond/config/jwt.hex:ro"
     restart: unless-stopped
     stop_grace_period: 1m
 
