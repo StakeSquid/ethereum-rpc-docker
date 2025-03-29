@@ -54,7 +54,7 @@ services:
       - --discovery.port=10759     
       - --port=10759
       
-      - --pruneancient
+      
     restart: unless-stopped
     stop_grace_period: 3m
     networks: 
