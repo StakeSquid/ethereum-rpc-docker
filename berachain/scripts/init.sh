@@ -7,6 +7,7 @@ echo "MONIKER: $MONIKER"
 CHAINID=${CHAINID:-80069}
 CHAINNAME=${CHAINNAME:-bepolia}
 CHAIN_SPEC=testnet
+AUTH_RPC=${AUTH_RPC:-http://berachain-bepolia:8551} # just as example
 if [ "$CHAINNAME" == "mainnet" ]; then
   CHAIN_SPEC="mainnet"
 fi
@@ -58,7 +59,7 @@ if $BEACOND init ${MONIKER} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /ro
 
     # Update RPC dial URL in app.toml
     if [ -f "$CONFIG_DIR/app.toml" ]; then
-	sed -i "s|^rpc-dial-url = \".*\"|rpc-dial-url = \"http://berachain-bepolia:8551\"|" "$CONFIG_DIR/app.toml"
+	sed -i "s|^rpc-dial-url = \".*\"|rpc-dial-url = \"$AUTH_RPC\"|" "$CONFIG_DIR/app.toml"
     fi
 else
     echo "Already initialized, continuing!" >&2

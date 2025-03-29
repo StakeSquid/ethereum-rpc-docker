@@ -60,6 +60,7 @@ services:
       - "P2P_PORT=15347"
       - "CHAINNAME=bepolia"
       - "CHAINID=80069"
+      - "AUTH_RPC=http://berachain-bepolia-archive:8551"
     entrypoint: [ "sh", "/init.sh" ]
     networks:
       - chains

@@ -60,6 +60,7 @@ services:
       - "P2P_PORT=15900"
       - "CHAINNAME=mainnet"
       - "CHAINID=80094"
+      - "AUTH_RPC=http://berachain-mainnet:8551"
     entrypoint: [ "sh", "/init.sh" ]
     networks:
       - chains
