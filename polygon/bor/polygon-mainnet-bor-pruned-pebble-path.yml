@@ -17,7 +17,6 @@ services:
     entrypoint: ["bor", "server"]
     command: >
       --chain=mainnet
-      --datadir=/datadir
       --bor.heimdall=${POLYGON_HEIMDALL_REST:-https://polygon-heimdall-rest.publicnode.com}
       --db.engine=pebble
       --state.scheme=path

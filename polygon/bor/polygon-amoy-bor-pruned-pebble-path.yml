@@ -17,7 +17,6 @@ services:
     entrypoint: ["bor", "server"]
     command: >
       --chain=amoy
-      --datadir=/datadir
       --bor.heimdall=${POLYGON_HEIMDALL_REST:-https://polygon-amoy-heimdall-rest.publicnode.com}
       --db.engine=pebble
       --state.scheme=path
