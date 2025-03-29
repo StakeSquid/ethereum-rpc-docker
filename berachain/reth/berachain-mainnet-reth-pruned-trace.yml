@@ -1,3 +1,14 @@
+# this is what you should know:
+# the execution client can not start before the node part initialized and generated a genesis block for the execution client
+# once the execution client is started it needs a push from the node to start syncing but then syncs p2p
+# if you restart the node then the node willnot start anymore because the execution client is syncing
+# but the execution client stops syncing if it doesn't get a node to push it.
+# delete and resync. idk what's the solution honestly
+
+# rm -rf berachain/mainnet/config/* && rm -rf /var/lib/docker/volumes/rpc_berachain-mainnet-reth-archive-trace*/_data/* && ./force-recreate.sh berachain-mainnet-archive
+
+# I also suspect that the peers will blacklist you frequently if you try more than once
+
 services:
   berachain-mainnet:
     image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.3.4}
@@ -65,7 +76,6 @@ services:
       - "CHAINNAME=mainnet"
       - "CHAINID=80094"
       - "AUTH_RPC=http://berachain-mainnet:8551"
-      - "AUTH_RPC=http://berachain-mainnet:8545"
       - "CHAIN_SPEC=mainnet"
     entrypoint: [ "sh", "/init.sh" ]
     networks:
