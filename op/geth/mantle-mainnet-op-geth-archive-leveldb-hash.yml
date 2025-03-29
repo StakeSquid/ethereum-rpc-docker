@@ -74,7 +74,7 @@ services:
       - ./mantle/mainnet:/config      
     stop_grace_period: 30s
     env_file:
-      - ./mantle/mainnet/.env
+      - ./mantle/mainnet.env
     environment:
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - "OP_NODE_SYNCMODE=consensus-layer"

@@ -74,7 +74,7 @@ services:
       - ./blast/mainnet:/config      
     stop_grace_period: 30s
     env_file:
-      - ./blast/mainnet/.env
+      - ./blast/mainnet.env
     environment:
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - "OP_NODE_SYNCMODE=execution-layer"
