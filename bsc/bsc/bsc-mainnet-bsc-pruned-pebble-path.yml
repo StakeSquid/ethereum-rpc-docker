@@ -15,9 +15,11 @@ services:
     volumes:                                                                             
       - bsc-mainnet-bsc-pruned-pebble-path:/bsc/.ethereum
       - /slowdisk:/slowdisk
+            
     entrypoint: [ "geth" ]
     command:
-      - --mainnet      
+      - --mainnet
+      
       - --db.engine=pebble
       - --state.scheme=path
       - --syncmode=snap

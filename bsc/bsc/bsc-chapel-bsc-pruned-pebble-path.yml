@@ -15,9 +15,11 @@ services:
     volumes:                                                                             
       - bsc-chapel-bsc-pruned-pebble-path:/bsc/.ethereum
       - /slowdisk:/slowdisk
+      - ./bsc-testnet/config:/config      
     entrypoint: [ "geth" ]
     command:
-      - --chapel      
+      - --chapel
+      - --config=/config/config.toml
       - --db.engine=pebble
       - --state.scheme=path
       - --syncmode=snap
