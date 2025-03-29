@@ -61,7 +61,7 @@ services:
       - "P2P_PORT=15900"
       - "CHAINNAME=mainnet"
       - "CHAINID=80094"
-    entrypoint: /init.sh
+    entrypoint: [ "sh", "/init.sh" ]
     networks:
       - chains
     volumes:

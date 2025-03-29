@@ -61,7 +61,7 @@ services:
       - "P2P_PORT=15347"
       - "CHAINNAME=bepolia"
       - "CHAINID=80069"
-    entrypoint: /init.sh
+    entrypoint: [ "sh", "/init.sh" ]
     networks:
       - chains
     volumes:
