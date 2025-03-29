@@ -69,7 +69,7 @@ services:
       - "./berachain/scripts/init.sh:/init.sh"
       - "berachain-mainnet-reth-pruned-trace_node:/root/.beacond/data"
       - "./berachain/mainnet/config:/root/.beacond/config"
-      - ".jwtsecret:/jwtsecret"
+      - ".jwtsecret:/root/.beacond/config/jwt.hex"
     restart: unless-stopped
     stop_grace_period: 1m
 
