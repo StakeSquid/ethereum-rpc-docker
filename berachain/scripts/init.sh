@@ -8,11 +8,11 @@ CHAINID=${CHAINID:-80069}
 CHAINNAME=${CHAINNAME:-bepolia}
 AUTH_RPC=${AUTH_RPC:-http://berachain-bepolia:8551} # just as example
 
-if [ "$CHAINNAME" == "mainnet" ]; then
-    export CHAIN_SPEC="mainnet"
-else
-    export CHAIN_SPEC="testnet"
-fi
+#if [ "$CHAINNAME" == "mainnet" ]; then
+#    export CHAIN_SPEC="mainnet"
+#else
+#    export CHAIN_SPEC="testnet"
+#fi
 
 BEACOND=${BEACOND_PATH:-beacond}
 CONFIG_DIR="/root/.beacond/config"
