@@ -30,10 +30,10 @@ SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/n
 
 
 # this goes first because it won't overwrite shit
+apk add curl
+if [ $? -ne 0 ]; then exit 1; fi
 
 if $BEACOND init ${MONIKER} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /root/.beacond/; then
-    apk add curl
-    
     # Define variables
     CONFIG_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/config.toml"
     APP_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/app.toml"
@@ -84,7 +84,7 @@ fi
 
 #cd "$CONFIG_DIR"
 
-while curl -s -X POST --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' -H "Content-Type: application/json" "$L2_RPC" | grep -q '"result":false'; do
+while curl -s -X POST --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' -H "Content-Type: application/json" "$L2_RPC" | grep -q '"result":true'; do
   echo "Waiting for L2 to finish syncing..."
   sleep 10
 done
