@@ -67,7 +67,7 @@ services:
     ports:
       - "15308:15308"
       - "15308:15308/udp"
-    entrypoint: [ "./op-node" ]
+    entrypoint: [ "op-node" ]
     restart: unless-stopped
     volumes:
       - .jwtsecret:/jwtsecret
