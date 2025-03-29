@@ -58,7 +58,7 @@ services:
       
   blast-mainnet-archive-node:
     
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.0-mainnet
+    image: blastio/blast-optimism:v1.1.0-mainnet
     
     expose:
       - 8545
