@@ -17,7 +17,7 @@ services:
     volumes:
       - blast-sepolia-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret:ro
-      - ./blast-io/sepolia:/config
+      - ./blast/sepolia:/config
     env_file:
       - ./blast/sepolia.env
     environment:
@@ -71,10 +71,10 @@ services:
     restart: unless-stopped
     volumes:
       - .jwtsecret:/jwtsecret:ro
-      - ./blast-io/sepolia:/config      
+      - ./blast/sepolia:/config      
     stop_grace_period: 30s
     env_file:
-      - ./blast-io/sepolia/.env
+      - ./blast/sepolia/.env
     environment:
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - "OP_NODE_SYNCMODE=execution-layer"

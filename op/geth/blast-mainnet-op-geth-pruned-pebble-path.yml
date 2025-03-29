@@ -17,7 +17,7 @@ services:
     volumes:
       - blast-mainnet-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret:ro
-      - ./blast-io/mainnet:/config
+      - ./blast/mainnet:/config
     env_file:
       - ./blast/mainnet.env
     environment:
@@ -71,10 +71,10 @@ services:
     restart: unless-stopped
     volumes:
       - .jwtsecret:/jwtsecret:ro
-      - ./blast-io/mainnet:/config      
+      - ./blast/mainnet:/config      
     stop_grace_period: 30s
     env_file:
-      - ./blast-io/mainnet/.env
+      - ./blast/mainnet/.env
     environment:
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - "OP_NODE_SYNCMODE=execution-layer"
