@@ -84,12 +84,6 @@ fi
 
 #cd "$CONFIG_DIR"
 
-while curl -s -X POST --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' -H "Content-Type: application/json" "$L2_RPC" | grep -q '"result":true'; do
-  echo "Waiting for L2 to finish syncing..."
-  sleep 10
-done
-echo "L2 sync complete!"
-
 # Execute beacond
 #exec $BEACOND start --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json --minimum-gas-prices 0atom "$@"
 env
