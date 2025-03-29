@@ -1,9 +1,10 @@
 # this is what you should know:
 # the execution client can not start before the node part initialized and generated a genesis block for the execution client
+# those config files are stored in ./berachain//config
 # once the execution client is started it needs a push from the node to start syncing but then syncs p2p
-# if you restart the node then the node willnot start anymore because the execution client is syncing
-# but the execution client stops syncing if it doesn't get a node to push it.
-# delete and resync. idk what's the solution honestly
+# if you restart the beacon node while the execution client is syncing the beacon node will crash loop until sync is done
+
+# delete and resync:
 
 # rm -rf berachain/mainnet/config/* && rm -rf /var/lib/docker/volumes/rpc_berachain-mainnet-reth-archive-trace*/_data/* && ./force-recreate.sh berachain-mainnet-archive
 

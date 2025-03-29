@@ -13,7 +13,7 @@ services:
     expose:                                                                              
       - "8545"                                                                           
     volumes:                                                                             
-      - bsc-mainnet-bsc-pruned-pebble-path:/root/.ethereum
+      - bsc-mainnet-bsc-pruned-pebble-path:/bsc/.ethereum
       - /slowdisk:/slowdisk
     entrypoint: [ "geth" ]
     command:
