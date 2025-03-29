@@ -9,13 +9,13 @@ services:
       - 8545
       - 6060       
     ports:
-      - "10351:10351"
-      - "10351:10351/udp"
+      - "10591:10591"
+      - "10591:10591/udp"
     entrypoint: ["/bin/sh", "-c", "[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json; exec /usr/local/bin/geth \"$@\""]
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
-      - blast-sepolia-op-geth-pruned-pebble-path:/data
+      - blast-sepolia-op-geth-pruned-pebble-hash:/data
       - .jwtsecret:/jwtsecret:ro
       - ./blast/sepolia:/config
     env_file:
@@ -25,10 +25,10 @@ services:
       
       - "GETH_GCMODE=full"
       - "GETH_SYNCMODE=full"      
-      - "GETH_STATE_SCHEME=path"
+      - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
       - "GETH_NAT=extip:${IP}"
-      - "GETH_PORT=10351"
+      - "GETH_PORT=10591"
       - "GETH_WS_PORT=8545"
       - "GETH_HTTP=true"
       - "GETH_HTTP_ADDR=0.0.0.0"
@@ -46,12 +46,12 @@ services:
       - "GETH_OVERRIDE_ECOTONE_TIME=1713999600"            
     labels:                     
       - "traefik.enable=true"
-      - "traefik.http.middlewares.blast-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/blast-sepolia"                      
-      - "traefik.http.services.blast-sepolia-op-geth-pruned-pebble-path.loadbalancer.server.port=8545"
-      - "traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-path.entrypoints=websecure"                                              
-      - "traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-path.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-sepolia`)"                     
-      - "traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-path.middlewares=blast-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"                           
+      - "traefik.http.middlewares.blast-sepolia-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/blast-sepolia"                      
+      - "traefik.http.services.blast-sepolia-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545"
+      - "traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.entrypoints=websecure"                                              
+      - "traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-sepolia`)"                     
+      - "traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.middlewares=blast-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist"                           
     networks:                                                                                         
       - chains
 
@@ -65,8 +65,8 @@ services:
       - 7300
       - 6060
     ports:
-      - "15351:15351"
-      - "15351:15351/udp"
+      - "15591:15591"
+      - "15591:15591/udp"
     entrypoint: [ "op-node" ]
     restart: unless-stopped
     volumes:
@@ -86,8 +86,8 @@ services:
       - "OP_NODE_METRICS_ENABLED=true"
       - "OP_NODE_METRICS_PORT=7300"
       - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=15351"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=15351"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15591"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15591"
       - "OP_NODE_RPC_ADDR=0.0.0.0"
       - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
       - "OP_NODE_RPC_PORT=8545"
@@ -106,4 +106,4 @@ services:
       - chains
       
 volumes:  
-  blast-sepolia-op-geth-pruned-pebble-path:
+  blast-sepolia-op-geth-pruned-pebble-hash:
