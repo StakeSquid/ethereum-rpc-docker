@@ -58,7 +58,7 @@ services:
       
   blast-mainnet-node:
     
-    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.0-mainnet
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.1.0-mainnet
     
     expose:
       - 8545

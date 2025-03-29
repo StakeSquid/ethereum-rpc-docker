@@ -3,7 +3,7 @@
 services:
   op-mainnet-archive:
     
-    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.101503.1    
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.101503.1    
     
     expose:
       - 8545
@@ -58,7 +58,7 @@ services:
       
   op-mainnet-archive-node:
     
-    image: https://us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.12.2
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.12.2
     
     expose:
       - 8545
