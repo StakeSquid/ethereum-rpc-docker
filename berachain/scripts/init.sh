@@ -47,16 +47,6 @@ if $BEACOND init ${MONIKER} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /ro
     curl -sL "$KZG_URL" -o "$CONFIG_DIR/kzg-trusted-setup.json"
     curl -sL "$CONFIG_TOML_URL" -o "$CONFIG_DIR/config.toml"
     curl -sL "$APP_TOML_URL" -o "$CONFIG_DIR/app.toml"
-    
-    # Update moniker if set
-    if [ -n "$MONIKER" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
-	sed -i "s/^moniker = \".*\"/moniker = \"$MONIKER\"/" "$CONFIG_DIR/config.toml"
-    fi
-    
-    # Update RPC dial URL in app.toml
-    if [ -f "$CONFIG_DIR/app.toml" ]; then
-	sed -i "s|^rpc-dial-url = \".*\"|rpc-dial-url = \"$AUTH_RPC\"|" "$CONFIG_DIR/app.toml"
-    fi
 
     # somehow it's better to make home static to /root
     sed -i 's|~/|/root/|g' "$CONFIG_DIR/config.toml"
@@ -78,6 +68,17 @@ if [ -n "$SEEDS" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
     sed -i "s/^seeds = \".*\"/seeds = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
     sed -i "s/^persistent_peers = \".*\"/persistent_peers = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
 fi
+
+# Update RPC dial URL in app.toml
+if [ -f "$CONFIG_DIR/app.toml" ]; then
+    sed -i "s|^rpc-dial-url = \".*\"|rpc-dial-url = \"$AUTH_RPC\"|" "$CONFIG_DIR/app.toml"
+fi
+
+# Update moniker if set
+if [ -n "$MONIKER" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
+    sed -i "s/^moniker = \".*\"/moniker = \"$MONIKER\"/" "$CONFIG_DIR/config.toml"
+fi
+
 
 #echo "$CONFIG_DIR/jwt.hex: $(cat $CONFIG_DIR/jwt.hex)"
 
