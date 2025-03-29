@@ -23,7 +23,7 @@ services:
       - --http.addr=0.0.0.0
       - --http.vhosts=*
       - --l1.endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
-      - --da.blob.beaconnode=${ETHEREUM_SEPOLIA_BEACON_REST}
+      
       - --rollup.verify
       - --graphql                        
       - --graphql.vhosts=*
