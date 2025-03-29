@@ -16,7 +16,7 @@ services:
     stop_grace_period: 3m    
     volumes:
       - blast-mainnet-op-geth-pruned-pebble-hash:/data
-      - .jwtsecret:/jwtsecret
+      - .jwtsecret:/jwtsecret:ro
       - ./blast-io/mainnet:/config
     env_file:
       - ./blast-io/mainnet/.env
@@ -70,7 +70,7 @@ services:
     entrypoint: [ "op-node" ]
     restart: unless-stopped
     volumes:
-      - .jwtsecret:/jwtsecret
+      - .jwtsecret:/jwtsecret:ro
       - ./blast-io/mainnet:/config      
     stop_grace_period: 30s
     env_file:

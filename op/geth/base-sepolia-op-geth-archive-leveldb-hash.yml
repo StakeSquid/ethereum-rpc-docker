@@ -17,7 +17,7 @@ services:
     stop_grace_period: 3m    
     volumes:
       - base-sepolia-op-geth-archive-leveldb-hash:/data
-      - .jwtsecret:/jwtsecret
+      - .jwtsecret:/jwtsecret:ro
       
     
     environment:
@@ -70,7 +70,7 @@ services:
     entrypoint: [ "op-node" ]
     restart: unless-stopped
     volumes:
-      - .jwtsecret:/jwtsecret
+      - .jwtsecret:/jwtsecret:ro
             
     stop_grace_period: 30s
     

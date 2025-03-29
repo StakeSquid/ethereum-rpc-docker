@@ -65,6 +65,7 @@ services:
       - "CHAINNAME=mainnet"
       - "CHAINID=80094"
       - "AUTH_RPC=http://berachain-mainnet-archive:8551"
+      - "AUTH_RPC=http://berachain-mainnet-archive:8545"
       - "CHAIN_SPEC=mainnet"
     entrypoint: [ "sh", "/init.sh" ]
     networks:

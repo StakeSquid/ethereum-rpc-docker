@@ -65,6 +65,7 @@ services:
       - "CHAINNAME=bepolia"
       - "CHAINID=80069"
       - "AUTH_RPC=http://berachain-bepolia:8551"
+      - "AUTH_RPC=http://berachain-bepolia:8545"
       - "CHAIN_SPEC=testnet"
     entrypoint: [ "sh", "/init.sh" ]
     networks:

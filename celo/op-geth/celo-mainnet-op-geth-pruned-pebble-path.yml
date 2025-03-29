@@ -5,7 +5,7 @@ services:
     image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:${CELO_L2_VERSION:-celo-v2.0.0}
     volumes:
       - "celo-mainnet-op-geth-pruned-pebble-path:/datadir"
-      - ".jwtsecret:/shared/jwt.txt"
+      - ".jwtsecret:/shared/jwt.txt:ro"
       - "./celo/mainnet/:/chainconfig"
       - "./celo/scripts/:/scripts"
     ports:
@@ -82,7 +82,7 @@ services:
       --rollup.halt=major
     restart: always
     volumes:
-      - .jwtsecret:/jwtsecret
+      - .jwtsecret:/jwtsecret:ro
       - ./celo/mainnet/:/chainconfigs/
     stop_grace_period: 30s
 
