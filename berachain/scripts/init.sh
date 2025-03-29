@@ -20,10 +20,10 @@ CONFIG_DIR="/root/.beacond/config"
 # Create config directory
 mkdir -p "$CONFIG_DIR"
 
-JWTSECRET="0x$(cat /jwtsecret)" # reth and bepolia don't speak the same language
+#JWTSECRET="0x$(cat /jwtsecret)" # reth and bepolia don't speak the same language
 P2P_STRING="tcp:\\/\\/0\\.0\\.0\\.0\\:${P2P_PORT:-55696}"
 
-echo "$JWTSECRET" > "$CONFIG_DIR/jwt.hex"
+#echo "$JWTSECRET" > "$CONFIG_DIR/jwt.hex"
 
 # this goes first because it won't overwrite shit
 
@@ -74,7 +74,7 @@ sed -i "/^\[p2p\]/,/^\[/{s|^laddr = .*|laddr = \"$P2P_STRING\"|}" "$CONFIG_DIR/c
 sed -i 's|~/|/root/|g' "$CONFIG_DIR/config.toml"
 sed -i 's|~/|/root/|g' "$CONFIG_DIR/app.toml"
 
-echo "$CONFIG_DIR/jwt.hex: $(cat $CONFIG_DIR/jwt.hex)"
+#echo "$CONFIG_DIR/jwt.hex: $(cat $CONFIG_DIR/jwt.hex)"
 
 #cd "$CONFIG_DIR"
 
