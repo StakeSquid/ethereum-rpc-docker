@@ -25,6 +25,9 @@ P2P_STRING="tcp:\\/\\/0\\.0\\.0\\.0\\:${P2P_PORT:-55696}"
 
 #echo "$JWTSECRET" > "$CONFIG_DIR/jwt.hex"
 
+SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
+
+
 # this goes first because it won't overwrite shit
 
 if $BEACOND init ${MONIKER} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /root/.beacond/; then
@@ -33,7 +36,7 @@ if $BEACOND init ${MONIKER} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /ro
     # Define variables
     CONFIG_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/config.toml"
     APP_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/app.toml"
-    SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
+    # SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
     KZG_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/kzg-trusted-setup.json"
     ETH_GENESIS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/eth-genesis.json"
     GENESIS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/genesis.json"    
@@ -50,19 +53,14 @@ if $BEACOND init ${MONIKER} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /ro
 	sed -i "s/^moniker = \".*\"/moniker = \"$MONIKER\"/" "$CONFIG_DIR/config.toml"
     fi
     
-    # Fetch and format SEEDS
-    SEEDS=$(curl -s "$SEEDS_URL" | tail -n +2 | tr '\n' ',' | sed 's/,$//')
-    
-    # Update seeds and persistent_peers
-    if [ -n "$SEEDS" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
-	sed -i "s/^seeds = \".*\"/seeds = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
-	sed -i "s/^persistent_peers = \".*\"/persistent_peers = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
-    fi
-
     # Update RPC dial URL in app.toml
     if [ -f "$CONFIG_DIR/app.toml" ]; then
 	sed -i "s|^rpc-dial-url = \".*\"|rpc-dial-url = \"$AUTH_RPC\"|" "$CONFIG_DIR/app.toml"
     fi
+
+    # somehow it's better to make home static to /root
+    sed -i 's|~/|/root/|g' "$CONFIG_DIR/config.toml"
+    sed -i 's|~/|/root/|g' "$CONFIG_DIR/app.toml"
 else
     echo "Already initialized, continuing!" >&2
 fi
@@ -71,8 +69,15 @@ fi
 # apply a port change to the config
 sed -i "/^\[p2p\]/,/^\[/{s|^laddr = .*|laddr = \"$P2P_STRING\"|}" "$CONFIG_DIR/config.toml"
 #sed -i "s/^laddr = \".*\"/laddr = \"$P2P_STRING\"/" "$CONFIG_DIR/config.toml"
-sed -i 's|~/|/root/|g' "$CONFIG_DIR/config.toml"
-sed -i 's|~/|/root/|g' "$CONFIG_DIR/app.toml"
+
+# Fetch and format SEEDS
+SEEDS=$(curl -s "$SEEDS_URL" | tail -n +2 | tr '\n' ',' | sed 's/,$//')
+    
+# Update seeds and persistent_peers
+if [ -n "$SEEDS" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
+    sed -i "s/^seeds = \".*\"/seeds = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
+    sed -i "s/^persistent_peers = \".*\"/persistent_peers = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
+fi
 
 #echo "$CONFIG_DIR/jwt.hex: $(cat $CONFIG_DIR/jwt.hex)"
 
