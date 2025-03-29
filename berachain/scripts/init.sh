@@ -6,11 +6,12 @@ echo "MONIKER: $MONIKER"
 
 CHAINID=${CHAINID:-80069}
 CHAINNAME=${CHAINNAME:-bepolia}
-CHAIN_SPEC="testnet"
 AUTH_RPC=${AUTH_RPC:-http://berachain-bepolia:8551} # just as example
 
 if [ "$CHAINNAME" == "mainnet" ]; then
-  CHAIN_SPEC="mainnet"
+    export CHAIN_SPEC="mainnet"
+else
+    export CHAIN_SPEC="testnet"
 fi
 
 BEACOND=${BEACOND_PATH:-beacond}
