@@ -6,6 +6,7 @@ echo "MONIKER: $MONIKER"
 
 CHAINID=${CHAINID:-80069}
 CHAINNAME=${CHAINNAME:-bepolia}
+L2_RPC==${L2_RPC:-http://berachain-bepolia:8545}
 AUTH_RPC=${AUTH_RPC:-http://berachain-bepolia:8551} # just as example
 
 #if [ "$CHAINNAME" == "mainnet" ]; then
@@ -82,6 +83,12 @@ fi
 #echo "$CONFIG_DIR/jwt.hex: $(cat $CONFIG_DIR/jwt.hex)"
 
 #cd "$CONFIG_DIR"
+
+while curl -s -X POST --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' -H "Content-Type: application/json" "$L2_RPC" | grep -q '"result":true'; do
+  echo "Waiting for L2 to finish syncing..."
+  sleep 10
+done
+echo "L2 sync complete!"
 
 # Execute beacond
 #exec $BEACOND start --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json --minimum-gas-prices 0atom "$@"
