@@ -41,7 +41,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.sonic-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/sonic-mainnet-archive"
-      - "traefik.http.services.sonic-mainnet-sonic-archive.loadbalancer.server.port=18544"
+      - "traefik.http.services.sonic-mainnet-sonic-archive.loadbalancer.server.port=8545"
       - "traefik.http.routers.sonic-mainnet-sonic-archive.entrypoints=websecure"
       - "traefik.http.routers.sonic-mainnet-sonic-archive.tls.certresolver=myresolver"
       - "traefik.http.routers.sonic-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/sonic-mainnet-archive`)"

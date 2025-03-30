@@ -41,7 +41,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.fantom-testnet-sonic-archive-stripprefix.stripprefix.prefixes=/fantom-testnet-archive"
-      - "traefik.http.services.fantom-testnet-sonic-archive.loadbalancer.server.port=18544"
+      - "traefik.http.services.fantom-testnet-sonic-archive.loadbalancer.server.port=8545"
       - "traefik.http.routers.fantom-testnet-sonic-archive.entrypoints=websecure"
       - "traefik.http.routers.fantom-testnet-sonic-archive.tls.certresolver=myresolver"
       - "traefik.http.routers.fantom-testnet-sonic-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-testnet-archive`)"
