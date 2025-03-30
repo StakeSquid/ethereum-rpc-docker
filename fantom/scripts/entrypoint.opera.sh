@@ -6,32 +6,21 @@ set -e
 datadir=/datadir
 FANTOM_HOME="$datadir"
 
-url="${GENESIS:-https://download.fantom.network/opera/mainnet/mainnet-5577-full-mpt.g}"
-filename=$(basename "$url")
-
-if [ ! -f "$datadir/bootstrapped" ]; then
-    echo "Initializing Opera..."
-
-    if ls $datadir/*.g >/dev/null 2>&1; then
-	echo "Some genesis block seems to exist"
-    else
-	wget -P "$datadir" "$url"
-    fi
-
-    touch "$datadir/bootstrapped"
-
-    echo "Initialization complete."
+if existing_file=$(ls "$datadir"/*.g 2>/dev/null | head -n1); then
+    echo "Some genesis block seems to exist"
+    filename=$(basename "$existing_file")
 else
-    echo "Opera is already initialized."
+    url="${GENESIS:-https://download.fantom.network/opera/mainnet/mainnet-5577-full-mpt.g}"
+    wget -P "$datadir" "$url"
+    filename=$(basename "$url")
 fi
 
 # uncomment the next line and do docker-compose build in case you have to try to fix the db after unclean shutdown etc.
 # opera --db.preset pbl-1 --datadir=$datadir db heal --experimental
 
-# always make a new nodekey
+# always make a new nodekey so backups can be shared
 
 echo "Generating new Geth node key..."
 rm -f "$datadir/nodekey"
-#openssl rand 32 | xxd -p -c 32 | tr -d '\n' > "$datadir/nodekey"
 
-exec opera --nodekey="$datadir/nodekey" --genesis="$datadir/$filename" --datadir="$datadir" "$@"
+exec opera --genesis="$datadir/$filename" --datadir="$datadir" "$@"
