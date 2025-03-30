@@ -1,0 +1,106 @@
+
+services:
+  lisk-mainnet-archive:
+    image: ghcr.io/paradigmxyz/op-reth:${RETH_VERSION:-v1.3.4}
+    expose:
+      - 8551
+      - 8545
+    ports:
+      - "10598:10598"
+      - "10598:10598/udp"
+    restart: unless-stopped
+    user: root
+    stop_grace_period: 3m
+    entrypoint: ["op-reth", "node"]
+    command:
+      - --chain=/config/genesis.json
+      
+      - --port=10598
+      - --discovery.port=10598
+      - --rollup.sequencer-http=None
+      - --http
+      - --ws
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.port=8551
+      - --authrpc.jwtsecret=/jwtsecret
+      - --http.addr=0.0.0.0
+      - --http.port=8545
+      - --ws.addr=0.0.0.0
+      - --ws.port=8545
+      - --ws.origins=*
+      - --http.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
+      - --ws.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
+      - --http.corsdomain=*
+      - --rpc.max-logs-per-response=1100000
+      - --rpc.gascap=600000000
+      - --nat=extip:$IP
+            
+    volumes:
+      - lisk-mainnet-op-reth-archive-trace:/root/.local/share/reth
+      - /slowdisk:/slowdisk
+      - .jwtsecret:/jwtsecret:ro
+      - ./op/mainnet/lisk:/config            
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.lisk-mainnet-op-reth-archive-trace-stripprefix.stripprefix.prefixes=/lisk-mainnet-archive"                      
+      - "traefik.http.services.lisk-mainnet-op-reth-archive-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.lisk-mainnet-op-reth-archive-trace.entrypoints=websecure"                                              
+      - "traefik.http.routers.lisk-mainnet-op-reth-archive-trace.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.lisk-mainnet-op-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-mainnet-archive`)"                     
+      - "traefik.http.routers.lisk-mainnet-op-reth-archive-trace.middlewares=lisk-mainnet-op-reth-archive-trace-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+
+      
+  lisk-mainnet-archive-node:
+    
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.12.2
+    
+    expose:
+      - 8545
+      - 7300
+      - 6060
+    ports:
+      - "15598:15598"
+      - "15598:15598/udp"
+    entrypoint: [ "op-node" ]
+    restart: unless-stopped
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+      - ./op/mainnet/lisk:/config      
+    stop_grace_period: 30s
+    env_file:
+      - ./lisk/mainnet.env
+    environment:
+      - "OP_NODE_ROLLUP_CONFIG=/config/rollup.json"
+      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_ENGINE_RPC=http://lisk-mainnet-archive:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15598"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15598"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=0"
+      - "OP_NODE_STATIC_PEERS="
+      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"
+      
+      
+                        
+      
+    networks:                                                                                         
+      - chains
+
+      
+volumes:  
+  lisk-mainnet-op-reth-archive-trace:
