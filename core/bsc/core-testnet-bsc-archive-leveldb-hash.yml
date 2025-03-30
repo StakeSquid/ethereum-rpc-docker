@@ -1,0 +1,59 @@
+
+
+services:
+  core-testnet-archive:
+    image: docker pull ghcr.io/coredao-org/core-chain:1.0.15    
+    sysctls:
+      net.ipv4.tcp_slow_start_after_idle: 0
+      net.ipv4.tcp_no_metrics_save: 1
+    user: root
+    ports:
+      - "10830:10830"
+      - "10830:10830/udp"
+    expose:                                                                              
+      - "8545"                                                                           
+    volumes:                                                                             
+      - core-testnet-bsc-archive-leveldb-hash:/bsc/.ethereum
+      - /slowdisk:/slowdisk
+      - ./core-chain/testnet:/config      
+    entrypoint: [ "geth" ]
+    command:
+      - --testnet
+      - --config=/config/config.toml
+      - --db.engine=leveldb
+      - --state.scheme=hash
+      - --syncmode=full
+      - --gcmode=archive
+      - --rpc.gascap=600000000
+      - --nat=extip:${IP}
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.port=8545
+      - --http.vhosts=*
+      - --http.api=eth,net,web3,txpool,parlia,debug,admin
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.api=net,web3,eth,debug
+      - --maxpeers=200
+      - --nodiscover=false
+      - --discovery.port=10830     
+      - --port=10830
+      
+      
+    restart: unless-stopped
+    stop_grace_period: 3m
+    networks: 
+      - chains
+    labels:                                                                              
+      - "traefik.enable=true"                                                            
+      - "traefik.http.middlewares.core-testnet-bsc-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/core-testnet-archive"             
+      - "traefik.http.services.core-testnet-bsc-archive-leveldb-hash.loadbalancer.server.port=8545"                        
+      - "traefik.http.routers.core-testnet-bsc-archive-leveldb-hash.entrypoints=websecure"                                 
+      - "traefik.http.routers.core-testnet-bsc-archive-leveldb-hash.tls.certresolver=myresolver"                           
+      - "traefik.http.routers.core-testnet-bsc-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/core-testnet-archive`)"            
+      - "traefik.http.routers.core-testnet-bsc-archive-leveldb-hash.middlewares=core-testnet-bsc-archive-leveldb-hash-stripprefix, ipwhitelist"
+
+volumes:
+  core-testnet-bsc-archive-leveldb-hash:

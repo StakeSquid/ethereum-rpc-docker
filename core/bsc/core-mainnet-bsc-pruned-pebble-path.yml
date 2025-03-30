@@ -1,0 +1,59 @@
+
+
+services:
+  core-mainnet:
+    image: docker pull ghcr.io/coredao-org/core-chain:1.0.15    
+    sysctls:
+      net.ipv4.tcp_slow_start_after_idle: 0
+      net.ipv4.tcp_no_metrics_save: 1
+    user: root
+    ports:
+      - "10269:10269"
+      - "10269:10269/udp"
+    expose:                                                                              
+      - "8545"                                                                           
+    volumes:                                                                             
+      - core-mainnet-bsc-pruned-pebble-path:/bsc/.ethereum
+      - /slowdisk:/slowdisk
+      - ./core-chain/mainnet:/config      
+    entrypoint: [ "geth" ]
+    command:
+      - --mainnet
+      - --config=/config/config.toml
+      - --db.engine=pebble
+      - --state.scheme=path
+      - --syncmode=snap
+      - --gcmode=full
+      - --rpc.gascap=600000000
+      - --nat=extip:${IP}
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.port=8545
+      - --http.vhosts=*
+      - --http.api=eth,net,web3,txpool,parlia,debug,admin
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.api=net,web3,eth,debug
+      - --maxpeers=200
+      - --nodiscover=false
+      - --discovery.port=10269     
+      - --port=10269
+      
+      
+    restart: unless-stopped
+    stop_grace_period: 3m
+    networks: 
+      - chains
+    labels:                                                                              
+      - "traefik.enable=true"                                                            
+      - "traefik.http.middlewares.core-mainnet-bsc-pruned-pebble-path-stripprefix.stripprefix.prefixes=/core-mainnet"             
+      - "traefik.http.services.core-mainnet-bsc-pruned-pebble-path.loadbalancer.server.port=8545"                        
+      - "traefik.http.routers.core-mainnet-bsc-pruned-pebble-path.entrypoints=websecure"                                 
+      - "traefik.http.routers.core-mainnet-bsc-pruned-pebble-path.tls.certresolver=myresolver"                           
+      - "traefik.http.routers.core-mainnet-bsc-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/core-mainnet`)"            
+      - "traefik.http.routers.core-mainnet-bsc-pruned-pebble-path.middlewares=core-mainnet-bsc-pruned-pebble-path-stripprefix, ipwhitelist"
+
+volumes:
+  core-mainnet-bsc-pruned-pebble-path:
