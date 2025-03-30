@@ -2,7 +2,7 @@
 
 services:
   bsc-mainnet:
-    image: ghcr.io/bnb-chain/bsc:${BSC_VERSION:-1.5.8}
+    image: ghcr.io/bnb-chain/bsc:${BSC_VERSION:-1.5.8}    
     sysctls:
       net.ipv4.tcp_slow_start_after_idle: 0
       net.ipv4.tcp_no_metrics_save: 1
@@ -15,30 +15,17 @@ services:
     volumes:                                                                             
       - bsc-mainnet-bsc-pruned-pebble-path:/bsc/.ethereum
       - /slowdisk:/slowdisk
-            
+      - ./bsc/config:/config      
     entrypoint: [ "geth" ]
     command:
       - --mainnet
-      
+      - --config=/config/config.toml
       - --db.engine=pebble
       - --state.scheme=path
       - --syncmode=snap
       - --gcmode=full
       - --rpc.gascap=600000000
       - --nat=extip:${IP}
-      - --miner.gasprice=1000000000
-      - --txpool.nolocals
-      - --txpool.journal=transactions.rlp
-      - --txpool.pricelimit=1000000000
-      - --txpool.pricebump=10
-      - --txpool.accountslots=200
-      - --txpool.globalslots=8000
-      - --txpool.accountqueue=200
-      - --txpool.globalqueue=4000
-      - --gpo.blocks=20
-      - --history.transactions=0 
-      - --gpo.percentile=60
-      - --ipcpath=geth.ipc
       - --http
       - --http.addr=0.0.0.0
       - --http.port=8545
