@@ -25,7 +25,7 @@ services:
       - --l1.endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - --da.sync
       - --da.blob.beaconnode=${ETHEREUM_SEPOLIA_BEACON_REST}
-      - --da.blob.blobscan "https://api.sepolia.blobscan.com/blobs/"
+      - --da.blob.blobscan=https://api.sepolia.blobscan.com/blobs/
       
       - --rollup.verify
       - --graphql                        
