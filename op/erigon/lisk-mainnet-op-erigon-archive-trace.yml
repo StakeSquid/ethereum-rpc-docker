@@ -25,7 +25,7 @@ services:
       - --http.corsdomain=*
       - --authrpc.addr=0.0.0.0
       - --authrpc.port=8551
-      - --authrpc.vhosts="*"
+      - --authrpc.vhosts=*
       - --authrpc.jwtsecret=/jwtsecret
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
       - --rpc.returndata.limit=1100000
