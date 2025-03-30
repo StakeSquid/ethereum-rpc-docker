@@ -1,24 +1,24 @@
 
 
 services:
-  core-testnet-archive:
+  core-buffalo-archive:
     image: ghcr.io/coredao-org/core-chain:1.0.15    
     sysctls:
       net.ipv4.tcp_slow_start_after_idle: 0
       net.ipv4.tcp_no_metrics_save: 1
     user: root
     ports:
-      - "10955:10955"
-      - "10955:10955/udp"
+      - "10564:10564"
+      - "10564:10564/udp"
     expose:                                                                              
       - "8545"                                                                           
     volumes:                                                                             
-      - core-testnet-core-archive-leveldb-hash:/bsc/.ethereum
+      - core-buffalo-core-archive-leveldb-hash:/core/.ethereum
       - /slowdisk:/slowdisk
       - ./core-chain/testnet:/config      
     entrypoint: [ "geth" ]
     command:
-      - --testnet
+      - --buffalo
       - --config=/config/config.toml
       - --db.engine=leveldb
       - --state.scheme=hash
@@ -38,8 +38,8 @@ services:
       - --ws.api=net,web3,eth,debug
       - --maxpeers=200
       - --nodiscover=false
-      - --discovery.port=10955     
-      - --port=10955
+      - --discovery.port=10564     
+      - --port=10564
       
       
     restart: unless-stopped
@@ -48,12 +48,12 @@ services:
       - chains
     labels:                                                                              
       - "traefik.enable=true"                                                            
-      - "traefik.http.middlewares.core-testnet-core-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/core-testnet-archive"             
-      - "traefik.http.services.core-testnet-core-archive-leveldb-hash.loadbalancer.server.port=8545"                        
-      - "traefik.http.routers.core-testnet-core-archive-leveldb-hash.entrypoints=websecure"                                 
-      - "traefik.http.routers.core-testnet-core-archive-leveldb-hash.tls.certresolver=myresolver"                           
-      - "traefik.http.routers.core-testnet-core-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/core-testnet-archive`)"            
-      - "traefik.http.routers.core-testnet-core-archive-leveldb-hash.middlewares=core-testnet-core-archive-leveldb-hash-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.core-buffalo-core-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/core-buffalo-archive"             
+      - "traefik.http.services.core-buffalo-core-archive-leveldb-hash.loadbalancer.server.port=8545"                        
+      - "traefik.http.routers.core-buffalo-core-archive-leveldb-hash.entrypoints=websecure"                                 
+      - "traefik.http.routers.core-buffalo-core-archive-leveldb-hash.tls.certresolver=myresolver"                           
+      - "traefik.http.routers.core-buffalo-core-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/core-buffalo-archive`)"            
+      - "traefik.http.routers.core-buffalo-core-archive-leveldb-hash.middlewares=core-buffalo-core-archive-leveldb-hash-stripprefix, ipwhitelist"
 
 volumes:
-  core-testnet-core-archive-leveldb-hash:
+  core-buffalo-core-archive-leveldb-hash:

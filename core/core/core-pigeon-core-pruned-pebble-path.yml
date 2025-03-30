@@ -1,29 +1,29 @@
 
 
 services:
-  core-testnet2-archive:
+  core-pigeon:
     image: ghcr.io/coredao-org/core-chain:1.0.15    
     sysctls:
       net.ipv4.tcp_slow_start_after_idle: 0
       net.ipv4.tcp_no_metrics_save: 1
     user: root
     ports:
-      - "10592:10592"
-      - "10592:10592/udp"
+      - "10478:10478"
+      - "10478:10478/udp"
     expose:                                                                              
       - "8545"                                                                           
     volumes:                                                                             
-      - core-testnet2-core-archive-leveldb-hash:/bsc/.ethereum
+      - core-pigeon-core-pruned-pebble-path:/core/.ethereum
       - /slowdisk:/slowdisk
       - ./core-chain/testnet2:/config      
     entrypoint: [ "geth" ]
     command:
-      - --testnet2
+      - --pigeon
       - --config=/config/config.toml
-      - --db.engine=leveldb
-      - --state.scheme=hash
-      - --syncmode=full
-      - --gcmode=archive
+      - --db.engine=pebble
+      - --state.scheme=path
+      - --syncmode=snap
+      - --gcmode=full
       - --rpc.gascap=600000000
       - --nat=extip:${IP}
       - --http
@@ -38,8 +38,8 @@ services:
       - --ws.api=net,web3,eth,debug
       - --maxpeers=200
       - --nodiscover=false
-      - --discovery.port=10592     
-      - --port=10592
+      - --discovery.port=10478     
+      - --port=10478
       
       
     restart: unless-stopped
@@ -48,12 +48,12 @@ services:
       - chains
     labels:                                                                              
       - "traefik.enable=true"                                                            
-      - "traefik.http.middlewares.core-testnet2-core-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/core-testnet2-archive"             
-      - "traefik.http.services.core-testnet2-core-archive-leveldb-hash.loadbalancer.server.port=8545"                        
-      - "traefik.http.routers.core-testnet2-core-archive-leveldb-hash.entrypoints=websecure"                                 
-      - "traefik.http.routers.core-testnet2-core-archive-leveldb-hash.tls.certresolver=myresolver"                           
-      - "traefik.http.routers.core-testnet2-core-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/core-testnet2-archive`)"            
-      - "traefik.http.routers.core-testnet2-core-archive-leveldb-hash.middlewares=core-testnet2-core-archive-leveldb-hash-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.core-pigeon-core-pruned-pebble-path-stripprefix.stripprefix.prefixes=/core-pigeon"             
+      - "traefik.http.services.core-pigeon-core-pruned-pebble-path.loadbalancer.server.port=8545"                        
+      - "traefik.http.routers.core-pigeon-core-pruned-pebble-path.entrypoints=websecure"                                 
+      - "traefik.http.routers.core-pigeon-core-pruned-pebble-path.tls.certresolver=myresolver"                           
+      - "traefik.http.routers.core-pigeon-core-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/core-pigeon`)"            
+      - "traefik.http.routers.core-pigeon-core-pruned-pebble-path.middlewares=core-pigeon-core-pruned-pebble-path-stripprefix, ipwhitelist"
 
 volumes:
-  core-testnet2-core-archive-leveldb-hash:
+  core-pigeon-core-pruned-pebble-path:
