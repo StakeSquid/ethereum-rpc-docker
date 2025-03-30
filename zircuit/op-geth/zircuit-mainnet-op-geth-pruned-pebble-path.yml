@@ -19,7 +19,7 @@ services:
       - "10359:10359"
       - "10359:10359/udp"
     env_file:
-      - /config/env
+      - ./zircuit_config/env
     entrypoint: ["/bin/sh", "-c", "[ ! -d /data/geth ] && geth init /config/genesis.json; exec geth \"$@\""]
     command:
       - --http
@@ -68,7 +68,7 @@ services:
     networks:
       - chains
     env_file:
-      - /config/env      
+      - ./zircuit_config/env      
     environment:
       OP_NODE_L1_ETH_RPC: ${ETHEREUM_MAINNET_EXECUTION_RPC}
       OP_NODE_L2_ENGINE_RPC: http://zircuit-mainnet:8551

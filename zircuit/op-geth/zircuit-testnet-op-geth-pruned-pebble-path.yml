@@ -19,7 +19,7 @@ services:
       - "10804:10804"
       - "10804:10804/udp"
     env_file:
-      - /config/env
+      - ./zircuit_testnet_config/env
     entrypoint: ["/bin/sh", "-c", "[ ! -d /data/geth ] && geth init /config/genesis.json; exec geth \"$@\""]
     command:
       - --http
@@ -68,7 +68,7 @@ services:
     networks:
       - chains
     env_file:
-      - /config/env      
+      - ./zircuit_testnet_config/env      
     environment:
       OP_NODE_L1_ETH_RPC: ${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       OP_NODE_L2_ENGINE_RPC: http://zircuit-testnet:8551
