@@ -1,0 +1,62 @@
+[Eth]
+NetworkId = 1115
+NoPruning = false
+NoPrefetch = false
+LightPeers = 100
+UltraLightFraction = 75
+TrieTimeout = 100000000000
+EnablePreimageRecording = false
+EWASMInterpreter = ""
+EVMInterpreter = ""
+
+[Eth.Miner]
+GasFloor = 30000000
+GasCeil = 40000000
+GasPrice = 1000000000
+Recommit = 10000000000
+Noverify = false
+
+[Eth.TxPool]
+Locals = []
+NoLocals = true
+Journal = "transactions.rlp"
+Rejournal = 3600000000000
+PriceLimit = 1000000000
+PriceBump = 10
+AccountSlots = 512
+GlobalSlots = 10000
+AccountQueue = 256
+GlobalQueue = 5000
+Lifetime = 10800000000000
+
+[Eth.GPO]
+Blocks = 20
+Percentile = 60
+OracleThreshold = 20
+
+[Node]
+IPCPath = "geth.ipc"
+HTTPHost = "0.0.0.0"
+NoUSB = true
+InsecureUnlockAllowed = false
+HTTPPort = 8545
+HTTPVirtualHosts = ["*"]
+HTTPModules = ["eth", "net", "web3", "txpool", "satoshi", "debug", "admin"]
+WSPort = 8545
+WSModules = ["eth", "net", "web3", "txpool", "satoshi"]
+[Node.P2P]
+MaxPeers = 30
+NoDiscovery = false
+BootstrapNodes = ["enode://e512f59f311cc2dbe0219e80490f6aa52d3ff5c0498d4bc7645a9571760c9a01f3b927aea7e344d59c8979ccf73da3353209b36f5a5b107d520e423c15355e39@3.141.33.40:0?discport=35011","enode://7d57491701081ca62cbdc4bf4c34461e5a05afcf303cfcd61ee1b08035923460ede0221667e69f0858473a392a5e9aa50733131356865a9c2494941f3468b431@54.183.183.28:0?discport=35011","enode://5272c95fcc35521ef5094d92f54768b5f914ae1c8d5e70d3b2451a835d80d70492ca2601cca084daca474f3193e5db4f98bda8f687fbbc85eda42bb429e2c9a3@44.234.126.175:0?discport=35011"]
+StaticNodes = ["enode://9626bd475ab009ad239b371ea9293107a5de6a76cbc963a8715d9b3c26dd565ebf5a0663726e5042779a818dc8b935b4c2351f61d65ad4a97e7453db29a0cabe@3.145.212.105:35012","enode://103152e35d00f8a3361918ed6a692a403fb456a6b7a498bd80795debc0e478d2f5e2ecd91434b9339481c269dc5dda5f8b47c0c6f2c54a4bab9e1c04391364fb@54.215.137.72:35012","enode://8a716b394ccac9208742349e26f45675543c9809d265f90d0ed781985f9b2b167e0378e86130a6c617c205aec76ccebfd9c791d649d0bb0d7e6c3833a3828297@44.233.146.164:35012"]
+EnableMsgEvents = false
+
+[Node.HTTPTimeouts]
+ReadTimeout = 30000000000
+WriteTimeout = 30000000000
+IdleTimeout = 120000000000
+
+[Node.LogConfig]
+MaxBytesSize = 10485760
+Level = "info"
+FileRoot = ""
