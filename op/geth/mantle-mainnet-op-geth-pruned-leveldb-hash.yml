@@ -76,7 +76,7 @@ services:
     env_file:
       - ./mantle/mainnet.env
     environment:
-      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
+      - "OP_NODE_ROLLUP_CONFIG=/config/rollup.json"
       - "OP_NODE_SYNCMODE=consensus-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"

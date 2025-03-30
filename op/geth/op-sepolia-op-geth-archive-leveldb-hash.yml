@@ -75,7 +75,7 @@ services:
     stop_grace_period: 30s
     
     environment:
-      - OP_NODE_NETWORK=op-sepolia
+      - "OP_NODE_NETWORK=op-sepolia"
       - "OP_NODE_SYNCMODE=execution-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
