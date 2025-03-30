@@ -1,25 +1,25 @@
 
 
 services:
-  zircuit-mainnet:
+  zircuit-testnet:
     image: zircuit1/l2-geth:e81568966f2a42a57b1347fb1dffdd5257dde73a
     volumes:
-      - "zircuit-mainnet-op-geth-pruned-pebble-path:/data"
+      - "zircuit-testnet-op-geth-pruned-pebble-hash:/data"
       - ".jwtsecret:/jwtsecret:ro"
-      - ./zircuit_config:/config
+      - ./zircuit_testnet_config:/config
     environment:
       - "GETH_GCMODE=full"
-      - "GETH_SYNCMODE=snap"            
-      - "GETH_STATE_SCHEME=path"
+      - "GETH_SYNCMODE=full"            
+      - "GETH_STATE_SCHEME=hash"
       - "GETH_DB_ENGINE=pebble"
       - "GETH_NAT=extip:${IP}"
-      - "GETH_PORT=10359"
+      - "GETH_PORT=10357"
       - "GETH_DATADIR=/data"
     ports:
-      - "10359:10359"
-      - "10359:10359/udp"
+      - "10357:10357"
+      - "10357:10357/udp"
     env_file:
-      - ./zircuit_config/env
+      - ./zircuit_testnet_config/env
     entrypoint: ["/bin/sh", "-c", "[ ! -d /data/geth ] && geth init /config/genesis.json; exec geth \"$@\""]
     command:
       - --http
@@ -47,31 +47,31 @@ services:
       - chains
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.zircuit-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/zircuit-mainnet"
-      - "traefik.http.services.zircuit-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=80"
-      - "traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure"
-      - "traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver"
-      - "traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-mainnet`)"
-      - "traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-path.middlewares=zircuit-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist"
+      - "traefik.http.middlewares.zircuit-testnet-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/zircuit-testnet"
+      - "traefik.http.services.zircuit-testnet-op-geth-pruned-pebble-hash.loadbalancer.server.port=80"
+      - "traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-hash.entrypoints=websecure"
+      - "traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-hash.tls.certresolver=myresolver"
+      - "traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-testnet`)"
+      - "traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-hash.middlewares=zircuit-testnet-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist"
 
       
-  zircuit-mainnet-node:
+  zircuit-testnet-node:
     depends_on:
-      - zircuit-mainnet
+      - zircuit-testnet
     image: zircuit1/op-node:e81568966f2a42a57b1347fb1dffdd5257dde73a
     ports:
-      - "15359:15359"
-      - "15359:15359/udp"
+      - "15357:15357"
+      - "15357:15357/udp"
     volumes:
       - ".jwtsecret:/jwtsecret:ro"
-      - ./zircuit_config:/config
+      - ./zircuit_testnet_config:/config
     networks:
       - chains
     env_file:
-      - ./zircuit_config/env      
+      - ./zircuit_testnet_config/env      
     environment:
-      OP_NODE_L1_ETH_RPC: ${ETHEREUM_MAINNET_EXECUTION_RPC}
-      OP_NODE_L2_ENGINE_RPC: http://zircuit-mainnet:8551
+      OP_NODE_L1_ETH_RPC: ${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      OP_NODE_L2_ENGINE_RPC: http://zircuit-testnet:8551
       OP_NODE_ROLLUP_CONFIG: /config/rollup.json
       OP_NODE_RPC_ADDR: "0.0.0.0"
       OP_NODE_RPC_PORT: 9545
@@ -84,11 +84,11 @@ services:
       OP_NODE_SEQUENCER_L1_CONFS: 0
       OP_NODE_L1_EPOCH_POLL_INTERVAL: 384s
       OP_NODE_HEARTBEAT_ENABLED: "false"
-      OP_NODE_L1_BEACON: ${ETHEREUM_MAINNET_BEACON_REST}
-      OP_NODE_SYNCMODE: execution-layer
+      OP_NODE_L1_BEACON: ${ETHEREUM_SEPOLIA_BEACON_REST}
+      OP_NODE_SYNCMODE: consensus-layer
       OP_NODE_P2P_LISTEN_IP: "0.0.0.0"
-      OP_NODE_P2P_LISTEN_TCP_PORT: 15359
-      OP_NODE_P2P_LISTEN_UDP_PORT: 15359
+      OP_NODE_P2P_LISTEN_TCP_PORT: 15357
+      OP_NODE_P2P_LISTEN_UDP_PORT: 15357
       OP_NODE_P2P_PEER_SCORING: light
       OP_NODE_P2P_PEER_BANNING: "true"
       OP_NODE_P2P_STATIC: ${ZIRCUIT_MAINNET_STATIC_PEERS}
@@ -98,4 +98,4 @@ services:
       OP_NODE_LOG_COLOR: "false"
       
 volumes:
-  zircuit-mainnet-op-geth-pruned-pebble-path:
+  zircuit-testnet-op-geth-pruned-pebble-hash:
