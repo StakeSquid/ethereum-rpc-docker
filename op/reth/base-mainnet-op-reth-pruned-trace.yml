@@ -13,7 +13,8 @@ services:
     stop_grace_period: 3m
     entrypoint: ["op-reth", "node"]
     command:
-      - --chain=base
+      
+      - --chain=/config/genesis.json
       - --port=10759
       - --discovery.port=10759
       - --rollup.sequencer-http=https://mainnet-sequencer.base.org
@@ -38,6 +39,7 @@ services:
       - base-mainnet-op-reth-pruned-trace:/root/.local/share/reth
       - /slowdisk:/slowdisk
       - .jwtsecret:/jwtsecret:ro
+                  
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.base-mainnet-op-reth-pruned-trace-stripprefix.stripprefix.prefixes=/base-mainnet"                      

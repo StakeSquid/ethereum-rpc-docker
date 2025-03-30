@@ -13,7 +13,8 @@ services:
     stop_grace_period: 3m
     entrypoint: ["op-reth", "node"]
     command:
-      - --chain=op-sepolia
+      
+      - --chain=/config/genesis.json
       - --port=10442
       - --discovery.port=10442
       - --rollup.sequencer-http=https://sepolia-sequencer.optimism.org
@@ -38,6 +39,7 @@ services:
       - op-sepolia-op-reth-pruned-trace:/root/.local/share/reth
       - /slowdisk:/slowdisk
       - .jwtsecret:/jwtsecret:ro
+                  
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.op-sepolia-op-reth-pruned-trace-stripprefix.stripprefix.prefixes=/op-sepolia"                      

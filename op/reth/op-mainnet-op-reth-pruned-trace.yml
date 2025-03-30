@@ -13,7 +13,8 @@ services:
     stop_grace_period: 3m
     entrypoint: ["op-reth", "node"]
     command:
-      - --chain=optimism
+      
+      - --chain=/config/genesis.json
       - --port=10985
       - --discovery.port=10985
       - --rollup.sequencer-http=https://mainnet-sequencer.optimism.org
@@ -38,6 +39,7 @@ services:
       - op-mainnet-op-reth-pruned-trace:/root/.local/share/reth
       - /slowdisk:/slowdisk
       - .jwtsecret:/jwtsecret:ro
+                  
     labels:                     
       - "traefik.enable=true"
       - "traefik.http.middlewares.op-mainnet-op-reth-pruned-trace-stripprefix.stripprefix.prefixes=/op-mainnet"                      
