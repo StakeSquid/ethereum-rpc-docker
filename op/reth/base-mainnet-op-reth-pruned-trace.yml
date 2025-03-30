@@ -69,7 +69,6 @@ services:
       - .jwtsecret:/jwtsecret:ro
             
     stop_grace_period: 30s
-    
     environment:
       - "OP_NODE_NETWORK=base-mainnet"
       - "OP_NODE_SYNCMODE=execution-layer"

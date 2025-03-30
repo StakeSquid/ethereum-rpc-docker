@@ -69,11 +69,9 @@ services:
       - .jwtsecret:/jwtsecret:ro
       - ./op/mainnet/lisk:/config      
     stop_grace_period: 30s
-    env_file:
-      - ./lisk/mainnet.env
     environment:
       - "OP_NODE_ROLLUP_CONFIG=/config/rollup.json"
-      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_SYNCMODE=consensus-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "OP_NODE_L2_ENGINE_RPC=http://lisk-mainnet-archive:8551"
