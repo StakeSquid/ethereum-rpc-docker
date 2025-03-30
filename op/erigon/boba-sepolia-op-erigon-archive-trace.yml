@@ -1,0 +1,87 @@
+# The erigon db can be downloaded from
+# https://boba-db.s3.us-east-2.amazonaws.com/mainnet/boba-mainnet-erigon-db-1149019.tgz
+# and extracted to the DATA_DIR
+
+# The jwt-secret.txt file should be a random string of32 characters and should be kept secret.
+
+# The p2p-node-key.txt is the private key used for the node to identify itself.
+
+# The discovery and peerstore directories are used to store the peerstore and discovery data.
+
+# boba is part of the superchain registry and knows it's overrides
+
+services:
+  boba-sepolia-archive:
+    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon:${BOBAETH_ERIGON_VERSION:-v1.2.11}
+    user: root
+    command: |
+      --datadir=/db
+      --port=10249
+      --nat=stun
+      --chain=boba-sepolia
+      --http.addr=0.0.0.0
+      --http.port=8545
+      --http.compression=true
+      --ws.port=8545
+      --ws.compression=true
+      --ws
+      --http.corsdomain=*
+      --http.vhosts=*
+      --authrpc.addr=0.0.0.0
+      --authrpc.port=8551
+      --authrpc.vhosts=*
+      --authrpc.jwtsecret=/jwtsecret
+      --http.api=eth,debug,net,engine,web3
+      --txpool.gossip.disable=true
+      --rollup.sequencerhttp=https://sepolia.boba.network
+      --db.size.limit=8TB
+    ports:
+      - "10249:10249"
+      - "10249:10249/udp"
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - .jwtsecret:/jwtsecret
+      - ${BOBA_SEPOLIA_OP_ERIGON_ARCHIVE_TRACE_DATA:-boba-sepolia-op-erigon-archive-trace}:/db
+    networks:                                                                                         
+      - chains      
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.boba-sepolia-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/boba-sepolia-archive"
+      - "traefik.http.services.boba-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545"
+      - "${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-sepolia-archive`)}"
+      - "${NO_SSL:+traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=PathPrefix(`/boba-sepolia-archive`)}"      
+      - "traefik.http.routers.boba-sepolia-op-erigon-archive-trace.middlewares=boba-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist"
+
+  boba-sepolia-archive-node:
+    depends_on:
+      - boba-sepolia-archive
+    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node:${BOBAETH_NODE_VERSION:-v1.6.16-rc.1}
+    command: >
+      op-node
+      --l2=http://boba-sepolia-archive:8551
+      --l2.jwt-secret=/jwtsecret
+      --network=boba-sepolia
+      --rpc.addr=0.0.0.0
+      --rpc.port=8545
+    environment:
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15249"
+      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"      
+      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
+    ports:
+      - "15249:15249"
+      - "15249:15249/udp"
+    networks:                                                                                         
+      - chains      
+    volumes:
+      - .jwtsecret:/jwtsecret
+    restart: unless-stopped
+
+volumes:
+    boba-sepolia-op-erigon-archive-trace:

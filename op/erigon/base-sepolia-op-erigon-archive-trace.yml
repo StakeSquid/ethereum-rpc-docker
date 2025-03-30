@@ -1,0 +1,104 @@
+services:
+  base-sepolia-archive:
+    image: testinprod/op-erigon:${OP_ERIGON_VERSION:-v2.61.1-0.8.3}    
+    expose:
+      - 8545
+      - 8551
+    ports:
+      - "10487:10487"
+      - "10487:10487/udp"
+      - "25487:25487"
+      - "25487:25487/udp"
+      - "30487:30487"
+      - "30487:30487/udp"      
+    
+    entrypoint: ["erigon"]
+    command:
+      - --chain=base-sepolia
+      
+      - --port=10487
+      - --p2p.allowed-ports=25487
+      - --p2p.allowed-ports=30487      
+      - --nat=extip:${IP}
+      - --http.addr=0.0.0.0
+      - --http.vhosts=*
+      - --http.corsdomain=*
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.port=8551
+      - --authrpc.vhosts="*"
+      - --authrpc.jwtsecret=/jwtsecret
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --rpc.returndata.limit=1100000
+      - --rpc.gascap=5000000000
+      - --ws.port=8545
+      - --ws
+           
+       
+    restart: unless-stopped
+    stop_grace_period: 3m    
+    volumes:
+      - base-sepolia-op-erigon-archive-trace:/root/.local/share/erigon      
+      - .jwtsecret:/jwtsecret:ro
+      
+    
+    labels:                     
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.base-sepolia-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/base-sepolia-archive"                      
+      - "traefik.http.services.base-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545"
+      - "traefik.http.routers.base-sepolia-op-erigon-archive-trace.entrypoints=websecure"                                              
+      - "traefik.http.routers.base-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver"                                        
+      - "traefik.http.routers.base-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/base-sepolia-archive`)"                     
+      - "traefik.http.routers.base-sepolia-op-erigon-archive-trace.middlewares=base-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist"                           
+    networks:                                                                                         
+      - chains
+      
+  base-sepolia-archive-node:
+    
+    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.12.2
+    
+    expose:
+      - 8545
+      - 7300
+      - 6060
+    ports:
+      - "15487:15487"
+      - "15487:15487/udp"
+    entrypoint: [ "op-node" ]
+    restart: unless-stopped
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+            
+    stop_grace_period: 30s
+    
+    environment:
+      - "OP_NODE_NETWORK=base-sepolia"
+      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}"
+      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
+      - "OP_NODE_L2_ENGINE_RPC=http://base-sepolia-archive:8551"
+      - "OP_NODE_LOG_LEVEL=info"
+      - "OP_NODE_METRICS_ADDR=0.0.0.0"
+      - "OP_NODE_METRICS_ENABLED=true"
+      - "OP_NODE_METRICS_PORT=7300"
+      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
+      - "OP_NODE_P2P_LISTEN_TCP_PORT=15487"
+      - "OP_NODE_P2P_LISTEN_UDP_PORT=15487"
+      - "OP_NODE_RPC_ADDR=0.0.0.0"
+      - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
+      - "OP_NODE_RPC_PORT=8545"
+      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
+      - "OP_NODE_VERIFIER_L1_CONFS=0"
+      - "OP_NODE_STATIC_PEERS="
+      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}"
+      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}"
+      - "OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}"
+      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}"
+      
+      
+                        
+      - "OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400"
+    networks:                                                                                         
+      - chains
+      
+volumes:  
+  base-sepolia-op-erigon-archive-trace:
