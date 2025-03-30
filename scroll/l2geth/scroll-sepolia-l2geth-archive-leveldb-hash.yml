@@ -23,7 +23,7 @@ services:
       - --http.addr=0.0.0.0
       - --http.vhosts=*
       - --l1.endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
-      - --da.sync
+      
       - --da.blob.beaconnode=${ETHEREUM_SEPOLIA_BEACON_REST}
       - --da.blob.blobscan=https://api.sepolia.blobscan.com/blobs/
       
