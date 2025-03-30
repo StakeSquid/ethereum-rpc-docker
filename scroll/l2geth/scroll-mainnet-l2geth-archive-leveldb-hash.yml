@@ -23,7 +23,9 @@ services:
       - --http.addr=0.0.0.0
       - --http.vhosts=*
       - --l1.endpoint=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      
+      - --da.blob.beaconnode=${ETHEREUM_MAINNET_BEACON_REST}      
+      - --da.blob.blobscan "https://api.blobscan.com/blobs/"
+      - --da.blob.blocknative "https://api.ethernow.xyz/v1/blob/"
       - --rollup.verify
       - --graphql                        
       - --graphql.vhosts=*
