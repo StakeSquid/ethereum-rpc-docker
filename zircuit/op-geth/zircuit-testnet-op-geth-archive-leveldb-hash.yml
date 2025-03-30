@@ -41,7 +41,6 @@ services:
       - --circuit-capacity-check=false
       - --txpool.globalqueue=1024
       - --config=/config/gethconfig.toml
-      - --rollup.sequencerhttp=${ZIRCUIT_SEQUENCER_HTTP}
       - --rollup.disabletxpoolgossip=true
       
     networks:
