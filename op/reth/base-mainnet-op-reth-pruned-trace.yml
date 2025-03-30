@@ -14,7 +14,7 @@ services:
     entrypoint: ["op-reth", "node"]
     command:
       
-      - --chain=/config/genesis.json
+      - --chain=base
       - --port=10759
       - --discovery.port=10759
       - --rollup.sequencer-http=https://mainnet-sequencer.base.org

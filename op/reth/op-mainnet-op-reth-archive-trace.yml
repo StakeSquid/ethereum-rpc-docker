@@ -14,7 +14,7 @@ services:
     entrypoint: ["op-reth", "node"]
     command:
       
-      - --chain=/config/genesis.json
+      - --chain=optimism
       - --port=10114
       - --discovery.port=10114
       - --rollup.sequencer-http=https://mainnet-sequencer.optimism.org

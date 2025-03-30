@@ -14,7 +14,7 @@ services:
     entrypoint: ["op-reth", "node"]
     command:
       
-      - --chain=/config/genesis.json
+      - --chain=base-sepolia
       - --port=10147
       - --discovery.port=10147
       - --rollup.sequencer-http=https://sepolia-sequencer.base.org
