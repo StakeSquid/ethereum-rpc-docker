@@ -31,7 +31,7 @@ fi
 # always make a new nodekey
 
 echo "Generating new Geth node key..."
-rm "$datadir/nodekey"
+rm -f "$datadir/nodekey"
 #openssl rand 32 | xxd -p -c 32 | tr -d '\n' > "$datadir/nodekey"
 
 exec opera --nodekey="$datadir/nodekey" --genesis="$datadir/$filename" --datadir="$datadir" "$@"
