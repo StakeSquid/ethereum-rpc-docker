@@ -1,5 +1,7 @@
 
 services:
+  
+    
   viction-testnet-archive-client:
     image: buildonviction/node:v2.4.5
     stop_grace_period: 5m
@@ -20,7 +22,6 @@ services:
     environment:
       EXTIP: "${IP}"
       P2P_PORT: 10689
-      
     command:
       - --tomox
       - --tomox.datadir=/tomochain/data/tomox

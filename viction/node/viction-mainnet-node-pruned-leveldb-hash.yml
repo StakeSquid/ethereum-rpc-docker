@@ -1,5 +1,18 @@
 
 services:
+  viction-mainnet-download:
+    image: alpine:latest
+    volumes:
+      - viction-mainnet-node-pruned-leveldb-hash:/tomochain/data
+    command: sh -c "apk add --no-cache wget tar zstd && echo 'Running with wget, tar, and zstd' && exec \"$@\""
+    entrypoint: ["sh", "-c", "apk add --no-cache wget tar zstd && echo 'Running with wget, tar, and zstd' && eval \"$SNAPSHOT_CMD\""]
+    restart: "no"
+    environment:
+      SNAPSHOT_CMD: 'mkdir -p /tomochain/data/tomo/chaindata; rm -rf /tomochain/data/tomo/chaindata/*; wget -c https://snapshot.viction.xyz/CHAIN_DATA.tar.zst -O - | tar zstd xvf -C /tomochain/data/tomo/chaindata; mkdir -p /tomochain/dats/tomox; rm -rf /tomochain/data/tomox/*; wget -c https://snapshot.viction.xyz/TOMOX_DATA.tar.zst -O - | tar zstd xvf -C /tomochain/data/tomox'
+    profiles:
+      - manual
+    tty: true
+    
   viction-mainnet-client:
     image: buildonviction/node:v2.4.5
     stop_grace_period: 5m
@@ -20,7 +33,6 @@ services:
     environment:
       EXTIP: "${IP}"
       P2P_PORT: 10670
-      SNAPSHOT_CMD: 'mkdir -p /tomochain/data/tomo/chaindata; wget -c https://snapshot.viction.xyz/CHAIN_DATA.tar.zst -O - | tar zstd xvf -C /tomochain/data/tomo/chaindata; mkdir -p /tomochain/data/tomox; wget -c https://snapshot.viction.xyz/TOMOX_DATA.tar.zst -O - | tar zstd xvf -C /tomochain/data/tomox'
     command:
       - --tomox
       - --tomox.datadir=/tomochain/data/tomox
