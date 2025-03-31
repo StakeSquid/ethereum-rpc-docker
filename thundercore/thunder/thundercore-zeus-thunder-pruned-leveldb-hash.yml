@@ -39,12 +39,11 @@ services:
       - SNAPSHOT_URL=https://chaindata-backup-prod-zeus-us-east-1.s3.amazonaws.com/zeus-latest
     volumes:
       - thundercore-zeus-thunder-pruned-leveldb-hash:/tomochain/data
-      - ./viction/scripts/download.thunder.sh:/download.sh
+      - ./thundercore/scripts/download.thunder.sh:/download.sh
     command: sh -c "/download.sh"      
     restart: "no"
     profiles:
       - manual
-
       
 volumes:
   thundercore-zeus-thunder-pruned-leveldb-hash:
