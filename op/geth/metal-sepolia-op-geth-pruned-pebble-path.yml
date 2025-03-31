@@ -24,7 +24,7 @@ services:
       - "GETH_DATADIR=/data"
       - "GETH_OP_NETWORK=metal-sepolia"
       - "GETH_GCMODE=full"
-      - "GETH_SYNCMODE=snap"      
+      - "GETH_SYNCMODE=full"      
       - "GETH_STATE_SCHEME=path"
       - "GETH_DB_ENGINE=pebble"
       - "GETH_NAT=extip:${IP}"
@@ -76,7 +76,7 @@ services:
     
     environment:
       - "OP_NODE_NETWORK=metal-sepolia"
-      - "OP_NODE_SYNCMODE=execution-layer"
+      - "OP_NODE_SYNCMODE=consensus-layer"
       - "OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}"
       - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
       - "OP_NODE_L2_ENGINE_RPC=http://metal-sepolia:8551"
