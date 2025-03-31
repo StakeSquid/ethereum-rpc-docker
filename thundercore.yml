@@ -12,12 +12,13 @@ services:
       - "33797:33797/udp"
     volumes:
       - thundercore-fullnode-db:/datadir
-      - ./thundercore/mainnet:/config/fastpath/pala
+      - ./thundercore/mainnet:/config
       - thundercore-fullnode-logs:/logs
     networks:
       - chains
     entrypoint: [ "/sbin/tini", "--", "/entrypoint.sh" ]
     environment:
+      CONFIG_PATH: /config
       PORT: 33797
     restart: unless-stopped
 

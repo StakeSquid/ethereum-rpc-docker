@@ -12,12 +12,13 @@ services:
       - "32577:32577/udp"
     volumes:
       - thundercore-testnet-db:/datadir
-      - ./thundercore/testnet:/config/fastpath/pala
+      - ./thundercore/testnet:/config
       - thundercore-testnet-logs:/logs
     networks:
       - chains
     entrypoint: [ "/sbin/tini", "--", "/entrypoint.sh" ]
     environment:
+      CONFIG_PATH: /config      
       PORT: 32577
     restart: unless-stopped
 

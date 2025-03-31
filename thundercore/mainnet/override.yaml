@@ -39,7 +39,7 @@ rpc:
   logRequests: True
 chain:
   chainID: 108
-  genesis: /config/fastpath/pala/genesis.json
+  genesis: /config/genesis.json
   initialSupply: 1E+28
   snapshotCache: 0
 accel:

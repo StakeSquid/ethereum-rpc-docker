@@ -39,7 +39,7 @@ rpc:
   logRequests: True
 chain:
   chainID: 18
-  genesis: /config/fastpath/pala/genesis.json
+  genesis: /config/genesis.json
   initialSupply: 1E+29
   snapshotCache: 0
 accel:
@@ -55,8 +55,6 @@ accel:
     TimePerBlock: 1s
     TxPerBlockLimit: -1
 eth:
-  logFile: /logs/thunder.eth.log
-  logFilter: "trie=4,state=4"
   txLookupLimit: 0
 metrics:
   address: 0.0.0.0:9201
