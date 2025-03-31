@@ -38,7 +38,7 @@ services:
     environment:
       - SNAPSHOT_URL=https://chaindata-backup-prod-venus-us-east-1.s3.amazonaws.com/venus-latest
     volumes:
-      - thundercore-venus-thunder-pruned-leveldb-hash:/tomochain/data
+      - thundercore-venus-thunder-pruned-leveldb-hash:/datadir
       - ./thundercore/scripts/download.thunder.sh:/download.sh
     command: sh -c "/download.sh"      
     restart: "no"
