@@ -31,6 +31,19 @@ services:
       - "traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.tls.certresolver=myresolver"
       - "traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/thundercore-venus`)"
       - "traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.middlewares=thundercore-venus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist"
+
+  thundercore-venus-download:
+    image: alpine:latest
+    user: root
+    environment:
+      - SNAPSHOT_URL=https://chaindata-backup-prod-venus-us-east-1.s3.amazonaws.com/venus-latest
+    volumes:
+      - thundercore-venus-thunder-pruned-leveldb-hash:/tomochain/data
+    command: sh -c "apk add wget tar gzip; wget -c $(wget -q -O - https://chaindata-backup-prod-venus-us-east-1.s3.amazonaws.com/venus-latest) -O - | tar -C /datadir -zx"
+    restart: "no"
+    profiles:
+      - manual
+
       
 volumes:
   thundercore-venus-thunder-pruned-leveldb-hash:
