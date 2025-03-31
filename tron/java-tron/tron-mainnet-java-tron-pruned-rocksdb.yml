@@ -12,7 +12,7 @@ services:
       - "25815:25815/udp"
     volumes:
       - tron-mainnet-java-tron-pruned-rocksdb:/java-tron/output-directory
-      - ./tron/mainnet/config:/config
+      - ./tron/mainnet:/config
     command: -c /config/config.conf --log-config /config/logback.xml
     networks:
       - chains
