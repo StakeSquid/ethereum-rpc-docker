@@ -1,0 +1,45 @@
+services:
+  tron-mainnet:
+    image: tronprotocol/java-tron:GreatVoyage-v4.7.7
+    user: root
+    stop_grace_period: 5m
+    ulimits:
+      nofile: 1048576
+    expose:
+      - "8545"
+    ports:
+      - "25815:25815/tcp"
+      - "25815:25815/udp"
+    volumes:
+      - tron-mainnet-java-tron-pruned-rocksdb:/java-tron/output-directory
+      - ./tron/mainnet/config:/config
+    command: -c /config/config.conf --log-config /config/logback.xml
+    networks:
+      - chains
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.tron-mainnet-java-tron-pruned-rocksdb-set-path.replacepath.path=/jsonrpc"
+      - "traefik.http.services.tron-mainnet-java-tron-pruned-rocksdb.loadbalancer.server.port=8545"
+      - "traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.entrypoints=websecure"
+      - "traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.tls.certresolver=myresolver"
+      - "traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=Host(`$DOMAIN`) && PathPrefix(`/tron-mainnet`)"
+      - "traefik.http.middlewares.tron-mainnet-java-tron-pruned-rocksdb-strip-trailing-slash.stripprefixregex.regex=/$"
+      - "traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.middlewares=tron-mainnet-java-tron-pruned-rocksdb-set-path, tron-mainnet-java-tron-pruned-rocksdb-strip-trailing-slash, ipwhitelist"
+
+  tron-mainnet-download:
+    image: alpine:latest
+    user: root
+    environment:
+      - SNAPSHOT_URL=https://snapshots.publicnode.com/tron-pruned-70904745.tar.lz4
+    volumes:
+      - tron-mainnet-java-tron-pruned-rocksdb:/java-tron/output-directory
+      - ./tron/scripts/download.java-tron.sh:/download.sh
+    command: sh -c "/download.sh"
+    restart: "no"
+    profiles:
+      - manual
+
+      
+volumes:
+  tron-mainnet-java-tron-pruned-rocksdb:
