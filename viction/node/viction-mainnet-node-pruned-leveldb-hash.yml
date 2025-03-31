@@ -8,7 +8,7 @@ services:
     volumes:
       - viction-mainnet-node-pruned-leveldb-hash:/tomochain/data
       - ./tomochain/scripts/download.node.sh:/download.sh
-    command: /bin/sh -c "/download.sh"
+    entrypoint: /download.sh
     restart: "no"
     profiles:
       - manual
