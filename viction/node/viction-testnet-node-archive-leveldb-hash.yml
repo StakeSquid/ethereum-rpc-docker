@@ -12,7 +12,7 @@ services:
       - "10689:10689/tcp"
       - "10689:10689/udp"
     volumes:
-      - viction-testnet-node-archive-leveldb-hash:/data
+      - viction-testnet-node-archive-leveldb-hash:/tomochain/data
     networks:
       - chains
     env_file:
@@ -23,7 +23,6 @@ services:
       
     command:
       - --tomox
-      - --tomox.datadir=/data/tomox
       - --gcmode=archive
       - --syncmode=full
       - --rpcapi=eth,debug,net,db,admin,web3
