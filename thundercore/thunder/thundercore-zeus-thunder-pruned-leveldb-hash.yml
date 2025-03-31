@@ -1,0 +1,36 @@
+# todo: figure out how to pass the external IP to the client
+# todo: automatically initialize from snapshot
+
+services:
+  thundercore-zeus:
+    image: thundercore/thunder:r4.1.3
+    stop_grace_period: 5m
+    ulimits:
+      nofile: 1048576
+    expose:
+      - "8545"
+    ports:
+      - "10645:10645/tcp"
+      - "10645:10645/udp"
+    volumes:
+      - thundercore-zeus-thunder-pruned-leveldb-hash:/datadir
+      - ./thundercore/zeus:/config
+    networks:
+      - chains
+    entrypoint: [ "/sbin/tini", "--", "/entrypoint.sh", "--logToConsole" ]
+    environment:
+      CONFIG_PATH: /config
+      PORT: 10645
+      SNAPSHOT_CMD: 'wget -c "$(wget -q -O - https://chaindata-backup-prod-zeus-us-east-1.s3.amazonaws.com/zeus-latest)" -O - | tar -C /datadir -zx'
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.thundercore-zeus-thunder-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/thundercore-zeus"
+      - "traefik.http.services.thundercore-zeus-thunder-pruned-leveldb-hash.loadbalancer.server.port=8545"
+      - "traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.entrypoints=websecure"
+      - "traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.tls.certresolver=myresolver"
+      - "traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/thundercore-zeus`)"
+      - "traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.middlewares=thundercore-zeus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist"
+      
+volumes:
+  thundercore-zeus-thunder-pruned-leveldb-hash:
