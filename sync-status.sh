@@ -33,7 +33,7 @@ for path in $pathlist; do
         if [ -n "$2" ]; then
             ref="$2"
         else
-            chain_id_response=$(curl --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL)
+            chain_id_response=$(curl -L --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL)
 		
 	    if [ $? -eq 0 ]; then
 		chain_id=$(echo "$chain_id_response" | jq -r '.result' 2>/dev/null)

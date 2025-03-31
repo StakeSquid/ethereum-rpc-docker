@@ -23,7 +23,7 @@ timeout=3 # seconds
 
 response_file=$(mktemp)
 
-http_status_code=$(curl --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL)
+http_status_code=$(curl -L --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL)
 
 if [ $? -eq 0 ]; then
     if [[ $http_status_code -eq 200 ]]; then
@@ -65,7 +65,7 @@ if [ $? -eq 0 ]; then
 			status_file4=$(mktemp)
 
 			{
-			    curl --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file4" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL > "$status_file4"
+			    curl -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file4" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL > "$status_file4"
 			} &
 			pid4=$!
 
