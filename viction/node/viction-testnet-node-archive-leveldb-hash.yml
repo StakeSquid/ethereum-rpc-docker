@@ -12,7 +12,7 @@ services:
       - "10689:10689/tcp"
       - "10689:10689/udp"
     volumes:
-      - viction-testnet-node-archive-leveldb-hash:/tomochain/data
+      - viction-testnet-node-archive-leveldb-hash:/data
     networks:
       - chains
     env_file:
@@ -24,7 +24,7 @@ services:
     command:
       - --gcmode=archive
       - --syncmode=full
-      - --rpcapi "eth,debug,net,db,admin,web3"
+      - --rpcapi=eth,debug,net,db,admin,web3
     restart: unless-stopped
     
   viction-testnet-archive:         

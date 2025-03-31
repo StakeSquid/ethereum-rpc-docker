@@ -12,7 +12,7 @@ services:
       - "10670:10670/tcp"
       - "10670:10670/udp"
     volumes:
-      - viction-mainnet-node-pruned-leveldb-hash:/tomochain/data
+      - viction-mainnet-node-pruned-leveldb-hash:/data
     networks:
       - chains
     env_file:
@@ -20,11 +20,11 @@ services:
     environment:
       EXTIP: "${IP}"
       P2P_PORT: 10670
-      SNAPSHOT_CMD: 'mkdir -p /tomochain/data/tomo/chaindata; wget -c https://snapshot.viction.xyz/CHAIN_DATA.tar.zst -O - | tar zstd xvf -C /chaindata/data/tomo/chaindata; mkdir -p /tomochain/data/tomox; wget -c https://snapshot.viction.xyz/TOMOX_DATA.tar.zst -O - | tar zstd xvf -C /tomochain/data/tomox'
+      SNAPSHOT_CMD: 'mkdir -p /data/tomo/chaindata; wget -c https://snapshot.viction.xyz/CHAIN_DATA.tar.zst -O - | tar zstd xvf -C /data/tomo/chaindata; mkdir -p /data/tomox; wget -c https://snapshot.viction.xyz/TOMOX_DATA.tar.zst -O - | tar zstd xvf -C /data/tomox'
     command:
       - --gcmode=full
       - --syncmode=full
-      - --rpcapi "eth,debug,net,db,admin,web3"
+      - --rpcapi=eth,debug,net,db,admin,web3
     restart: unless-stopped
     
   viction-mainnet:         
