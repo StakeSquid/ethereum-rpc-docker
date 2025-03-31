@@ -1,0 +1,98 @@
+- blocknum: 0
+  session: 0
+  desc: "Venus Testnet Default Value before any hardfork"
+  committee:
+    electionScheme: "TopKCandidates"
+    expectedCommSize: 4
+    minBidderStake: 1E+23
+    minCommitteeSize: 1
+    minGasBidPrice: 1E+7
+    switchOffset: 0
+    proposerList: ''
+    verifyBid: false
+    voteCountingScheme: Seat
+    rewardScheme: "thunderella"
+    vaultGasUnlimited: false
+    rewardRatio: 50
+    electVersion: ""
+  protocol:
+    blockGasLimit: 1E+8
+    maxCodeSize: 24576
+    gasTable: ""
+    inflation: 0
+    baseFee: 0
+  vault:
+    burnReward: false
+  trustedRNG:
+    rngActive: true
+    version: "v1"
+  pala:
+    hardfork: false
+  election:
+    # 3 hours = 3600 * 3 - 1
+    stopBlockSessionOffset: 10799
+  consensus:
+    infoInHeader: false
+    k: 1
+  evm:
+    version: ""
+  precompiled:
+    blockSnGetterActive: false
+    vaultVersion: ""
+    revertDelegateCall: false
+
+- blocknum: 1
+  desc: "Pala hardfork"
+  pala:
+    hardfork: true
+
+- session: 1500
+  committee:
+    proposerList: r2
+    verifyBid: true
+    voteCountingScheme: Stake
+  protocol:
+    maxCodeSize: 40960
+
+- session: 3200
+  committee:
+    proposerList: r2.1
+    rewardScheme: "pala-r2.1"
+    vaultGasUnlimited: true
+  protocol:
+    gasTable: pala-r2.1
+
+- session: 5555
+  trustedRNG:
+    version: "v3"
+  consensus:
+    infoInHeader: true
+
+- session: 6025
+  evm:
+    version: "london"
+
+- session: 8350
+  precompiled:
+    blockSnGetterActive: true
+  consensus:
+    k: 1
+  protocol:
+    inflation: 15E+18
+    baseFee: 1E+10
+  committee:
+    proposerList: r4.0
+    expectedCommSize: 12
+    rewardRatio: 90
+    rewardScheme: "inflation"
+
+- session: 9685
+  committee:
+    electVersion: "r3"
+  precompiled:
+    vaultVersion: "r3"
+    revertDelegateCall: true
+  trustedRNG:
+    version: "v4"
+  vault:
+    burnReward: false

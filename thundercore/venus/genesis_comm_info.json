@@ -1,0 +1,57 @@
+{
+    "SlowChainHeight": 0,
+    "AccelId": 0,
+    "MemberInfo": [
+        {
+            "Stake": 0,
+            "PubVoteKey": "UGS32UXyuKe1/NdDxeRezqrDL/B4PPCRvJM/im0Y1/wjpp2OLWOmoV+sAZKfjvywymAuZfoRHmk0omlLropoDUwOaQmQf3Pk0v4ZicEvuYSK3C2ZoBSEL2g0hGNS46AwBl3+hxdwQPYysWgY4Xt0imbmK7lT9zYhx4BT3RaX9ds=",
+            "Coinbase": "0x0000000000000000000000000000000000000000",
+            "GasPrice": 10000000
+        },
+        {
+            "Stake": 1,
+            "PubVoteKey": "Me+82s3Fh3Su/VoLLWM6qeoeEiX7crw4wygIuQGXRFiD5y6CYsSRuFm4ObJCssR2QOzLg0DZPXduDgbitvwE8yFwX1jgSdtj7/t8deVN1m/T/put2QEqLm1DncqWb8RJUquORidklfNNGx+KhAqD1jcx0QLYoTTdpw6f/XEDPMM=",
+            "Coinbase": "0x0000000000000000000000000000000000000001",
+            "GasPrice": 10000000
+        },
+        {
+            "Stake": 2,
+            "PubVoteKey": "h2BjQuU46vUoyAZ6B80l0a6DGjHFH/ayqV3uef/+Qt9MoudNCjjc/phuy1i485uaAu1+oKuCqFZuNbATPZZ4pg05nhKCUkSXqDaau1gZQ8kPoMCqWEQaO5ByEp03PTW7O4wvI2/OrZ72ypZv0hp0fZJBGdD2KKO6q8m1z6ceakE=",
+            "Coinbase": "0x0000000000000000000000000000000000000002",
+            "GasPrice": 10000000
+        },
+        {
+            "Stake": 3,
+            "PubVoteKey": "GJYo33CspGj9hJHh/FAeWkijuAl0aPxGzqQHBeeJgMdF1G+VRi1ylOkEEXwO2jLzYGGfXvoiX47I5pExQKHiBBESK9TDSHHRXYB2cg/k8aYy4RqqbqvOj3o8+9FypIw2Q29arpZJXwj6iYTRntbNKr/YD87Rq+kOuKK7uCPW1Z8=",
+            "Coinbase": "0x0000000000000000000000000000000000000003",
+            "GasPrice": 10000000
+        }
+    ],
+    "AccelInfo": [
+        {
+            "Stake": 100,
+            "PubVoteKey": "SRj1b5QjJJm2G2liOQ8WkhqXtXZdzyAx21DbnDYK6xhPlo43kE4j6+9LdIIgGeDZMl8NnAr+CXWbYegXQkH/9YPX1GgjO4mKNT4dSEUXkPBBlfEuK/jn0S2XJ6zNnYdyTGkiCa8mfa5pOjz28bnfFBC5UJvl8QApdEA33cdSMxA=",
+            "Coinbase": "0x0000000000000000000000000000000000000064",
+            "GasPrice": 0,
+            "AccelCert": {
+                "Version": 1,
+                "SerialNumber": 60420792082393516382808622804599114188074780933,
+                "NotBefore": 1546558940,
+                "NotAfter": 1862178140,
+                "IssueDate": 1546558940,
+                "PublicKey": "SRj1b5QjJJm2G2liOQ8WkhqXtXZdzyAx21DbnDYK6xhPlo43kE4j6+9LdIIgGeDZMl8NnAr+CXWbYegXQkH/9YPX1GgjO4mKNT4dSEUXkPBBlfEuK/jn0S2XJ6zNnYdyTGkiCa8mfa5pOjz28bnfFBC5UJvl8QApdEA33cdSMxA=",
+                "SignatureAlgorithm": 10,
+                "Issuer": "Thunder Token Inc.",
+                "Subject": "ThunderCore Accelerator 0",
+                "KeyUsage": 1,
+                "Signature": {
+                    "R": 78076793135492539121877292256641206477275309070273528475420094308293461526404,
+                    "S": 7825391584813885271888950487684627930631254584177320009356072227896940396313
+                }
+            },
+            "URI": "cdnserver_0:8889",
+            "HostPort": "venus-prod-proposer-us-east-1-0.prod.tt-eng.com:8888",
+            "TxPoolAddr": "accel_0:8887"
+        }
+    ]
+}

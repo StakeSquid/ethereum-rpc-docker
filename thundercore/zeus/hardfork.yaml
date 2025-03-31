@@ -1,0 +1,131 @@
+- blocknum: 0
+  session: 0
+  desc: "Default Value before any hardfork"
+  committee:
+    auctionStakeThreshold: 3E+26
+    electionScheme: "TotalStakeThreshold"
+    expectedCommSize: -1
+    minBidderStake: 1E+23
+    minCommitteeSize: 1
+    minGasBidPrice: 1E+7
+    proposerList: ''
+    switchInterval: 720
+    switchOffset: 0
+    verifyBid: false
+    voteCountingScheme: Seat
+    rewardScheme: "thunderella"
+    vaultGasUnlimited: false
+    rewardRatio: 50
+    electVersion: ""
+    clearingGasPriceScheme: "CandidatesMax"
+  election:
+    stopBlockSessionOffset: 10799
+  pala:
+    hardfork: false 
+  protocol:
+    blockGasLimit: 1E+8
+    maxCodeSize: 24576
+    gasTable: ""
+    inflation: 0
+    baseFee: 0
+  trustedRNG:
+    rngActive: false
+    version: "v1"
+  vault:
+    burnReward: true
+  consensus:
+    infoInHeader: false
+    k: 1
+  evm:
+    version: ""
+  precompiled:
+    blockSnGetterActive: false
+    vaultVersion: ""
+    revertDelegateCall: false
+
+- blocknum: 33000000
+  desc: Pala hardfork
+  session: 1
+  committee:
+    electionScheme: TopKCandidates
+    expectedCommSize: 4
+    minBidderStake: 1E+23
+    minCommitteeSize: 1
+    minGasBidPrice: 1E+7
+  election:
+    stopBlockSessionOffset: 10799
+  pala:
+    hardfork: true
+  trustedRNG:
+    rngActive: true
+  vault:
+    burnReward: false
+
+- session: 555
+  committee:
+    proposerList: r2
+    verifyBid: true
+    voteCountingScheme: Stake
+  protocol:
+    maxCodeSize: 40960
+
+- session: 2300
+  committee:
+    proposerList: r2.1
+    rewardScheme: "pala-r2.1"
+    vaultGasUnlimited: true
+  protocol:
+    gasTable: pala-r2.1
+
+- session: 4567
+  trustedRNG:
+    version: "v3"
+  consensus:
+    infoInHeader: true
+
+- session: 5350
+  evm:
+    version: "london"
+
+- session: 7750
+  precompiled:
+    blockSnGetterActive: true
+  consensus:
+    k: 1
+  protocol:
+    inflation: 15E+18
+    baseFee: 1E+10
+  committee:
+    proposerList: r4.0
+    expectedCommSize: 12
+    rewardRatio: 90
+    rewardScheme: "inflation"
+
+- session: 9098
+  committee:
+    electVersion: "r3"
+  precompiled:
+    vaultVersion: "r3"
+    revertDelegateCall: true
+  trustedRNG:
+    version: "v4"
+  vault:
+    burnReward: false
+
+- session: 10080
+  committee:
+    clearingGasPriceScheme: "Top1CandidatesDecision"
+  protocol:
+    baseFee: 1E+11 #100gwei
+  trustedRNG:
+    version: "v5"
+
+- session: 12089
+  committee:
+    electVersion: "r4"
+  precompiled:
+    vaultVersion: "r4"
+
+- session: 12090
+  committee:
+    rewardScheme: "on-chain-governance"
