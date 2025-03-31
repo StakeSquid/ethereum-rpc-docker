@@ -8,7 +8,7 @@ services:
     volumes:
       - viction-mainnet-node-archive-leveldb-hash:/tomochain/data
       - ./viction/scripts/download.node.sh:/download.sh
-    command: bash -c "/download.sh"
+    command: sh -c "/download.sh"
     restart: "no"
     profiles:
       - manual
