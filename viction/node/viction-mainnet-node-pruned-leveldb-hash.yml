@@ -2,6 +2,7 @@
 services:
   viction-mainnet-download:
     image: alpine:latest
+    user: root
     environment:
       - SNAPSHOT_URL=https://snapshot.viction.xyz
     volumes:
