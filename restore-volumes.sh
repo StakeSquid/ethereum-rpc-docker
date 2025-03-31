@@ -53,7 +53,7 @@ echo "done cleanup"
 
 for file in "${restore_files[@]}"; do
     echo "Processing: $file"
-    
+
     if [[ -n $2 ]]; then
 	if [ ! -d "$backup_dir" ]; then
 	    echo "Error: /backup directory does not exist. download from http and extract directly to /var/lib/docker"
@@ -68,17 +68,17 @@ for file in "${restore_files[@]}"; do
 		echo "$file successfully processed."
 	    fi
 	else
-	    if [ -e "$file" ]; then
+	    echo "have backup dir to cache... $file"
+	    if [ ! -e "$backup_dir/$(basename $file)" ]; then
 		aria2c -c -Z -x8 -j8 -s8 -d "$backup_dir" "${2}${file}"
 	    fi
-	    tar -I zstd -xf "$file" --dereference -C /
+	    tar -I zstd -xf "$backup_dir/$(basename $file)" --dereference -C /
 	    echo "Backup '$file' processed"
 	fi
     else
 	tar -I zstd -xf "$file" --dereference -C /
-	echo "Backup '$file' restored"        
+	echo "Backup '$file' restored"
     fi
-    
 done
 
 echo "node $1 restored."
