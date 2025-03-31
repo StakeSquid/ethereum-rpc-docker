@@ -69,7 +69,7 @@ for part in "${parts[@]}"; do
 
 		response_file=$(mktemp)
 		
-		http_status_code=$(curl --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL)
+		http_status_code=$(curl -L --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL)
 
 		curl_status=$?
 		
@@ -112,7 +112,7 @@ while IFS= read -r url; do
     
     response_file=$(mktemp)
 
-    http_status_code=$(curl --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL < /dev/null)
+    http_status_code=$(curl -L --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL < /dev/null)
     # if I do not echo that one then the script doesn't iterate over the list of urls properly ^^
     echo "$(cat $response_file)" >&2
     #echo $http_status_code
