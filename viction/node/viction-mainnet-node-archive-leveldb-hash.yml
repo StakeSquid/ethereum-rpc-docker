@@ -7,7 +7,7 @@ services:
       - SNAPSHOT_URL=https://snapshot.viction.xyz/archive-node
     volumes:
       - viction-mainnet-node-archive-leveldb-hash:/tomochain/data
-      - ./tomochain/scripts/download.node.sh:/download.sh
+      - ./viction/scripts/download.node.sh:/download.sh
     entrypoint: /download.sh
     restart: "no"
     profiles:

@@ -7,7 +7,7 @@ services:
       - SNAPSHOT_URL=https://snapshot.viction.xyz
     volumes:
       - viction-mainnet-node-pruned-leveldb-hash:/tomochain/data
-      - ./tomochain/scripts/download.node.sh:/download.sh
+      - ./viction/scripts/download.node.sh:/download.sh
     entrypoint: /download.sh
     restart: "no"
     profiles:
