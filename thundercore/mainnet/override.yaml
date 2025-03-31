@@ -4,9 +4,9 @@ logLevel:
   /: warn
 dataDir: /datadir
 key:
-  GenesisCommPath: /config/fastpath/pala/genesis_comm_info.json
+  GenesisCommPath: /config/genesis_comm_info.json
   KeyStorePath: /keystore
-  alterCommPath: /config/fastpath/pala/r2_comm_info.json
+  alterCommPath: /config/r2_comm_info.json
   # masterCert: /keystore/master_cert.pem
 pala:
   fromGenesis:   false
@@ -26,7 +26,7 @@ rpc:
   ws:
     hostname: 0.0.0.0
     origins: '*'
-    port: 8546
+    port: 8545
     modules:
       - eth
       - thunder
@@ -55,8 +55,6 @@ accel:
     TimePerBlock: 1s
     TxPerBlockLimit: -1
 eth:
-  logFile: /logs/thunder.eth.log
-  logFilter: "trie=4,state=4"
   txLookupLimit: 0
 metrics:
   address: 0.0.0.0:9201
