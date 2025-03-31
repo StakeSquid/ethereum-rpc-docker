@@ -22,6 +22,8 @@ services:
       P2P_PORT: 10689
       
     command:
+      - --tomox
+      - --tomox.datadir=/data/tomox
       - --gcmode=archive
       - --syncmode=full
       - --rpcapi=eth,debug,net,db,admin,web3

@@ -22,6 +22,8 @@ services:
       P2P_PORT: 10670
       SNAPSHOT_CMD: 'mkdir -p /data/tomo/chaindata; wget -c https://snapshot.viction.xyz/CHAIN_DATA.tar.zst -O - | tar zstd xvf -C /data/tomo/chaindata; mkdir -p /data/tomox; wget -c https://snapshot.viction.xyz/TOMOX_DATA.tar.zst -O - | tar zstd xvf -C /data/tomox'
     command:
+      - --tomox
+      - --tomox.datadir=/data/tomox
       - --gcmode=full
       - --syncmode=full
       - --rpcapi=eth,debug,net,db,admin,web3

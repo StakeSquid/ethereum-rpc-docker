@@ -22,6 +22,8 @@ services:
       P2P_PORT: 10254
       
     command:
+      - --tomox
+      - --tomox.datadir=/data/tomox
       - --gcmode=full
       - --syncmode=full
       - --rpcapi=eth,debug,net,db,admin,web3
