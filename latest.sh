@@ -29,13 +29,13 @@ for path in $pathlist; do
     if $include; then
         RPC_URL="${PROTO:-https}://$DOMAIN$path"
 
-	if curl -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq -r '.result.number, .result.hash' | gawk '{if (NR==1) print "Block Number:", strtonum($0); else print "Block Hash:", $0}'; then
+	if curl -L -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq -r '.result.number, .result.hash' | gawk '{if (NR==1) print "Block Number:", strtonum($0); else print "Block Hash:", $0}'; then
 	    exit 0
 	else
-	    if curl -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq; then
+	    if curl -L -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq; then
 		exit 1
 	    else
-		curl -vv -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}'
+		curl -L -vv -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}'
 	    fi		 
 	fi
     fi

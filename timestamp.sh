@@ -30,7 +30,7 @@ for path in $pathlist; do
 	RPC_URL="$PROTO://$DOMAIN$path"
 	response_file=$(mktemp)
 
-	http_status_code=$(curl --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL)
+	http_status_code=$(curl -L --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL)
 
 	if [ $? -eq 0 ]; then
 	    
