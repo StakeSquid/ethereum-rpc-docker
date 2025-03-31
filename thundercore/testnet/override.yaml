@@ -26,7 +26,7 @@ rpc:
   ws:
     hostname: 0.0.0.0
     origins: '*'
-    port: 8546
+    port: 8545
     modules:
       - eth
       - thunder
