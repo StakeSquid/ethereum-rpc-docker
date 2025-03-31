@@ -15,7 +15,7 @@ apk add --no-cache wget tar gzip
 # Create and prepare directories
 rm -rf /datadir/*
 
-url=$(wget -q -O - $SNAPSHOT_URL)
+url=$(wget -q -O - $SNAPSHOT_URL | cut -d , -f 1)
 echo "downloading $url"
 
 wget --show-progress -c $url -O - | tar -C /datadir -zx
