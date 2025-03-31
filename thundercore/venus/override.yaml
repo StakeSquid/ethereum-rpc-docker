@@ -4,9 +4,9 @@ logLevel:
   /: warn
 dataDir: /datadir
 key:
-  GenesisCommPath: /config/fastpath/pala/genesis_comm_info.json
+  GenesisCommPath: /config/genesis_comm_info.json
   KeyStorePath: /keystore
-  alterCommPath: /config/fastpath/pala/r2_comm_info.json
+  alterCommPath: /config/r2_comm_info.json
   # masterCert: /keystore/master_cert.pem
 pala:
   fromGenesis: true
