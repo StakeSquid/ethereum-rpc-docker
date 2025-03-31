@@ -1,0 +1,57 @@
+
+services:
+  viction-testnet-client:
+    image: buildonviction/node:v2.4.5
+    stop_grace_period: 5m
+    ulimits:
+      nofile: 1048576
+    expose:
+      - "8545"
+      - "8546"
+    ports:
+      - "10254:10254/tcp"
+      - "10254:10254/udp"
+    volumes:
+      - viction-testnet-node-pruned-leveldb-hash:/tomochain/data
+    networks:
+      - chains
+    env_file:
+      - ./viction/testnet/env
+    environment:
+      EXTIP: "${IP}"
+      P2P_PORT: 10254
+      
+    command:
+      - --gcmode=full
+      - --syncmode=full
+      - --rpcapi "eth,debug,net,db,admin,web3"
+    restart: unless-stopped
+    
+  viction-testnet:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - viction-testnet-client
+    expose:  
+      - 80                                                                                    
+    environment:                                                                                      
+      PROXY_HOST: viction-testnet-client
+      RPC_PORT: 8545
+      RPC_PATH: ""
+      WS_PORT: 8546
+      WS_PATH: ""
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates            
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.viction-testnet-node-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-testnet"
+      - "traefik.http.services.viction-testnet-node-pruned-leveldb-hash.loadbalancer.server.port=80"
+      - "traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.entrypoints=websecure"
+      - "traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.tls.certresolver=myresolver"
+      - "traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/viction-testnet`)"
+      - "traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.middlewares=viction-testnet-node-pruned-leveldb-hash-stripprefix, ipwhitelist"
+      
+volumes:
+  viction-testnet-node-pruned-leveldb-hash:

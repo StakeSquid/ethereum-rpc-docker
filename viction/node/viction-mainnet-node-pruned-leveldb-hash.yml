@@ -1,0 +1,57 @@
+
+services:
+  viction-mainnet-client:
+    image: buildonviction/node:v2.4.5
+    stop_grace_period: 5m
+    ulimits:
+      nofile: 1048576
+    expose:
+      - "8545"
+      - "8546"
+    ports:
+      - "10670:10670/tcp"
+      - "10670:10670/udp"
+    volumes:
+      - viction-mainnet-node-pruned-leveldb-hash:/tomochain/data
+    networks:
+      - chains
+    env_file:
+      - ./viction/mainnet/env
+    environment:
+      EXTIP: "${IP}"
+      P2P_PORT: 10670
+      SNAPSHOT_CMD: 'mkdir -p /tomochain/data/tomo/chaindata; wget -c https://snapshot.viction.xyz/CHAIN_DATA.tar.zst -O - | tar zstd xvf -C /chaindata/data/tomo/chaindata; mkdir -p /tomochain/data/tomox; wget -c https://snapshot.viction.xyz/TOMOX_DATA.tar.zst -O - | tar zstd xvf -C /tomochain/data/tomox'
+    command:
+      - --gcmode=full
+      - --syncmode=full
+      - --rpcapi "eth,debug,net,db,admin,web3"
+    restart: unless-stopped
+    
+  viction-mainnet:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - viction-mainnet-client
+    expose:  
+      - 80                                                                                    
+    environment:                                                                                      
+      PROXY_HOST: viction-mainnet-client
+      RPC_PORT: 8545
+      RPC_PATH: ""
+      WS_PORT: 8546
+      WS_PATH: ""
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates            
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.viction-mainnet-node-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet"
+      - "traefik.http.services.viction-mainnet-node-pruned-leveldb-hash.loadbalancer.server.port=80"
+      - "traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.entrypoints=websecure"
+      - "traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.tls.certresolver=myresolver"
+      - "traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/viction-mainnet`)"
+      - "traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.middlewares=viction-mainnet-node-pruned-leveldb-hash-stripprefix, ipwhitelist"
+      
+volumes:
+  viction-mainnet-node-pruned-leveldb-hash:

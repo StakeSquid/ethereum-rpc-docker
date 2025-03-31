@@ -1,0 +1,57 @@
+
+services:
+  viction-testnet-archive-client:
+    image: buildonviction/node:v2.4.5
+    stop_grace_period: 5m
+    ulimits:
+      nofile: 1048576
+    expose:
+      - "8545"
+      - "8546"
+    ports:
+      - "10689:10689/tcp"
+      - "10689:10689/udp"
+    volumes:
+      - viction-testnet-node-archive-leveldb-hash:/tomochain/data
+    networks:
+      - chains
+    env_file:
+      - ./viction/testnet/env
+    environment:
+      EXTIP: "${IP}"
+      P2P_PORT: 10689
+      
+    command:
+      - --gcmode=archive
+      - --syncmode=full
+      - --rpcapi "eth,debug,net,db,admin,web3"
+    restart: unless-stopped
+    
+  viction-testnet-archive:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - viction-testnet-archive-client
+    expose:  
+      - 80                                                                                    
+    environment:                                                                                      
+      PROXY_HOST: viction-testnet-archive-client
+      RPC_PORT: 8545
+      RPC_PATH: ""
+      WS_PORT: 8546
+      WS_PATH: ""
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates            
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.viction-testnet-node-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-testnet-archive"
+      - "traefik.http.services.viction-testnet-node-archive-leveldb-hash.loadbalancer.server.port=80"
+      - "traefik.http.routers.viction-testnet-node-archive-leveldb-hash.entrypoints=websecure"
+      - "traefik.http.routers.viction-testnet-node-archive-leveldb-hash.tls.certresolver=myresolver"
+      - "traefik.http.routers.viction-testnet-node-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/viction-testnet-archive`)"
+      - "traefik.http.routers.viction-testnet-node-archive-leveldb-hash.middlewares=viction-testnet-node-archive-leveldb-hash-stripprefix, ipwhitelist"
+      
+volumes:
+  viction-testnet-node-archive-leveldb-hash:

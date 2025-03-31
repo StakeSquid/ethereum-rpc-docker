@@ -1,0 +1,57 @@
+
+services:
+  viction-mainnet-archive-client:
+    image: buildonviction/node:v2.4.5
+    stop_grace_period: 5m
+    ulimits:
+      nofile: 1048576
+    expose:
+      - "8545"
+      - "8546"
+    ports:
+      - "10184:10184/tcp"
+      - "10184:10184/udp"
+    volumes:
+      - viction-mainnet-node-archive-leveldb-hash:/tomochain/data
+    networks:
+      - chains
+    env_file:
+      - ./viction/mainnet/env
+    environment:
+      EXTIP: "${IP}"
+      P2P_PORT: 10184
+      SNAPSHOT_CMD: 'mkdir -p /tomochain/data/tomo/chaindata; wget -c https://snapshot.viction.xyz/archive-node/CHAIN_DATA.tar.zst -O - | tar zstd xvf -C /chaindata/data/tomo/chaindata; mkdir -p /tomochain/data/tomox; wget -c https://snapshot.viction.xyz/archive-node/TOMOX_DATA.tar.zst -O - | tar zstd xvf -C /tomochain/data/tomox'
+    command:
+      - --gcmode=archive
+      - --syncmode=full
+      - --rpcapi "eth,debug,net,db,admin,web3"
+    restart: unless-stopped
+    
+  viction-mainnet-archive:         
+    restart: unless-stopped           
+    image: nginx
+    depends_on:
+      - viction-mainnet-archive-client
+    expose:  
+      - 80                                                                                    
+    environment:                                                                                      
+      PROXY_HOST: viction-mainnet-archive-client
+      RPC_PORT: 8545
+      RPC_PATH: ""
+      WS_PORT: 8546
+      WS_PATH: ""
+    networks:               
+      - chains 
+    volumes:               
+      - ./nginx-proxy:/etc/nginx/templates            
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.viction-mainnet-node-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet-archive"
+      - "traefik.http.services.viction-mainnet-node-archive-leveldb-hash.loadbalancer.server.port=80"
+      - "traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.entrypoints=websecure"
+      - "traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.tls.certresolver=myresolver"
+      - "traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/viction-mainnet-archive`)"
+      - "traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.middlewares=viction-mainnet-node-archive-leveldb-hash-stripprefix, ipwhitelist"
+      
+volumes:
+  viction-mainnet-node-archive-leveldb-hash:
