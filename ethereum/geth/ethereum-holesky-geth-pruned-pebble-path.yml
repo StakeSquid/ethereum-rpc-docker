@@ -94,6 +94,8 @@ upstreams:
     methods:
       disabled:
         - name: debug_traceBlockByHash
+      enabled:
+        - name: txpool_content        
     connection:
       generic:
         rpc:
