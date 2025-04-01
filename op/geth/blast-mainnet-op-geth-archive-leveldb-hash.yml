@@ -109,7 +109,7 @@ services:
 volumes:  
   blast-mainnet-op-geth-archive-leveldb-hash:
 
-upstreams:
+x-upstreams:
   - id: $${ID}
     chain: $${CHAIN}
     labels:

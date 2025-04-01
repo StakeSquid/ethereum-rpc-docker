@@ -108,7 +108,7 @@ services:
 volumes:  
   base-mainnet-op-geth-pruned-pebble-path:
 
-upstreams:
+x-upstreams:
   - id: $${ID}
     chain: $${CHAIN}
     labels:

@@ -109,7 +109,7 @@ services:
 volumes:  
   blast-sepolia-op-geth-pruned-pebble-hash:
 
-upstreams:
+x-upstreams:
   - id: $${ID}
     chain: $${CHAIN}
     labels:

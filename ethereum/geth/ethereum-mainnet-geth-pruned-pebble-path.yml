@@ -82,7 +82,7 @@ volumes:
   ethereum-mainnet-geth-pruned-pebble-path_prysm:
 
     
-upstreams:
+x-upstreams:
   - id: $${ID}
     chain: $${CHAIN}
     labels:
