@@ -91,6 +91,8 @@ services:
     image: ghcr.io/layr-labs/eigenda-proxy:v1.6.4
     restart: unless-stopped
     stop_grace_period: 5m
+    networks:
+      - chains
     entrypoint: /scripts/start-eigenda-proxy.sh
     environment:
       - EIGENDA_LOCAL_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
