@@ -15,6 +15,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${BLAST_SEPOLIA_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-blast-sepolia-op-geth-pruned-pebble-hash}:/data
       - blast-sepolia-op-geth-pruned-pebble-hash:/data
       - .jwtsecret:/jwtsecret:ro
       - ./blast/sepolia:/config

@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${UNICHAIN_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-unichain-mainnet-op-geth-archive-leveldb-hash}:/data
       - unichain-mainnet-op-geth-archive-leveldb-hash:/data
       - .jwtsecret:/jwtsecret:ro
       

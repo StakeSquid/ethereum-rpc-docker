@@ -15,6 +15,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${FRAXTAL_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-fraxtal-mainnet-op-geth-pruned-pebble-path}:/data
       - fraxtal-mainnet-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret:ro
       - ./fraxtal/mainnet:/config

@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${BASE_SEPOLIA_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-base-sepolia-op-geth-pruned-pebble-path}:/data
       - base-sepolia-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret:ro
       

@@ -15,6 +15,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${MANTLE_MAINNET_OP_GETH_PRUNED_LEVELDB_HASH_DATA:-mantle-mainnet-op-geth-pruned-leveldb-hash}:/data
       - mantle-mainnet-op-geth-pruned-leveldb-hash:/data
       - .jwtsecret:/jwtsecret:ro
       - ./mantle/mainnet:/config

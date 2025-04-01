@@ -4,7 +4,7 @@ services:
   celo-alfajores:
     image: us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth:${CELO_L2_VERSION:-celo-v2.0.0}
     volumes:
-      - "celo-alfajores-op-geth-pruned-pebble-path:/datadir"
+      - "${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-celo-alfajores-op-geth-pruned-pebble-path}:/datadir"
       - ".jwtsecret:/shared/jwt.txt:ro"
       - "./celo/alfajores/:/chainconfig"
       - "./celo/scripts/:/scripts"
@@ -97,7 +97,8 @@ services:
       - EIGENDA_LOCAL_SVC_MANAGER_ADDR=0xD4A7E1Bd8015057293f0D0A557088c286942e84b
       - OP_NODE__RPC_ENDPOINT=${ETHEREUM_HOLESKY_EXECUTION_RPC}
     volumes:
-      - celo-alfajores-op-geth-pruned-pebble-path_eigenda:/data
+      - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH__EIGENDA_DATA:-celo-alfajores-op-geth-pruned-pebble-path_eigenda}:/data
+      #- celo-alfajores-op-geth-pruned-pebble-path_eigenda:/data
       - ./celo/scripts:/scripts
     
   celo-alfajores-key-generator:

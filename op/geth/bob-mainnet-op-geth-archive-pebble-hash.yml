@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${BOB_MAINNET_OP_GETH_ARCHIVE_PEBBLE_HASH_DATA:-bob-mainnet-op-geth-archive-pebble-hash}:/data
       - bob-mainnet-op-geth-archive-pebble-hash:/data
       - .jwtsecret:/jwtsecret:ro
       

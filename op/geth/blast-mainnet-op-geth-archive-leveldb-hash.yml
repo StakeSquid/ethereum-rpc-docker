@@ -15,6 +15,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${BLAST_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-blast-mainnet-op-geth-archive-leveldb-hash}:/data
       - blast-mainnet-op-geth-archive-leveldb-hash:/data
       - .jwtsecret:/jwtsecret:ro
       - ./blast/mainnet:/config

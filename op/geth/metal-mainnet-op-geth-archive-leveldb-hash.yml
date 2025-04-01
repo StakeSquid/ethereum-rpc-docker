@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${METAL_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-metal-mainnet-op-geth-archive-leveldb-hash}:/data
       - metal-mainnet-op-geth-archive-leveldb-hash:/data
       - .jwtsecret:/jwtsecret:ro
       

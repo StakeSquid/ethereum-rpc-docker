@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${BASE_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-base-mainnet-op-geth-archive-leveldb-hash}:/data
       - base-mainnet-op-geth-archive-leveldb-hash:/data
       - .jwtsecret:/jwtsecret:ro
       

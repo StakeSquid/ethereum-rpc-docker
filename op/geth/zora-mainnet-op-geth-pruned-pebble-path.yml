@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 3m    
     volumes:
+      #- ${ZORA_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-zora-mainnet-op-geth-pruned-pebble-path}:/data
       - zora-mainnet-op-geth-pruned-pebble-path:/data
       - .jwtsecret:/jwtsecret:ro
       
