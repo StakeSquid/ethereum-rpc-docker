@@ -95,7 +95,7 @@ for part in "${parts[@]}"; do
 		# Run envsubst to replace environment variables in the input file and save the result to the output file
 		if yaml2json < "$BASEPATH/$part" | jq -e '.["x-upstreams"]' >/dev/null 2>&1; then
 		    #echo "upstreams key exists in $part"
-		    upstreams+=("$(yaml2json < "$BASEPATH/$part" | jq '.upstreams' | json2yaml | sed 's/^/  /' | envsubst)")
+		    upstreams+=("$(yaml2json < "$BASEPATH/$part" | jq '.["x-upstreams"]' | json2yaml | sed 's/^/  /' | envsubst)")
 		else
 		    #echo "upstreams config $input_file for $part"
 		    upstreams+=("$(envsubst < "$input_file")")		    
