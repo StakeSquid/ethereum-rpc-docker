@@ -93,12 +93,11 @@ for part in "${parts[@]}"; do
 		[ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
 
 		# Run envsubst to replace environment variables in the input file and save the result to the output file    
-		if yq e '.upstreams' $BASEPATH/$part >/dev/null 2>&1; then
-		    echo "upstreams key exists"
+		if yq e '.upstreams' "$BASEPATH/$part" >/dev/null 2>&1; then
+		    echo "upstreams key exists for $part"
 		    upstreams+=("$(yq e '.upstreams' $BASEPATH/$part | sed 's/^/  /' | envsubst)")
 		else
 		    upstreams+=("$(envsubst < "$input_file")")	
-		    echo "upstreams key does not exist"
 		fi
 		
 		break
