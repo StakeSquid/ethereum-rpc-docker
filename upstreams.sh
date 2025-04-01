@@ -92,12 +92,13 @@ for part in "${parts[@]}"; do
 
 		[ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
 
-		# Run envsubst to replace environment variables in the input file and save the result to the output file    
-		if yq e '.upstreams' "$BASEPATH/$part" >/dev/null 2>&1; then
-		    echo "upstreams key exists for $part"
-		    upstreams+=("$(yq e '.upstreams' $BASEPATH/$part | sed 's/^/  /' | envsubst)")
+		# Run envsubst to replace environment variables in the input file and save the result to the output file
+		if yaml2json < tron-mainnet.yml | jq -e '.upstreams' >/dev/null 2>&1; then
+		    echo "upstreams key exists in $part"
+		    upstreams+=($(yaml2json < tron-mainnet.yml | jq '.upstreams' | sed 's/^/  /' | envsubst | json2yaml))
 		else
-		    upstreams+=("$(envsubst < "$input_file")")	
+		    echo "upstreams config $input_file for $part"
+		    upstreams+=("$(envsubst < "$input_file")")		    
 		fi
 		
 		break
