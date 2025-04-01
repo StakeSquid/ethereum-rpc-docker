@@ -135,9 +135,16 @@ while IFS= read -r url; do
     #echo "$input_file"
     
     [ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
-		
-    # Run envsubst to replace environment variables in the input file and save the result to the output file
-    upstreams+=("$(envsubst < "$input_file")")
+
+    # Run envsubst to replace environment variables in the input file and save the result to the output file    
+    if yq e '.upstreams' tron-mainnet.yml >/dev/null 2>&1; then
+	echo "upstreams key exists"
+	upstreams+=(yq e '.upstreams' tron-mainnet.yml | sed 's/^/  /' | envsubst)
+    else
+	upstreams+=("$(envsubst < "$input_file")")	
+	echo "upstreams key does not exist"
+    fi
+
 done < $BASEPATH/external-rpcs.txt
 fi
 
