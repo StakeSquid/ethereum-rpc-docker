@@ -106,3 +106,25 @@ services:
       
 volumes:  
   base-sepolia-op-geth-pruned-pebble-path:
+
+upstreams:
+  - id: ${ID}
+    chain: ${CHAIN}
+    labels:
+      provider: ${PROVIDER}
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+        - name: debug_traceBlockByHash
+    connection:
+      generic:
+        rpc:
+          url: "${RPC_URL}"
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: "${WS_URL}"
+  

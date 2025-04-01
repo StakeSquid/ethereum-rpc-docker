@@ -106,3 +106,25 @@ services:
       
 volumes:  
   op-sepolia-op-geth-archive-leveldb-hash:
+
+upstreams:
+  - id: ${ID}
+    chain: ${CHAIN}
+    labels:
+      provider: ${PROVIDER}
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+        
+    connection:
+      generic:
+        rpc:
+          url: "${RPC_URL}"
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: "${WS_URL}"
+  
