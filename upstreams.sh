@@ -91,9 +91,16 @@ for part in "${parts[@]}"; do
 		input_file="$BASEPATH/${part%.yml}.cfg"
 
 		[ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
+
+		# Run envsubst to replace environment variables in the input file and save the result to the output file    
+		if yq e '.upstreams' $part >/dev/null 2>&1; then
+		    echo "upstreams key exists"
+		    upstreams+=("$(yq e '.upstreams' $part | sed 's/^/  /' | envsubst)")
+		else
+		    upstreams+=("$(envsubst < "$input_file")")	
+		    echo "upstreams key does not exist"
+		fi
 		
-		# Run envsubst to replace environment variables in the input file and save the result to the output file
-		upstreams+=("$(envsubst < "$input_file")")
 		break
 	    fi
 	done	
@@ -136,14 +143,10 @@ while IFS= read -r url; do
     
     [ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
 
-    # Run envsubst to replace environment variables in the input file and save the result to the output file    
-    if yq e '.upstreams' tron-mainnet.yml >/dev/null 2>&1; then
-	echo "upstreams key exists"
-	upstreams+=(yq e '.upstreams' tron-mainnet.yml | sed 's/^/  /' | envsubst)
-    else
-	upstreams+=("$(envsubst < "$input_file")")	
-	echo "upstreams key does not exist"
-    fi
+
+		
+    # Run envsubst to replace environment variables in the input file and save the result to the output file
+    upstreams+=("$(envsubst < "$input_file")")
 
 done < $BASEPATH/external-rpcs.txt
 fi
