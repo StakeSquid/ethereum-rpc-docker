@@ -45,11 +45,11 @@ volumes:
   tron-mainnet-java-tron-pruned-rocksdb:
 
 upstreams:
-  - id: ${ID}
-    chain: ${CHAIN}
+  - id: $${ID}
+    chain: $${CHAIN}
     labels:
-      provider: ${PROVIDER}
+      provider: $${PROVIDER}
     connection:
       generic:
         rpc:
-          url: "${RPC_URL}"
+          url: "$${RPC_URL}"

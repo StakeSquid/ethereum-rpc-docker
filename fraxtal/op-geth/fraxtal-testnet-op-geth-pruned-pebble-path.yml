@@ -110,10 +110,10 @@ volumes:
   fraxtal-testnet-op-geth-pruned-pebble-path:
 
 upstreams:
-  - id: ${ID}
-    chain: ${CHAIN}
+  - id: $${ID}
+    chain: $${CHAIN}
     labels:
-      provider: ${PROVIDER}
+      provider: $${PROVIDER}
     method-groups:
       enabled:
         - debug
@@ -124,9 +124,9 @@ upstreams:
     connection:
       generic:
         rpc:
-          url: "${RPC_URL}"
+          url: "$${RPC_URL}"
         ws:
           frameSize: 20Mb
           msgSize: 50Mb
-          url: "${WS_URL}"
+          url: "$${WS_URL}"
   
