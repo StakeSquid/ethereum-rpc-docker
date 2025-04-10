@@ -1,0 +1,6 @@
+{
+  "chain": {
+    "info-json": "[{\"chain-id\":6398,\"parent-chain-id\":11155111,\"parent-chain-is-arbitrum\":false,\"chain-name\":\"Connext Sepolia\",\"chain-config\":{\"homesteadBlock\":0,\"daoForkBlock\":null,\"daoForkSupport\":true,\"eip150Block\":0,\"eip150Hash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"eip155Block\":0,\"eip158Block\":0,\"byzantiumBlock\":0,\"constantinopleBlock\":0,\"petersburgBlock\":0,\"istanbulBlock\":0,\"muirGlacierBlock\":0,\"berlinBlock\":0,\"londonBlock\":0,\"clique\":{\"period\":0,\"epoch\":0},\"arbitrum\":{\"EnableArbOS\":true,\"AllowDebugPrecompiles\":false,\"DataAvailabilityCommittee\":true,\"InitialArbOSVersion\":20,\"GenesisBlockNum\":0,\"MaxCodeSize\":24576,\"MaxInitCodeSize\":49152,\"InitialChainOwner\":\"0x8ECD393576Ca37a7e5095f31bdfE21F606FF5F75\"},\"chainId\":6398},\"rollup\":{\"bridge\":\"0xf0b58FA876005898798a66A04EE09159C199CB7A\",\"inbox\":\"0x7bc7DAF843bf57c54D41D912F8221A2eE830c320\",\"sequencer-inbox\":\"0x7f5C1a58014E9DE69663CAc441bfa4C5d94b7E64\",\"rollup\":\"0xE6D7bf11A6264BACa59e8fAD7f6985FaC8f62e60\",\"validator-utils\":\"0xb33Dca7b17c72CFC311D68C543cd4178E0d7ce55\",\"validator-wallet-creator\":\"0x75500812ADC9E51b721BEa31Df322EEc66967DDF\",\"deployed-at\":5780509}}]",
+    "name": "Connext Sepolia"
+  }
+}

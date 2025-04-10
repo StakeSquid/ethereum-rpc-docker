@@ -1,0 +1,6 @@
+{
+    "chain": {
+	"info-json": "[{\"chain-id\":2039,\"parent-chain-id\":11155111,\"parent-chain-is-arbitrum\":false,\"chain-name\":\"Aleph Zero EVM testnet\",\"chain-config\":{\"homesteadBlock\":0,\"daoForkBlock\":null,\"daoForkSupport\":true,\"eip150Block\":0,\"eip150Hash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"eip155Block\":0,\"eip158Block\":0,\"byzantiumBlock\":0,\"constantinopleBlock\":0,\"petersburgBlock\":0,\"istanbulBlock\":0,\"muirGlacierBlock\":0,\"berlinBlock\":0,\"londonBlock\":0,\"clique\":{\"period\":0,\"epoch\":0},\"arbitrum\":{\"EnableArbOS\":true,\"AllowDebugPrecompiles\":false,\"DataAvailabilityCommittee\":true,\"InitialArbOSVersion\":20,\"GenesisBlockNum\":0,\"MaxCodeSize\":98304,\"MaxInitCodeSize\":49152,\"InitialChainOwner\":\"0x4c6dfF3e40e82a1fB599e062051726a9f7808a18\"},\"chainId\":2039},\"rollup\":{\"bridge\":\"0xCB5c0B38C45Fad0C20591E26b0b3C3809123994A\",\"inbox\":\"0xb27fd27987a71a6B77Fb8705bFb6010C411083EB\",\"sequencer-inbox\":\"0x16Ef70c48EF4BaaCfdaa4AfdD37F69332832a0bD\",\"rollup\":\"0xC8C08A4DbbF3367c8441151591c3d935947CB42F\",\"validator-utils\":\"0xb33Dca7b17c72CFC311D68C543cd4178E0d7ce55\",\"validator-wallet-creator\":\"0x75500812ADC9E51b721BEa31Df322EEc66967DDF\",\"deployed-at\":5827184}}]",
+	"name": "Aleph Zero EVM testnet"
+    }
+}
