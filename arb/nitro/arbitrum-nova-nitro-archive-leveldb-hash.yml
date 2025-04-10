@@ -28,8 +28,6 @@ services:
       - ${ARBITRUM_NOVA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-arbitrum-nova-nitro-archive-leveldb-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
       - ./tmp/arbitrum-nova-archive:/tmp
 
     command:

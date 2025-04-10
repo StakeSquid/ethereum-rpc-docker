@@ -28,8 +28,6 @@ services:
       - ${OPENCAMPUSCODEX_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-opencampuscodex-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
       - ./tmp/opencampuscodex-sepolia-archive:/tmp
 
     command:

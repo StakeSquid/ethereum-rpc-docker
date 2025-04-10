@@ -28,8 +28,6 @@ services:
       - ${ALEPHZERO_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_DATA:-alephzero-sepolia-nitro-pruned-pebble-path}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
       - ./tmp/alephzero-sepolia:/tmp
 
     command:

@@ -28,8 +28,6 @@ services:
       - ${ARBITRUM_SEPOLIA_NITRO_ARCHIVE_PEBBLE_HASH_DATA:-arbitrum-sepolia-nitro-archive-pebble-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
       - ./tmp/arbitrum-sepolia-archive:/tmp
 
     command:

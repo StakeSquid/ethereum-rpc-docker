@@ -33,8 +33,6 @@ services:
       - ${FANTOM_MAINNET_SONIC_ARCHIVE_DATA:-fantom-mainnet-sonic-archive}:/var/sonic
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     environment:
       - GENESIS=https://download.fantom.network/opera/testnet/testnet-26650-rpc.g
       - CACHE_GB=${SONIC_CACHE_GB:-28}

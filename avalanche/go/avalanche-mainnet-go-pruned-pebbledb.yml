@@ -1,0 +1,81 @@
+# use at your own risk
+
+services:
+  avalanche-mainnet-client:
+    image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalancheg}:${AVALANCHE_MAINNET_GO_VERSION:-v1.13.0}
+    user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    expose:
+      - 9650
+
+      - 9650
+
+    ports:
+      - 10929:10929
+      - 10929:10929/udp
+    volumes:
+      - ${AVALANCHE_MAINNET_GO_PRUNED_PEBBLEDB_DATA:-avalanche-mainnet-go-pruned-pebbledb}:/root/.avalanchego
+      - /slowdisk:/slowdisk
+
+    entrypoint: [/avalanchego/build/avalanchego]
+    command:
+      - --chain-config-dir /config/pruned
+      - --db-type=pebbledb
+      - --http-host=
+      - --http-allowed-hosts=*
+      - --staking-port=10929
+      - --public-ip=${IP}"
+
+    networks:
+      - chains
+    restart: unless-stopped
+    stop_grace_period: 5m
+  avalanche-mainnet:
+    restart: unless-stopped
+    image: nginx
+    environment:
+      PROXY_HOST: avalanche-mainnet-client
+      RPC_PORT: 9650
+      RPC_PATH: /ext/bc/C/rpc
+      WS_PORT: 9650
+      WS_PATH: /ext/bc/C/ws
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.avalanche-mainnet-go-pruned-pebbledb-stripprefix.stripprefix.prefixes=/avalanche-mainnet
+      - traefik.http.services.avalanche-mainnet-go-pruned-pebbledb.loadbalancer.server.port=80
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-mainnet`)}
+      - ${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.rule=PathPrefix(`/avalanche-mainnet`)}
+      - traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.middlewares=avalanche-mainnet-go-pruned-pebbledb-stripprefix, ipwhitelist
+
+volumes:
+  avalanche-mainnet-go-pruned-pebbledb:
+
+x-upstreams:
+  - chain: avalanche
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+      enabled:

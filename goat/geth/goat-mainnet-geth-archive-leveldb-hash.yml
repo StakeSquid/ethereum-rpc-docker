@@ -28,8 +28,6 @@ services:
       - ${GOAT_MAINNET_GETH_ARCHIVE_LEVELDB_HASH_DATA:-goat-mainnet-geth-archive-leveldb-hash}:/root/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command: --goat=mainnet
     networks:
       - chains

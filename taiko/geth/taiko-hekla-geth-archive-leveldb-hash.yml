@@ -53,6 +53,10 @@ services:
       - --rpc.returndatalimit=10000000
       - --rpc.txfeecap=0
 
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.vhosts=*
+      - --authrpc.jwtsecret=/jwtsecret
+
       - --db.engine=leveldb
       - --state.scheme=hash
       - --syncmode=full
@@ -77,9 +81,6 @@ services:
     ports:
       - 15396:15396
       - 15396:15396/udp
-    run_file: &id001
-      - ./taiko/hekla.env
-
     environment:
       - L1_WS=${ETHEREUM_HOLESKY_EXECUTION_WS}
       - L1_BEACON=${ETHEREUM_HOLESKY_BEACON_REST}
@@ -97,7 +98,9 @@ services:
       - .jwtsecret:/jwtsecret:ro
 
     restart: unless-stopped
-    env_file: *id001
+    env_file:
+      - ./taiko/hekla.env
+
 volumes:
   taiko-hekla-geth-archive-leveldb-hash:
 

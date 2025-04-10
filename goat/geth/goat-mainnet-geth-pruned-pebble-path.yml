@@ -28,8 +28,6 @@ services:
       - ${GOAT_MAINNET_GETH_PRUNED_PEBBLE_PATH_DATA:-goat-mainnet-geth-pruned-pebble-path}:/root/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command: --goat=mainnet
     networks:
       - chains

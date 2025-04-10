@@ -33,8 +33,6 @@ services:
       - ${LINEA_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-linea-mainnet-erigon3-archive-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     entrypoint: [erigon]
     command:
       - --datadir=/root/.local/share/erigon

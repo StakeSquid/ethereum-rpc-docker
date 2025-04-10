@@ -28,8 +28,6 @@ services:
       - ${BSC_CHAPEL_BSC_PRUNED_PEBBLE_PATH_DATA:-bsc-chapel-bsc-pruned-pebble-path}:/bsc/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command:
       - --datadir=/bsc/.ethereum
       - --port=10759

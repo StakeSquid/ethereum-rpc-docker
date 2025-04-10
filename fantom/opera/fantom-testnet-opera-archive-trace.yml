@@ -33,8 +33,6 @@ services:
       - ${FANTOM_TESTNET_OPERA_ARCHIVE_TRACE_DATA:-fantom-testnet-opera-archive-trace}:/datadir
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     environment:
       - GENESIS=https://download.fantom.network/opera/testnet/testnet-2458-full-mpt.g
     command:

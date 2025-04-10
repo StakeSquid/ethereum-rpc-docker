@@ -28,8 +28,6 @@ services:
       - ${SONIC_MAINNET_SONIC_ARCHIVE_DATA:-sonic-mainnet-sonic-archive}:/var/sonic
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     environment:
       - GENESIS=https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic-16500-full.g
       - CACHE_GB=${SONIC_CACHE_GB:-28}

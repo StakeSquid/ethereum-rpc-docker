@@ -56,6 +56,10 @@ services:
       - --rpc.returndata.limit=1100000
       - --rpc.gascap=6000000000
 
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.vhosts=*
+      - --authrpc.jwtsecret=/jwtsecret
+
       - --p2p.allowed-ports=30671
       - --p2p.allowed-ports=35671
 

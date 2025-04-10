@@ -28,8 +28,6 @@ services:
       - ${CORE_BUFFALO_CORE_PRUNED_PEBBLE_PATH_DATA:-core-buffalo-core-pruned-pebble-path}:/core/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command:
       - --datadir=/core/.ethereum
       - --port=10384

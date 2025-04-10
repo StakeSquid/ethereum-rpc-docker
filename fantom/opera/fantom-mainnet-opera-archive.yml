@@ -33,8 +33,6 @@ services:
       - ${FANTOM_MAINNET_OPERA_ARCHIVE_DATA:-fantom-mainnet-opera-archive}:/datadir
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     environment:
       - GENESIS=https://download.fantom.network/opera/mainnet/mainnet-5577-full-mpt.g
     command:

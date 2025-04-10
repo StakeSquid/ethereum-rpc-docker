@@ -33,8 +33,6 @@ services:
       - ${FANTOM_TESTNET_OPERA_PRUNED_TRACE_DATA:-fantom-testnet-opera-pruned-trace}:/datadir
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     environment:
       - GENESIS=https://download.fantom.network/opera/testnet/testnet-6226-no-history.g
     command:

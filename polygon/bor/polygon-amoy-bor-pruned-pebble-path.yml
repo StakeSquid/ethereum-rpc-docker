@@ -28,8 +28,6 @@ services:
       - ${POLYGON_AMOY_BOR_PRUNED_PEBBLE_PATH_DATA:-polygon-amoy-bor-pruned-pebble-path}:/root.bor/
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     entrypoint: [bor, server]
     command:
       - --datadir=/root.bor/

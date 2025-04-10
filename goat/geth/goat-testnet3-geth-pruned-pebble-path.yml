@@ -28,8 +28,6 @@ services:
       - ${GOAT_TESTNET3_GETH_PRUNED_PEBBLE_PATH_DATA:-goat-testnet3-geth-pruned-pebble-path}:/root/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command: --goat=testnet3
     networks:
       - chains

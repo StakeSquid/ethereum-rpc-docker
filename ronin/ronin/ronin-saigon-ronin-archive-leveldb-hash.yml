@@ -1,0 +1,71 @@
+# use at your own risk
+
+services:
+  ronin-saigon-archive:
+    image: ${RONIN_RONIN_IMAGE:-ghcr.io/ronin-chain/ronin}:${RONIN_SAIGON_RONIN_VERSION:-v1.0.2-eaef5a2}
+    user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    expose:
+      - 8545
+
+    ports:
+      - 10493:10493
+      - 10493:10493/udp
+    volumes:
+      - ${RONIN_SAIGON_RONIN_ARCHIVE_LEVELDB_HASH_DATA:-ronin-saigon-ronin-archive-leveldb-hash}:/ronin
+      - /slowdisk:/slowdisk
+
+    environment:
+      - NETWORK_ID=2021
+      - NETWORK_PORT=10493
+      - DB_ENGINE=
+      - STATE_SCHEME=
+      - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
+    command:
+      - --port=10493
+      - --http.api admin,eth,net,web3,consortium,txpool,debug
+      - --discovery.dns enrtree://AJCNIAXQIPO55NW3QE2NUBBDMPYZDOQUCAEUS65NHQFMUUFES5KOW@saigon.nodes.roninchain.com
+      - --txpool.pricelimit 20000000000
+      - --txpool.nolocals
+      - --nat=extip:${IP}
+      - --gcmode=archive
+
+    networks:
+      - chains
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ronin-saigon-ronin-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/ronin-saigon-archive
+      - traefik.http.services.ronin-saigon-ronin-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-saigon-archive`)}
+      - ${NO_SSL:+traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.rule=PathPrefix(`/ronin-saigon-archive`)}
+      - traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.middlewares=ronin-saigon-ronin-archive-leveldb-hash-stripprefix, ipwhitelist
+
+volumes:
+  ronin-saigon-ronin-archive-leveldb-hash:
+
+x-upstreams:
+  - chain:
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+      enabled:

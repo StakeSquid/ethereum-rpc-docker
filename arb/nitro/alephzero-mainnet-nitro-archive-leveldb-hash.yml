@@ -28,8 +28,6 @@ services:
       - ${ALEPHZERO_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-alephzero-mainnet-nitro-archive-leveldb-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command:
       - --datadir=/root/.arbitrum
       - --port=10301

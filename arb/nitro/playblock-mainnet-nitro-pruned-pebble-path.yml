@@ -28,8 +28,6 @@ services:
       - ${PLAYBLOCK_MAINNET_NITRO_PRUNED_PEBBLE_PATH_DATA:-playblock-mainnet-nitro-pruned-pebble-path}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command:
       - --datadir=/root/.arbitrum
       - --port=10728

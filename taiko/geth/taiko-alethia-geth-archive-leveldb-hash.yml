@@ -53,6 +53,10 @@ services:
       - --rpc.returndatalimit=10000000
       - --rpc.txfeecap=0
 
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.vhosts=*
+      - --authrpc.jwtsecret=/jwtsecret
+
       - --db.engine=leveldb
       - --state.scheme=hash
       - --syncmode=full
@@ -77,9 +81,6 @@ services:
     ports:
       - 15251:15251
       - 15251:15251/udp
-    run_file: &id001
-      - ./taiko/alethia.env
-
     environment:
       - L1_WS=${ETHEREUM_MAINNET_EXECUTION_WS}
       - L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
@@ -97,7 +98,9 @@ services:
       - .jwtsecret:/jwtsecret:ro
 
     restart: unless-stopped
-    env_file: *id001
+    env_file:
+      - ./taiko/alethia.env
+
 volumes:
   taiko-alethia-geth-archive-leveldb-hash:
 

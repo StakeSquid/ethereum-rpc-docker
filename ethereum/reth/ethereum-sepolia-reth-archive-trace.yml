@@ -52,6 +52,10 @@ services:
       - --rpc.max-logs-per-response=1100000
       - --rpc.gascap=600000000
 
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.vhosts=*
+      - --authrpc.jwtsecret=/jwtsecret
+
       - --chain=sepolia
 
     networks:

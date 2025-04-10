@@ -28,8 +28,6 @@ services:
       - ${BSC_MAINNET_BSC_PRUNED_PEBBLE_PATH_DATA:-bsc-mainnet-bsc-pruned-pebble-path}:/bsc/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command:
       - --datadir=/bsc/.ethereum
       - --port=10037

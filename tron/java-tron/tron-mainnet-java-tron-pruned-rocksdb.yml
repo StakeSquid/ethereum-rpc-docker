@@ -21,8 +21,8 @@ services:
       - 8545
 
     ports:
-      - 10599:10599
-      - 10599:10599/udp
+      - 25815:25815
+      - 25815:25815/udp
     volumes:
       - ${TRON_MAINNET_JAVA_TRON_PRUNED_ROCKSDB_DATA:-tron-mainnet-java-tron-pruned-rocksdb}:/java-tron/output-directory
       - /slowdisk:/slowdisk

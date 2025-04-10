@@ -28,8 +28,6 @@ services:
       - ${CORE_MAINNET_CORE_PRUNED_LEVELDB_HASH_DATA:-core-mainnet-core-pruned-leveldb-hash}:/core/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command:
       - --datadir=/core/.ethereum
       - --port=10169

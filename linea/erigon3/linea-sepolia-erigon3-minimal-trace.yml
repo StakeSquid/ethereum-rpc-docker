@@ -33,8 +33,6 @@ services:
       - ${LINEA_SEPOLIA_ERIGON3_MINIMAL_TRACE_DATA:-linea-sepolia-erigon3-minimal-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     entrypoint: [erigon]
     command:
       - --datadir=/root/.local/share/erigon

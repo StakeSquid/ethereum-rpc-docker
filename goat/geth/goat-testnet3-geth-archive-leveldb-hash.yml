@@ -28,8 +28,6 @@ services:
       - ${GOAT_TESTNET3_GETH_ARCHIVE_LEVELDB_HASH_DATA:-goat-testnet3-geth-archive-leveldb-hash}:/root/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command: --goat=testnet3
     networks:
       - chains

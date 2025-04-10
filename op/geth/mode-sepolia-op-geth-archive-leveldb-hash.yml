@@ -54,6 +54,10 @@ services:
       - --rpc.returndatalimit=10000000
       - --rpc.txfeecap=0
 
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.vhosts=*
+      - --authrpc.jwtsecret=/jwtsecret
+
       - --db.engine=leveldb
       - --state.scheme=hash
       - --syncmode=full

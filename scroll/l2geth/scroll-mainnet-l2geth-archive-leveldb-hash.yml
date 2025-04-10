@@ -28,8 +28,6 @@ services:
       - ${SCROLL_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-scroll-mainnet-l2geth-archive-leveldb-hash}:/root/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command:
       - --datadir=/root/.ethereum
       - --port=10083

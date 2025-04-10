@@ -28,8 +28,6 @@ services:
       - ${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_DATA:-core-mainnet-core-archive-leveldb-hash}:/core/.ethereum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
     command:
       - --datadir=/core/.ethereum
       - --port=10169

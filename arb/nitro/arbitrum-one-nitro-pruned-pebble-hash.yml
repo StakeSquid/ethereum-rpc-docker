@@ -28,8 +28,6 @@ services:
       - ${ARBITRUM_ONE_NITRO_PRUNED_PEBBLE_HASH_DATA:-arbitrum-one-nitro-pruned-pebble-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
       - ./tmp/arbitrum-one:/tmp
 
     command:

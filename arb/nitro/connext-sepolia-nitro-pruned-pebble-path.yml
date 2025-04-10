@@ -28,8 +28,6 @@ services:
       - ${CONNEXT_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_DATA:-connext-sepolia-nitro-pruned-pebble-path}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
       - ./tmp/connext-sepolia:/tmp
 
     command:

@@ -28,8 +28,6 @@ services:
       - ${ARBITRUM_ONE_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-arbitrum-one-nitro-archive-leveldb-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - .jwtsecret:/jwtsecret:ro
-
       - ./tmp/arbitrum-one-archive:/tmp
 
     command:

@@ -22,8 +22,8 @@ services:
       - 8551
 
     ports:
-      - 10347:10347
-      - 10347:10347/udp
+      - 10363:10363
+      - 10363:10363/udp
     volumes:
       - ${BOB_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-bob-mainnet-op-geth-archive-leveldb-hash}:/data
       - /slowdisk:/slowdisk
@@ -35,7 +35,7 @@ services:
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
       - --datadir=/data
-      - --port=10347
+      - --port=10363
       - --bind=0.0.0.0
       - --nat=extip:${IP}
       - --http
@@ -53,6 +53,10 @@ services:
       - --rpc.gascap=600000000
       - --rpc.returndatalimit=10000000
       - --rpc.txfeecap=0
+
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.vhosts=*
+      - --authrpc.jwtsecret=/jwtsecret
 
       - --db.engine=leveldb
       - --state.scheme=hash
@@ -76,14 +80,14 @@ services:
   bob-mainnet-archive-node:
     image: ${BOB_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${BOB_MAINNET_NODE_VERSION:-v1.12.2}
     ports:
-      - 15347:15347
-      - 15347:15347/udp
+      - 15363:15363
+      - 15363:15363/udp
     environment:
       - OP_NODE_NETWORK=bob-mainnet
       - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - OP_NODE_L2_ENGINE_RPC=http://bob-mainnet-archive:8551
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15347
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15347
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15363
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15363
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
