@@ -22,8 +22,8 @@ services:
       - 8551
 
     ports:
-      - 10938:10938
-      - 10938:10938/udp
+      - 10953:10953
+      - 10953:10953/udp
     volumes:
       - ${OPENCAMPUSCODEX_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-opencampuscodex-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk
@@ -34,7 +34,7 @@ services:
 
     command:
       - --datadir=/root/.arbitrum
-      - --port=10938
+      - --port=10953
       - --bind=0.0.0.0
       - --nat=extip:${IP}
       - --http
