@@ -1,77 +1,127 @@
-
-
+# use at your own risk
 
 services:
   gnosis-chiado-archive:
-    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_CHIADO_ERIGON3_VERSION:-v3.0.0}
     user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
-      - "8545"
+      - 8545
+      - 8551
+
     ports:
-      - "10986:10986"
-      - "10986:10986/udp"
-      - "25986:25986"
-      - "25986:25986/udp"
-      - "30986:30986"
-      - "30986:30986/udp"
-      - "15986:15986"
-      - "15986:15986/udp"
-      - "20986:20986"
-      - "20986:20986/udp"
-    environment:
-      - "IP=${IP}"
+      - 10986:10986
+      - 10986:10986/udp
+      - 30986:30986
+      - 30986:30986/udp
+      - 35986:35986
+      - 35986:35986/udp
+      - 15986:15986
+      - 15986:15986/udp
+      - 25986:25986
+      - 25986:25986/udp
     volumes:
-      - gnosis-chiado-erigon3-archive-trace:/root/.local/share/erigon
+      - ${GNOSIS_CHIADO_ERIGON3_ARCHIVE_TRACE_DATA:-gnosis-chiado-erigon3-archive-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
-            
+
+      - .jwtsecret:/jwtsecret:ro
+
+    entrypoint: [erigon]
+    command:
+      - --datadir=/root/.local/share/erigon
+      - --port=10986
+      - --bind=0.0.0.0
+      - --nat=extip:${IP}
+      - --http
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --ws.api=eth,erigon,web3,net,debug,trace,txpool,admin
+
+      - --rpc.returndata.limit=1100000
+      - --rpc.gascap=6000000000
+
+      - --prune.mode=
+
+      - --p2p.allowed-ports=30986
+      - --p2p.allowed-ports=35986
+      - --chain=chiado
+
+      - --torrent.port=25986
+
     networks:
       - chains
-    
-    entrypoint: ["erigon"]
-    command:
-      - --chain=chiado
-      
-      - --prune.mode=archive
-      - --port=10986
-      - --p2p.allowed-ports=25986
-      - --p2p.allowed-ports=30986      
-      - --nat=extip:${IP}
-      - --http.addr=0.0.0.0
-      - --http.vhosts=*
-      - --http.corsdomain=*
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
-      - --rpc.returndata.limit=1100000
-      - --rpc.gascap=5000000000
-      - --ws.port=8545
-      - --ws
-       
-      - --torrent.port=20986
-      
-      - --beacon.api.port=5555
-      - --beacon.api.addr=0.0.0.0
-      - --beacon.api.cors.allow-origins=*      
-      - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=15986
-      - --caplin.discovery.tcpport=15986
-      - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
-
     restart: unless-stopped
-    stop_grace_period: 1m
+    stop_grace_period: 5m
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.gnosis-chiado-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/gnosis-chiado-archive"
-      - "traefik.http.services.gnosis-chiado-erigon3-archive-trace.loadbalancer.server.port=8545"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.entrypoints=websecure"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.tls.certresolver=myresolver"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado-archive`)"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipwhitelist"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace.service=gnosis-chiado-erigon3-archive-trace"
-      
-      - "traefik.http.services.gnosis-chiado-erigon3-archive-trace-node.loadbalancer.server.port=5555"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.entrypoints=websecure"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.service=gnosis-chiado-erigon3-archive-trace-node"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.tls.certresolver=myresolver"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado-archive/eth`)"
-      - "traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipwhitelist"
+      - traefik.enable=true
+      - traefik.http.middlewares.gnosis-chiado-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/gnosis-chiado-archive
+      - traefik.http.services.gnosis-chiado-erigon3-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado-archive`)}
+      - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=PathPrefix(`/gnosis-chiado-archive`)}
+      - traefik.http.routers.gnosis-chiado-erigon3-archive-trace.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.gnosis-chiado-erigon3-archive-trace.service=gnosis-chiado-erigon3-archive-trace
+      - traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.service=gnosis-chiado-erigon3-archive-trace-node
+      - traefik.http.services.gnosis-chiado-erigon3-archive-trace-node.loadbalancer.server.port=5555
+      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado-archive/eth`)}
+      - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.rule=PathPrefix(`/gnosis-chiado-archive/eth`)}
+      - traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipwhitelist
+
 volumes:
-    gnosis-chiado-erigon3-archive-trace:
+  gnosis-chiado-erigon3-archive-trace:
+
+x-upstreams:
+  - chain: gnosis-chiado
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+        # non standard erigon only
+        - name: eth_getBlockReceipts
+        - name: eth_protocolVersion
+        - name: eth_callMany
+        - name: eth_callBundle
+        - name: debug_accountAt
+        - name: debug_traceCallMany
+        - name: erigon_getHeaderByHash
+        - name: erigon_getBlockReceiptsByBlockHash
+        - name: erigon_getHeaderByNumber
+        - name: erigon_getLogsByHash
+        - name: erigon_forks
+        - name: erigon_getBlockByTimestamp
+        - name: erigon_BlockNumber
+        - name: erigon_getLatestLogs

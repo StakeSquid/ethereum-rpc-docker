@@ -1,56 +1,108 @@
-
+# use at your own risk
 
 services:
   polygon-mainnet:
-    image: 0xpolygon/bor:${BOR_VERSION:-2.0.1}
+    image: ${POLYGON_BOR_IMAGE:-0xpolygon/bor}:${POLYGON_MAINNET_BOR_VERSION:-v1.3.10}
+    user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     sysctls:
-      net.ipv4.tcp_slow_start_after_idle: 0
-      net.ipv4.tcp_no_metrics_save: 1
-    volumes:                  
-      - "polygon-mainnet-bor-pruned-pebble-path:/root/.bor/"
-      - "/slowdisk:/slowdisk"
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
-    ports:                   
-      - "10961:10961"                                                                                 
-      - "10961:10961/udp"
-    entrypoint: ["bor", "server"]
-    command: >
-      --chain=mainnet
-      --bor.heimdall=${POLYGON_HEIMDALL_REST:-https://polygon-heimdall-rest.publicnode.com}
-      --db.engine=pebble
-      --state.scheme=path
-      --syncmode=snap
-      --gcmode=full
-      --port=10961
-      --bind=0.0.0.0
-      --nat=extip:$IP
-      --rpc.returndatalimit=10000000
-      --http
-      --http.port=8545
-      --http.vhosts=*
-      --ws
-      --ws.port=8545
-      --ws.origins=*
-      --ws.addr=0.0.0.0
-      --http.addr=0.0.0.0
-      --maxpeers=200
-      --ws.api=eth,net,web3,txpool,bor
-      --http.api=admin,eth,net,web3,txpool,bor
-      --maxpeers=200
-      --rpc.txfeecap=0
-      --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.polygon-peers.io
-    restart: unless-stopped                 
-    labels:                     
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.polygon-mainnet-bor-pruned-pebble-path-stripprefix.stripprefix.prefixes=/polygon-mainnet"                      
-      - "traefik.http.services.polygon-mainnet-bor-pruned-pebble-path.loadbalancer.server.port=8545"                                     
-      - "traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.entrypoints=websecure"                                              
-      - "traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-mainnet`)"                     
-      - "traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.middlewares=polygon-mainnet-bor-pruned-pebble-path-stripprefix, ipwhitelist"                           
-    networks:                                                                                         
-      - chains
+      - 8551
 
-volumes:  
-    polygon-mainnet-bor-pruned-pebble-path:
+    ports:
+      - 10961:10961
+      - 10961:10961/udp
+    volumes:
+      - ${POLYGON_MAINNET_BOR_PRUNED_PEBBLE_PATH_DATA:-polygon-mainnet-bor-pruned-pebble-path}:/root.bor/
+      - /slowdisk:/slowdisk
+
+      - .jwtsecret:/jwtsecret:ro
+
+    entrypoint: [bor, server]
+    command:
+      - --datadir=/root.bor/
+      - --port=10961
+      - --bind=0.0.0.0
+      - --nat=extip:${IP}
+      - --http
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=eth,net,web3,txpool,debug,admin,bor
+      - --ws.api=eth,net,web3,txpool,debug,admin,bor
+
+      - --rpc.gascap=600000000
+      - --rpc.returndatalimit=10000000
+      - --rpc.txfeecap=0
+
+      - --db.engine=pebble
+      - --state.scheme=path
+      - --syncmode=snap
+      - --gcmode=full
+
+      - --chain=mainnet
+      - --bor.heimdall=https://polygon-heimdall-rest.publicnode.com
+      - --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.polygon-peers.io
+
+    networks:
+      - chains
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.polygon-mainnet-bor-pruned-pebble-path-stripprefix.stripprefix.prefixes=/polygon-mainnet
+      - traefik.http.services.polygon-mainnet-bor-pruned-pebble-path.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-mainnet`)}
+      - ${NO_SSL:+traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.rule=PathPrefix(`/polygon-mainnet`)}
+      - traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.middlewares=polygon-mainnet-bor-pruned-pebble-path-stripprefix, ipwhitelist
+
+volumes:
+  polygon-mainnet-bor-pruned-pebble-path:
+
+x-upstreams:
+  - chain:
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+        # not compatible with path state scheme
+        - name: debug_traceBlockByHash
+      enabled:
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex

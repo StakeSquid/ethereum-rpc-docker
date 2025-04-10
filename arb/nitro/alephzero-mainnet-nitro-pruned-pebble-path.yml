@@ -1,62 +1,121 @@
-
+# use at your own risk
 
 services:
   alephzero-mainnet:
-    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.5.3-0a9c975}'
-    stop_grace_period: 3m
+    image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_MAINNET_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
-    volumes:
-      - 'alephzero-mainnet-nitro-pruned-pebble-path:/root/.arbitrum'
-      - ./arb/mainnet/alephzero/:/config
-      - './tmp/alephzero-mainnet:/tmp'
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
+      - 8551
+
+    ports:
+      - 10301:10301
+      - 10301:10301/udp
+    volumes:
+      - ${ALEPHZERO_MAINNET_NITRO_PRUNED_PEBBLE_PATH_DATA:-alephzero-mainnet-nitro-pruned-pebble-path}:/root/.arbitrum
+      - /slowdisk:/slowdisk
+
+      - .jwtsecret:/jwtsecret:ro
+
     command:
-      - --conf.file=/config/baseConfig.json      
-      - --execution.caching.state-scheme=path      
-      - --execution.rpc.gas-cap=600000000
-      - --execution.caching.archive=false
-      - --execution.sequencer.enable=false      
-      - --persistent.db-engine=pebble
-      - --persistent.chain=/root/.arbitrum/alephzero-mainnet
-      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
-      - --http.addr=0.0.0.0
+      - --datadir=/root/.arbitrum
+      - --port=10301
+      - --bind=0.0.0.0
+      - --nat=extip:${IP}
+      - --http
       - --http.port=8545
       - --http.vhosts=*
-      - --http.corsdomain=*
-      - --http.api=eth,net,web3,arb,txpool,debug
+      - --ws
       - --ws.port=8545
-      - --ws.addr=0.0.0.0
       - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=eth,net,web3,arb,txpool,debug
       - --ws.api=eth,net,web3,arb,txpool,debug
-      - --metrics
-      - --metrics-server.addr=0.0.0.0
-      - --metrics-server.port=6070
-      - --log-type=json
+
+      - --rpc.gascap=600000000
+      - --rpc.returndatalimit=10000000
+      - --rpc.txfeecap=0
+
+      - --execution.caching.state-scheme=path
+      - --execution.rpc.gas-cap=600000000
+      - --execution.caching.archive=false
+      - --execution.sequencer.enable=false
+      - --persistent.db-engine=pebble
+      - --persistent.chain=/root/.arbitrum/alephzero-mainnet
+
+      - --conf.file=/config/baseConfig.json
+
       - --node.sequencer=false
       - --node.staker.enable=false
-      - --node.batch-poster.enable=false            
+      - --node.batch-poster.enable=false
       - --node.data-availability.enable=true
-      - --node.data-availability.sequencer-inbox-address=1411949971076304187394088912578077660717096867958
+      - --node.data-availability.sequencer-inbox-address=0x1411949971076304187394088912578077660717096867958
       - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das.alephzero.raas.gelato.cloud
+
       - --node.feed.input.url=wss://feed.alephzero.raas.gelato.cloud
       - --execution.forwarding-target=https://rpc.alephzero.raas.gelato.cloud
-            
-            
-    restart: unless-stopped                 
-    labels:                     
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.alephzero-mainnet-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/alephzero-mainnet"                      
-      - "traefik.http.services.alephzero-mainnet-nitro-pruned-pebble-path.loadbalancer.server.port=8545"
-      - "traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.entrypoints=websecure"                                              
-      - "traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/alephzero-mainnet`)"                     
-      - "traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.middlewares=alephzero-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist"                           
-    networks:                                                                                         
-      - chains
+      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
 
-volumes:  
+    networks:
+      - chains
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.alephzero-mainnet-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/alephzero-mainnet
+      - traefik.http.services.alephzero-mainnet-nitro-pruned-pebble-path.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/alephzero-mainnet`)}
+      - ${NO_SSL:+traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=PathPrefix(`/alephzero-mainnet`)}
+      - traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.middlewares=alephzero-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
+
+volumes:
   alephzero-mainnet-nitro-pruned-pebble-path:
+
+x-upstreams:
+  - chain: alephzero
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+        # not compatible with path state scheme
+        - name: debug_traceBlockByHash
+      enabled:
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex

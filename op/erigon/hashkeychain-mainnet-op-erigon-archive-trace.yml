@@ -1,104 +1,147 @@
+# use at your own risk
+
 services:
   hashkeychain-mainnet-archive:
-    image: testinprod/op-erigon:${OP_ERIGON_VERSION:-v2.61.1-0.8.3}    
+    image: ${HASHKEYCHAIN_ERIGON_IMAGE:-testinprod/erigon}:${HASHKEYCHAIN_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
+    user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
       - 8551
+
     ports:
-      - "10378:10378"
-      - "10378:10378/udp"
-      - "25378:25378"
-      - "25378:25378/udp"
-      - "30378:30378"
-      - "30378:30378/udp"      
-    
-    entrypoint: ["erigon"]
+      - 10378:10378
+      - 10378:10378/udp
+      - 30378:30378
+      - 30378:30378/udp
+      - 35378:35378
+      - 35378:35378/udp
+    volumes:
+      - ${HASHKEYCHAIN_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-hashkeychain-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+
+      - .jwtsecret:/jwtsecret:ro
+
+    entrypoint: [erigon]
     command:
-      - --chain=hashkeychain-mainnet
-      
+      - --datadir=/root/.local/share/erigon
       - --port=10378
-      - --p2p.allowed-ports=25378
-      - --p2p.allowed-ports=30378      
+      - --bind=0.0.0.0
       - --nat=extip:${IP}
-      - --http.addr=0.0.0.0
+      - --http
+      - --http.port=8545
       - --http.vhosts=*
-      - --http.corsdomain=*
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.port=8551
-      - --authrpc.vhosts=*
-      - --authrpc.jwtsecret=/jwtsecret
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
-      - --rpc.returndata.limit=1100000
-      - --rpc.gascap=5000000000
-      - --ws.port=8545
       - --ws
-           
-       
-    restart: unless-stopped
-    stop_grace_period: 3m    
-    volumes:
-      - hashkeychain-mainnet-op-erigon-archive-trace:/root/.local/share/erigon      
-      - .jwtsecret:/jwtsecret:ro
-      
-    
-    labels:                     
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.hashkeychain-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/hashkeychain-mainnet-archive"                      
-      - "traefik.http.services.hashkeychain-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545"
-      - "traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.entrypoints=websecure"                                              
-      - "traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/hashkeychain-mainnet-archive`)"                     
-      - "traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.middlewares=hashkeychain-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist"                           
-    networks:                                                                                         
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --ws.api=eth,erigon,web3,net,debug,trace,txpool,admin
+
+      - --rpc.returndata.limit=1100000
+      - --rpc.gascap=6000000000
+
+      - --p2p.allowed-ports=30378
+      - --p2p.allowed-ports=35378
+
+      - --chain=hashkeychain-mainnet
+
+    networks:
       - chains
-      
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.hashkeychain-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/hashkeychain-mainnet-archive
+      - traefik.http.services.hashkeychain-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/hashkeychain-mainnet-archive`)}
+      - ${NO_SSL:+traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.rule=PathPrefix(`/hashkeychain-mainnet-archive`)}
+      - traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.middlewares=hashkeychain-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+
   hashkeychain-mainnet-archive-node:
-    
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.12.2
-    
-    expose:
-      - 8545
-      - 7300
-      - 6060
+    image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.12.2}
     ports:
-      - "15378:15378"
-      - "15378:15378/udp"
-    entrypoint: [ "op-node" ]
-    restart: unless-stopped
+      - 15378:15378
+      - 15378:15378/udp
+    environment:
+      - OP_NODE_NETWORK=hashkeychain-mainnet
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L2_ENGINE_RPC=http://hashkeychain-mainnet-archive:8551
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15378
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15378
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
+      - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    networks:
+      - chains
+
     volumes:
       - .jwtsecret:/jwtsecret:ro
-            
-    stop_grace_period: 30s
-    
-    environment:
-      - "OP_NODE_NETWORK=hashkeychain-mainnet"
-      - "OP_NODE_SYNCMODE=execution-layer"
-      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
-      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://hashkeychain-mainnet-archive:8551"
-      - "OP_NODE_LOG_LEVEL=info"
-      - "OP_NODE_METRICS_ADDR=0.0.0.0"
-      - "OP_NODE_METRICS_ENABLED=true"
-      - "OP_NODE_METRICS_PORT=7300"
-      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=15378"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=15378"
-      - "OP_NODE_RPC_ADDR=0.0.0.0"
-      - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
-      - "OP_NODE_RPC_PORT=8545"
-      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
-      - "OP_NODE_VERIFIER_L1_CONFS=0"
-      - "OP_NODE_STATIC_PEERS="
-      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
-      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
-      - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
-      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"
-      
-      
-                        
-      
-    networks:                                                                                         
-      - chains
-      
-volumes:  
+
+    restart: unless-stopped
+volumes:
   hashkeychain-mainnet-op-erigon-archive-trace:
+
+x-upstreams:
+  - chain: hashkey
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+        # non standard erigon only
+        - name: eth_getBlockReceipts
+        - name: eth_protocolVersion
+        - name: eth_callMany
+        - name: eth_callBundle
+        - name: debug_accountAt
+        - name: debug_traceCallMany
+        - name: erigon_getHeaderByHash
+        - name: erigon_getBlockReceiptsByBlockHash
+        - name: erigon_getHeaderByNumber
+        - name: erigon_getLogsByHash
+        - name: erigon_forks
+        - name: erigon_getBlockByTimestamp
+        - name: erigon_BlockNumber
+        - name: erigon_getLatestLogs

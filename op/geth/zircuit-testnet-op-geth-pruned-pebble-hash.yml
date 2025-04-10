@@ -1,0 +1,147 @@
+# use at your own risk
+
+services:
+  zircuit-testnet:
+    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_TESTNET_GETH_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}
+    user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    expose:
+      - 8545
+      - 8551
+
+    ports:
+      - 10357:10357
+      - 10357:10357/udp
+    volumes:
+      - ${ZIRCUIT_TESTNET_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-zircuit-testnet-op-geth-pruned-pebble-hash}:/data
+      - /slowdisk:/slowdisk
+
+      - .jwtsecret:/jwtsecret:ro
+
+    environment:
+      - GETH_OP_NETWORK=zircuit-testnet
+      - GETH_ETHSTATS=d${DOMAIN}:${ZIRCUIT_TESTNET_WS_SECRET}@${ZIRCUIT_TESTNET_ETH_STATS_SERVER}:${ZIRCUIT_TESTNET_ETH_STATS_SERVER_PORT}
+    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
+    command:
+      - --datadir=/data
+      - --port=10357
+      - --bind=0.0.0.0
+      - --nat=extip:${IP}
+      - --http
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=web3,net,eth,debug,admin
+      - --ws.api=web3,net,eth,debug,admin
+
+      - --rpc.gascap=600000000
+      - --rpc.returndatalimit=10000000
+      - --rpc.txfeecap=0
+
+      - --db.engine=pebble
+      - --state.scheme=hash
+      - --syncmode=snap
+      - --gcmode=full
+
+      - --circuit-capacity-check=false
+
+    networks:
+      - chains
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.zircuit-testnet-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/zircuit-testnet
+      - traefik.http.services.zircuit-testnet-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-testnet`)}
+      - ${NO_SSL:+traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-hash.rule=PathPrefix(`/zircuit-testnet`)}
+      - traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-hash.middlewares=zircuit-testnet-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
+
+  zircuit-testnet-node:
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_TESTNET_NODE_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}
+    ports:
+      - 15357:15357
+      - 15357:15357/udp
+    environment:
+      - OP_NODE_NETWORK=zircuit-testnet
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - OP_NODE_L2_ENGINE_RPC=http://zircuit-testnet:8551
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15357
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15357
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}
+      - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
+      - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    networks:
+      - chains
+
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+
+    restart: unless-stopped
+volumes:
+  zircuit-testnet-op-geth-pruned-pebble-hash:
+
+x-upstreams:
+  - chain: zircuit-testnet
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+      enabled:
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+
+        - name: zirc_getQuarantineHistory
+        - name: zirc_getQuarantined
+        - name: zirc_isQuarantined

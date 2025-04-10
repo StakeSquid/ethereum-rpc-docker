@@ -1,59 +1,115 @@
-
-
+# use at your own risk
 
 services:
   linea-mainnet-archive:
-    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_MAINNET_ERIGON3_VERSION:-v3.0.0}
     user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
-      - "8545"
+      - 8545
+      - 8551
+
     ports:
-      - "10060:10060"
-      - "10060:10060/udp"
-      - "25060:25060"
-      - "25060:25060/udp"
-      - "30060:30060"
-      - "30060:30060/udp"
-      
-    environment:
-      - "IP=${IP}"
+      - 10060:10060
+      - 10060:10060/udp
+      - 30060:30060
+      - 30060:30060/udp
+      - 35060:35060
+      - 35060:35060/udp
     volumes:
-      - linea-mainnet-erigon3-archive-trace:/root/.local/share/erigon
+      - ${LINEA_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-linea-mainnet-erigon3-archive-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
-      - ./linea/shared:/config      
+
+      - .jwtsecret:/jwtsecret:ro
+
+    entrypoint: [erigon]
+    command:
+      - --datadir=/root/.local/share/erigon
+      - --port=10060
+      - --bind=0.0.0.0
+      - --nat=extip:${IP}
+      - --http
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --ws.api=eth,erigon,web3,net,debug,trace,txpool,admin
+
+      - --rpc.returndata.limit=1100000
+      - --rpc.gascap=6000000000
+
+      - --prune.mode=
+
+      - --p2p.allowed-ports=30060
+      - --p2p.allowed-ports=35060
+      - --chain=mainnet
+
+      - --bootnoodes=enode://069800db9e6e0ec9cadca670994ef1aea2cfd3d88133e63ecadbc1cdbd1a5847b09838ee08d8b5f02a9c32ee13abeb4d4104bb5514e5322c9d7ee19f41ff3e51@3.132.73.210:31002,enode://a8e03a71eab12ec4b47bb6e19169d8e4dc7a58373a2476969bbe463f2dded6003037fa4dd5f71e15027f7fc8d7340956fbbefed67ddd116ac19a7f74da034b61@3.132.73.210:31003,enode://97706526cf79df9d930003644f9156805f6c8bd964fc79e083444f7014ce10c9bdd2c5049e63b58040dca1d4c82ebef970822198cf0714de830cff4111534ff1@18.223.198.165:31004,enode://24e1c654a801975a96b7f54ebd7452ab15777fc635c1db25bdbd4425fdb04e7f4768e9e838a87ab724320a765e41631d5d37758c933ad0e8668693558125c8aa@18.223.198.165:31000,enode://27010891d960f73d272a553f72b6336c6698db3ade98d631f09c764e57674a797be5ebc6829ddbb65ab564f439ebc75215d20aa98b6f351d12ea623e7d139ac3@3.132.73.210:31001,enode://228e1b8a4931e46f383e30721dac21fb8fb4e5e1b32c870e13b25478c82db3dc1cd9e7ceb93d302a766466b55638cc9c5cbfc43aa48fa41ced19baf365951f76@3.1.142.64:31002,enode://c22eb0d40fc3ad5ea710aeddea906567778166bfe18c157955e8c39b23a46c45db18a0fa2ba07f2b64c81178a8c796aec2a29151533920ead06fcdfc6d8d03c6@47.128.192.57:31004,enode://8ce733abe39fd7ae0a278b9893f85c1193c611a3886168690dd843435460f22cc4d61f9e8d0ace7f5905836a665319a31cccdaacdada2acc69972c382ecce7db@3.1.142.64:31003,enode://b7c1b2bed65a855f7a2104aac9a14674dfdf018fdac763415b373b29ce18cdb81d36328ba4e5c9f12629f3a50c3e8f9ee048f22dbdbe93a82813da89c6b81334@51.20.235.126:31004,enode://95270e0550848a72fb141cf27f1c4ea10714edde365b411dc0fa06c81c0f282ce155eb9fa472b6b8bb9ee98395eeaf4c5a7b02a01fe58b37ea98ba152eda4c37@13.50.94.193:31000,enode://72013391755f24f08567b932feeeec4c893c06e0b1fb480890c83bf87fd277ad86a5ab9cb586db9ae9970371a2f8cb0c96f6c9f69045abca0fb801db7f047138@51.20.235.126:31001
+
     networks:
       - chains
-    entrypoint: ["/bin/sh", "-c", "[ ! -f /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init /config/genesis.json; exec erigon \"$@\""]
-    command:
-      - --network=goerli
-      - --networkid=59144
-      - --prune.mode=archive
-      - --port=10060
-      - --p2p.allowed-ports=25060
-      - --p2p.allowed-ports=30060      
-      - --nat=extip:${IP}
-      - --http.addr=0.0.0.0
-      - --http.vhosts=*
-      - --http.corsdomain=*
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
-      - --rpc.returndata.limit=1100000
-      - --rpc.gascap=5000000000
-      - --ws.port=8545
-      - --ws
-      - --bootnodes=enode://069800db9e6e0ec9cadca670994ef1aea2cfd3d88133e63ecadbc1cdbd1a5847b09838ee08d8b5f02a9c32ee13abeb4d4104bb5514e5322c9d7ee19f41ff3e51@3.132.73.210:31002,enode://a8e03a71eab12ec4b47bb6e19169d8e4dc7a58373a2476969bbe463f2dded6003037fa4dd5f71e15027f7fc8d7340956fbbefed67ddd116ac19a7f74da034b61@3.132.73.210:31003,enode://97706526cf79df9d930003644f9156805f6c8bd964fc79e083444f7014ce10c9bdd2c5049e63b58040dca1d4c82ebef970822198cf0714de830cff4111534ff1@18.223.198.165:31004,enode://24e1c654a801975a96b7f54ebd7452ab15777fc635c1db25bdbd4425fdb04e7f4768e9e838a87ab724320a765e41631d5d37758c933ad0e8668693558125c8aa@18.223.198.165:31000,enode://27010891d960f73d272a553f72b6336c6698db3ade98d631f09c764e57674a797be5ebc6829ddbb65ab564f439ebc75215d20aa98b6f351d12ea623e7d139ac3@3.132.73.210:31001,enode://228e1b8a4931e46f383e30721dac21fb8fb4e5e1b32c870e13b25478c82db3dc1cd9e7ceb93d302a766466b55638cc9c5cbfc43aa48fa41ced19baf365951f76@3.1.142.64:31002,enode://c22eb0d40fc3ad5ea710aeddea906567778166bfe18c157955e8c39b23a46c45db18a0fa2ba07f2b64c81178a8c796aec2a29151533920ead06fcdfc6d8d03c6@47.128.192.57:31004,enode://8ce733abe39fd7ae0a278b9893f85c1193c611a3886168690dd843435460f22cc4d61f9e8d0ace7f5905836a665319a31cccdaacdada2acc69972c382ecce7db@3.1.142.64:31003,enode://b7c1b2bed65a855f7a2104aac9a14674dfdf018fdac763415b373b29ce18cdb81d36328ba4e5c9f12629f3a50c3e8f9ee048f22dbdbe93a82813da89c6b81334@51.20.235.126:31004,enode://95270e0550848a72fb141cf27f1c4ea10714edde365b411dc0fa06c81c0f282ce155eb9fa472b6b8bb9ee98395eeaf4c5a7b02a01fe58b37ea98ba152eda4c37@13.50.94.193:31000,enode://72013391755f24f08567b932feeeec4c893c06e0b1fb480890c83bf87fd277ad86a5ab9cb586db9ae9970371a2f8cb0c96f6c9f69045abca0fb801db7f047138@51.20.235.126:31001 
-      
-      
-
     restart: unless-stopped
-    stop_grace_period: 1m
+    stop_grace_period: 5m
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.linea-mainnet-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/linea-mainnet-archive"
-      - "traefik.http.services.linea-mainnet-erigon3-archive-trace.loadbalancer.server.port=8545"
-      - "traefik.http.routers.linea-mainnet-erigon3-archive-trace.entrypoints=websecure"
-      - "traefik.http.routers.linea-mainnet-erigon3-archive-trace.tls.certresolver=myresolver"
-      - "traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-mainnet-archive`)"
-      - "traefik.http.routers.linea-mainnet-erigon3-archive-trace.middlewares=linea-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist"
-      
+      - traefik.enable=true
+      - traefik.http.middlewares.linea-mainnet-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/linea-mainnet-archive
+      - traefik.http.services.linea-mainnet-erigon3-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-mainnet-archive`)}
+      - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=PathPrefix(`/linea-mainnet-archive`)}
+      - traefik.http.routers.linea-mainnet-erigon3-archive-trace.middlewares=linea-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist
+
 volumes:
-    linea-mainnet-erigon3-archive-trace:
+  linea-mainnet-erigon3-archive-trace:
+
+x-upstreams:
+  - chain:
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+        # non standard erigon only
+        - name: eth_getBlockReceipts
+        - name: eth_protocolVersion
+        - name: eth_callMany
+        - name: eth_callBundle
+        - name: debug_accountAt
+        - name: debug_traceCallMany
+        - name: erigon_getHeaderByHash
+        - name: erigon_getBlockReceiptsByBlockHash
+        - name: erigon_getHeaderByNumber
+        - name: erigon_getLogsByHash
+        - name: erigon_forks
+        - name: erigon_getBlockByTimestamp
+        - name: erigon_BlockNumber
+        - name: erigon_getLatestLogs

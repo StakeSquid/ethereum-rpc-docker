@@ -1,57 +1,116 @@
-
+# use at your own risk
 
 services:
   arbitrum-nova-archive:
-    image: 'offchainlabs/nitro-node:${NITRO_VERSION:-v3.5.3-0a9c975}'
-    stop_grace_period: 3m
+    image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_NOVA_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
-    volumes:
-      - 'arbitrum-nova-nitro-archive-leveldb-hash:/root/.arbitrum'
-      
-      - './tmp/arbitrum-nova-archive:/tmp'
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
+      - 8551
+
+    ports:
+      - 10468:10468
+      - 10468:10468/udp
+    volumes:
+      - ${ARBITRUM_NOVA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-arbitrum-nova-nitro-archive-leveldb-hash}:/root/.arbitrum
+      - /slowdisk:/slowdisk
+
+      - .jwtsecret:/jwtsecret:ro
+
+      - ./tmp/arbitrum-nova-archive:/tmp
+
     command:
-      - --chain.id=42170      
-      - --execution.caching.state-scheme=hash      
-      - --execution.rpc.gas-cap=600000000
-      - --execution.caching.archive=true
-      - --execution.sequencer.enable=false      
-      - --persistent.db-engine=leveldb
-      - --persistent.chain=/root/.arbitrum/arbitrum-nova-archive
-      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
-      - --http.addr=0.0.0.0
+      - --datadir=/root/.arbitrum
+      - --port=10468
+      - --bind=0.0.0.0
+      - --nat=extip:${IP}
+      - --http
       - --http.port=8545
       - --http.vhosts=*
-      - --http.corsdomain=*
-      - --http.api=eth,net,web3,arb,txpool,debug
+      - --ws
       - --ws.port=8545
-      - --ws.addr=0.0.0.0
       - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=eth,net,web3,arb,txpool,debug
       - --ws.api=eth,net,web3,arb,txpool,debug
-      - --metrics
-      - --metrics-server.addr=0.0.0.0
-      - --metrics-server.port=6070
-      - --log-type=json
+
+      - --rpc.gascap=600000000
+      - --rpc.returndatalimit=10000000
+      - --rpc.txfeecap=0
+
+      - --execution.caching.state-scheme=hash
+      - --execution.rpc.gas-cap=600000000
+      - --execution.caching.archive=true
+      - --execution.sequencer.enable=false
+      - --persistent.db-engine=leveldb
+      - --persistent.chain=/root/.arbitrum/arbitrum-nova-archive
+
+      - --init.latest=archive
+
+      - --chain.id=42170
+
       - --node.sequencer=false
       - --node.staker.enable=false
-      - --node.batch-poster.enable=false            
-      
-      
-            
-      - --init.latest=archive      
-    restart: unless-stopped                 
-    labels:                     
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.arbitrum-nova-nitro-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/arbitrum-nova-archive"                      
-      - "traefik.http.services.arbitrum-nova-nitro-archive-leveldb-hash.loadbalancer.server.port=8545"
-      - "traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.entrypoints=websecure"                                              
-      - "traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-nova-archive`)"                     
-      - "traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.middlewares=arbitrum-nova-nitro-archive-leveldb-hash-stripprefix, ipwhitelist"                           
-    networks:                                                                                         
-      - chains
+      - --node.batch-poster.enable=false
 
-volumes:  
+      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
+
+    networks:
+      - chains
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.arbitrum-nova-nitro-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/arbitrum-nova-archive
+      - traefik.http.services.arbitrum-nova-nitro-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-nova-archive`)}
+      - ${NO_SSL:+traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.rule=PathPrefix(`/arbitrum-nova-archive`)}
+      - traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.middlewares=arbitrum-nova-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
+
+volumes:
   arbitrum-nova-nitro-archive-leveldb-hash:
+
+x-upstreams:
+  - chain:
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+      enabled:
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex

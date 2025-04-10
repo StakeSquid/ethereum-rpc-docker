@@ -1,55 +1,57 @@
+# use at your own risk
+
 services:
   tron-mainnet:
-    image: tronprotocol/java-tron:GreatVoyage-v4.7.7
+    image: ${TRON_JAVA_TRON_IMAGE:-tronprotocol/java-tron}:${TRON_MAINNET_JAVA_TRON_VERSION:-GreatVoyage-v4.7.7}
     user: root
-    stop_grace_period: 5m
     ulimits:
-      nofile: 1048576
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
-      - "8545"
+      - 8545
+
     ports:
-      - "25815:25815/tcp"
-      - "25815:25815/udp"
+      - 10599:10599
+      - 10599:10599/udp
     volumes:
-      - tron-mainnet-java-tron-pruned-rocksdb:/java-tron/output-directory
-      - ./tron/mainnet:/config
+      - ${TRON_MAINNET_JAVA_TRON_PRUNED_ROCKSDB_DATA:-tron-mainnet-java-tron-pruned-rocksdb}:/java-tron/output-directory
+      - /slowdisk:/slowdisk
+
     command: -c /config/config.conf --log-config /config/logback.xml
     networks:
       - chains
     restart: unless-stopped
+    stop_grace_period: 5m
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.tron-mainnet-java-tron-pruned-rocksdb-set-path.replacepath.path=/jsonrpc"
-      - "traefik.http.services.tron-mainnet-java-tron-pruned-rocksdb.loadbalancer.server.port=8545"
-      - "traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.entrypoints=websecure"
-      - "traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.tls.certresolver=myresolver"
-      - "traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=Host(`$DOMAIN`) && PathPrefix(`/tron-mainnet`)"
-      - "traefik.http.middlewares.tron-mainnet-java-tron-pruned-rocksdb-strip-trailing-slash.stripprefixregex.regex=/$"
-      - "traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.middlewares=tron-mainnet-java-tron-pruned-rocksdb-set-path, tron-mainnet-java-tron-pruned-rocksdb-strip-trailing-slash, ipwhitelist"
+      - traefik.enable=true
+      - traefik.http.middlewares.tron-mainnet-java-tron-pruned-rocksdb-stripprefix.stripprefix.prefixes=/tron-mainnet
+      - traefik.http.services.tron-mainnet-java-tron-pruned-rocksdb.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=Host(`$DOMAIN`) && PathPrefix(`/tron-mainnet`)}
+      - ${NO_SSL:+traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=PathPrefix(`/tron-mainnet`)}
+      - traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.middlewares=tron-mainnet-java-tron-pruned-rocksdb-stripprefix, ipwhitelist
 
-  tron-mainnet-download:
-    image: alpine:latest
-    user: root
-    environment:
-      - SNAPSHOT_URL=https://snapshots.publicnode.com/tron-pruned-70904745.tar.lz4
-    volumes:
-      - tron-mainnet-java-tron-pruned-rocksdb:/java-tron/output-directory
-      - ./tron/scripts/download.java-tron.sh:/download.sh
-    command: sh -c "/download.sh"
-    restart: "no"
-    profiles:
-      - manual
-
-      
 volumes:
   tron-mainnet-java-tron-pruned-rocksdb:
 
 x-upstreams:
-  - id: $${ID}
-    chain: $${CHAIN}
-    labels:
-      provider: $${PROVIDER}
-    connection:
-      generic:
-        rpc:
-          url: "$${RPC_URL}"
+  - chain: tron
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+      enabled:

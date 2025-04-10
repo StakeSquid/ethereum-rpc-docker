@@ -1,71 +1,82 @@
+# use at your own risk
 
 services:
-  viction-mainnet-archive-download:
-    image: alpine:latest
-    user: root
-    environment:
-      - SNAPSHOT_URL=https://snapshot.viction.xyz/archive-node
-    volumes:
-      - viction-mainnet-node-archive-leveldb-hash:/tomochain/data
-      - ./viction/scripts/download.node.sh:/download.sh
-    command: sh -c "/download.sh"
-    restart: "no"
-    profiles:
-      - manual
-    
   viction-mainnet-archive-client:
-    image: buildonviction/node:v2.4.5
-    stop_grace_period: 5m
+    image: ${VICTION_NODE_IMAGE:-buildonviction/node}:${VICTION_MAINNET_NODE_VERSION:-v2.4.5}
+    user: root
     ulimits:
-      nofile: 1048576
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
-      - "8545"
-      - "8546"
+      - 8545
+
+      - 8546
+
     ports:
-      - "10184:10184/tcp"
-      - "10184:10184/udp"
+      - 10670:10670
+      - 10670:10670/udp
     volumes:
-      - viction-mainnet-node-archive-leveldb-hash:/tomochain/data
-    networks:
-      - chains
-    env_file:
-      - ./viction/mainnet/env
+      - ${VICTION_MAINNET_NODE_ARCHIVE_LEVELDB_HASH_DATA:-viction-mainnet-node-archive-leveldb-hash}:/tomochain/data
+      - /slowdisk:/slowdisk
+
     environment:
-      EXTIP: "${IP}"
-      P2P_PORT: 10184
+      EXTIP: ${IP}
+      P2P_PORT: 10670
     command:
       - --tomox
       - --tomox.datadir=/tomochain/data/tomox
       - --gcmode=archive
       - --syncmode=full
       - --rpcapi=eth,debug,net,db,admin,web3
+
+    networks:
+      - chains
     restart: unless-stopped
-    
-  viction-mainnet-archive:         
-    restart: unless-stopped           
+    stop_grace_period: 5m
+  viction-mainnet-archive:
+    restart: unless-stopped
     image: nginx
-    depends_on:
-      - viction-mainnet-archive-client
-    expose:  
-      - 80                                                                                    
-    environment:                                                                                      
+    environment:
       PROXY_HOST: viction-mainnet-archive-client
       RPC_PORT: 8545
-      RPC_PATH: ""
+      RPC_PATH:
       WS_PORT: 8546
-      WS_PATH: ""
-    networks:               
-      - chains 
-    volumes:               
-      - ./nginx-proxy:/etc/nginx/templates            
+      WS_PATH:
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.viction-mainnet-node-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet-archive"
-      - "traefik.http.services.viction-mainnet-node-archive-leveldb-hash.loadbalancer.server.port=80"
-      - "traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.entrypoints=websecure"
-      - "traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.tls.certresolver=myresolver"
-      - "traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/viction-mainnet-archive`)"
-      - "traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.middlewares=viction-mainnet-node-archive-leveldb-hash-stripprefix, ipwhitelist"
-      
+      - traefik.enable=true
+      - traefik.http.middlewares.viction-mainnet-node-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet-archive
+      - traefik.http.services.viction-mainnet-node-archive-leveldb-hash.loadbalancer.server.port=80
+      - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/viction-mainnet-archive`)}
+      - ${NO_SSL:+traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=PathPrefix(`/viction-mainnet-archive`)}
+      - traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.middlewares=viction-mainnet-node-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
   viction-mainnet-node-archive-leveldb-hash:
+
+x-upstreams:
+  - chain: viction
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+      enabled:

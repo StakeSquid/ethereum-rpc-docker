@@ -1,49 +1,59 @@
-# todo: figure out how to pass the external IP to the client
-# todo: automatically initialize from snapshot
+# use at your own risk
 
 services:
   thundercore-venus:
-    image: thundercore/thunder:r4.1.3
-    stop_grace_period: 5m
+    image: ${THUNDERCORE_THUNDER_IMAGE:-thundercore/thunder}:${THUNDERCORE_VENUS_THUNDER_VERSION:-r4.1.3}
+    user: root
     ulimits:
-      nofile: 1048576
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
-      - "8545"
+      - 8545
+
     ports:
-      - "10368:10368/tcp"
-      - "10368:10368/udp"
+      - 10368:10368
+      - 10368:10368/udp
     volumes:
-      - thundercore-venus-thunder-pruned-leveldb-hash:/datadir
-      - ./thundercore/venus:/config
+      - ${THUNDERCORE_VENUS_THUNDER_PRUNED_LEVELDB_HASH_DATA:-thundercore-venus-thunder-pruned-leveldb-hash}:/datadir
+      - /slowdisk:/slowdisk
+
+    environment:
+      PORT: 10368
+    entrypoint: [/sbin/tini, --, /entrypoint.sh, --logToConsole]
     networks:
       - chains
-    entrypoint: [ "/sbin/tini", "--", "/entrypoint.sh", "--logToConsole" ]
-    environment:
-      CONFIG_PATH: /config
-      PORT: 10368
-      SNAPSHOT_CMD: 'wget -c "$(wget -q -O - https://chaindata-backup-prod-venus-us-east-1.s3.amazonaws.com/venus-latest)" -O - | tar -C /datadir -zx'
     restart: unless-stopped
+    stop_grace_period: 5m
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.thundercore-venus-thunder-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/thundercore-venus"
-      - "traefik.http.services.thundercore-venus-thunder-pruned-leveldb-hash.loadbalancer.server.port=8545"
-      - "traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.entrypoints=websecure"
-      - "traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.tls.certresolver=myresolver"
-      - "traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/thundercore-venus`)"
-      - "traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.middlewares=thundercore-venus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist"
+      - traefik.enable=true
+      - traefik.http.middlewares.thundercore-venus-thunder-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/thundercore-venus
+      - traefik.http.services.thundercore-venus-thunder-pruned-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/thundercore-venus`)}
+      - ${NO_SSL:+traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=PathPrefix(`/thundercore-venus`)}
+      - traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.middlewares=thundercore-venus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist
 
-  thundercore-venus-download:
-    image: alpine:latest
-    user: root
-    environment:
-      - SNAPSHOT_URL=https://chaindata-backup-prod-venus-us-east-1.s3.amazonaws.com/venus-latest
-    volumes:
-      - thundercore-venus-thunder-pruned-leveldb-hash:/datadir
-      - ./thundercore/scripts/download.thunder.sh:/download.sh
-    command: sh -c "/download.sh"      
-    restart: "no"
-    profiles:
-      - manual
-      
 volumes:
   thundercore-venus-thunder-pruned-leveldb-hash:
+
+x-upstreams:
+  - chain: thundercore-testnet
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+      enabled:

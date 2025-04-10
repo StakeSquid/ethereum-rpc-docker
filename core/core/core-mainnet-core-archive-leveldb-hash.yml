@@ -1,59 +1,87 @@
-
+# use at your own risk
 
 services:
   core-mainnet-archive:
-    image: ghcr.io/coredao-org/core-chain:1.0.15    
-    sysctls:
-      net.ipv4.tcp_slow_start_after_idle: 0
-      net.ipv4.tcp_no_metrics_save: 1
+    image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_MAINNET_CORE_VERSION:-1.0.15}
     user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    expose:
+      - 8545
+      - 8551
+
     ports:
-      - "10234:10234"
-      - "10234:10234/udp"
-    expose:                                                                              
-      - "8545"                                                                           
-    volumes:                                                                             
-      - core-mainnet-core-archive-leveldb-hash:/core/.ethereum
+      - 10169:10169
+      - 10169:10169/udp
+    volumes:
+      - ${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_DATA:-core-mainnet-core-archive-leveldb-hash}:/core/.ethereum
       - /slowdisk:/slowdisk
-      - ./core-chain/mainnet:/config      
-    entrypoint: [ "geth" ]
+
+      - .jwtsecret:/jwtsecret:ro
+
     command:
-      - --mainnet
-      - --config=/config/config.toml
-      - --db.engine=leveldb
-      - --state.scheme=hash
-      - --syncmode=full
-      - --gcmode=archive
-      - --rpc.gascap=600000000
+      - --datadir=/core/.ethereum
+      - --port=10169
+      - --bind=0.0.0.0
       - --nat=extip:${IP}
       - --http
-      - --http.addr=0.0.0.0
       - --http.port=8545
       - --http.vhosts=*
-      - --http.api=eth,net,web3,txpool,debug,admin,satoshi
       - --ws
-      - --ws.addr=0.0.0.0
       - --ws.port=8545
       - --ws.origins=*
-      - --ws.api=net,web3,eth,debug
-      - --maxpeers=200
-      - --nodiscover=false
-      - --discovery.port=10234     
-      - --port=10234
-      
-      
-    restart: unless-stopped
-    stop_grace_period: 3m
-    networks: 
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=eth,net,web3,txpool,debug,admin,satoshi
+      - --ws.api=eth,net,web3,txpool,debug,admin,satoshi
+
+      - --rpc.gascap=600000000
+      - --rpc.returndatalimit=10000000
+      - --rpc.txfeecap=0
+
+      - --db.engine=
+      - --state.scheme=
+      - --syncmode=full
+      - --gcmode=archive
+
+      - --config=/config/config.toml
+
+    networks:
       - chains
-    labels:                                                                              
-      - "traefik.enable=true"                                                            
-      - "traefik.http.middlewares.core-mainnet-core-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/core-mainnet-archive"             
-      - "traefik.http.services.core-mainnet-core-archive-leveldb-hash.loadbalancer.server.port=8545"                        
-      - "traefik.http.routers.core-mainnet-core-archive-leveldb-hash.entrypoints=websecure"                                 
-      - "traefik.http.routers.core-mainnet-core-archive-leveldb-hash.tls.certresolver=myresolver"                           
-      - "traefik.http.routers.core-mainnet-core-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/core-mainnet-archive`)"            
-      - "traefik.http.routers.core-mainnet-core-archive-leveldb-hash.middlewares=core-mainnet-core-archive-leveldb-hash-stripprefix, ipwhitelist"
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.core-mainnet-core-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/core-mainnet-archive
+      - traefik.http.services.core-mainnet-core-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.core-mainnet-core-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.core-mainnet-core-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.core-mainnet-core-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/core-mainnet-archive`)}
+      - ${NO_SSL:+traefik.http.routers.core-mainnet-core-archive-leveldb-hash.rule=PathPrefix(`/core-mainnet-archive`)}
+      - traefik.http.routers.core-mainnet-core-archive-leveldb-hash.middlewares=core-mainnet-core-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
   core-mainnet-core-archive-leveldb-hash:
+
+x-upstreams:
+  - chain: core
+    method-groups:
+      enabled:
+        - debug
+        - filter
+
+    methods:
+      disabled:
+      enabled:

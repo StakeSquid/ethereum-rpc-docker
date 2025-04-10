@@ -1,87 +1,148 @@
-# The erigon db can be downloaded from
-# https://boba-db.s3.us-east-2.amazonaws.com/mainnet/boba-mainnet-erigon-db-1149019.tgz
-# and extracted to the DATA_DIR
-
-# The jwt-secret.txt file should be a random string of32 characters and should be kept secret.
-
-# The p2p-node-key.txt is the private key used for the node to identify itself.
-
-# The discovery and peerstore directories are used to store the peerstore and discovery data.
-
-# boba is part of the superchain registry and knows it's overrides
+# use at your own risk
 
 services:
   boba-sepolia-archive:
-    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon:${BOBAETH_ERIGON_VERSION:-v1.2.11}
+    image: ${BOBA_ERIGON_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/erigon}:${BOBA_SEPOLIA_ERIGON_VERSION:-v1.2.11}
     user: root
-    command: |
-      --datadir=/db
-      --port=10249
-      --nat=stun
-      --chain=boba-sepolia
-      --http.addr=0.0.0.0
-      --http.port=8545
-      --http.compression=true
-      --ws.port=8545
-      --ws.compression=true
-      --ws
-      --http.corsdomain=*
-      --http.vhosts=*
-      --authrpc.addr=0.0.0.0
-      --authrpc.port=8551
-      --authrpc.vhosts=*
-      --authrpc.jwtsecret=/jwtsecret
-      --http.api=eth,debug,net,engine,web3
-      --txpool.gossip.disable=true
-      --rollup.sequencerhttp=https://sepolia.boba.network
-      --db.size.limit=8TB
-    ports:
-      - "10249:10249"
-      - "10249:10249/udp"
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
       - 8551
+
+    ports:
+      - 10249:10249
+      - 10249:10249/udp
+      - 30249:30249
+      - 30249:30249/udp
+      - 35249:35249
+      - 35249:35249/udp
     volumes:
-      - .jwtsecret:/jwtsecret
       - ${BOBA_SEPOLIA_OP_ERIGON_ARCHIVE_TRACE_DATA:-boba-sepolia-op-erigon-archive-trace}:/db
-    networks:                                                                                         
-      - chains      
+      - /slowdisk:/slowdisk
+
+      - .jwtsecret:/jwtsecret:ro
+
+    entrypoint: [erigon]
+    command:
+      - --datadir=/db
+      - --port=10249
+      - --bind=0.0.0.0
+      - --nat=extip:${IP}
+      - --http
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --ws.api=eth,erigon,web3,net,debug,trace,txpool,admin
+
+      - --rpc.returndata.limit=1100000
+      - --rpc.gascap=6000000000
+
+      - --p2p.allowed-ports=30249
+      - --p2p.allowed-ports=35249
+
+      - --chain=boba-sepolia
+
+    networks:
+      - chains
+    restart: unless-stopped
+    stop_grace_period: 5m
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.boba-sepolia-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/boba-sepolia-archive"
-      - "traefik.http.services.boba-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545"
-      - "${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.entrypoints=websecure}"
-      - "${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}"
-      - "${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-sepolia-archive`)}"
-      - "${NO_SSL:+traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=PathPrefix(`/boba-sepolia-archive`)}"      
-      - "traefik.http.routers.boba-sepolia-op-erigon-archive-trace.middlewares=boba-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist"
+      - traefik.enable=true
+      - traefik.http.middlewares.boba-sepolia-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/boba-sepolia-archive
+      - traefik.http.services.boba-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-sepolia-archive`)}
+      - ${NO_SSL:+traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=PathPrefix(`/boba-sepolia-archive`)}
+      - traefik.http.routers.boba-sepolia-op-erigon-archive-trace.middlewares=boba-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   boba-sepolia-archive-node:
-    depends_on:
-      - boba-sepolia-archive
-    image: us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node:${BOBAETH_NODE_VERSION:-v1.6.16-rc.1}
-    command: >
-      op-node
-      --l2=http://boba-sepolia-archive:8551
-      --l2.jwt-secret=/jwtsecret
-      --network=boba-sepolia
-      --rpc.addr=0.0.0.0
-      --rpc.port=8545
-    environment:
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=15249"
-      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
-      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
-      - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
-      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"      
-      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
+    image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}
     ports:
-      - "15249:15249"
-      - "15249:15249/udp"
-    networks:                                                                                         
-      - chains      
-    volumes:
-      - .jwtsecret:/jwtsecret
-    restart: unless-stopped
+      - 15249:15249
+      - 15249:15249/udp
+    environment:
+      - OP_NODE_NETWORK=boba-sepolia
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - OP_NODE_L2_ENGINE_RPC=http://boba-sepolia-archive:8551
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15249
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15249
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}
+      - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
+      - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    networks:
+      - chains
 
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+
+    restart: unless-stopped
 volumes:
-    boba-sepolia-op-erigon-archive-trace:
+  boba-sepolia-op-erigon-archive-trace:
+
+x-upstreams:
+  - chain:
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+        # non standard erigon only
+        - name: eth_getBlockReceipts
+        - name: eth_protocolVersion
+        - name: eth_callMany
+        - name: eth_callBundle
+        - name: debug_accountAt
+        - name: debug_traceCallMany
+        - name: erigon_getHeaderByHash
+        - name: erigon_getBlockReceiptsByBlockHash
+        - name: erigon_getHeaderByNumber
+        - name: erigon_getLogsByHash
+        - name: erigon_forks
+        - name: erigon_getBlockByTimestamp
+        - name: erigon_BlockNumber
+        - name: erigon_getLatestLogs

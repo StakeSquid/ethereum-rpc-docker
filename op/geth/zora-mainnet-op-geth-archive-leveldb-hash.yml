@@ -1,131 +1,139 @@
-
+# use at your own risk
 
 services:
   zora-mainnet-archive:
-    
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth:v1.101503.1    
-    
+    image: ${ZORA_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${ZORA_MAINNET_GETH_VERSION:-v1.101503.1}
+    user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
-      - 6060       
+      - 8551
+
     ports:
-      - "10066:10066"
-      - "10066:10066/udp"
-    
-    entrypoint: ["/bin/sh", "-c", "exec /usr/local/bin/geth \"$@\""]
-    restart: unless-stopped
-    stop_grace_period: 3m    
+      - 10714:10714
+      - 10714:10714/udp
     volumes:
-      #- ${ZORA_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-zora-mainnet-op-geth-archive-leveldb-hash}:/data
-      - zora-mainnet-op-geth-archive-leveldb-hash:/data
+      - ${ZORA_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-zora-mainnet-op-geth-archive-leveldb-hash}:/data
+      - /slowdisk:/slowdisk
+
       - .jwtsecret:/jwtsecret:ro
-      
-    
+
     environment:
-      - "GETH_DATADIR=/data"
-      - "GETH_OP_NETWORK=zora-mainnet"
-      - "GETH_GCMODE=archive"
-      - "GETH_SYNCMODE=full"      
-      - "GETH_STATE_SCHEME=hash"
-      - "GETH_DB_ENGINE=leveldb"
-      - "GETH_NAT=extip:${IP}"
-      - "GETH_PORT=10066"
-      - "GETH_WS_PORT=8545"
-      - "GETH_HTTP=true"
-      - "GETH_HTTP_ADDR=0.0.0.0"
-      - "GETH_HTTP_VHOSTS=*"
-      - "GETH_WS=true"
-      - "GETH_WS_ADDR=0.0.0.0"
-      - "GETH_WS_ORIGINS=*"
-      - "GETH_HTTP_API=eth,net,debug,admin,web3"
-      - "GETH_AUTHRPC_JWTSECRET=/jwtsecret"
-      - "GETH_AUTHRPC_ADDR=0.0.0.0"
-      - "GETH_AUTHRPC_VHOSTS=*"
-      
-      
-      
-                  
-    labels:                     
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.zora-mainnet-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/zora-mainnet-archive"                      
-      - "traefik.http.services.zora-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545"
-      - "traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure"                                              
-      - "traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver"                                        
-      - "traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-mainnet-archive`)"                     
-      - "traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.middlewares=zora-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist"                           
-    networks:                                                                                         
+      - GETH_OP_NETWORK=zora-mainnet
+    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
+    command:
+      - --datadir=/data
+      - --port=10714
+      - --bind=0.0.0.0
+      - --nat=extip:${IP}
+      - --http
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=web3,net,eth,debug,admin
+      - --ws.api=web3,net,eth,debug,admin
+
+      - --rpc.gascap=600000000
+      - --rpc.returndatalimit=10000000
+      - --rpc.txfeecap=0
+
+      - --db.engine=leveldb
+      - --state.scheme=hash
+      - --syncmode=full
+      - --gcmode=archive
+
+    networks:
+      - chains
+    restart: unless-stopped
+    stop_grace_period: 5m
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.zora-mainnet-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/zora-mainnet-archive
+      - traefik.http.services.zora-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-mainnet-archive`)}
+      - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/zora-mainnet-archive`)}
+      - traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.middlewares=zora-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
+  zora-mainnet-archive-node:
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${ZORA_MAINNET_NODE_VERSION:-v1.12.2}
+    ports:
+      - 15714:15714
+      - 15714:15714/udp
+    environment:
+      - OP_NODE_NETWORK=zora-mainnet
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L2_ENGINE_RPC=http://zora-mainnet-archive:8551
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15714
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15714
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
+      - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    networks:
       - chains
 
-      
-  zora-mainnet-archive-node:
-    
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node:v1.12.2
-    
-    expose:
-      - 8545
-      - 7300
-      - 6060
-    ports:
-      - "15066:15066"
-      - "15066:15066/udp"
-    entrypoint: [ "op-node" ]
-    restart: unless-stopped
     volumes:
       - .jwtsecret:/jwtsecret:ro
-            
-    stop_grace_period: 30s
-    
-    environment:
-      - "OP_NODE_NETWORK=zora-mainnet"
-      - "OP_NODE_SYNCMODE=execution-layer"
-      - "OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}"
-      - "OP_NODE_L2_ENGINE_AUTH=/jwtsecret"
-      - "OP_NODE_L2_ENGINE_RPC=http://zora-mainnet-archive:8551"
-      - "OP_NODE_LOG_LEVEL=info"
-      - "OP_NODE_METRICS_ADDR=0.0.0.0"
-      - "OP_NODE_METRICS_ENABLED=true"
-      - "OP_NODE_METRICS_PORT=7300"
-      - "OP_NODE_P2P_LISTEN_IP=0.0.0.0"
-      - "OP_NODE_P2P_LISTEN_TCP_PORT=15066"
-      - "OP_NODE_P2P_LISTEN_UDP_PORT=15066"
-      - "OP_NODE_RPC_ADDR=0.0.0.0"
-      - "OP_NODE_P2P_ADVERTISE_IP=${IP}"
-      - "OP_NODE_RPC_PORT=8545"
-      - "OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log"
-      - "OP_NODE_VERIFIER_L1_CONFS=0"
-      - "OP_NODE_STATIC_PEERS="
-      - "OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}"
-      - "OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}"
-      - "OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}"
-      - "OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}"
-      
-      
-                        
-      
-    networks:                                                                                         
-      - chains
-      
-volumes:  
+
+    restart: unless-stopped
+volumes:
   zora-mainnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:
-  - id: $${ID}
-    chain: $${CHAIN}
-    labels:
-      provider: $${PROVIDER}
+  - chain:
     method-groups:
       enabled:
         - debug
         - filter
+
     methods:
       disabled:
-        
-    connection:
-      generic:
-        rpc:
-          url: "$${RPC_URL}"
-        ws:
-          frameSize: 20Mb
-          msgSize: 50Mb
-          url: "$${WS_URL}"
-  
+      enabled:
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex

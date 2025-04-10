@@ -1,77 +1,127 @@
-
-
+# use at your own risk
 
 services:
   ethereum-sepolia-minimal:
-    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_SEPOLIA_ERIGON3_VERSION:-v3.0.0}
     user: root
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
-      - "8545"
+      - 8545
+      - 8551
+
     ports:
-      - "10087:10087"
-      - "10087:10087/udp"
-      - "25087:25087"
-      - "25087:25087/udp"
-      - "30087:30087"
-      - "30087:30087/udp"
-      - "15087:15087"
-      - "15087:15087/udp"
-      - "20087:20087"
-      - "20087:20087/udp"
-    environment:
-      - "IP=${IP}"
+      - 10317:10317
+      - 10317:10317/udp
+      - 30317:30317
+      - 30317:30317/udp
+      - 35317:35317
+      - 35317:35317/udp
+      - 15317:15317
+      - 15317:15317/udp
+      - 25317:25317
+      - 25317:25317/udp
     volumes:
-      - ethereum-sepolia-erigon3-minimal-trace:/root/.local/share/erigon
+      - ${ETHEREUM_SEPOLIA_ERIGON3_MINIMAL_TRACE_DATA:-ethereum-sepolia-erigon3-minimal-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
-            
+
+      - .jwtsecret:/jwtsecret:ro
+
+    entrypoint: [erigon]
+    command:
+      - --datadir=/root/.local/share/erigon
+      - --port=10317
+      - --bind=0.0.0.0
+      - --nat=extip:${IP}
+      - --http
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.port=8545
+      - --ws.origins=*
+      - --ws.addr=0.0.0.0
+      - --http.addr=0.0.0.0
+      - --maxpeers=50
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --ws.api=eth,erigon,web3,net,debug,trace,txpool,admin
+
+      - --rpc.returndata.limit=1100000
+      - --rpc.gascap=6000000000
+
+      - --prune.mode=
+
+      - --p2p.allowed-ports=30317
+      - --p2p.allowed-ports=35317
+      - --chain=sepolia
+
+      - --torrent.port=25317
+
     networks:
       - chains
-    
-    entrypoint: ["erigon"]
-    command:
-      - --chain=sepolia
-      
-      - --prune.mode=minimal
-      - --port=10087
-      - --p2p.allowed-ports=25087
-      - --p2p.allowed-ports=30087      
-      - --nat=extip:${IP}
-      - --http.addr=0.0.0.0
-      - --http.vhosts=*
-      - --http.corsdomain=*
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
-      - --rpc.returndata.limit=1100000
-      - --rpc.gascap=5000000000
-      - --ws.port=8545
-      - --ws
-       
-      - --torrent.port=20087
-      
-      - --beacon.api.port=5555
-      - --beacon.api.addr=0.0.0.0
-      - --beacon.api.cors.allow-origins=*      
-      - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=15087
-      - --caplin.discovery.tcpport=15087
-      - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
-
     restart: unless-stopped
-    stop_grace_period: 1m
+    stop_grace_period: 5m
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.ethereum-sepolia-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia-minimal"
-      - "traefik.http.services.ethereum-sepolia-erigon3-minimal-trace.loadbalancer.server.port=8545"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.entrypoints=websecure"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.tls.certresolver=myresolver"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-minimal`)"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.service=ethereum-sepolia-erigon3-minimal-trace"
-      
-      - "traefik.http.services.ethereum-sepolia-erigon3-minimal-trace-node.loadbalancer.server.port=5555"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.entrypoints=websecure"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.service=ethereum-sepolia-erigon3-minimal-trace-node"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.tls.certresolver=myresolver"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-minimal/eth`)"
-      - "traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist"
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-sepolia-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia-minimal
+      - traefik.http.services.ethereum-sepolia-erigon3-minimal-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-minimal`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=PathPrefix(`/ethereum-sepolia-minimal`)}
+      - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.service=ethereum-sepolia-erigon3-minimal-trace
+      - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.service=ethereum-sepolia-erigon3-minimal-trace-node
+      - traefik.http.services.ethereum-sepolia-erigon3-minimal-trace-node.loadbalancer.server.port=5555
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-minimal/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=PathPrefix(`/ethereum-sepolia-minimal/eth`)}
+      - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist
+
 volumes:
-    ethereum-sepolia-erigon3-minimal-trace:
+  ethereum-sepolia-erigon3-minimal-trace:
+
+x-upstreams:
+  - chain: sepolia
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+        # non standard erigon only
+        - name: eth_getBlockReceipts
+        - name: eth_protocolVersion
+        - name: eth_callMany
+        - name: eth_callBundle
+        - name: debug_accountAt
+        - name: debug_traceCallMany
+        - name: erigon_getHeaderByHash
+        - name: erigon_getBlockReceiptsByBlockHash
+        - name: erigon_getHeaderByNumber
+        - name: erigon_getLogsByHash
+        - name: erigon_forks
+        - name: erigon_getBlockByTimestamp
+        - name: erigon_BlockNumber
+        - name: erigon_getLatestLogs
