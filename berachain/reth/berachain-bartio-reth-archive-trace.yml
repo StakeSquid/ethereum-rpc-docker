@@ -83,6 +83,9 @@ services:
       - MONIKER=d${DOMAIN:-local}
       - P2P_PORT=15527
       - AUTH_RPC=http://berachain-bartio-archive:8551
+      - CHAIN_SPEC=testnet
+      - CHAINNAME=bartio
+      - CHAINID=80084
     entrypoint: [sh, /init.sh]
     networks:
       - chains
