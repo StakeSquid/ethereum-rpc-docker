@@ -84,7 +84,7 @@ services:
       - L1_BEACON=${ETHEREUM_HOLESKY_BEACON_REST}
       - L2_WS=ws://taiko-hekla:8545
       - L2_AUTH=http://taiko-hekla:8551
-      - P2P_CHECK_POINT_SYNC_URL=https://rpc.hekla.taiko.xyz
+      - P2P_CHECK_POINT_SYNC_URL=
       - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
       - P2P_SYNC=true
       - JWT_SECRET=/jwtsecret
