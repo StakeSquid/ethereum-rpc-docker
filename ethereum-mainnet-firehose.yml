@@ -53,7 +53,7 @@ services:
       - chains
     volumes:
       - ./ethereum-firehose/config.yml:/etc/firehose/config.yml:ro
-      - ${ETHEREUM_MAINNET_FIREHOSE__FIREGETH_DATA:-ethereum-mainnet-firehose-fireeth}:/var/lib/firehose                # Firehose data-dir
+      - ${ETHEREUM_MAINNET_FIREHOSE__FIREGETH_DATA:-ethereum-mainnet-firehose-firegeth}:/var/lib/firehose                # Firehose data-dir
       - ${ETHEREUM_MAINNET_FIREHOSE__BLOCKS_DATA:-ethereum-mainnet-firehose-blocks}:/var/lib/eth-blocks                  # Merged blocks store
       - .jwtsecret:/jwtsecret:ro                           # JWT for authrpc
     restart: unless-stopped

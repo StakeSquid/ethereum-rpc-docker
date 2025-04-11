@@ -36,8 +36,8 @@ services:
       - "18025:18025/udp"
     volumes:
       - ${LINEA_MAINNET_ERIGON_ARCHIVE_TRACE_DATA:-linea-mainnet-erigon-archive-trace}:/root/.local/share/erigon
-      - ./linea/shared:/configs/mainnet/shared
-      - ./linea/erigon/scripts/entrypoint.sh:/entrypoint.sh
+      - ./linea/mainnet:/configs/mainnet/shared
+      - ./linea/scripts/entrypoint.erigon.sh:/entrypoint.sh
     networks:
       - chains
     entrypoint: /entrypoint.sh

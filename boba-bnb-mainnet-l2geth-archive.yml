@@ -26,7 +26,7 @@ services:
       DATA_TRANSPORT_LAYER__SERVER_HOSTNAME: '0.0.0.0'
     volumes:
       - ./boba/bnb:/opt/optimism/packages/data-transport-layer/state-dumps/
-      - ${BOBA_BNB_MAINNET_L2GETH_ARCHIVE__DTL_DATA:-boba-bnb-l2geth-archive_dtl}:/db
+      - ${BOBA_BNB_MAINNET_L2GETH_ARCHIVE__DTL_DATA:-boba-bnb-mainnet-l2geth-archive_dtl}:/db
     networks:
       - chains
 
@@ -37,7 +37,7 @@ services:
     entrypoint: sh ./geth.sh
     stop_grace_period: 5m    
     volumes:
-      - ${BOBA_BNB_MAINNET_L2GETH_ARCHIVE__CLIENT_DATA:-boba-bnb-mainnet-l2geth-archive_client}:/root/.ethereum/
+      - ${BOBA_BNB_MAINNET_L2GETH_ARCHIVE__CLIENT_DATA:-boba-bnb-mainnet-l2geth-archive}:/root/.ethereum/
     environment:
       GETH_ALLOW_INSECURE_UNLOCK: 'true'
 #      ETH1_HTTP: 'https://bsc-dataseed.binance.org'
@@ -124,5 +124,5 @@ services:
 
 
 volumes:
-  boba-bnb-mainnet-l2geth-archive_client:
+  boba-bnb-mainnet-l2geth-archive:
   boba-bnb-mainnet-l2geth-archive_dtl:

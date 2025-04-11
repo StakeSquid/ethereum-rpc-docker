@@ -2,7 +2,7 @@
 
 services:
   avalanche-fuji-client:
-    image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalancheg}:${AVALANCHE_FUJI_GO_VERSION:-v1.13.0-fuji}
+    image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_FUJI_GO_VERSION:-v1.13.0-fuji}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)

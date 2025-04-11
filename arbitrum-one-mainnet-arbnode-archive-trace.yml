@@ -9,25 +9,25 @@ services:
     expose:
       - 8547
       - 8548
-    entrypoint: ["/bin/bash", "/entrypoint.sh"]
-    command: >
-        --l1.url=http://eth.drpc.org
-        --core.checkpoint-gas-frequency=156250000
-        --node.rpc.enable-l1-calls
-        --node.cache.allow-slow-lookup
-        --node.rpc.tracing.enable
-        --node.rpc.addr=0.0.0.0
-        --node.rpc.port=8547        
-        --node.rpc.tracing.namespace=trace
-        --node.chain-id=42161
-        --node.ws.addr=0.0.0.0
-        --node.ws.port=8548
-        --metrics
-        --metrics-server.addr=0.0.0.0
-        --metrics-server.port=7070
-        --l2.disable-upstream
-        --persistent.chain=/data/datadir/
-        --persistent.global-config=/data/
+    entrypoint: ["/home/user/go/bin/arb-node"]
+    command: 
+        - --l1.url=http://eth.drpc.org
+        - --core.checkpoint-gas-frequency=156250000
+        - --node.rpc.enable-l1-calls
+        - --node.cache.allow-slow-lookup
+        - --node.rpc.tracing.enable
+        - --node.rpc.addr=0.0.0.0
+        - --node.rpc.port=8547        
+        - --node.rpc.tracing.namespace=trace
+        - --node.chain-id=42161
+        - --node.ws.addr=0.0.0.0
+        - --node.ws.port=8548
+        - --metrics
+        - --metrics-server.addr=0.0.0.0
+        - --metrics-server.port=7070
+        - --l2.disable-upstream
+        - --persistent.chain=/data/datadir/
+        - --persistent.global-config=/data/
     restart: unless-stopped         
     labels:                     
       - "traefik.enable=true"
