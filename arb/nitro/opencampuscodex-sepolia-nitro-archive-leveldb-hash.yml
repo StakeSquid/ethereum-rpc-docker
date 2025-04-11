@@ -14,7 +14,7 @@ services:
       net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
       net.core.somaxconn: 32768                   # Higher connection queue
       # Memory/Connection Management
-      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
@@ -28,7 +28,7 @@ services:
       - ${OPENCAMPUSCODEX_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-opencampuscodex-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk
 
-      - ./tmp/opencampuscodex-sepolia-archive:/tmp
+      - .//sepolia:/config
 
     command:
       - --datadir=/root/.arbitrum
@@ -57,8 +57,6 @@ services:
       - --execution.sequencer.enable=false
       - --persistent.db-engine=leveldb
       - --persistent.chain=/root/.arbitrum/opencampuscodex-sepolia-archive
-
-      - --init.latest=archive
 
       - --conf.file=/config/baseConfig.json
 
@@ -93,7 +91,10 @@ volumes:
   opencampuscodex-sepolia-nitro-archive-leveldb-hash:
 
 x-upstreams:
-  - chain: open-campus-codex-sepolia
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    chain: open-campus-codex-sepolia
     method-groups:
       enabled:
         - debug
@@ -102,6 +103,7 @@ x-upstreams:
     methods:
       disabled:
       enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
         - name: debug_getRawBlock
         - name: debug_getRawTransaction

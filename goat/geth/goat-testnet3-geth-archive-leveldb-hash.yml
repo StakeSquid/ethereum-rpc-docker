@@ -14,7 +14,7 @@ services:
       net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
       net.core.somaxconn: 32768                   # Higher connection queue
       # Memory/Connection Management
-      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
@@ -27,6 +27,8 @@ services:
     volumes:
       - ${GOAT_TESTNET3_GETH_ARCHIVE_LEVELDB_HASH_DATA:-goat-testnet3-geth-archive-leveldb-hash}:/root/.ethereum
       - /slowdisk:/slowdisk
+
+      - .//testnet3:/config
 
     command: --goat=testnet3
     networks:
@@ -48,7 +50,10 @@ volumes:
   goat-testnet3-geth-archive-leveldb-hash_node:
 
 x-upstreams:
-  - chain: goat-testnet3
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    chain: goat-testnet3
     method-groups:
       enabled:
         - debug
@@ -57,6 +62,7 @@ x-upstreams:
     methods:
       disabled:
       enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
         - name: debug_getRawBlock
         - name: debug_getRawTransaction
