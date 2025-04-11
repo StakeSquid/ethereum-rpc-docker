@@ -75,16 +75,28 @@ This directory includes several useful scripts to help you manage and monitor yo
 - `show-networks.sh` - List all available network configurations
 - `show-running.sh` - List currently running containers
 - `sync-status.sh <config-name>` - Check synchronization status of a specific configuration
-- `logs.sh <config-name>` - View logs of all containers for a specific configuration (e.g., `ethereum-mainnet`)
+- `logs.sh <config-name>` - View logs of all containers for a specific configuration
+- `latest.sh <config-name>` - Get the latest block number and hash of a local node
+- `ping.sh <container-name>` - Test connectivity to a container from inside the Docker network
 
 ### Node Management
 
-- `stop.sh <config-name>` - Stop all containers for a specific configuration (e.g., `ethereum-mainnet`)
+- `stop.sh <config-name>` - Stop all containers for a specific configuration
 - `force-recreate.sh <config-name>` - Force recreate all containers for a specific configuration
 - `backup-node.sh <config-name> [webdav_url]` - Backup Docker volumes for a configuration (locally or to WebDAV)
 - `restore-volumes.sh <config-name> [http_url]` - Restore Docker volumes from backup (local or HTTP source)
 - `cleanup-backups.sh` - Clean up old backup files
 - `list-backups.sh` - List available backup files
+- `op-wheel.sh` - Tool for Optimism rollup maintenance, including rewinding to a specific block
+
+#### OP Wheel Usage Example
+
+```bash
+# Rewind an Optimism rollup to a specific block
+./op-wheel.sh engine set-forkchoice --unsafe=0x111AC7F --safe=0x111AC7F --finalized=0x111AC7F \
+  --engine=http://op-lisk-sepolia:8551/ --engine.open=http://op-lisk-sepolia:8545 \
+  --engine.jwt-secret-path=/jwtsecret
+```
 
 Note: `<config-name>` refers to the compose file name without the .yml extension (e.g., `ethereum-mainnet` for ethereum-mainnet.yml)
 
