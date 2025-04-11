@@ -150,7 +150,7 @@ Once your nodes are running, you can access the RPC endpoints at:
 
 - HTTPS: `https://yourdomain.tld/ethereum` (or other network paths)
 - HTTP: `http://yourdomain.tld/ethereum` (or other network paths)
-- WebSocket: `wss://yourdomain.tld/ethereum/ws` (or other network paths with /ws suffix)
+- WebSocket: `wss://yourdomain.tld/ethereum` (same URL as HTTP/HTTPS)
 
 All services use standard ports (80 for HTTP, 443 for HTTPS), so no port specification is required in the URL.
 
