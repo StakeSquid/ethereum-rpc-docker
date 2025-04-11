@@ -43,6 +43,7 @@ services:
       - --ws.port=8545
       - --ws.origins=*
       - --ws.addr=0.0.0.0
+
       - --http.addr=0.0.0.0
       - --maxpeers=50
       - --http.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin

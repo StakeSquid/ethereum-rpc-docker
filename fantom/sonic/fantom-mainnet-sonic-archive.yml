@@ -45,8 +45,7 @@ services:
       - --http.vhosts=*
       - --ws
       - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
+
       - --http.addr=0.0.0.0
       - --maxpeers=50
       - --http.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm,sfc
