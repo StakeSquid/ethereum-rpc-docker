@@ -31,7 +31,7 @@ services:
 
       - .jwtsecret:/jwtsecret:ro
 
-    entrypoint: [op-reth, node]
+    entrypoint: [/usr/local/bin/op-reth, node]
     command:
       - --datadir=/root/.local/share/reth
       - --port=10326
