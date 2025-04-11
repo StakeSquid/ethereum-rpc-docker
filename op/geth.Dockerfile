@@ -21,6 +21,6 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY --from=geth /app/build/bin/geth ./
+COPY --from=geth /app/build/bin/geth /usr/local/bin/geth
 
-ENTRYPOINT ["./geth"]
+ENTRYPOINT ["geth"]

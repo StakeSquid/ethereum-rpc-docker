@@ -34,6 +34,6 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY --from=op /app/op-node/bin/op-node ./
+COPY --from=op /app/op-node/bin/op-node /usr/local/bin/op-node
 
-ENTRYPOINT ["./op-node"]
+ENTRYPOINT ["op-node"]
