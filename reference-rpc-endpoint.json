@@ -250,7 +250,9 @@
   },
   "lens": {
     "id": 232,
-    "urls": []
+    "urls": [
+      "https://rpc.lens.xyz"
+    ]
   },
   "cronos-zkevm-testnet": {
     "id": 240,
@@ -408,7 +410,7 @@
   "core-testnet": {
     "id": 1115,
     "urls": [
-      "https://rpc.test.btcs.network/"
+      "https://rpc.test.btcs.network"
     ]
   },
   "core": {
@@ -1217,6 +1219,13 @@
     "id": 88153591557,
     "urls": [
       "https://rpc.arb-blueberry.gelato.digital"
+    ]
+  },
+  "core-pigeon": {
+    "id": 1114,
+    "urls": [
+      "https://rpc.test2.btcs.network",
+      "https://rpcar.test2.btcs.network"
     ]
   },
   "goat-testnet3": {
