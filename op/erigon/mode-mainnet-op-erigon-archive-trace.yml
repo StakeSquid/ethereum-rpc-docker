@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.mode-mainnet-op-erigon-archive-trace.middlewares=mode-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   mode-mainnet-archive-node:
-    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${MODE_MAINNET_NODE_VERSION:-v1.12.2}
+    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${MODE_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
       - 15509:15509
       - 15509:15509/udp

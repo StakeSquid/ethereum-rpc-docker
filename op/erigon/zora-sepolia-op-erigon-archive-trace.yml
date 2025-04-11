@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.zora-sepolia-op-erigon-archive-trace.middlewares=zora-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   zora-sepolia-archive-node:
-    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${ZORA_SEPOLIA_NODE_VERSION:-v1.12.2}
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${ZORA_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
       - 15839:15839
       - 15839:15839/udp

@@ -2,7 +2,7 @@
 
 services:
   zora-mainnet-archive:
-    image: ${ZORA_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${ZORA_MAINNET_GETH_VERSION:-v1.101503.1}
+    image: ${ZORA_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${ZORA_MAINNET_GETH_VERSION:-v1.101503.3}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.middlewares=zora-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   zora-mainnet-archive-node:
-    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${ZORA_MAINNET_NODE_VERSION:-v1.12.2}
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
       - 15714:15714
       - 15714:15714/udp

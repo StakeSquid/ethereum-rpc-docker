@@ -2,7 +2,7 @@
 
 services:
   mode-sepolia:
-    image: ${MODE_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${MODE_SEPOLIA_GETH_VERSION:-v1.101503.1}
+    image: ${MODE_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${MODE_SEPOLIA_GETH_VERSION:-v1.101503.3}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.mode-sepolia-op-geth-pruned-pebble-path.middlewares=mode-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   mode-sepolia-node:
-    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${MODE_SEPOLIA_NODE_VERSION:-v1.12.2}
+    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${MODE_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
       - 15308:15308
       - 15308:15308/udp

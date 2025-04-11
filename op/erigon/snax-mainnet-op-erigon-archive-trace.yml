@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.snax-mainnet-op-erigon-archive-trace.middlewares=snax-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   snax-mainnet-archive-node:
-    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${SNAX_MAINNET_NODE_VERSION:-v1.12.2}
+    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
       - 15671:15671
       - 15671:15671/udp

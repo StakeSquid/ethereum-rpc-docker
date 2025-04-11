@@ -80,7 +80,7 @@ services:
       - traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.middlewares=zircuit-mainnet-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
 
   zircuit-mainnet-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_MAINNET_NODE_VERSION:-v1.12.2}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
       - 15688:15688
       - 15688:15688/udp

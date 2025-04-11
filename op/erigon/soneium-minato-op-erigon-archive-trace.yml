@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.soneium-minato-op-erigon-archive-trace.middlewares=soneium-minato-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   soneium-minato-archive-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${SONEIUM_MINATO_NODE_VERSION:-v1.12.2}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.1}
     ports:
       - 15314:15314
       - 15314:15314/udp

@@ -2,7 +2,7 @@
 
 services:
   ink-sepolia-archive:
-    image: ${INK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${INK_SEPOLIA_GETH_VERSION:-v1.101503.1}
+    image: ${INK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${INK_SEPOLIA_GETH_VERSION:-v1.101503.3}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.ink-sepolia-op-geth-archive-leveldb-hash.middlewares=ink-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   ink-sepolia-archive-node:
-    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${INK_SEPOLIA_NODE_VERSION:-v1.12.2}
+    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${INK_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
       - 15869:15869
       - 15869:15869/udp
