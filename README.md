@@ -29,7 +29,7 @@ Most networks have both archive and pruned node configurations available, with s
 
 ```bash
 # Domain settings
-DOMAIN=node.traefik.me  # Use <anything>.traefik.me for automatic SSL certificates
+DOMAIN=192-168-1-100.traefik.me  # Use your server IP with dots replaced by hyphens
 MAIL=your-email@example.com  # Required for Let's Encrypt SSL
 WHITELIST=0.0.0.0/0  # IP whitelist for access (0.0.0.0/0 allows all)
 
@@ -93,8 +93,8 @@ Note: `<config-name>` refers to the compose file name without the .yml extension
 This system uses Traefik as a reverse proxy and can automatically handle SSL certificates:
 
 1. By default, SSL certificates are obtained from Let's Encrypt
-2. Use the domain `yourdomain.traefik.me` for testing (Traefik.me will automatically generate certificates)
-3. You can also use your IP address with traefik.me by replacing dots with hyphens, e.g., `127-0-0-1.traefik.me`
+2. Use your server's IP address with traefik.me by replacing dots with hyphens, e.g., `192-168-1-100.traefik.me`
+3. This works with any public IP address and lets traefik.me automatically generate valid SSL certificates
 4. For production, use your own domain and set MAIL in .env to your email for Let's Encrypt notifications
 5. To disable SSL, set `NO_SSL=true` in your .env file
 
@@ -151,3 +151,40 @@ This system includes support for DRPC (Decentralized RPC) integration, allowing 
 The `upstreams.sh` script automatically detects all running nodes on your machine and generates the appropriate configuration for the dshackle load balancer. This allows you to connect your nodes to drpc.org and sell RPC capacity.
 
 For more information about DRPC, visit [drpc.org](https://drpc.org/).
+
+## Backup and Restore System
+
+This repository includes a comprehensive backup and restore system for Docker volumes:
+
+### Local Backups
+
+- `backup-node.sh <config-name>` - Create a backup of all volumes for a configuration to the `/backup` directory
+- `restore-volumes.sh <config-name>` - Restore volumes from the latest backup in the `/backup` directory
+
+### Remote Backups
+
+To serve backups via HTTP and WebDAV:
+
+1. Add `backup-http.yml` to your `COMPOSE_FILE` variable in `.env`
+2. This exposes:
+   - HTTP access to backups at `https://yourdomain.tld/backup`
+   - WebDAV access at `https://yourdomain.tld/dav`
+
+### Cross-Server Backup and Restore
+
+For multi-server setups:
+
+1. On server A: Include `backup-http.yml` in `COMPOSE_FILE` to serve backups
+2. On server B: Use restore from server A's backups:
+   ```bash
+   # Restore directly from server A
+   ./restore-volumes.sh ethereum-mainnet https://serverA.domain.tld/backup/
+   ```
+
+3. Create backups on server B and send to server A via WebDAV:
+   ```bash
+   # Backup to server A's WebDAV
+   ./backup-node.sh ethereum-mainnet https://serverA.domain.tld/dav
+   ```
+
+This allows for efficient volume transfers between servers without needing SSH access.
