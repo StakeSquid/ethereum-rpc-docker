@@ -189,6 +189,214 @@ The `upstreams.sh` script automatically detects all running nodes on your machin
 
 For more information about DRPC, visit [drpc.org](https://drpc.org/).
 
+## Supported Networks
+
+This repository includes configurations for a wide range of blockchain networks:
+
+### Layer 1 Networks
+1. **Ethereum**
+   - Environments: Mainnet, Sepolia, Holesky
+   - Implementations: Erigon3, Reth, Geth
+
+2. **Avalanche**
+   - Environments: Mainnet, Fuji (testnet)
+   - Implementations: Go
+
+3. **Binance Smart Chain (BSC)**
+   - Environments: Mainnet, Chapel (testnet)
+   - Implementations: BSC, Erigon3
+
+4. **Polygon**
+   - Environments: Mainnet, Amoy (testnet)
+   - Implementations: Bor, Erigon3
+
+5. **Gnosis**
+   - Environments: Mainnet, Chiado (testnet)
+   - Implementations: Erigon3
+
+6. **Fantom**
+   - Environments: Mainnet, Testnet
+   - Implementations: Opera, Sonic
+
+7. **Core**
+   - Environments: Mainnet, Buffalo, Pigeon
+   - Implementations: Core
+
+8. **Berachain**
+   - Environments: Mainnet, Bepolia (testnet)
+   - Implementations: Reth
+
+9. **Ronin**
+   - Environments: Mainnet, Saigon (testnet)
+   - Implementations: Ronin
+
+10. **Viction**
+    - Environments: Mainnet, Testnet
+    - Implementations: Node
+
+11. **Fuse**
+    - Environments: Mainnet
+    - Implementations: Nethermind
+
+12. **Tron**
+    - Environments: Mainnet
+    - Implementations: Java-Tron
+
+13. **Thundercore**
+    - Environments: Zeus, Venus
+    - Implementations: Thunder
+
+14. **Goat**
+    - Environments: Mainnet, Testnet3
+    - Implementations: Geth
+
+15. **AlephZero**
+    - Environments: Mainnet, Sepolia
+    - Implementations: Nitro
+
+16. **Haqq**
+    - Environments: Mainnet
+    - Implementations: Haqq
+
+17. **Taiko**
+    - Environments: Alethia, Hekla
+    - Implementations: Geth
+
+18. **Rootstock**
+    - Environments: Mainnet, Testnet, Bamboo
+    - Implementations: RSKJ
+
+### Layer 2 Networks (OP Stack)
+1. **Optimism (OP)**
+   - Environments: Mainnet, Sepolia
+   - Implementations: Erigon, Geth, Reth
+
+2. **Base**
+   - Environments: Mainnet, Sepolia
+   - Implementations: Erigon, Geth, Reth
+
+3. **Zora**
+   - Environments: Mainnet, Sepolia
+   - Implementations: Erigon, Geth
+
+4. **Mode**
+   - Environments: Mainnet, Sepolia
+   - Implementations: Erigon, Geth
+
+5. **Blast**
+   - Environments: Mainnet, Sepolia
+   - Implementations: Geth
+
+6. **Fraxtal**
+   - Environments: Mainnet, Testnet
+   - Implementations: Geth
+
+7. **Bob**
+   - Environments: Mainnet
+   - Implementations: Erigon, Geth
+
+8. **Boba**
+   - Environments: Mainnet, Sepolia, BNB Mainnet
+   - Implementations: Erigon, Geth, L2Geth
+
+9. **Worldchain**
+   - Environments: Mainnet, Sepolia
+   - Implementations: Erigon, Geth
+
+10. **Unichain**
+    - Environments: Mainnet, Sepolia
+    - Implementations: Erigon, Geth
+
+11. **Metal**
+    - Environments: Mainnet, Sepolia
+    - Implementations: Erigon, Geth
+
+12. **Ink**
+    - Environments: Mainnet, Sepolia
+    - Implementations: Erigon, Geth
+
+13. **Lisk**
+    - Environments: Mainnet, Sepolia
+    - Implementations: Erigon, Geth, Reth
+
+14. **SNAX**
+    - Environments: Mainnet
+    - Implementations: Erigon, Geth
+
+15. **Swell**
+    - Environments: Mainnet
+    - Implementations: Erigon, Geth
+
+16. **Zircuit**
+    - Environments: Mainnet, Testnet, Garfield
+    - Implementations: Geth
+
+17. **Celo**
+    - Environments: Mainnet, Alfajores
+    - Implementations: Geth
+
+18. **Mantle**
+    - Environments: Mainnet, Sepolia
+    - Implementations: Geth
+
+19. **Manta Pacific**
+    - Environments: Mainnet
+    - Implementations: Geth
+
+20. **HashKeyChain**
+    - Environments: Mainnet
+    - Implementations: Erigon, Geth
+
+### Arbitrum Ecosystem
+1. **Arbitrum One**
+   - Environments: Mainnet, Sepolia
+   - Implementations: Nitro, ArbNode
+
+2. **Arbitrum Nova**
+   - Environments: Mainnet
+   - Implementations: Nitro
+
+3. **Everclear**
+   - Environments: Mainnet
+   - Implementations: Nitro
+
+4. **Playblock**
+   - Environments: Mainnet (on Nova)
+   - Implementations: Nitro
+
+5. **Real**
+   - Environments: Mainnet (on Nova)
+   - Implementations: Nitro
+
+6. **Connext**
+   - Environments: Sepolia
+   - Implementations: Nitro
+
+7. **OpenCampusCodex**
+   - Environments: Sepolia
+   - Implementations: Nitro
+
+### Other L2 Networks
+1. **Linea**
+   - Environments: Mainnet, Sepolia
+   - Implementations: Erigon
+
+2. **Scroll**
+   - Environments: Mainnet, Sepolia
+   - Implementations: L2Geth
+
+3. **zkSync Era**
+   - Environments: Mainnet, Sepolia
+   - Implementations: External-Node
+
+4. **Metis**
+   - Environments: Mainnet
+   - Implementations: Not specified
+
+5. **Moonbeam**
+   - Environments: Mainnet
+   - Implementations: Not specified
+
 ## Backup and Restore System
 
 This repository includes a comprehensive backup and restore system for Docker volumes:
