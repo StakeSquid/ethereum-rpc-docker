@@ -47,7 +47,6 @@ services:
       - --ws.api=eth,net,web3,txpool,debug,admin,parlia
 
       - --rpc.gascap=600000000
-      - --rpc.returndatalimit=10000000
       - --rpc.txfeecap=0
 
       - --db.engine=pebble

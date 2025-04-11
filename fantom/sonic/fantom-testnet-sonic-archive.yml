@@ -53,7 +53,6 @@ services:
       - --ws.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm,sfc
 
       - --rpc.gascap=600000000
-      - --rpc.returndatalimit=10000000
       - --rpc.txfeecap=0
 
       - --db.engine=

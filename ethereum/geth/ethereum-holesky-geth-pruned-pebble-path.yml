@@ -47,7 +47,6 @@ services:
       - --ws.api=eth,net,web3,debug,admin,txpool
 
       - --rpc.gascap=600000000
-      - --rpc.returndatalimit=10000000
       - --rpc.txfeecap=0
 
       - --authrpc.addr=0.0.0.0
