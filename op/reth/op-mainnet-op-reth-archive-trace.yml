@@ -79,7 +79,7 @@ services:
       - traefik.http.routers.op-mainnet-op-reth-archive-trace.middlewares=op-mainnet-op-reth-archive-trace-stripprefix, ipwhitelist
 
   op-mainnet-archive-node:
-    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${OP_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
       - 15114:15114
       - 15114:15114/udp

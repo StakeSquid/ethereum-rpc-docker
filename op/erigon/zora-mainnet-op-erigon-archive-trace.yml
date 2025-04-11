@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.zora-mainnet-op-erigon-archive-trace.middlewares=zora-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   zora-mainnet-archive-node:
-    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
       - 15360:15360
       - 15360:15360/udp

@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.middlewares=metal-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   metal-sepolia-node:
-    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${METAL_SEPOLIA_NODE_VERSION:-v1.13.1}
+    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
       - 15701:15701
       - 15701:15701/udp

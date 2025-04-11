@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.unichain-sepolia-op-erigon-archive-trace.middlewares=unichain-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   unichain-sepolia-archive-node:
-    image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${UNICHAIN_SEPOLIA_NODE_VERSION:-v1.13.1}
+    image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
       - 15196:15196
       - 15196:15196/udp

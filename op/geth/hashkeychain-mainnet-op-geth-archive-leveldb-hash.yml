@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.hashkeychain-mainnet-op-geth-archive-leveldb-hash.middlewares=hashkeychain-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   hashkeychain-mainnet-archive-node:
-    image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
       - 15188:15188
       - 15188:15188/udp

@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.base-sepolia-op-geth-pruned-pebble-path.middlewares=base-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   base-sepolia-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.1}
+    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
       - 15022:15022
       - 15022:15022/udp
