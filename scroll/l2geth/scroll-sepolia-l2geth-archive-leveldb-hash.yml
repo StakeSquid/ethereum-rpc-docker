@@ -48,8 +48,6 @@ services:
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
 
-      - --db.engine=leveldb
-      - --state.scheme=hash
       - --syncmode=full
       - --gcmode=archive
 
