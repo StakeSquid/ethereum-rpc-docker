@@ -2,7 +2,7 @@
 
 services:
   boba-sepolia-archive:
-    image: ${BOBA_ERIGON_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/erigon}:${BOBA_SEPOLIA_ERIGON_VERSION:-v1.2.11}
+    image: ${BOBA_ERIGON_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon}:${BOBA_SEPOLIA_ERIGON_VERSION:-v1.2.11}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.boba-sepolia-op-erigon-archive-trace.middlewares=boba-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   boba-sepolia-archive-node:
-    image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}
+    image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}
     ports:
       - 15249:15249
       - 15249:15249/udp

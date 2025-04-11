@@ -2,7 +2,7 @@
 
 services:
   zora-sepolia:
-    image: ${ZORA_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${ZORA_SEPOLIA_GETH_VERSION:-v1.101503.3}
+    image: ${ZORA_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${ZORA_SEPOLIA_GETH_VERSION:-v1.101503.3}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)

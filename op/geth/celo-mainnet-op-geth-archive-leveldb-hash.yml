@@ -2,7 +2,7 @@
 
 services:
   celo-mainnet-archive:
-    image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/geth}:${CELO_MAINNET_GETH_VERSION:-celo-v2.0.0}
+    image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_MAINNET_GETH_VERSION:-celo-v2.0.0}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
@@ -77,7 +77,7 @@ services:
       - traefik.http.routers.celo-mainnet-op-geth-archive-leveldb-hash.middlewares=celo-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   celo-mainnet-archive-node:
-    image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/node}:${CELO_MAINNET_NODE_VERSION:-celo-v2.0.0}
+    image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_MAINNET_NODE_VERSION:-celo-v2.0.0}
     ports:
       - 15993:15993
       - 15993:15993/udp

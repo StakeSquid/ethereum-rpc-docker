@@ -2,7 +2,7 @@
 
 services:
   hashkeychain-mainnet-archive:
-    image: ${HASHKEYCHAIN_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${HASHKEYCHAIN_MAINNET_GETH_VERSION:-v1.101503.3}
+    image: ${HASHKEYCHAIN_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${HASHKEYCHAIN_MAINNET_GETH_VERSION:-v1.101503.3}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
