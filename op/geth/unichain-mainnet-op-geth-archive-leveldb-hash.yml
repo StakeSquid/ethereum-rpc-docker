@@ -44,11 +44,11 @@ services:
       - --ws.port=8545
       - --ws.origins=*
       - --ws.addr=0.0.0.0
+      - --ws.api=web3,net,eth,debug,admin
 
       - --http.addr=0.0.0.0
       - --maxpeers=50
       - --http.api=web3,net,eth,debug,admin
-      - --ws.api=web3,net,eth,debug,admin
 
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0

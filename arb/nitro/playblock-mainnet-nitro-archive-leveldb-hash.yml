@@ -39,11 +39,11 @@ services:
       - --ws.port=8545
       - --ws.origins=*
       - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,arb,txpool,debug
 
       - --http.addr=0.0.0.0
       - --maxpeers=50
       - --http.api=eth,net,web3,arb,txpool,debug
-      - --ws.api=eth,net,web3,arb,txpool,debug
 
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0

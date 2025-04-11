@@ -49,7 +49,6 @@ services:
       - --http.addr=0.0.0.0
       - --maxpeers=50
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
-      - --ws.api=eth,erigon,web3,net,debug,trace,txpool,admin
 
       - --rpc.returndata.limit=1100000
       - --rpc.gascap=6000000000

@@ -43,7 +43,6 @@ services:
       - --http.addr=0.0.0.0
       - --maxpeers=50
       - --http.api=eth,net,web3,txpool,debug,admin,satoshi
-      - --ws.api=eth,net,web3,txpool,debug,admin,satoshi
 
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
