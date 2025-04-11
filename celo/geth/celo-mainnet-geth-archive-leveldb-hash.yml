@@ -35,6 +35,7 @@ services:
       - --http
       - --http.port=8545
       - --http.vhosts=*
+
       - --ws
       - --ws.port=8545
       - --ws.origins=*
