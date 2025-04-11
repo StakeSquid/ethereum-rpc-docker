@@ -37,7 +37,6 @@ services:
     command:
       - --datadir=/root/.local/share/reth
       - --port=10347
-      - --bind=0.0.0.0
       - --nat=extip:${IP}
       - --http
       - --http.port=8545

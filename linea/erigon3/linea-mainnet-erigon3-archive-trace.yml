@@ -39,7 +39,6 @@ services:
     command:
       - --datadir=/root/.local/share/erigon
       - --port=10060
-      - --bind=0.0.0.0
       - --nat=extip:${IP}
       - --http
       - --http.port=8545

@@ -37,7 +37,6 @@ services:
     command:
       - --datadir=/data
       - --port=10688
-      - --bind=0.0.0.0
       - --nat=extip:${IP}
       - --http
       - --http.port=8545
