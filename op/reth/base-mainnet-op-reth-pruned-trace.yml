@@ -2,7 +2,7 @@
 
 services:
   base-mainnet:
-    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${BASE_MAINNET_RETH_VERSION:-v1.3.4}
+    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_MAINNET_RETH_VERSION:-v1.3.4}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
@@ -31,7 +31,7 @@ services:
 
       - .jwtsecret:/jwtsecret:ro
 
-    entrypoint: [/usr/local/bin/op-reth, node]
+    entrypoint: [op-reth, node]
     command:
       - --datadir=/root/.local/share/reth
       - --port=10221
