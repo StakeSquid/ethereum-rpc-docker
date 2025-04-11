@@ -29,9 +29,12 @@ Most networks have both archive and pruned node configurations available, with s
 
 ```bash
 # Domain settings
-DOMAIN=192-168-1-100.traefik.me  # Use your server IP with dots replaced by hyphens
+DOMAIN=203-0-113-42.traefik.me  # Use your PUBLIC IP with dots replaced by hyphens
 MAIL=your-email@example.com  # Required for Let's Encrypt SSL
 WHITELIST=0.0.0.0/0  # IP whitelist for access (0.0.0.0/0 allows all)
+
+# Public IP (required for many chains)
+IP=203.0.113.42  # Your PUBLIC IP (get it with: curl ipinfo.io/ip)
 
 # Network settings
 CHAINS_SUBNET=192.168.0.0/26
@@ -100,14 +103,36 @@ This directory includes several useful scripts to help you manage and monitor yo
 
 Note: `<config-name>` refers to the compose file name without the .yml extension (e.g., `ethereum-mainnet` for ethereum-mainnet.yml)
 
-## SSL Certificates with Traefik
+## SSL Certificates and IP Configuration
 
-This system uses Traefik as a reverse proxy and can automatically handle SSL certificates:
+### Public IP Configuration
 
-1. By default, SSL certificates are obtained from Let's Encrypt
-2. Use your server's IP address with traefik.me by replacing dots with hyphens, e.g., `192-168-1-100.traefik.me`
-3. This works with any public IP address and lets traefik.me automatically generate valid SSL certificates
-4. For production, use your own domain and set MAIL in .env to your email for Let's Encrypt notifications
+Many blockchain nodes require your public IP address to function properly:
+
+1. Get your public IP address:
+   ```bash
+   curl ipinfo.io/ip
+   ```
+
+2. Add this IP to your `.env` file:
+   ```bash
+   IP=203.0.113.42  # Your actual public IP
+   ```
+
+3. This IP is used by several chains for P2P discovery and network communication
+
+### SSL Certificates with Traefik
+
+This system uses Traefik as a reverse proxy for SSL certificates:
+
+1. By default, certificates are obtained from Let's Encrypt
+2. Use your **public** IP address with traefik.me by replacing dots with hyphens
+   ```
+   # If your public IP is 203.0.113.42
+   DOMAIN=203-0-113-42.traefik.me
+   ```
+3. Traefik.me automatically generates valid SSL certificates for this domain
+4. For production, use your own domain and set MAIL for Let's Encrypt notifications
 5. To disable SSL, set `NO_SSL=true` in your .env file
 
 ## Configuration
