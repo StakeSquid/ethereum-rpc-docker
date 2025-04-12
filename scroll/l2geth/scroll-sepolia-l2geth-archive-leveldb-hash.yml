@@ -1,7 +1,7 @@
 
 services:
   scroll-sepolia-archive:                         
-    image: scrolltech/l2geth:scroll-v5.8.29
+    image: scrolltech/l2geth:scroll-v5.8.33
     expose: 
       - 8545
     ports:                      
