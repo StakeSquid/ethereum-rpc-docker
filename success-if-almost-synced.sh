@@ -9,7 +9,7 @@ while IFS= read -r line; do
     blacklist+=("$line")
 done < "$BASEPATH/path-blacklist.txt"
 
-pathlist=$(cat "$BASEPATH/$1.yml" | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
+pathlist=$(cat "$BASEPATH/$1.yml" | grep -oP "stripprefix\.prefixes.*?/\K[^\"]+")
 
 for path in $pathlist; do
     include=true
@@ -20,7 +20,7 @@ for path in $pathlist; do
     done
 
     if $include; then
-        RPC_URL="https://$DOMAIN$path"
+        RPC_URL="https://$DOMAIN/$path"
         response_file=$(mktemp)
 
         http_status_code=$(curl --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' "$RPC_URL")

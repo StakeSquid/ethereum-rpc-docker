@@ -16,7 +16,7 @@ else
     PROTO="https"
 fi
 
-pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=PathPrefix).*\"" | cut -d'`' -f2-2)
+pathlist=$(cat $BASEPATH/$1.yml | grep -oP "stripprefix\.prefixes.*?/\K[^\"]+")
 
 for path in $pathlist; do
     include=true
@@ -27,7 +27,7 @@ for path in $pathlist; do
     done
         
     if $include; then
-        RPC_URL="$PROTO://$DOMAIN$path"
+        RPC_URL="$PROTO://$DOMAIN/$path"
 
         ref=''
         if [ -n "$2" ]; then
