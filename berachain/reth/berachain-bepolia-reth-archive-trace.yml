@@ -33,7 +33,7 @@ services:
 
     environment:
       - BOOTNODES=enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303,enode://5b037f66099d5ded86eb7e1619f6d06ceb15609e8cc345ced22a4772b06178004e1490a3cd32fd1222789de4c6e4021c2d648a3d750f6d5323e64b771bbd8de7@34.87.142.180:30303,enode://bb7e44178543431feac8f0ee3827056b7b84d8235b802a8bdbbcd4939dab7f7dd2579ff577a38b002bb0139792af67abd2dd5c9f4f85b8da6e914fa76dca82bc@35.198.150.35:30303,enode://d071fa740e063ce1bb9cdc2b7937baeff6dc4000f91588d730a731c38a6ff0d4015814812c160fab8695e46f74b9b618735368ea2f16db4d785f16d29b3fb7b0@35.203.2.210:30303,enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303
-    entrypoint: [/bin/sh, -c, "trap 'exit 0' SIGTERM; while [ ! -f /config/eth-genesis.json ] && [ ! -f /tmp/stop ]; do sleep 1 & wait $!; done; exec reth node \"$@\"", --]
+    entrypoint: [/bin/bash, -c, "trap 'exit 0' SIGTERM; while [ ! -f /config/eth-genesis.json ] && [ ! -f /tmp/stop ]; do sleep 1 & wait $!; done; exec reth node \"$@\"", --]
     command:
       - --datadir=/root/.local/share/reth
       - --port=10347
