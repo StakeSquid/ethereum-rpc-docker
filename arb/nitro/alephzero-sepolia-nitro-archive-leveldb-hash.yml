@@ -37,7 +37,6 @@ services:
       - --http.api=eth,net,web3,arb,txpool,debug
       - --http.port=8545
       - --http.vhosts=*
-      - --init.latest=archive
       - --maxpeers=50
       - --nat=extip:${IP}
       - --node.batch-poster.enable=false
@@ -67,7 +66,7 @@ services:
       - chains
     volumes:
       - ${ALEPHZERO_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-alephzero-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
-      - ./tmp/alephzero-sepolia-archive:/tmp
+      - ./arb/sepolia:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

@@ -57,6 +57,7 @@ services:
       - chains
     volumes:
       - ${MANTLE_MAINNET_OP_GETH_PRUNED_LEVELDB_HASH_DATA:-mantle-mainnet-op-geth-pruned-leveldb-hash}:/data
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -75,11 +76,14 @@ services:
       - 15067:15067
       - 15067:15067/udp
     environment:
+      - OP_NODE_INDEXER_ENABLE=true
+      - OP_NODE_INDEXER_SOCKET=da-indexer-api.mantle.xyz:443
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
       - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
+      - OP_NODE_L2_BACKUP_UNSAFE_SYNC_RPC=https://rpc.mantle.xyz
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
       - OP_NODE_L2_ENGINE_RPC=http://mantle-mainnet:8551
       - OP_NODE_LOG_LEVEL=info
@@ -88,10 +92,12 @@ services:
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_NETWORK=mantle-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_AGENT=mantle
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
       - OP_NODE_P2P_LISTEN_TCP_PORT=15067
       - OP_NODE_P2P_LISTEN_UDP_PORT=15067
       - OP_NODE_P2P_STATIC_PEERS=/dns4/peer0.mantle.xyz/tcp/9003/p2p/16Uiu2HAmKVKzUAns2gLhZAz1PYcbnhY3WpxNxUZYeTN1x29tNBAW,/dns4/peer1.mantle.xyz/tcp/9003/p2p/16Uiu2HAm1AiZtVp8f5C8LvpSTAXC6GtwqAVKnB3VLawWYSEBmcFN,/dns4/peer2.mantle.xyz/tcp/9003/p2p/16Uiu2HAm2UHVKiPXpovs8VbbUQVPr7feBAqBJdFsH1z5XDiLEvHT
+      - OP_NODE_P2P_SYNCMODE=consensus-layer
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
@@ -102,6 +108,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

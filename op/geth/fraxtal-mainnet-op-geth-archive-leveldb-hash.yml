@@ -57,6 +57,7 @@ services:
       - chains
     volumes:
       - ${FRAXTAL_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-fraxtal-mainnet-op-geth-archive-leveldb-hash}:/data
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -75,6 +76,7 @@ services:
       - 15282:15282
       - 15282:15282/udp
     environment:
+      - OP_NODE_DA_RPC=https://da-rpc.mainnet.frax.com
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
       - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
@@ -101,6 +103,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

@@ -56,6 +56,7 @@ services:
       - chains
     volumes:
       - ${BOB_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-bob-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -100,6 +101,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

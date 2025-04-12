@@ -59,6 +59,7 @@ services:
       - chains
     volumes:
       - ${ZIRCUIT_TESTNET_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-zircuit-testnet-op-geth-pruned-pebble-hash}:/data
+      - ./op/testnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -104,6 +105,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/testnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

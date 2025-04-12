@@ -57,6 +57,7 @@ services:
       - chains
     volumes:
       - ${FRAXTAL_TESTNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-fraxtal-testnet-op-geth-archive-leveldb-hash}:/data
+      - ./op/testnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -75,6 +76,7 @@ services:
       - 15370:15370
       - 15370:15370/udp
     environment:
+      - OP_NODE_DA_RPC=https://da-rpc.testnet.frax.com
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
       - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
@@ -95,13 +97,14 @@ services:
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
-      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_SYNCMODE=consensus-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
     restart: unless-stopped
     networks:
       - chains
     volumes:
+      - ./op/testnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

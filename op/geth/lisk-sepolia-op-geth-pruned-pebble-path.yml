@@ -57,6 +57,7 @@ services:
       - chains
     volumes:
       - ${LISK_SEPOLIA_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-lisk-sepolia-op-geth-pruned-pebble-path}:/data
+      - ./op/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -101,13 +102,14 @@ services:
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
-      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_SYNCMODE=consensus-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
     restart: unless-stopped
     networks:
       - chains
     volumes:
+      - ./op/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

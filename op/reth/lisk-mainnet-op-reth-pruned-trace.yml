@@ -55,6 +55,7 @@ services:
       - chains
     volumes:
       - ${LISK_MAINNET_OP_RETH_PRUNED_TRACE_DATA:-lisk-mainnet-op-reth-pruned-trace}:/root/.local/share/reth
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -99,6 +100,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

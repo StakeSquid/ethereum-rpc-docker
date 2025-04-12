@@ -57,6 +57,7 @@ services:
       - chains
     volumes:
       - ${SNAX_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-snax-mainnet-op-geth-archive-leveldb-hash}:/data
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -101,6 +102,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:
