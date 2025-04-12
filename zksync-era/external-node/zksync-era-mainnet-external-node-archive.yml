@@ -25,7 +25,7 @@ services:
       - 8545
       - 8546
     environment:
-      - DATABASE_URL=postgres://postgres:notsecurepassword@zksync-era-mainnet-external-node-archive-db:5430/zksync_local_ext_node
+      - DATABASE_URL=postgres://postgres:notsecurepassword@zksync-era-mainnet-archive-db:5430/zksync_local_ext_node
       - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
       - EN_ETH_CLIENT_URL=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - EN_L2_CHAIN_ID=324
