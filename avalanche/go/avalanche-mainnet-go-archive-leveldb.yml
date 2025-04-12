@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -27,19 +28,16 @@ services:
       - 10929:10929/udp
     volumes:
       - ${AVALANCHE_MAINNET_GO_ARCHIVE_LEVELDB_DATA:-avalanche-mainnet-go-archive-leveldb}:/root/.avalanchego
-      - /slowdisk:/slowdisk
-
       - .//mainnet:/config
-
+      - /slowdisk:/slowdisk
     entrypoint: [/avalanchego/build/avalanchego]
     command:
       - --chain-config-dir /config/archive
       - --db-type=leveldb
-      - --http-host=
       - --http-allowed-hosts=*
-      - --staking-port=10929
+      - --http-host=
       - --public-ip=${IP}"
-
+      - --staking-port=10929
     networks:
       - chains
     restart: unless-stopped
@@ -49,15 +47,14 @@ services:
     image: nginx
     environment:
       PROXY_HOST: avalanche-mainnet-archive-client
-      RPC_PORT: 9650
       RPC_PATH: /ext/bc/C/rpc
-      WS_PORT: 9650
+      RPC_PORT: 9650
       WS_PATH: /ext/bc/C/ws
+      WS_PORT: 9650
     networks:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
-
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.avalanche-mainnet-go-archive-leveldb-stripprefix.stripprefix.prefixes=/avalanche-mainnet-archive
@@ -85,3 +82,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

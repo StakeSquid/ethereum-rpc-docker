@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -25,53 +26,44 @@ services:
     ports:
       - 10974:10974
       - 10974:10974/udp
-      - 30974:30974
-      - 30974:30974/udp
-      - 35974:35974
-      - 35974:35974/udp
       - 15974:15974
       - 15974:15974/udp
       - 25974:25974
       - 25974:25974/udp
+      - 30974:30974
+      - 30974:30974/udp
+      - 35974:35974
+      - 35974:35974/udp
     volumes:
       - ${GNOSIS_MAINNET_ERIGON3_PRUNED_TRACE_DATA:-gnosis-mainnet-erigon3-pruned-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
-
     entrypoint: [erigon]
     command:
-      - --datadir=/root/.local/share/erigon
-      - --port=10974
-      - --nat=extip:${IP}
-      - --http
-      - --http.port=8545
-      - --http.vhosts=*
-      - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
-
-      - --rpc.returndata.limit=1100000
-      - --rpc.gascap=6000000000
-
-      - --beacon.api.port=5555
       - --beacon.api.addr=0.0.0.0
       - --beacon.api.cors.allow-origins=*
+      - --beacon.api.port=5555
+      - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       - --caplin.discovery.addr=0.0.0.0
       - --caplin.discovery.port=15974
       - --caplin.discovery.tcpport=15974
-      - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
-
-      - --prune.mode=
-
+      - --chain=gnosis
+      - --datadir=/root/.local/share/erigon
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --http.port=8545
+      - --http.vhosts=*
+      - --maxpeers=50
+      - --nat=extip:${IP}
       - --p2p.allowed-ports=30974
       - --p2p.allowed-ports=35974
-      - --chain=gnosis
-
+      - --port=10974
+      - --prune.mode=
+      - --rpc.gascap=6000000000
+      - --rpc.returndata.limit=1100000
       - --torrent.port=25974
-
+      - --ws
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -133,3 +125,5 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
+
+...

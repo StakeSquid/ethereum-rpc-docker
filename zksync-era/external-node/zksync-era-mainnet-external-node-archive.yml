@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -28,14 +29,13 @@ services:
     volumes:
       - ${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_ARCHIVE_DATA:-zksync-era-mainnet-external-node-archive}:/db \
       - /slowdisk:/slowdisk
-
     environment:
       - DATABASE_URL=postgres://postgres:notsecurepassword@zksync-era-mainnet-external-node-archive-db:5430/zksync_local_ext_node
-      - EN_ETH_CLIENT_URL=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - EN_MAIN_NODE_URL=https://zksync2-mainnet.zksync.io
-      - EN_L2_CHAIN_ID=324
-      - EN_PRUNING_ENABLED=
       - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
+      - EN_ETH_CLIENT_URL=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - EN_L2_CHAIN_ID=324
+      - EN_MAIN_NODE_URL=https://zksync2-mainnet.zksync.io
+      - EN_PRUNING_ENABLED=
     networks:
       - chains
     restart: unless-stopped
@@ -45,15 +45,14 @@ services:
     image: nginx
     environment:
       PROXY_HOST: zksync-era-mainnet-archive-client
-      RPC_PORT: 8545
       RPC_PATH:
-      WS_PORT: 8546
+      RPC_PORT: 8545
       WS_PATH:
+      WS_PORT: 8546
     networks:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
-
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.zksync-era-mainnet-external-node-archive-stripprefix.stripprefix.prefixes=/zksync-era-mainnet-archive
@@ -89,8 +88,8 @@ services:
       timeout: 3s
       test: [CMD-SHELL, psql -U postgres -c "select exists (select * from pg_stat_activity where datname = '' and application_name = 'pg_restore')" | grep -e ".f$$"]
     environment:
-      - POSTGRES_PASSWORD=notsecurepassword
       - PGPORT=5430
+      - POSTGRES_PASSWORD=notsecurepassword
     networks:
       - chains
 
@@ -112,3 +111,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

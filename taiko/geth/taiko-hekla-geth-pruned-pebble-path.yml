@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,43 +27,34 @@ services:
       - 10396:10396/udp
     volumes:
       - ${TAIKO_HEKLA_GETH_PRUNED_PEBBLE_PATH_DATA:-taiko-hekla-geth-pruned-pebble-path}:/root/.ethereum
-      - /slowdisk:/slowdisk
-
       - .jwtsecret:/jwtsecret:ro
-
+      - /slowdisk:/slowdisk
     environment:
       - GETH_NETWORKID=167009
     command:
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
       - --datadir=/root/.ethereum
-      - --port=10396
-      - --nat=extip:${IP}
+      - --db.engine=pebble
+      - --gcmode=full
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,debug,admin,txpool,engine
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
-
+      - --nat=extip:${IP}
+      - --port=10396
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.vhosts=*
-
-      - --authrpc.jwtsecret=/jwtsecret
-
-      - --db.engine=pebble
       - --state.scheme=path
       - --syncmode=snap
-      - --gcmode=full
-
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -83,21 +75,20 @@ services:
       - 15396:15396
       - 15396:15396/udp
     environment:
-      - L1_WS=${ETHEREUM_HOLESKY_EXECUTION_WS}
-      - L1_BEACON=${ETHEREUM_HOLESKY_BEACON_REST}
-      - L2_WS=ws://taiko-hekla:8545
-      - L2_AUTH=http://taiko-hekla:8551
-      - P2P_CHECK_POINT_SYNC_URL=
-      - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
-      - P2P_SYNC=true
       - JWT_SECRET=/jwtsecret
+      - L1_BEACON=${ETHEREUM_HOLESKY_BEACON_REST}
+      - L1_WS=${ETHEREUM_HOLESKY_EXECUTION_WS}
+      - L2_AUTH=http://taiko-hekla:8551
+      - L2_WS=ws://taiko-hekla:8545
+      - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
+      - P2P_CHECK_POINT_SYNC_URL=
+      - P2P_SYNC=true
     entrypoint: [taiko-client, driver]
     networks:
       - chains
 
     volumes:
       - .jwtsecret:/jwtsecret:ro
-
     restart: unless-stopped
     env_file:
       - ./taiko/hekla.env
@@ -138,3 +129,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

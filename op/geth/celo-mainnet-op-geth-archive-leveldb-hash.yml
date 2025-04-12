@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,44 +27,35 @@ services:
       - 10993:10993/udp
     volumes:
       - ${CELO_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-celo-mainnet-op-geth-archive-leveldb-hash}:/data
-      - /slowdisk:/slowdisk
-
       - .jwtsecret:/jwtsecret:ro
-
+      - /slowdisk:/slowdisk
     environment:
       - GETH_OP_NETWORK=celo-mainnet
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
       - --datadir=/data
-      - --port=10993
-      - --nat=extip:${IP}
+      - --db.engine=leveldb
+      - --gcmode=archive
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,debug,admin,txpool,engine
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
-
+      - --nat=extip:${IP}
+      - --port=10993
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.vhosts=*
-
-      - --authrpc.jwtsecret=/jwtsecret
-
-      - --db.engine=leveldb
       - --state.scheme=hash
       - --syncmode=full
-      - --gcmode=archive
-
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -84,41 +76,40 @@ services:
       - 15993:15993
       - 15993:15993/udp
     environment:
-      - OP_NODE_NETWORK=celo-mainnet
-      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - OP_NODE_L2_ENGINE_RPC=http://celo-mainnet-archive:8551
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15993
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15993
-      - OP_NODE_P2P_ADVERTISE_IP=${IP}
-      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
+      - NODE_IMAGE=us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node
+      - NODE_VERSION=celo-v2.0.0
+      - OP_NODE_ALTDA_DA_SERVER=http://celo-mainnet-archive-eigenda-proxy:4242
+      - OP_NODE_ALTDA_DA_SERVICE=true
+      - OP_NODE_ALTDA_ENABLED=true
+      - OP_NODE_ALTDA_VERIFY_ON_READ=false
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
-      - OP_NODE_P2P_STATIC_PEERS=/ip4/34.83.180.111/tcp/9222/p2p/16Uiu2HAkxBYxPd4eDFJzwm84XPzymkXud847vu65eju4UCDRpDSM,/ip4/34.169.135.64/tcp/9222/p2p/16Uiu2HAm6oVW1YeKheAuhnJSySnVvbXZ5gXL4g36XrWb1imF9K3m,/ip4/34.169.201.36/tcp/9222/p2p/16Uiu2HAmCqAFUoq72tjGJfCkkzHoNbjTjshjEED4kWtRKMSxcMgb,/ip4/34.83.127.51/tcp/9222/p2p/16Uiu2HAmBqKBoxkk95CsZiXQmQHv9WMiHXU4Di6wzFuYEKo1i7dg,/ip4/35.227.175.30/tcp/9222/p2p/16Uiu2HAmTNVkin4vogHsqwJwShUkHtx48aDoxygGwgp9Tv5zQWTM,/ip4/34.82.198.98/tcp/9222/p2p/16Uiu2HAmS6CeFPUXMztLf4VDh9NLbauuXLSYx9YkXfyiscqoxsKt,/ip4/34.38.181.223/tcp/9222/p2p/16Uiu2HAmH3xfYGjaJDw6sxa8ds3bVwMYLZRpPzpTtTrYq7G4nZs3,/ip4/34.76.38.6/tcp/9222/p2p/16Uiu2HAm6yXZ9oRTSJfZzXe8wXJ165X3pfzAKdLB9sa27eRZgTwD,/ip4/35.187.106.54/tcp/9222/p2p/16Uiu2HAmPFucuARxzAqtXcD3evFoutKh7tSmfQCxwPKUXfkoyaqY,/ip4/34.76.16.183/tcp/9222/p2p/16Uiu2HAmS8NybNYedzHf4nuFfqyCDH9xiMpgMWxctMtau8dTUxeP,/ip4/104.199.39.59/tcp/9222/p2p/16Uiu2HAmGfwjf1XPikWYDN4NFpTBuuvs6C7eF2iyyKvvjK2MGrVM,/ip4/34.140.117.79/tcp/9222/p2p/16Uiu2HAkwSVN7WHohhoE1sh932y2q3Pv7AFiSugM8K6iFZLALq66
-      - OP_NODE_ALTDA_DA_SERVER=http://celo-mainnet-archive-eigenda-proxy:4242
-      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://celo-mainnet-archive:8551
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_NETWORK=celo-mainnet
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15993
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15993
+      - OP_NODE_P2P_STATIC_PEERS=/ip4/34.83.180.111/tcp/9222/p2p/16Uiu2HAkxBYxPd4eDFJzwm84XPzymkXud847vu65eju4UCDRpDSM,/ip4/34.169.135.64/tcp/9222/p2p/16Uiu2HAm6oVW1YeKheAuhnJSySnVvbXZ5gXL4g36XrWb1imF9K3m,/ip4/34.169.201.36/tcp/9222/p2p/16Uiu2HAmCqAFUoq72tjGJfCkkzHoNbjTjshjEED4kWtRKMSxcMgb,/ip4/34.83.127.51/tcp/9222/p2p/16Uiu2HAmBqKBoxkk95CsZiXQmQHv9WMiHXU4Di6wzFuYEKo1i7dg,/ip4/35.227.175.30/tcp/9222/p2p/16Uiu2HAmTNVkin4vogHsqwJwShUkHtx48aDoxygGwgp9Tv5zQWTM,/ip4/34.82.198.98/tcp/9222/p2p/16Uiu2HAmS6CeFPUXMztLf4VDh9NLbauuXLSYx9YkXfyiscqoxsKt,/ip4/34.38.181.223/tcp/9222/p2p/16Uiu2HAmH3xfYGjaJDw6sxa8ds3bVwMYLZRpPzpTtTrYq7G4nZs3,/ip4/34.76.38.6/tcp/9222/p2p/16Uiu2HAm6yXZ9oRTSJfZzXe8wXJ165X3pfzAKdLB9sa27eRZgTwD,/ip4/35.187.106.54/tcp/9222/p2p/16Uiu2HAmPFucuARxzAqtXcD3evFoutKh7tSmfQCxwPKUXfkoyaqY,/ip4/34.76.16.183/tcp/9222/p2p/16Uiu2HAmS8NybNYedzHf4nuFfqyCDH9xiMpgMWxctMtau8dTUxeP,/ip4/104.199.39.59/tcp/9222/p2p/16Uiu2HAmGfwjf1XPikWYDN4NFpTBuuvs6C7eF2iyyKvvjK2MGrVM,/ip4/34.140.117.79/tcp/9222/p2p/16Uiu2HAkwSVN7WHohhoE1sh932y2q3Pv7AFiSugM8K6iFZLALq66
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
-      - NODE_IMAGE=us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node
-      - NODE_VERSION=celo-v2.0.0
-      - OP_NODE_ALTDA_ENABLED=true
-      - OP_NODE_ALTDA_DA_SERVICE=true
-      - OP_NODE_ALTDA_VERIFY_ON_READ=false
     entrypoint: [op-node]
     networks:
       - chains
 
     volumes:
       - .jwtsecret:/jwtsecret:ro
-
     restart: unless-stopped
   celo-mainnet-archive-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_MAINNET_EIGENDA_PROXY_VERSION:-v1.6.4}
@@ -126,20 +117,19 @@ services:
       - 20993:20993
       - 20993:20993/udp
     environment:
-      - EIGENDA_PROXY_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - EIGENDA_PROXY_PORT=20993
-      - EIGENDA_PROXY_IMAGE=ghcr.io/layr-labs/eigenda-proxy
-      - EIGENDA_PROXY_VERSION=v1.6.4
-      - EIGENDA_PROXY_EIGENDA_STATUS_QUERY_TIMEOUT=45m
-      - EIGENDA_PROXY_EIGENDA_MAX_BLOB_LENGTH=32MiB
       - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
       - EIGENDA_PROXY_EIGENDA_GRPC_DISABLE_TLS=false
+      - EIGENDA_PROXY_EIGENDA_MAX_BLOB_LENGTH=32MiB
+      - EIGENDA_PROXY_EIGENDA_STATUS_QUERY_TIMEOUT=45m
+      - EIGENDA_PROXY_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - EIGENDA_PROXY_IMAGE=ghcr.io/layr-labs/eigenda-proxy
+      - EIGENDA_PROXY_PORT=20993
+      - EIGENDA_PROXY_VERSION=v1.6.4
     networks:
       - chains
 
     volumes:
       - ${CELO_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_DATA:-celo-mainnet-op-geth-archive-leveldb-hash_eigenda}:/data
-
     restart: unless-stopped
 volumes:
   celo-mainnet-op-geth-archive-leveldb-hash:
@@ -175,3 +165,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

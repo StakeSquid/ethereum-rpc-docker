@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,10 +27,8 @@ services:
       - 10640:10640/udp
     volumes:
       - ${GOAT_MAINNET_GETH_PRUNED_PEBBLE_PATH_DATA:-goat-mainnet-geth-pruned-pebble-path}:/root/.ethereum
-      - /slowdisk:/slowdisk
-
       - .//mainnet:/config
-
+      - /slowdisk:/slowdisk
     command: --goat=mainnet
     networks:
       - chains
@@ -82,3 +81,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

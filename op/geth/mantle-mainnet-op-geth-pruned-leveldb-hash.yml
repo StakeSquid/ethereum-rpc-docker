@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,44 +27,35 @@ services:
       - 10067:10067/udp
     volumes:
       - ${MANTLE_MAINNET_OP_GETH_PRUNED_LEVELDB_HASH_DATA:-mantle-mainnet-op-geth-pruned-leveldb-hash}:/data
-      - /slowdisk:/slowdisk
-
       - .jwtsecret:/jwtsecret:ro
-
+      - /slowdisk:/slowdisk
     environment:
       - GETH_OP_NETWORK=mantle-mainnet
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
       - --datadir=/data
-      - --port=10067
-      - --nat=extip:${IP}
+      - --db.engine=leveldb
+      - --gcmode=full
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,debug,admin,txpool,engine
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
-
+      - --nat=extip:${IP}
+      - --port=10067
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.vhosts=*
-
-      - --authrpc.jwtsecret=/jwtsecret
-
-      - --db.engine=leveldb
       - --state.scheme=hash
       - --syncmode=snap
-      - --gcmode=full
-
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -84,27 +76,27 @@ services:
       - 15067:15067
       - 15067:15067/udp
     environment:
-      - OP_NODE_NETWORK=mantle-mainnet
-      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - OP_NODE_L2_ENGINE_RPC=http://mantle-mainnet:8551
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15067
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15067
-      - OP_NODE_P2P_ADVERTISE_IP=${IP}
-      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
-      - OP_NODE_P2P_STATIC_PEERS=/dns4/peer0.mantle.xyz/tcp/9003/p2p/16Uiu2HAmKVKzUAns2gLhZAz1PYcbnhY3WpxNxUZYeTN1x29tNBAW,/dns4/peer1.mantle.xyz/tcp/9003/p2p/16Uiu2HAm1AiZtVp8f5C8LvpSTAXC6GtwqAVKnB3VLawWYSEBmcFN,/dns4/peer2.mantle.xyz/tcp/9003/p2p/16Uiu2HAm2UHVKiPXpovs8VbbUQVPr7feBAqBJdFsH1z5XDiLEvHT
-      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://mantle-mainnet:8551
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_NETWORK=mantle-mainnet
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15067
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15067
+      - OP_NODE_P2P_STATIC_PEERS=/dns4/peer0.mantle.xyz/tcp/9003/p2p/16Uiu2HAmKVKzUAns2gLhZAz1PYcbnhY3WpxNxUZYeTN1x29tNBAW,/dns4/peer1.mantle.xyz/tcp/9003/p2p/16Uiu2HAm1AiZtVp8f5C8LvpSTAXC6GtwqAVKnB3VLawWYSEBmcFN,/dns4/peer2.mantle.xyz/tcp/9003/p2p/16Uiu2HAm2UHVKiPXpovs8VbbUQVPr7feBAqBJdFsH1z5XDiLEvHT
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
     networks:
@@ -112,7 +104,6 @@ services:
 
     volumes:
       - .jwtsecret:/jwtsecret:ro
-
     restart: unless-stopped
 volumes:
   mantle-mainnet-op-geth-pruned-leveldb-hash:
@@ -147,3 +138,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

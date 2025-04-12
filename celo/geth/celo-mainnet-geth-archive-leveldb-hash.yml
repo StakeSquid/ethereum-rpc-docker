@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -27,33 +28,27 @@ services:
     volumes:
       - ${CELO_MAINNET_GETH_ARCHIVE_LEVELDB_HASH_DATA:-celo-mainnet-geth-archive-leveldb-hash}:/root/.celo
       - /slowdisk:/slowdisk
-
     command:
       - --datadir=/root/.celo
-      - --port=10164
-      - --nat=extip:${IP}
+      - --db.engine=leveldb
+      - --gcmode=archive
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,debug,admin,txpool,engine
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
-
+      - --nat=extip:${IP}
+      - --port=10164
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-
-      - --db.engine=leveldb
       - --state.scheme=hash
       - --syncmode=full
-      - --gcmode=archive
-
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -102,3 +97,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -27,40 +28,30 @@ services:
       - 10330:10330/udp
     volumes:
       - ${ETHEREUM_SEPOLIA_RETH_ARCHIVE_TRACE_DATA:-ethereum-sepolia-reth-archive-trace}:/root/.local/share/reth
-      - /slowdisk:/slowdisk
-
       - .jwtsecret:/jwtsecret:ro
-
+      - /slowdisk:/slowdisk
     entrypoint: [reth, node]
     command:
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --chain=sepolia
       - --datadir=/root/.local/share/reth
-      - --port=10330
-      - --nat=extip:${IP}
       - --http
-      - --http.port=8545
-
-      - --http.corsdomain=*
-      - --max-outbound-peers=50
-      - --max-inbound-peers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
-
       - --http.addr=0.0.0.0
       - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
-
-      - --rpc.max-logs-per-response=1100000
+      - --http.corsdomain=*
+      - --http.port=8545
+      - --max-inbound-peers=50
+      - --max-outbound-peers=50
+      - --nat=extip:${IP}
+      - --port=10330
       - --rpc.gascap=600000000
-
-      - --authrpc.addr=0.0.0.0
-
-      - --authrpc.jwtsecret=/jwtsecret
-
-      - --chain=sepolia
-
+      - --rpc.max-logs-per-response=1100000
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -81,28 +72,25 @@ services:
       - 15330:15330
       - 15330:15330/udp
     command:
-      - --sepolia
+      - --accept-terms-of-use
+      - --beacon-db-pruning
+      - --checkpoint-sync-url=https://sepolia.beaconstate.info
       - --datadir=/data
-      - --jwt-secret=/jwtsecret
-      - --rpc-host=0.0.0.0
+      - --enable-historical-state-representation=false
+      - --execution-endpoint=http://ethereum-sepolia-archive:8551
       - --grpc-gateway-host=0.0.0.0
+      - --jwt-secret=/jwtsecret
       - --monitoring-host=0.0.0.0
       - --p2p-tcp-port=15330
       - --p2p-udp-port=15330
-      - --checkpoint-sync-url=https://sepolia.beaconstate.info
-      - --execution-endpoint=http://ethereum-sepolia-archive:8551
-      - --enable-historical-state-representation=false
-      - --beacon-db-pruning
-      - --accept-terms-of-use
-
+      - --rpc-host=0.0.0.0
+      - --sepolia
     networks:
       - chains
 
     volumes:
-      - .jwtsecret:/jwtsecret:ro
-
       - ${ETHEREUM_SEPOLIA_RETH_ARCHIVE_TRACE__PRYSM_DATA:-ethereum-sepolia-reth-archive-trace_prysm}:/data
-
+      - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
   ethereum-sepolia-reth-archive-trace:
@@ -122,3 +110,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

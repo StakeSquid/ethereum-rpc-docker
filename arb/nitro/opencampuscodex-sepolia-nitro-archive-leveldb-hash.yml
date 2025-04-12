@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,53 +27,43 @@ services:
       - 10953:10953/udp
     volumes:
       - ${OPENCAMPUSCODEX_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-opencampuscodex-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
-      - /slowdisk:/slowdisk
-
       - .//sepolia:/config
-
+      - /slowdisk:/slowdisk
     command:
+      - --conf.file=/config/baseConfig.json
       - --datadir=/root/.arbitrum
-      - --port=10953
-      - --nat=extip:${IP}
+      - --execution.caching.archive=true
+      - --execution.caching.state-scheme=hash
+      - --execution.forwarding-target=https://rpc.open-campus-codex.gelato.digital
+      - --execution.rpc.gas-cap=600000000
+      - --execution.sequencer.enable=false
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,arb,txpool,debug
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,arb,txpool,debug
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,arb,txpool,debug
-
-      - --rpc.gascap=600000000
-      - --rpc.txfeecap=0
-
-      - --execution.caching.state-scheme=hash
-      - --execution.rpc.gas-cap=600000000
-      - --execution.caching.archive=true
-      - --execution.sequencer.enable=false
-      - --persistent.db-engine=leveldb
-      - --persistent.chain=/root/.arbitrum/opencampuscodex-sepolia-archive
-
-      - --conf.file=/config/baseConfig.json
-
-      - --node.sequencer=false
-      - --node.staker.enable=false
+      - --nat=extip:${IP}
       - --node.batch-poster.enable=false
       - --node.data-availability.enable=true
-      - --node.data-availability.sequencer-inbox-address=0xe347C1223381b9Dcd6c0F61cf81c90175A7Bae77
       - --node.data-availability.parent-chain-node-url=${ARBITRUM_SEPOLIA_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das.open-campus-codex.gelato.digital
-
+      - --node.data-availability.sequencer-inbox-address=0xe347C1223381b9Dcd6c0F61cf81c90175A7Bae77
       - --node.feed.input.url=wss://feed.open-campus-codex.gelato.digital
-      - --execution.forwarding-target=https://rpc.open-campus-codex.gelato.digital
+      - --node.sequencer=false
+      - --node.staker.enable=false
       - --parent-chain.connection.url=${ARBITRUM_SEPOLIA_EXECUTION_RPC}
-
+      - --persistent.chain=/root/.arbitrum/opencampuscodex-sepolia-archive
+      - --persistent.db-engine=leveldb
+      - --port=10953
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,arb,txpool,debug
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -120,3 +111,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

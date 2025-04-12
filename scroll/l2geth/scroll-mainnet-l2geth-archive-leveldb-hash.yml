@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -27,38 +28,30 @@ services:
     volumes:
       - ${SCROLL_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-scroll-mainnet-l2geth-archive-leveldb-hash}:/root/.ethereum
       - /slowdisk:/slowdisk
-
     command:
+      - --cache=8192
       - --datadir=/root/.ethereum
-      - --port=10083
-      - --nat=extip:${IP}
+      - --gcmode=archive
+      - --gpo.ignoreprice=1
       - --http
-      - --http.port=8545
-      - --http.vhosts=*
-      - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,admin,debug
-
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,admin,debug
-
+      - --http.port=8545
+      - --http.vhosts=*
+      - --l1.endpoint=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --maxpeers=50
+      - --nat=extip:${IP}
+      - --port=10083
+      - --rollup.verify
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-
-      - --syncmode=full
-      - --gcmode=archive
-
-      - --cache=8192
-      - --l1.endpoint=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --scroll
-
-      - --rollup.verify
-      - --gpo.ignoreprice=1
-
+      - --syncmode=full
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,admin,debug
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -106,3 +99,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

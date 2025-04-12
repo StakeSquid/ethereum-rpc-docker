@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,44 +27,35 @@ services:
       - 10687:10687/udp
     volumes:
       - ${OP_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-op-mainnet-op-geth-archive-leveldb-hash}:/data
-      - /slowdisk:/slowdisk
-
       - .jwtsecret:/jwtsecret:ro
-
+      - /slowdisk:/slowdisk
     environment:
       - GETH_OP_NETWORK=op-mainnet
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
       - --datadir=/data
-      - --port=10687
-      - --nat=extip:${IP}
+      - --db.engine=leveldb
+      - --gcmode=archive
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,debug,admin,txpool,engine
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
-
+      - --nat=extip:${IP}
+      - --port=10687
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.vhosts=*
-
-      - --authrpc.jwtsecret=/jwtsecret
-
-      - --db.engine=leveldb
       - --state.scheme=hash
       - --syncmode=full
-      - --gcmode=archive
-
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -84,26 +76,26 @@ services:
       - 15687:15687
       - 15687:15687/udp
     environment:
-      - OP_NODE_NETWORK=op-mainnet
-      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - OP_NODE_L2_ENGINE_RPC=http://op-mainnet-archive:8551
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15687
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15687
-      - OP_NODE_P2P_ADVERTISE_IP=${IP}
-      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
-      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://op-mainnet-archive:8551
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_NETWORK=op-mainnet
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15687
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15687
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
     networks:
@@ -111,7 +103,6 @@ services:
 
     volumes:
       - .jwtsecret:/jwtsecret:ro
-
     restart: unless-stopped
 volumes:
   op-mainnet-op-geth-archive-leveldb-hash:
@@ -146,3 +137,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

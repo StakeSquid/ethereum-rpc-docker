@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,33 +27,25 @@ services:
       - 10169:10169/udp
     volumes:
       - ${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_DATA:-core-mainnet-core-archive-leveldb-hash}:/core/.ethereum
-      - /slowdisk:/slowdisk
-
       - .//mainnet:/config
-
+      - /slowdisk:/slowdisk
     command:
+      - --config=/config/config.toml
       - --datadir=/core/.ethereum
-      - --port=10169
-      - --nat=extip:${IP}
+      - --db.engine=
+      - --gcmode=archive
       - --http
-      - --http.port=8545
-
-      - --ws
-      - --ws.port=8545
-
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,txpool,debug,admin,satoshi
-
+      - --http.port=8545
+      - --nat=extip:${IP}
+      - --port=10169
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-
-      - --db.engine=
       - --state.scheme=
       - --syncmode=full
-      - --gcmode=archive
-
-      - --config=/config/config.toml
-
+      - --ws
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -84,3 +77,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

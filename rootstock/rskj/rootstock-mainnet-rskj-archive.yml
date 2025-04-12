@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -27,10 +28,8 @@ services:
       - 10808:10808/udp
     volumes:
       - ${ROOTSTOCK_MAINNET_RSKJ_ARCHIVE_DATA:-rootstock-mainnet-rskj-archive}:/var/lib/rsk/database/mainnet
-      - /slowdisk:/slowdisk
-
       - .//mainnet:/config
-
+      - /slowdisk:/slowdisk
     networks:
       - chains
     restart: unless-stopped
@@ -40,15 +39,14 @@ services:
     image: nginx
     environment:
       PROXY_HOST: rootstock-mainnet-archive-client
-      RPC_PORT: 8545
       RPC_PATH: /
-      WS_PORT: 8546
+      RPC_PORT: 8545
       WS_PATH: /
+      WS_PORT: 8546
     networks:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
-
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.rootstock-mainnet-rskj-archive-stripprefix.stripprefix.prefixes=/rootstock-mainnet-archive
@@ -76,3 +74,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

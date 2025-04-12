@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -25,10 +26,8 @@ services:
       - 10368:10368/udp
     volumes:
       - ${THUNDERCORE_VENUS_THUNDER_PRUNED_LEVELDB_HASH_DATA:-thundercore-venus-thunder-pruned-leveldb-hash}:/datadir
-      - /slowdisk:/slowdisk
-
       - .//venus:/config
-
+      - /slowdisk:/slowdisk
     environment:
       PORT: 10368
     entrypoint: [/sbin/tini, --, /entrypoint.sh, --logToConsole]
@@ -63,3 +62,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

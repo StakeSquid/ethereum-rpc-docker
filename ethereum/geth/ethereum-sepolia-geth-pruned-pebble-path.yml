@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,43 +27,33 @@ services:
       - 10710:10710/udp
     volumes:
       - ${ETHEREUM_SEPOLIA_GETH_PRUNED_PEBBLE_PATH_DATA:-ethereum-sepolia-geth-pruned-pebble-path}:/root/.ethereum
-      - /slowdisk:/slowdisk
-
       - .jwtsecret:/jwtsecret:ro
-
+      - /slowdisk:/slowdisk
     command:
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
       - --datadir=/root/.ethereum
-      - --port=10710
-      - --nat=extip:${IP}
+      - --db.engine=pebble
+      - --gcmode=full
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,debug,admin,txpool,engine
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
-
+      - --nat=extip:${IP}
+      - --port=10710
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.vhosts=*
-
-      - --authrpc.jwtsecret=/jwtsecret
-
-      - --db.engine=pebble
+      - --sepolia
       - --state.scheme=path
       - --syncmode=snap
-      - --gcmode=full
-
-      - --sepolia
-
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -83,28 +74,25 @@ services:
       - 15710:15710
       - 15710:15710/udp
     command:
-      - --sepolia
+      - --accept-terms-of-use
+      - --beacon-db-pruning
+      - --checkpoint-sync-url=https://sepolia.beaconstate.info
       - --datadir=/data
-      - --jwt-secret=/jwtsecret
-      - --rpc-host=0.0.0.0
+      - --enable-historical-state-representation=false
+      - --execution-endpoint=http://ethereum-sepolia:8551
       - --grpc-gateway-host=0.0.0.0
+      - --jwt-secret=/jwtsecret
       - --monitoring-host=0.0.0.0
       - --p2p-tcp-port=15710
       - --p2p-udp-port=15710
-      - --checkpoint-sync-url=https://sepolia.beaconstate.info
-      - --execution-endpoint=http://ethereum-sepolia:8551
-      - --enable-historical-state-representation=false
-      - --beacon-db-pruning
-      - --accept-terms-of-use
-
+      - --rpc-host=0.0.0.0
+      - --sepolia
     networks:
       - chains
 
     volumes:
-      - .jwtsecret:/jwtsecret:ro
-
       - ${ETHEREUM_SEPOLIA_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-sepolia-geth-pruned-pebble-path_prysm}:/data
-
+      - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
   ethereum-sepolia-geth-pruned-pebble-path:
@@ -143,3 +131,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

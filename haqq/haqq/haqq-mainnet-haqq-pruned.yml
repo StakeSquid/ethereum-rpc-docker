@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,7 +27,6 @@ services:
     volumes:
       - ${HAQQ_MAINNET_HAQQ_PRUNED_DATA:-haqq-mainnet-haqq-pruned}:/root/.haqqd
       - /slowdisk:/slowdisk
-
     entrypoint: [haqqd, start]
     command: --p2p.laddr=tcp://0.0.0.0:10465
     networks:
@@ -60,3 +60,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

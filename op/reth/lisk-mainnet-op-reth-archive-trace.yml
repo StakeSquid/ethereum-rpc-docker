@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -27,41 +28,31 @@ services:
       - 10598:10598/udp
     volumes:
       - ${LISK_MAINNET_OP_RETH_ARCHIVE_TRACE_DATA:-lisk-mainnet-op-reth-archive-trace}:/root/.local/share/reth
-      - /slowdisk:/slowdisk
-
       - .jwtsecret:/jwtsecret:ro
-
+      - /slowdisk:/slowdisk
     entrypoint: [op-reth, node]
     command:
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --chain=lisk
       - --datadir=/root/.local/share/reth
-      - --port=10598
-      - --nat=extip:${IP}
       - --http
-      - --http.port=8545
-
-      - --http.corsdomain=*
-      - --max-outbound-peers=50
-      - --max-inbound-peers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
-
       - --http.addr=0.0.0.0
       - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
-
-      - --rpc.max-logs-per-response=1100000
-      - --rpc.gascap=600000000
-
-      - --authrpc.addr=0.0.0.0
-
-      - --authrpc.jwtsecret=/jwtsecret
-
-      - --chain=lisk
+      - --http.corsdomain=*
+      - --http.port=8545
+      - --max-inbound-peers=50
+      - --max-outbound-peers=50
+      - --nat=extip:${IP}
+      - --port=10598
       - --rollup.sequencer-http=https://rpc.api.lisk.com
-
+      - --rpc.gascap=600000000
+      - --rpc.max-logs-per-response=1100000
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -82,26 +73,26 @@ services:
       - 15598:15598
       - 15598:15598/udp
     environment:
-      - OP_NODE_NETWORK=lisk-mainnet
-      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - OP_NODE_L2_ENGINE_RPC=http://lisk-mainnet-archive:8551
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15598
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15598
-      - OP_NODE_P2P_ADVERTISE_IP=${IP}
-      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
-      - OP_NODE_SYNCMODE=consensus-layer
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://lisk-mainnet-archive:8551
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_NETWORK=lisk-mainnet
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15598
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15598
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=consensus-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
     networks:
@@ -109,7 +100,6 @@ services:
 
     volumes:
       - .jwtsecret:/jwtsecret:ro
-
     restart: unless-stopped
 volumes:
   lisk-mainnet-op-reth-archive-trace:
@@ -129,3 +119,4 @@ x-upstreams:
         - name: eth_maxPriorityFeePerGas
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

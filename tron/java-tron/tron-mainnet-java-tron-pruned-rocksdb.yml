@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -25,10 +26,8 @@ services:
       - 25815:25815/udp
     volumes:
       - ${TRON_MAINNET_JAVA_TRON_PRUNED_ROCKSDB_DATA:-tron-mainnet-java-tron-pruned-rocksdb}:/java-tron/output-directory
-      - /slowdisk:/slowdisk
-
       - .//mainnet:/config
-
+      - /slowdisk:/slowdisk
     command: -c /config/config.conf --log-config /config/logback.xml
     networks:
       - chains
@@ -61,3 +60,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

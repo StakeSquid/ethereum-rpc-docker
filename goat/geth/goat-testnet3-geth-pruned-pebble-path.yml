@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,10 +27,8 @@ services:
       - 10272:10272/udp
     volumes:
       - ${GOAT_TESTNET3_GETH_PRUNED_PEBBLE_PATH_DATA:-goat-testnet3-geth-pruned-pebble-path}:/root/.ethereum
-      - /slowdisk:/slowdisk
-
       - .//testnet3:/config
-
+      - /slowdisk:/slowdisk
     command: --goat=testnet3
     networks:
       - chains
@@ -82,3 +81,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

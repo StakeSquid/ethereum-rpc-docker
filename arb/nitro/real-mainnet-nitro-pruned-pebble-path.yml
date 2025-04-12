@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -27,51 +28,42 @@ services:
     volumes:
       - ${REAL_MAINNET_NITRO_PRUNED_PEBBLE_PATH_DATA:-real-mainnet-nitro-pruned-pebble-path}:/root/.arbitrum
       - /slowdisk:/slowdisk
-
     command:
+      - --conf.file=/config/baseConfig.json
       - --datadir=/root/.arbitrum
-      - --port=10354
-      - --nat=extip:${IP}
+      - --execution.caching.archive=false
+      - --execution.caching.state-scheme=path
+      - --execution.forwarding-target=https://rpc.realforreal.gelato.digital
+      - --execution.rpc.gas-cap=600000000
+      - --execution.sequencer.enable=false
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,arb,txpool,debug
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,arb,txpool,debug
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,arb,txpool,debug
-
-      - --rpc.gascap=600000000
-      - --rpc.txfeecap=0
-
-      - --execution.caching.state-scheme=path
-      - --execution.rpc.gas-cap=600000000
-      - --execution.caching.archive=false
-      - --execution.sequencer.enable=false
-      - --persistent.db-engine=pebble
-      - --persistent.chain=/root/.arbitrum/real-mainnet
-
-      - --conf.file=/config/baseConfig.json
-
-      - --node.sequencer=false
-      - --node.staker.enable=false
+      - --nat=extip:${IP}
       - --node.batch-poster.enable=false
       - --node.data-availability.enable=true
-      - --node.data-availability.sequencer-inbox-address=0x466813324240923703236721233648302990016039913376
       - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das.realforreal.gelato.digital
-
+      - --node.data-availability.sequencer-inbox-address=0x466813324240923703236721233648302990016039913376
       - --node.feed.input.url=wss://feed.realforreal.gelato.digital
-      - --execution.forwarding-target=https://rpc.realforreal.gelato.digital
-      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --node.sequencer=false
+      - --node.staker.enable=false
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
-
+      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --persistent.chain=/root/.arbitrum/real-mainnet
+      - --persistent.db-engine=pebble
+      - --port=10354
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,arb,txpool,debug
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -122,3 +114,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

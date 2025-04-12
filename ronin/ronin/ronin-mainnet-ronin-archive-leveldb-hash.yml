@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,22 +27,20 @@ services:
     volumes:
       - ${RONIN_MAINNET_RONIN_ARCHIVE_LEVELDB_HASH_DATA:-ronin-mainnet-ronin-archive-leveldb-hash}:/ronin
       - /slowdisk:/slowdisk
-
     environment:
+      - DB_ENGINE=
+      - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
       - NETWORK_ID=2020
       - NETWORK_PORT=10276
-      - DB_ENGINE=
       - STATE_SCHEME=
-      - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
     command:
-      - --port=10276
-      - --http.api admin,eth,net,web3,consortium,txpool,debug
       - --discovery.dns enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.roninchain.com
-      - --txpool.pricelimit 20000000000
-      - --txpool.nolocals
-      - --nat=extip:${IP}
       - --gcmode=archive
-
+      - --http.api admin,eth,net,web3,consortium,txpool,debug
+      - --nat=extip:${IP}
+      - --port=10276
+      - --txpool.nolocals
+      - --txpool.pricelimit 20000000000
     networks:
       - chains
     restart: unless-stopped
@@ -73,3 +72,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

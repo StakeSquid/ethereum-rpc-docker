@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -27,39 +28,32 @@ services:
     volumes:
       - ${POLYGON_MAINNET_BOR_PRUNED_PEBBLE_PATH_DATA:-polygon-mainnet-bor-pruned-pebble-path}:/root.bor/
       - /slowdisk:/slowdisk
-
     entrypoint: [bor, server]
     command:
+      - --bor.heimdall=https://polygon-heimdall-rest.publicnode.com
+      - --chain=mainnet
       - --datadir=/root.bor/
-      - --port=10961
-      - --nat=extip:${IP}
+      - --db.engine=pebble
+      - --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.polygon-peers.io
+      - --gcmode=full
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,txpool,debug,admin,bor
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,txpool,debug,admin,bor
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,txpool,debug,admin,bor
-
+      - --nat=extip:${IP}
+      - --port=10961
       - --rpc.gascap=600000000
+      - --rpc.returndatalimit=10000000
       - --rpc.txfeecap=0
-
-      - --db.engine=pebble
       - --state.scheme=path
       - --syncmode=snap
-      - --gcmode=full
-
-      - --chain=mainnet
-      - --bor.heimdall=https://polygon-heimdall-rest.publicnode.com
-      - --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.polygon-peers.io
-      - --rpc.returndatalimit=10000000
-
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,txpool,debug,admin,bor
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -110,3 +104,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...

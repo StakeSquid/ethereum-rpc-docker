@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -27,20 +28,17 @@ services:
       - 10670:10670/udp
     volumes:
       - ${VICTION_MAINNET_NODE_PRUNED_LEVELDB_HASH_DATA:-viction-mainnet-node-pruned-leveldb-hash}:/tomochain/data
-      - /slowdisk:/slowdisk
-
       - .//mainnet:/config
-
+      - /slowdisk:/slowdisk
     environment:
       EXTIP: ${IP}
       P2P_PORT: 10670
     command:
+      - --gcmode=full
+      - --rpcapi=eth,debug,net,db,admin,web3
+      - --syncmode=full
       - --tomox
       - --tomox.datadir=/tomochain/data/tomox
-      - --gcmode=full
-      - --syncmode=full
-      - --rpcapi=eth,debug,net,db,admin,web3
-
     networks:
       - chains
     restart: unless-stopped
@@ -50,15 +48,14 @@ services:
     image: nginx
     environment:
       PROXY_HOST: viction-mainnet-client
-      RPC_PORT: 8545
       RPC_PATH:
-      WS_PORT: 8546
+      RPC_PORT: 8545
       WS_PATH:
+      WS_PORT: 8546
     networks:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
-
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.viction-mainnet-node-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet
@@ -86,3 +83,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

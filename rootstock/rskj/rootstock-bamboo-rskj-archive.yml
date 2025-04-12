@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -28,7 +29,6 @@ services:
     volumes:
       - ${ROOTSTOCK_BAMBOO_RSKJ_ARCHIVE_DATA:-rootstock-bamboo-rskj-archive}:/var/lib/rsk/database/mainnet
       - /slowdisk:/slowdisk
-
     networks:
       - chains
     restart: unless-stopped
@@ -38,15 +38,14 @@ services:
     image: nginx
     environment:
       PROXY_HOST: rootstock-bamboo-archive-client
-      RPC_PORT: 8545
       RPC_PATH: /
-      WS_PORT: 8546
+      RPC_PORT: 8545
       WS_PATH: /
+      WS_PORT: 8546
     networks:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
-
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.rootstock-bamboo-rskj-archive-stripprefix.stripprefix.prefixes=/rootstock-bamboo-archive
@@ -74,3 +73,4 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+...

@@ -1,3 +1,4 @@
+---
 # use at your own risk
 
 services:
@@ -26,38 +27,30 @@ services:
       - 10759:10759/udp
     volumes:
       - ${BSC_CHAPEL_BSC_PRUNED_PEBBLE_PATH_DATA:-bsc-chapel-bsc-pruned-pebble-path}:/bsc/.ethereum
-      - /slowdisk:/slowdisk
-
       - .//chapel:/config
-
+      - /slowdisk:/slowdisk
     command:
+      - --config=/config/config.toml
       - --datadir=/bsc/.ethereum
-      - --port=10759
-      - --nat=extip:${IP}
+      - --db.engine=pebble
+      - --gcmode=full
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,txpool,debug,admin,parlia
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
-
-      - --ws
-      - --ws.port=8545
-      - --ws.origins=*
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,txpool,debug,admin,parlia
-
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,txpool,debug,admin,parlia
-
+      - --nat=extip:${IP}
+      - --port=10759
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-
-      - --db.engine=pebble
       - --state.scheme=path
       - --syncmode=snap
-      - --gcmode=full
-
-      - --config=/config/config.toml
-
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,txpool,debug,admin,parlia
+      - --ws.origins=*
+      - --ws.port=8545
     networks:
       - chains
     restart: unless-stopped
@@ -108,3 +101,5 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+
+...
