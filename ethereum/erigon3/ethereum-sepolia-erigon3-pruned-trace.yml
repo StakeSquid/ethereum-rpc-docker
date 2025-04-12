@@ -86,7 +86,6 @@ services:
       - traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace-node.middlewares=ethereum-sepolia-erigon3-pruned-trace-stripprefix, ipwhitelist
 
 volumes:
-
   ethereum-sepolia-erigon3-pruned-trace:
 
 x-upstreams:

@@ -93,9 +93,7 @@ services:
       - chains
 
 volumes:
-
   zksync-era-mainnet-external-node-pruned:
-
   zksync-era-mainnet-external-node-pruned_db:
 
 x-upstreams:

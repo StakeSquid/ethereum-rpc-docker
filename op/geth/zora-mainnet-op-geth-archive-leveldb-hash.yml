@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   zora-mainnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:

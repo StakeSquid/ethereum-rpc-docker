@@ -93,9 +93,7 @@ services:
       - chains
 
 volumes:
-
   zksync-era-sepolia-external-node-pruned:
-
   zksync-era-sepolia-external-node-pruned_db:
 
 x-upstreams:

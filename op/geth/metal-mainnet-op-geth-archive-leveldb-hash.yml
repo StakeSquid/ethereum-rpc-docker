@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   metal-mainnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:

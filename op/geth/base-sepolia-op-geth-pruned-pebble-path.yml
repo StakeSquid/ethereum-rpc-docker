@@ -105,7 +105,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   base-sepolia-op-geth-pruned-pebble-path:
 
 x-upstreams:

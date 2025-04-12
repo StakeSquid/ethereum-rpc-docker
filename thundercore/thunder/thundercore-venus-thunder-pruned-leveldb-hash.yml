@@ -45,7 +45,6 @@ services:
       - traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.middlewares=thundercore-venus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   thundercore-venus-thunder-pruned-leveldb-hash:
 
 x-upstreams:

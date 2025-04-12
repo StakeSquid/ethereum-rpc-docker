@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   mode-sepolia-op-erigon-archive-trace:
 
 x-upstreams:

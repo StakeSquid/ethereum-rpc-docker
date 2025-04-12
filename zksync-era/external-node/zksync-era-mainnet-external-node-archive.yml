@@ -93,9 +93,7 @@ services:
       - chains
 
 volumes:
-
   zksync-era-mainnet-external-node-archive:
-
   zksync-era-mainnet-external-node-archive_db:
 
 x-upstreams:

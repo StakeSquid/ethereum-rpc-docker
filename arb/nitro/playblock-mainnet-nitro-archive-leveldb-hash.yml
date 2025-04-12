@@ -78,7 +78,6 @@ services:
       - traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.middlewares=playblock-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   playblock-mainnet-nitro-archive-leveldb-hash:
 
 x-upstreams:

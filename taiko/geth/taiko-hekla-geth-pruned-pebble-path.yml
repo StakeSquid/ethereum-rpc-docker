@@ -92,7 +92,6 @@ services:
       - ./taiko/hekla.env
 
 volumes:
-
   taiko-hekla-geth-pruned-pebble-path:
 
 x-upstreams:

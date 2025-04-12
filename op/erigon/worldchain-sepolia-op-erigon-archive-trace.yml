@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   worldchain-sepolia-op-erigon-archive-trace:
 
 x-upstreams:

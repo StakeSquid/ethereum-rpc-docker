@@ -66,7 +66,6 @@ services:
       - traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.middlewares=viction-mainnet-node-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   viction-mainnet-node-archive-leveldb-hash:
 
 x-upstreams:

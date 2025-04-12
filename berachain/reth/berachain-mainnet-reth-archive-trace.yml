@@ -90,9 +90,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   berachain-mainnet-reth-archive-trace:
-
   berachain-mainnet-reth-archive-trace_node:
 
 x-upstreams:

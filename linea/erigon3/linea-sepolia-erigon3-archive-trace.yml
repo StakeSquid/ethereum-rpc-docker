@@ -69,7 +69,6 @@ services:
       - traefik.http.routers.linea-sepolia-erigon3-archive-trace.middlewares=linea-sepolia-erigon3-archive-trace-stripprefix, ipwhitelist
 
 volumes:
-
   linea-sepolia-erigon3-archive-trace:
 
 x-upstreams:

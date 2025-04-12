@@ -80,7 +80,6 @@ services:
       - traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.middlewares=connext-sepolia-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   connext-sepolia-nitro-archive-leveldb-hash:
 
 x-upstreams:

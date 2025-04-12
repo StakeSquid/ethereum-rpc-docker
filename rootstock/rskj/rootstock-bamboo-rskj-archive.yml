@@ -56,7 +56,6 @@ services:
       - traefik.http.routers.rootstock-bamboo-rskj-archive.middlewares=rootstock-bamboo-rskj-archive-stripprefix, ipwhitelist
 
 volumes:
-
   rootstock-bamboo-rskj-archive:
 
 x-upstreams:

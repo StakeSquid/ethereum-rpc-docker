@@ -78,7 +78,6 @@ services:
       - traefik.http.routers.real-mainnet-nitro-pruned-pebble-path.middlewares=real-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   real-mainnet-nitro-pruned-pebble-path:
 
 x-upstreams:

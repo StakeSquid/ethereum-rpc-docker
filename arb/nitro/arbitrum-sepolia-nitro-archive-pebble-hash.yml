@@ -73,7 +73,6 @@ services:
       - traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.middlewares=arbitrum-sepolia-nitro-archive-pebble-hash-stripprefix, ipwhitelist
 
 volumes:
-
   arbitrum-sepolia-nitro-archive-pebble-hash:
 
 x-upstreams:

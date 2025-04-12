@@ -60,7 +60,6 @@ services:
       - traefik.http.routers.core-mainnet-core-archive-leveldb-hash.middlewares=core-mainnet-core-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   core-mainnet-core-archive-leveldb-hash:
 
 x-upstreams:

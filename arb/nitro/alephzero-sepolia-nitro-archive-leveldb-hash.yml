@@ -80,7 +80,6 @@ services:
       - traefik.http.routers.alephzero-sepolia-nitro-archive-leveldb-hash.middlewares=alephzero-sepolia-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   alephzero-sepolia-nitro-archive-leveldb-hash:
 
 x-upstreams:

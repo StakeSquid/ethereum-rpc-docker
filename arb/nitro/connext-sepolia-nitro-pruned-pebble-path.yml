@@ -79,7 +79,6 @@ services:
       - traefik.http.routers.connext-sepolia-nitro-pruned-pebble-path.middlewares=connext-sepolia-nitro-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   connext-sepolia-nitro-pruned-pebble-path:
 
 x-upstreams:

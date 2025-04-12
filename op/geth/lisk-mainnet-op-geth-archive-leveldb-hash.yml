@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   lisk-mainnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:

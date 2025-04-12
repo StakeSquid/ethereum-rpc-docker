@@ -73,7 +73,6 @@ services:
       - traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.middlewares=arbitrum-nova-nitro-pruned-pebble-hash-stripprefix, ipwhitelist
 
 volumes:
-
   arbitrum-nova-nitro-pruned-pebble-hash:
 
 x-upstreams:

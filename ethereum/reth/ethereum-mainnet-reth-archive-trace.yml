@@ -92,9 +92,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   ethereum-mainnet-reth-archive-trace:
-
   ethereum-mainnet-reth-archive-trace_prysm:
 
 x-upstreams:

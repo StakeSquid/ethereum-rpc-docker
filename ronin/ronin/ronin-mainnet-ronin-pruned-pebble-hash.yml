@@ -55,7 +55,6 @@ services:
       - traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.middlewares=ronin-mainnet-ronin-pruned-pebble-hash-stripprefix, ipwhitelist
 
 volumes:
-
   ronin-mainnet-ronin-pruned-pebble-hash:
 
 x-upstreams:

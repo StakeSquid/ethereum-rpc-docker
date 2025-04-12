@@ -102,7 +102,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   lisk-mainnet-op-reth-pruned-trace:
 
 x-upstreams:

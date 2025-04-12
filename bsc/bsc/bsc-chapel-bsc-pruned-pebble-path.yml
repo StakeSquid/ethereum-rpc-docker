@@ -65,7 +65,6 @@ services:
       - traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.middlewares=bsc-chapel-bsc-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   bsc-chapel-bsc-pruned-pebble-path:
 
 x-upstreams:

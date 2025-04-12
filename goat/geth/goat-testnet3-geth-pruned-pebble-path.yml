@@ -44,9 +44,7 @@ services:
       - traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.middlewares=goat-testnet3-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   goat-testnet3-geth-pruned-pebble-path:
-
   goat-testnet3-geth-pruned-pebble-path_node:
 
 x-upstreams:

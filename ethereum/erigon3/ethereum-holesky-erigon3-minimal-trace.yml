@@ -86,7 +86,6 @@ services:
       - traefik.http.routers.ethereum-holesky-erigon3-minimal-trace-node.middlewares=ethereum-holesky-erigon3-minimal-trace-stripprefix, ipwhitelist
 
 volumes:
-
   ethereum-holesky-erigon3-minimal-trace:
 
 x-upstreams:

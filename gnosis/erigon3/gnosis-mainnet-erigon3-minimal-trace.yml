@@ -86,7 +86,6 @@ services:
       - traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.middlewares=gnosis-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
 
 volumes:
-
   gnosis-mainnet-erigon3-minimal-trace:
 
 x-upstreams:

@@ -105,7 +105,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   mantle-mainnet-op-geth-pruned-leveldb-hash:
 
 x-upstreams:

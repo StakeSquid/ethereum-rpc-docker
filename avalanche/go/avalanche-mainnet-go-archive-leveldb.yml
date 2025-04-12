@@ -65,7 +65,6 @@ services:
       - traefik.http.routers.avalanche-mainnet-go-archive-leveldb.middlewares=avalanche-mainnet-go-archive-leveldb-stripprefix, ipwhitelist
 
 volumes:
-
   avalanche-mainnet-go-archive-leveldb:
 
 x-upstreams:

@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   hashkeychain-mainnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:

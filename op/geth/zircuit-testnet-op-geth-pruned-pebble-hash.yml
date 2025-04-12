@@ -107,7 +107,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   zircuit-testnet-op-geth-pruned-pebble-hash:
 
 x-upstreams:

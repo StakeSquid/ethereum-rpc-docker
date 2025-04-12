@@ -78,7 +78,6 @@ services:
       - traefik.http.routers.everclear-mainnet-nitro-archive-leveldb-hash.middlewares=everclear-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   everclear-mainnet-nitro-archive-leveldb-hash:
 
 x-upstreams:

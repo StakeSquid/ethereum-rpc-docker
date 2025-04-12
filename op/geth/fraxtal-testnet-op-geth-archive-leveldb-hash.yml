@@ -105,7 +105,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   fraxtal-testnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:

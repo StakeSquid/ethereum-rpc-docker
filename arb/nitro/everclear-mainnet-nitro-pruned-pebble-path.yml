@@ -78,7 +78,6 @@ services:
       - traefik.http.routers.everclear-mainnet-nitro-pruned-pebble-path.middlewares=everclear-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   everclear-mainnet-nitro-pruned-pebble-path:
 
 x-upstreams:

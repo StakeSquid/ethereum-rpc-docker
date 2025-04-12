@@ -103,7 +103,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   boba-mainnet-op-erigon-archive-trace:
 
 x-upstreams:

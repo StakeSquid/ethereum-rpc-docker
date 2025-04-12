@@ -66,7 +66,6 @@ services:
       - traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.middlewares=scroll-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   scroll-mainnet-l2geth-archive-leveldb-hash:
 
 x-upstreams:

@@ -131,9 +131,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   celo-mainnet-op-geth-archive-leveldb-hash:
-
   celo-mainnet-op-geth-archive-leveldb-hash_eigenda:
 
 x-upstreams:

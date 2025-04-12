@@ -60,7 +60,6 @@ services:
       - traefik.http.routers.core-pigeon-core-pruned-pebble-path.middlewares=core-pigeon-core-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   core-pigeon-core-pruned-pebble-path:
 
 x-upstreams:

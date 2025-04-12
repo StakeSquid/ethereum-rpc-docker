@@ -103,7 +103,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   op-sepolia-op-reth-pruned-trace:
 
 x-upstreams:

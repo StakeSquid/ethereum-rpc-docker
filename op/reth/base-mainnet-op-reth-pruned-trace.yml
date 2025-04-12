@@ -102,7 +102,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   base-mainnet-op-reth-pruned-trace:
 
 x-upstreams:

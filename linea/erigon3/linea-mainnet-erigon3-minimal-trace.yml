@@ -69,7 +69,6 @@ services:
       - traefik.http.routers.linea-mainnet-erigon3-minimal-trace.middlewares=linea-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
 
 volumes:
-
   linea-mainnet-erigon3-minimal-trace:
 
 x-upstreams:

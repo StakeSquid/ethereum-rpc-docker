@@ -94,9 +94,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   ethereum-holesky-geth-pruned-pebble-path:
-
   ethereum-holesky-geth-pruned-pebble-path_prysm:
 
 x-upstreams:

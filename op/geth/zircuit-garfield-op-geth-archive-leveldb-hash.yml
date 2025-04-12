@@ -106,7 +106,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   zircuit-garfield-op-geth-archive-leveldb-hash:
 
 x-upstreams:

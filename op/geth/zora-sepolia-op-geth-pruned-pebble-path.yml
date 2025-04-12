@@ -105,7 +105,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   zora-sepolia-op-geth-pruned-pebble-path:
 
 x-upstreams:

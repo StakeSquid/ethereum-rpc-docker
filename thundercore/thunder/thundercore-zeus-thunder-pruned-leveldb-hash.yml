@@ -45,7 +45,6 @@ services:
       - traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.middlewares=thundercore-zeus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   thundercore-zeus-thunder-pruned-leveldb-hash:
 
 x-upstreams:

@@ -65,7 +65,6 @@ services:
       - traefik.http.routers.avalanche-fuji-go-pruned-pebbledb.middlewares=avalanche-fuji-go-pruned-pebbledb-stripprefix, ipwhitelist
 
 volumes:
-
   avalanche-fuji-go-pruned-pebbledb:
 
 x-upstreams:

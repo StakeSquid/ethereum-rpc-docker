@@ -92,9 +92,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   ethereum-holesky-reth-archive-trace:
-
   ethereum-holesky-reth-archive-trace_prysm:
 
 x-upstreams:

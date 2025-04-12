@@ -131,9 +131,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   celo-alfajores-op-geth-pruned-pebble-path:
-
   celo-alfajores-op-geth-pruned-pebble-path_eigenda:
 
 x-upstreams:

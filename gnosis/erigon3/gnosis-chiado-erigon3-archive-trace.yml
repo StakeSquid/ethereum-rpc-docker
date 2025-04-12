@@ -86,7 +86,6 @@ services:
       - traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipwhitelist
 
 volumes:
-
   gnosis-chiado-erigon3-archive-trace:
 
 x-upstreams:

@@ -60,7 +60,6 @@ services:
       - traefik.http.routers.core-buffalo-core-pruned-pebble-path.middlewares=core-buffalo-core-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   core-buffalo-core-pruned-pebble-path:
 
 x-upstreams:

@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   ink-mainnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:

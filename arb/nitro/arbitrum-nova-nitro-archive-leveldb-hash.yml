@@ -73,7 +73,6 @@ services:
       - traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.middlewares=arbitrum-nova-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   arbitrum-nova-nitro-archive-leveldb-hash:
 
 x-upstreams:

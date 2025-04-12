@@ -103,7 +103,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   unichain-mainnet-op-erigon-archive-trace:
 
 x-upstreams:

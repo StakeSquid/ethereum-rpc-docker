@@ -55,7 +55,6 @@ services:
       - traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.middlewares=ronin-saigon-ronin-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   ronin-saigon-ronin-archive-leveldb-hash:
 
 x-upstreams:

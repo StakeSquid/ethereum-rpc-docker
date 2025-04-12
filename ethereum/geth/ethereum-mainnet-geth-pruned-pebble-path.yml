@@ -94,9 +94,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   ethereum-mainnet-geth-pruned-pebble-path:
-
   ethereum-mainnet-geth-pruned-pebble-path_prysm:
 
 x-upstreams:

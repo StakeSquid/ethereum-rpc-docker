@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   mode-mainnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:

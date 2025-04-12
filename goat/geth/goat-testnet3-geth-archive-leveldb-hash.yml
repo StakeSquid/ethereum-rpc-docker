@@ -44,9 +44,7 @@ services:
       - traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.middlewares=goat-testnet3-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   goat-testnet3-geth-archive-leveldb-hash:
-
   goat-testnet3-geth-archive-leveldb-hash_node:
 
 x-upstreams:

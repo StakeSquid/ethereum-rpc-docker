@@ -78,7 +78,6 @@ services:
       - traefik.http.routers.alephzero-mainnet-nitro-archive-leveldb-hash.middlewares=alephzero-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   alephzero-mainnet-nitro-archive-leveldb-hash:
 
 x-upstreams:

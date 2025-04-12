@@ -78,7 +78,6 @@ services:
       - traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.middlewares=alephzero-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   alephzero-mainnet-nitro-pruned-pebble-path:
 
 x-upstreams:

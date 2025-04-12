@@ -65,7 +65,6 @@ services:
       - traefik.http.routers.fantom-testnet-opera-pruned.middlewares=fantom-testnet-opera-pruned-stripprefix, ipwhitelist
 
 volumes:
-
   fantom-testnet-opera-pruned:
 
 x-upstreams:

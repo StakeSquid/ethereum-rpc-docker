@@ -105,7 +105,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   soneium-minato-op-geth-pruned-pebble-path:
 
 x-upstreams:

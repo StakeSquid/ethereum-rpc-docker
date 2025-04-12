@@ -86,7 +86,6 @@ services:
       - traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.middlewares=gnosis-chiado-erigon3-minimal-trace-stripprefix, ipwhitelist
 
 volumes:
-
   gnosis-chiado-erigon3-minimal-trace:
 
 x-upstreams:

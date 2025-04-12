@@ -78,7 +78,6 @@ services:
       - traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.middlewares=playblock-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   playblock-mainnet-nitro-pruned-pebble-path:
 
 x-upstreams:

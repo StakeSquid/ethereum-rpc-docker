@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   boba-mainnet-op-geth-pruned:
 
 x-upstreams:

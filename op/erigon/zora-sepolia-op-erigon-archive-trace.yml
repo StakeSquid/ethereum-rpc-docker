@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   zora-sepolia-op-erigon-archive-trace:
 
 x-upstreams:

@@ -68,7 +68,6 @@ services:
       - traefik.http.routers.polygon-amoy-bor-pruned-pebble-path.middlewares=polygon-amoy-bor-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   polygon-amoy-bor-pruned-pebble-path:
 
 x-upstreams:

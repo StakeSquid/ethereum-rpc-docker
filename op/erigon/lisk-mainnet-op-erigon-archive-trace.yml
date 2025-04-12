@@ -103,7 +103,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   lisk-mainnet-op-erigon-archive-trace:
 
 x-upstreams:

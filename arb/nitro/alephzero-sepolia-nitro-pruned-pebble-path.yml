@@ -79,7 +79,6 @@ services:
       - traefik.http.routers.alephzero-sepolia-nitro-pruned-pebble-path.middlewares=alephzero-sepolia-nitro-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   alephzero-sepolia-nitro-pruned-pebble-path:
 
 x-upstreams:

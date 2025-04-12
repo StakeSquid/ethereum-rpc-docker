@@ -111,7 +111,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   lisk-sepolia-op-geth-archive-leveldb-hash:
 
 x-upstreams:

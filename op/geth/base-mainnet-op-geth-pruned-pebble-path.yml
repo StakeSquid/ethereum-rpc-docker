@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   base-mainnet-op-geth-pruned-pebble-path:
 
 x-upstreams:

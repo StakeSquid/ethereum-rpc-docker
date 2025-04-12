@@ -101,7 +101,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   op-mainnet-op-reth-archive-trace:
 
 x-upstreams:

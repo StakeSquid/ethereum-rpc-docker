@@ -63,9 +63,7 @@ services:
       - traefik.http.routers.celo-mainnet-geth-archive-leveldb-hash.middlewares=celo-mainnet-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   celo-mainnet-geth-archive-leveldb-hash:
-
   celo-mainnet-geth-archive-leveldb-hash_prysm:
 
 x-upstreams:

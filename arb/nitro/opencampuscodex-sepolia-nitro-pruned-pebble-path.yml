@@ -78,7 +78,6 @@ services:
       - traefik.http.routers.opencampuscodex-sepolia-nitro-pruned-pebble-path.middlewares=opencampuscodex-sepolia-nitro-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:
-
   opencampuscodex-sepolia-nitro-pruned-pebble-path:
 
 x-upstreams:

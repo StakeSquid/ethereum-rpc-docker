@@ -131,9 +131,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   celo-mainnet-op-geth-pruned-pebble-path:
-
   celo-mainnet-op-geth-pruned-pebble-path_eigenda:
 
 x-upstreams:

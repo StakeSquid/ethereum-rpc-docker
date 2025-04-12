@@ -43,7 +43,6 @@ services:
       - traefik.http.routers.haqq-mainnet-haqq-pruned.middlewares=haqq-mainnet-haqq-pruned-stripprefix, ipwhitelist
 
 volumes:
-
   haqq-mainnet-haqq-pruned:
 
 x-upstreams:

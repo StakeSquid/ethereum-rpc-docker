@@ -65,7 +65,6 @@ services:
       - traefik.http.routers.avalanche-fuji-go-archive-leveldb.middlewares=avalanche-fuji-go-archive-leveldb-stripprefix, ipwhitelist
 
 volumes:
-
   avalanche-fuji-go-archive-leveldb:
 
 x-upstreams:

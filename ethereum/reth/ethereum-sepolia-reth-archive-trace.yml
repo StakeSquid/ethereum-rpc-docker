@@ -92,9 +92,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   ethereum-sepolia-reth-archive-trace:
-
   ethereum-sepolia-reth-archive-trace_prysm:
 
 x-upstreams:

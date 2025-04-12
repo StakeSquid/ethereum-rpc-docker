@@ -92,7 +92,6 @@ services:
       - ./taiko/alethia.env
 
 volumes:
-
   taiko-alethia-geth-pruned-pebble-path:
 
 x-upstreams:

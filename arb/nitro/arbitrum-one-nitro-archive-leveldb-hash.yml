@@ -73,7 +73,6 @@ services:
       - traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.middlewares=arbitrum-one-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
-
   arbitrum-one-nitro-archive-leveldb-hash:
 
 x-upstreams:

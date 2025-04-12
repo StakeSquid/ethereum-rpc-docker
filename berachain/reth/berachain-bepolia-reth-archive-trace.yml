@@ -90,9 +90,7 @@ services:
     restart: unless-stopped
 
 volumes:
-
   berachain-bepolia-reth-archive-trace:
-
   berachain-bepolia-reth-archive-trace_node:
 
 x-upstreams:

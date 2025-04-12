@@ -105,7 +105,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   boba-sepolia-op-geth-pruned:
 
 x-upstreams:

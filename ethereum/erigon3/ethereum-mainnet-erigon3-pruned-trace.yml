@@ -86,7 +86,6 @@ services:
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.middlewares=ethereum-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist
 
 volumes:
-
   ethereum-mainnet-erigon3-pruned-trace:
 
 x-upstreams:

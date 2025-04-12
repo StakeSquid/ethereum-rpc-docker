@@ -104,7 +104,6 @@ services:
     restart: unless-stopped
 
 volumes:
-
   snax-mainnet-op-geth-pruned-pebble-path:
 
 x-upstreams:

@@ -86,7 +86,6 @@ services:
       - traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace-node.middlewares=gnosis-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist
 
 volumes:
-
   gnosis-mainnet-erigon3-pruned-trace:
 
 x-upstreams:
