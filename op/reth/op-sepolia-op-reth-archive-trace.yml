@@ -4,6 +4,17 @@
 services:
   op-sepolia-archive:
     image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_SEPOLIA_RETH_VERSION:-v1.3.8}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     user: root
     ports:
       - 10326:10326
@@ -51,17 +62,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/op-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.op-sepolia-op-reth-archive-trace.rule=PathPrefix(`/op-sepolia-archive`)}
       - traefik.http.routers.op-sepolia-op-reth-archive-trace.middlewares=op-sepolia-op-reth-archive-trace-stripprefix, ipwhitelist
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)

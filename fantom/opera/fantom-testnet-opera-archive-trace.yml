@@ -3,6 +3,17 @@
 
 services:
   fantom-testnet-archive:
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     build:
       context: ./fantom
       dockerfile: opera.Dockerfile
@@ -51,17 +62,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-opera-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-testnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.fantom-testnet-opera-archive-trace.rule=PathPrefix(`/fantom-testnet-archive`)}
       - traefik.http.routers.fantom-testnet-opera-archive-trace.middlewares=fantom-testnet-opera-archive-trace-stripprefix, ipwhitelist
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
 
