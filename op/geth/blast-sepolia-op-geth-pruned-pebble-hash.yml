@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10591:10591
@@ -66,8 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=PathPrefix(`/blast-sepolia`)}
       - traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.middlewares=blast-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   blast-sepolia-node:
     image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_SEPOLIA_NODE_VERSION:-sepolia-v1.2.3}

@@ -15,6 +15,9 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
       - 10563:10563
@@ -61,9 +64,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=PathPrefix(`/ethereum-mainnet-archive`)}
       - traefik.http.routers.ethereum-mainnet-reth-archive-trace.middlewares=ethereum-mainnet-reth-archive-trace-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
 
   ethereum-mainnet-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.1}

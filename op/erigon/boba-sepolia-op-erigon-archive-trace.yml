@@ -15,6 +15,9 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
       - 10249:10249
@@ -64,9 +67,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=PathPrefix(`/boba-sepolia-archive`)}
       - traefik.http.routers.boba-sepolia-op-erigon-archive-trace.middlewares=boba-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
 
   boba-sepolia-archive-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}

@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10688:10688
@@ -68,8 +70,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.rule=PathPrefix(`/zircuit-mainnet`)}
       - traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.middlewares=zircuit-mainnet-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   zircuit-mainnet-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_MAINNET_NODE_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}

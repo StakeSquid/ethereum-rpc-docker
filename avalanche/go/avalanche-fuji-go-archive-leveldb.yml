@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10350:10350
@@ -38,8 +40,6 @@ services:
       - ${AVALANCHE_FUJI_GO_ARCHIVE_LEVELDB_DATA:-avalanche-fuji-go-archive-leveldb}:/root/.avalanchego
       - ./avalanche/fuji:/config
       - /slowdisk:/slowdisk
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   avalanche-fuji-archive:
     image: nginx

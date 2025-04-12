@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10993:10993
@@ -66,8 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.celo-mainnet-op-geth-pruned-pebble-path.rule=PathPrefix(`/celo-mainnet`)}
       - traefik.http.routers.celo-mainnet-op-geth-pruned-pebble-path.middlewares=celo-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   celo-mainnet-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_MAINNET_NODE_VERSION:-celo-v2.0.0}

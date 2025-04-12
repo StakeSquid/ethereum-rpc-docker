@@ -15,6 +15,9 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
       - 10060:10060
@@ -64,9 +67,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=PathPrefix(`/linea-mainnet-archive`)}
       - traefik.http.routers.linea-mainnet-erigon3-archive-trace.middlewares=linea-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
 
 volumes:
   linea-mainnet-erigon3-archive-trace:

@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10993:10993
@@ -64,8 +66,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.rule=PathPrefix(`/ethereum-holesky`)}
       - traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.middlewares=ethereum-holesky-geth-pruned-pebble-path-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   ethereum-holesky-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v5.3.1}

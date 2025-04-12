@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10354:10354
@@ -74,8 +76,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/real-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.real-mainnet-nitro-archive-leveldb-hash.rule=PathPrefix(`/real-mainnet-archive`)}
       - traefik.http.routers.real-mainnet-nitro-archive-leveldb-hash.middlewares=real-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
 volumes:
   real-mainnet-nitro-archive-leveldb-hash:

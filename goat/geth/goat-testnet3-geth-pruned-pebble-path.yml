@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10272:10272
@@ -40,8 +42,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/goat-testnet3`)}
       - ${NO_SSL:+traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.rule=PathPrefix(`/goat-testnet3`)}
       - traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.middlewares=goat-testnet3-geth-pruned-pebble-path-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
 volumes:
   goat-testnet3-geth-pruned-pebble-path:

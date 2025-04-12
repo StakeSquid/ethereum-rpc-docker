@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10490:10490
@@ -66,8 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.rule=PathPrefix(`/lisk-sepolia-archive`)}
       - traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.middlewares=lisk-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   lisk-sepolia-archive-node:
     build:

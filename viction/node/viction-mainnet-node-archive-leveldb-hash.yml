@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10670:10670
@@ -39,8 +41,6 @@ services:
       - ${VICTION_MAINNET_NODE_ARCHIVE_LEVELDB_HASH_DATA:-viction-mainnet-node-archive-leveldb-hash}:/tomochain/data
       - ./viction/mainnet:/config
       - /slowdisk:/slowdisk
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   viction-mainnet-archive:
     image: nginx

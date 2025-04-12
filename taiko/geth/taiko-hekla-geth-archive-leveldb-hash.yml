@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10396:10396
@@ -65,8 +67,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-hekla-archive`)}
       - ${NO_SSL:+traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=PathPrefix(`/taiko-hekla-archive`)}
       - traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.middlewares=taiko-hekla-geth-archive-leveldb-hash-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   taiko-hekla-archive-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.4.1}

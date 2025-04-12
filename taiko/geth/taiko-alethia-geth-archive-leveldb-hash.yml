@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10251:10251
@@ -65,8 +67,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-alethia-archive`)}
       - ${NO_SSL:+traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.rule=PathPrefix(`/taiko-alethia-archive`)}
       - traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.middlewares=taiko-alethia-geth-archive-leveldb-hash-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   taiko-alethia-archive-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v0.43.1}

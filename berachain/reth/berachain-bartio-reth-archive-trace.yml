@@ -15,6 +15,9 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
       - 10527:10527
@@ -63,9 +66,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/berachain-bartio-archive`)}
       - ${NO_SSL:+traefik.http.routers.berachain-bartio-reth-archive-trace.rule=PathPrefix(`/berachain-bartio-archive`)}
       - traefik.http.routers.berachain-bartio-reth-archive-trace.middlewares=berachain-bartio-reth-archive-trace-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
 
   berachain-bartio-archive-node:
     image: ${BERACHAIN_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}:${BERACHAIN_BARTIO_BEACON_KIT_VERSION:-v1.1.3}

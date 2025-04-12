@@ -15,6 +15,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
       - 10981:10981
@@ -66,8 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/op-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.op-sepolia-op-geth-archive-leveldb-hash.rule=PathPrefix(`/op-sepolia-archive`)}
       - traefik.http.routers.op-sepolia-op-geth-archive-leveldb-hash.middlewares=op-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   op-sepolia-archive-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_SEPOLIA_NODE_VERSION:-v1.13.1}
