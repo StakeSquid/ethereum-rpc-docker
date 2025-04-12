@@ -2,7 +2,7 @@
 
 services:
   op-sepolia:
-    image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_SEPOLIA_RETH_VERSION:-v1.3.4}
+    image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_SEPOLIA_RETH_VERSION:-v1.3.8}
     user: root
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
@@ -46,10 +46,10 @@ services:
       - --ws.port=8545
       - --ws.origins=*
       - --ws.addr=0.0.0.0
-      - --ws.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
+      - --ws.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin,engine
 
       - --http.addr=0.0.0.0
-      - --http.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
+      - --http.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin,engine
 
       - --rpc.max-logs-per-response=1100000
       - --rpc.gascap=600000000

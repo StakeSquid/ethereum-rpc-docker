@@ -45,10 +45,10 @@ services:
       - --ws.port=8545
       - --ws.origins=*
       - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,debug,admin,txpool
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
 
       - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
 
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0

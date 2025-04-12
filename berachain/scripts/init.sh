@@ -86,7 +86,7 @@ fi
 
 # Execute beacond
 #exec $BEACOND start --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json --minimum-gas-prices 0atom "$@"
-env
+
 exec $BEACOND start --home /root/.beacond $@
 # --beacon-kit.engine.jwt-secret-path $CONFIG_DIR/jwt.hex --beacon-kit.kzg.trusted-setup-path $CONFIG_DIR/kzg-trusted-setup.json --home /root/.beacond 
 #--minimum-gas-prices 0atom

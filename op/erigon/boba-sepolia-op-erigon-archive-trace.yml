@@ -49,7 +49,7 @@ services:
       - --ws.port=8545
 
       - --http.addr=0.0.0.0
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,engine
 
       - --rpc.returndata.limit=1100000
       - --rpc.gascap=6000000000
