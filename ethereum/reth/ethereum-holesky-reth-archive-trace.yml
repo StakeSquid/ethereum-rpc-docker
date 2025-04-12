@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   ethereum-holesky-archive:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_HOLESKY_RETH_VERSION:-v1.3.8}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10752:10752
       - 10752:10752/udp
@@ -65,7 +64,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky-archive`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-reth-archive-trace.rule=PathPrefix(`/ethereum-holesky-archive`)}
       - traefik.http.routers.ethereum-holesky-reth-archive-trace.middlewares=ethereum-holesky-reth-archive-trace-stripprefix, ipwhitelist
-
   ethereum-holesky-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v5.3.1}
     ports:
@@ -87,16 +85,16 @@ services:
       - --rpc-host=0.0.0.0
     networks:
       - chains
-
     volumes:
       - ${ETHEREUM_HOLESKY_RETH_ARCHIVE_TRACE__PRYSM_DATA:-ethereum-holesky-reth-archive-trace_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
+
   ethereum-holesky-reth-archive-trace:
   ethereum-holesky-reth-archive-trace_prysm:
-
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

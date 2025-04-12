@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   goat-testnet3-archive:
     image: ${GOAT_GETH_IMAGE:-ghcr.io/goatnetwork/goat-geth}:${GOAT_TESTNET3_GETH_VERSION:-v0.1.7}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10272:10272
       - 10272:10272/udp
@@ -43,12 +42,12 @@ services:
       - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/goat-testnet3-archive`)}
       - ${NO_SSL:+traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.rule=PathPrefix(`/goat-testnet3-archive`)}
       - traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.middlewares=goat-testnet3-geth-archive-leveldb-hash-stripprefix, ipwhitelist
-
 volumes:
+
   goat-testnet3-geth-archive-leveldb-hash:
   goat-testnet3-geth-archive-leveldb-hash_node:
-
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -57,7 +56,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -78,5 +76,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

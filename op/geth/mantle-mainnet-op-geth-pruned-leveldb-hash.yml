@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   mantle-mainnet:
     image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-geth}:${MANTLE_MAINNET_GETH_VERSION:-v1.1.1}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10067:10067
       - 10067:10067/udp
@@ -69,7 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.rule=PathPrefix(`/mantle-mainnet`)}
       - traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.middlewares=mantle-mainnet-op-geth-pruned-leveldb-hash-stripprefix, ipwhitelist
-
   mantle-mainnet-node:
     image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-node}:${MANTLE_MAINNET_NODE_VERSION:-v1.1.1}
     ports:
@@ -101,14 +99,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  mantle-mainnet-op-geth-pruned-leveldb-hash:
 
+  mantle-mainnet-op-geth-pruned-leveldb-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -117,7 +115,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -138,5 +135,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

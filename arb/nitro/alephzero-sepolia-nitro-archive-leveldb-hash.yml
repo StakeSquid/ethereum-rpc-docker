@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   alephzero-sepolia-archive:
     image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_SEPOLIA_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10083:10083
       - 10083:10083/udp
@@ -79,11 +78,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.alephzero-sepolia-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/alephzero-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.alephzero-sepolia-nitro-archive-leveldb-hash.rule=PathPrefix(`/alephzero-sepolia-archive`)}
       - traefik.http.routers.alephzero-sepolia-nitro-archive-leveldb-hash.middlewares=alephzero-sepolia-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
-
 volumes:
-  alephzero-sepolia-nitro-archive-leveldb-hash:
 
+  alephzero-sepolia-nitro-archive-leveldb-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -92,7 +91,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -113,5 +111,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

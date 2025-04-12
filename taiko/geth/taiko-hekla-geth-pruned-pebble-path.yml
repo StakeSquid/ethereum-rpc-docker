@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   taiko-hekla:
     image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HEKLA_GETH_VERSION:-v1.14.1}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10396:10396
       - 10396:10396/udp
@@ -68,7 +67,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-hekla`)}
       - ${NO_SSL:+traefik.http.routers.taiko-hekla-geth-pruned-pebble-path.rule=PathPrefix(`/taiko-hekla`)}
       - traefik.http.routers.taiko-hekla-geth-pruned-pebble-path.middlewares=taiko-hekla-geth-pruned-pebble-path-stripprefix, ipwhitelist
-
   taiko-hekla-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.4.1}
     ports:
@@ -86,17 +84,16 @@ services:
     entrypoint: [taiko-client, driver]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
     env_file:
       - ./taiko/hekla.env
-
 volumes:
-  taiko-hekla-geth-pruned-pebble-path:
 
+  taiko-hekla-geth-pruned-pebble-path:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -105,12 +102,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -129,5 +124,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

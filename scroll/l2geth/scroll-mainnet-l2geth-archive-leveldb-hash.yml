@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   scroll-mainnet-archive:
     image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_L2GETH_VERSION:-scroll-v5.7.2}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10083:10083
       - 10083:10083/udp
@@ -65,11 +64,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.rule=PathPrefix(`/scroll-mainnet-archive`)}
       - traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.middlewares=scroll-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist
-
 volumes:
-  scroll-mainnet-l2geth-archive-leveldb-hash:
 
+  scroll-mainnet-l2geth-archive-leveldb-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -78,7 +77,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -99,5 +97,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

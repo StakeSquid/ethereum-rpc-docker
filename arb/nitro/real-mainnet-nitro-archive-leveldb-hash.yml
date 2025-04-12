@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   real-mainnet-archive:
     image: ${REAL_NITRO_IMAGE:-offchainlabs/nitro-node}:${REAL_MAINNET_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10354:10354
       - 10354:10354/udp
@@ -77,11 +76,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/real-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.real-mainnet-nitro-archive-leveldb-hash.rule=PathPrefix(`/real-mainnet-archive`)}
       - traefik.http.routers.real-mainnet-nitro-archive-leveldb-hash.middlewares=real-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
-
 volumes:
-  real-mainnet-nitro-archive-leveldb-hash:
 
+  real-mainnet-nitro-archive-leveldb-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -90,7 +89,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -111,5 +109,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

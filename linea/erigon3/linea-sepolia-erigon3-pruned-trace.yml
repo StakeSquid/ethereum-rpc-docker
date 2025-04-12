@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   linea-sepolia:
     image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_SEPOLIA_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10235:10235
       - 10235:10235/udp
@@ -68,11 +67,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.linea-sepolia-erigon3-pruned-trace.rule=PathPrefix(`/linea-sepolia`)}
       - traefik.http.routers.linea-sepolia-erigon3-pruned-trace.middlewares=linea-sepolia-erigon3-pruned-trace-stripprefix, ipwhitelist
-
 volumes:
-  linea-sepolia-erigon3-pruned-trace:
 
+  linea-sepolia-erigon3-pruned-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -108,5 +107,4 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
-
 ...

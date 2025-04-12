@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   thundercore-venus:
     image: ${THUNDERCORE_THUNDER_IMAGE:-thundercore/thunder}:${THUNDERCORE_VENUS_THUNDER_VERSION:-r4.1.3}
     user: root
@@ -20,7 +20,6 @@ services:
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
-
     ports:
       - 10368:10368
       - 10368:10368/udp
@@ -44,11 +43,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/thundercore-venus`)}
       - ${NO_SSL:+traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=PathPrefix(`/thundercore-venus`)}
       - traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.middlewares=thundercore-venus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist
-
 volumes:
-  thundercore-venus-thunder-pruned-leveldb-hash:
 
+  thundercore-venus-thunder-pruned-leveldb-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -57,7 +56,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:

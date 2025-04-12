@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   zora-mainnet-archive:
     image: ${ZORA_ERIGON_IMAGE:-testinprod/erigon}:${ZORA_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10360:10360
       - 10360:10360/udp
@@ -68,7 +67,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-erigon-archive-trace.rule=PathPrefix(`/zora-mainnet-archive`)}
       - traefik.http.routers.zora-mainnet-op-erigon-archive-trace.middlewares=zora-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
-
   zora-mainnet-archive-node:
     image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
@@ -99,14 +97,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  zora-mainnet-op-erigon-archive-trace:
 
+  zora-mainnet-op-erigon-archive-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -142,5 +140,4 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
-
 ...

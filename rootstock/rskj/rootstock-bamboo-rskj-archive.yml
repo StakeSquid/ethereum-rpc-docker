@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   rootstock-bamboo-archive-client:
     image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_BAMBOO_RSKJ_VERSION:-}
     user: root
@@ -20,9 +20,7 @@ services:
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
-
       - 8546
-
     ports:
       - 10238:10238
       - 10238:10238/udp
@@ -55,11 +53,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.rootstock-bamboo-rskj-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/rootstock-bamboo-archive`)}
       - ${NO_SSL:+traefik.http.routers.rootstock-bamboo-rskj-archive.rule=PathPrefix(`/rootstock-bamboo-archive`)}
       - traefik.http.routers.rootstock-bamboo-rskj-archive.middlewares=rootstock-bamboo-rskj-archive-stripprefix, ipwhitelist
-
 volumes:
-  rootstock-bamboo-rskj-archive:
 
+  rootstock-bamboo-rskj-archive:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -68,7 +66,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:

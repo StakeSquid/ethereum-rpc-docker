@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   blast-mainnet-archive:
     image: ${BLAST_GETH_IMAGE:-blastio/blast-geth}:${BLAST_MAINNET_GETH_VERSION:-v1.1.0-mainnet}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10769:10769
       - 10769:10769/udp
@@ -69,7 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.blast-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.blast-mainnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/blast-mainnet-archive`)}
       - traefik.http.routers.blast-mainnet-op-geth-archive-leveldb-hash.middlewares=blast-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
-
   blast-mainnet-archive-node:
     image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_MAINNET_NODE_VERSION:-v1.1.0-mainnet}
     ports:
@@ -101,14 +99,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  blast-mainnet-op-geth-archive-leveldb-hash:
 
+  blast-mainnet-op-geth-archive-leveldb-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -117,7 +115,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -138,5 +135,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   ethereum-mainnet-minimal:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_MAINNET_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10675:10675
       - 10675:10675/udp
@@ -85,11 +84,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-minimal/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace-node.rule=PathPrefix(`/ethereum-mainnet-minimal/eth`)}
       - traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace-node.middlewares=ethereum-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
-
 volumes:
-  ethereum-mainnet-erigon3-minimal-trace:
 
+  ethereum-mainnet-erigon3-minimal-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -125,5 +124,4 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
-
 ...

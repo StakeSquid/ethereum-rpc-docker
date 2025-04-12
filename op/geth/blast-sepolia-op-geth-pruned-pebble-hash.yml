@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   blast-sepolia:
     image: ${BLAST_GETH_IMAGE:-blastio/blast-geth}:${BLAST_SEPOLIA_GETH_VERSION:-sepolia-v1.2.3}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10591:10591
       - 10591:10591/udp
@@ -69,7 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=PathPrefix(`/blast-sepolia`)}
       - traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.middlewares=blast-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
-
   blast-sepolia-node:
     image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_SEPOLIA_NODE_VERSION:-sepolia-v1.2.3}
     ports:
@@ -102,14 +100,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  blast-sepolia-op-geth-pruned-pebble-hash:
 
+  blast-sepolia-op-geth-pruned-pebble-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -118,7 +116,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -139,5 +136,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   hashkeychain-mainnet:
     image: ${HASHKEYCHAIN_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${HASHKEYCHAIN_MAINNET_GETH_VERSION:-v1.101503.3}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10188:10188
       - 10188:10188/udp
@@ -69,7 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/hashkeychain-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.hashkeychain-mainnet-op-geth-pruned-pebble-path.rule=PathPrefix(`/hashkeychain-mainnet`)}
       - traefik.http.routers.hashkeychain-mainnet-op-geth-pruned-pebble-path.middlewares=hashkeychain-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
-
   hashkeychain-mainnet-node:
     image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
@@ -100,14 +98,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  hashkeychain-mainnet-op-geth-pruned-pebble-path:
 
+  hashkeychain-mainnet-op-geth-pruned-pebble-path:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -116,12 +114,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -140,5 +136,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

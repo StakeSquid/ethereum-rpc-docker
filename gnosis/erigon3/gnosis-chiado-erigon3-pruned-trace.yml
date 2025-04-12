@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   gnosis-chiado:
     image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_CHIADO_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10986:10986
       - 10986:10986/udp
@@ -85,11 +84,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado/eth`)}
       - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-pruned-trace-node.rule=PathPrefix(`/gnosis-chiado/eth`)}
       - traefik.http.routers.gnosis-chiado-erigon3-pruned-trace-node.middlewares=gnosis-chiado-erigon3-pruned-trace-stripprefix, ipwhitelist
-
 volumes:
-  gnosis-chiado-erigon3-pruned-trace:
 
+  gnosis-chiado-erigon3-pruned-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -125,5 +124,4 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
-
 ...

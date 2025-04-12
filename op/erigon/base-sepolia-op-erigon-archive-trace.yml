@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   base-sepolia-archive:
     image: ${BASE_ERIGON_IMAGE:-testinprod/erigon}:${BASE_SEPOLIA_ERIGON_VERSION:-v2.61.1-0.8.3}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10487:10487
       - 10487:10487/udp
@@ -68,7 +67,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.base-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/base-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.base-sepolia-op-erigon-archive-trace.rule=PathPrefix(`/base-sepolia-archive`)}
       - traefik.http.routers.base-sepolia-op-erigon-archive-trace.middlewares=base-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
-
   base-sepolia-archive-node:
     image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
@@ -100,14 +98,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  base-sepolia-op-erigon-archive-trace:
 
+  base-sepolia-op-erigon-archive-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -143,5 +141,4 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
-
 ...

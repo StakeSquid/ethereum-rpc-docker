@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   alephzero-mainnet:
     image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_MAINNET_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10301:10301
       - 10301:10301/udp
@@ -77,11 +76,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/alephzero-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=PathPrefix(`/alephzero-mainnet`)}
       - traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.middlewares=alephzero-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
-
 volumes:
-  alephzero-mainnet-nitro-pruned-pebble-path:
 
+  alephzero-mainnet-nitro-pruned-pebble-path:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -90,12 +89,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -114,5 +111,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   gnosis-mainnet-minimal:
     image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10974:10974
       - 10974:10974/udp
@@ -85,11 +84,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-mainnet-minimal/eth`)}
       - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.rule=PathPrefix(`/gnosis-mainnet-minimal/eth`)}
       - traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.middlewares=gnosis-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
-
 volumes:
-  gnosis-mainnet-erigon3-minimal-trace:
 
+  gnosis-mainnet-erigon3-minimal-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -125,5 +124,4 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
-
 ...

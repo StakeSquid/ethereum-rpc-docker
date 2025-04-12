@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   arbitrum-nova:
     image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_NOVA_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10468:10468
       - 10468:10468/udp
@@ -72,11 +71,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-nova`)}
       - ${NO_SSL:+traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.rule=PathPrefix(`/arbitrum-nova`)}
       - traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.middlewares=arbitrum-nova-nitro-pruned-pebble-hash-stripprefix, ipwhitelist
-
 volumes:
-  arbitrum-nova-nitro-pruned-pebble-hash:
 
+  arbitrum-nova-nitro-pruned-pebble-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -85,7 +84,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -106,5 +104,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

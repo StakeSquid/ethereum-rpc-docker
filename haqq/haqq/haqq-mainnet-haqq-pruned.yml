@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   haqq-mainnet:
     image: ${HAQQ_HAQQ_IMAGE:-alhaqq/haqq}:${HAQQ_MAINNET_HAQQ_VERSION:-v1.8.2}
     user: root
@@ -20,7 +20,6 @@ services:
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
-
     ports:
       - 10465:10465
       - 10465:10465/udp
@@ -42,11 +41,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/haqq-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.haqq-mainnet-haqq-pruned.rule=PathPrefix(`/haqq-mainnet`)}
       - traefik.http.routers.haqq-mainnet-haqq-pruned.middlewares=haqq-mainnet-haqq-pruned-stripprefix, ipwhitelist
-
 volumes:
-  haqq-mainnet-haqq-pruned:
 
+  haqq-mainnet-haqq-pruned:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -55,7 +54,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   manta-pacific-mainnet:
     image: ${MANTA_PACIFIC_GETH_IMAGE:-public.ecr.aws/i6b2w2n6/op-geth}:${MANTA_PACIFIC_MAINNET_GETH_VERSION:-5.2.0}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10877:10877
       - 10877:10877/udp
@@ -69,7 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/manta-pacific-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.manta-pacific-mainnet-op-geth-pruned-pebble-path.rule=PathPrefix(`/manta-pacific-mainnet`)}
       - traefik.http.routers.manta-pacific-mainnet-op-geth-pruned-pebble-path.middlewares=manta-pacific-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
-
   manta-pacific-mainnet-node:
     image: ${MANTA_PACIFIC_NODE_IMAGE:-public.ecr.aws/i6b2w2n6/op-node}:${MANTA_PACIFIC_MAINNET_NODE_VERSION:-celestia-3.0.0-dencun}
     ports:
@@ -101,14 +99,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  manta-pacific-mainnet-op-geth-pruned-pebble-path:
 
+  manta-pacific-mainnet-op-geth-pruned-pebble-path:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -117,12 +115,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -141,5 +137,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

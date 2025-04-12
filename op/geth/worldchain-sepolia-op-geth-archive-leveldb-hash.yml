@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   worldchain-sepolia-archive:
     image: ${WORLDCHAIN_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${WORLDCHAIN_SEPOLIA_GETH_VERSION:-v1.101503.3}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10620:10620
       - 10620:10620/udp
@@ -69,7 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.worldchain-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/worldchain-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.worldchain-sepolia-op-geth-archive-leveldb-hash.rule=PathPrefix(`/worldchain-sepolia-archive`)}
       - traefik.http.routers.worldchain-sepolia-op-geth-archive-leveldb-hash.middlewares=worldchain-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
-
   worldchain-sepolia-archive-node:
     image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
@@ -101,14 +99,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  worldchain-sepolia-op-geth-archive-leveldb-hash:
 
+  worldchain-sepolia-op-geth-archive-leveldb-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -117,7 +115,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -138,5 +135,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

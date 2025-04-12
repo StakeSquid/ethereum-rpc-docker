@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   linea-mainnet-minimal:
     image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_MAINNET_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10060:10060
       - 10060:10060/udp
@@ -68,11 +67,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-mainnet-minimal`)}
       - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=PathPrefix(`/linea-mainnet-minimal`)}
       - traefik.http.routers.linea-mainnet-erigon3-minimal-trace.middlewares=linea-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
-
 volumes:
-  linea-mainnet-erigon3-minimal-trace:
 
+  linea-mainnet-erigon3-minimal-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -108,5 +107,4 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
-
 ...

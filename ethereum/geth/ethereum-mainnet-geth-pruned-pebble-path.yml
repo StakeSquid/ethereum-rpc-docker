@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   ethereum-mainnet:
     image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_GETH_VERSION:-v1.15.7}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10023:10023
       - 10023:10023/udp
@@ -67,7 +66,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.rule=PathPrefix(`/ethereum-mainnet`)}
       - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.middlewares=ethereum-mainnet-geth-pruned-pebble-path-stripprefix, ipwhitelist
-
   ethereum-mainnet-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.1}
     ports:
@@ -89,16 +87,16 @@ services:
       - --rpc-host=0.0.0.0
     networks:
       - chains
-
     volumes:
       - ${ETHEREUM_MAINNET_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-mainnet-geth-pruned-pebble-path_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
+
   ethereum-mainnet-geth-pruned-pebble-path:
   ethereum-mainnet-geth-pruned-pebble-path_prysm:
-
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -107,12 +105,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -131,5 +127,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

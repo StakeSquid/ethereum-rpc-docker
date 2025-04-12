@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   tron-mainnet:
     image: ${TRON_JAVA_TRON_IMAGE:-tronprotocol/java-tron}:${TRON_MAINNET_JAVA_TRON_VERSION:-GreatVoyage-v4.7.7}
     user: root
@@ -20,7 +20,6 @@ services:
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     expose:
       - 8545
-
     ports:
       - 25815:25815
       - 25815:25815/udp
@@ -42,11 +41,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=Host(`$DOMAIN`) && PathPrefix(`/tron-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=PathPrefix(`/tron-mainnet`)}
       - traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.middlewares=tron-mainnet-java-tron-pruned-rocksdb-stripprefix, ipwhitelist
-
 volumes:
-  tron-mainnet-java-tron-pruned-rocksdb:
 
+  tron-mainnet-java-tron-pruned-rocksdb:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -55,7 +54,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:

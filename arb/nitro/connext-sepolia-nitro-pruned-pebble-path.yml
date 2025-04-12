@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   connext-sepolia:
     image: ${CONNEXT_NITRO_IMAGE:-offchainlabs/nitro-node}:${CONNEXT_SEPOLIA_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10111:10111
       - 10111:10111/udp
@@ -78,11 +77,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.connext-sepolia-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/connext-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.connext-sepolia-nitro-pruned-pebble-path.rule=PathPrefix(`/connext-sepolia`)}
       - traefik.http.routers.connext-sepolia-nitro-pruned-pebble-path.middlewares=connext-sepolia-nitro-pruned-pebble-path-stripprefix, ipwhitelist
-
 volumes:
-  connext-sepolia-nitro-pruned-pebble-path:
 
+  connext-sepolia-nitro-pruned-pebble-path:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -91,12 +90,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -115,5 +112,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

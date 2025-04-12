@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   lisk-mainnet-archive:
     image: ${LISK_ERIGON_IMAGE:-testinprod/erigon}:${LISK_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10831:10831
       - 10831:10831/udp
@@ -68,7 +67,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.rule=PathPrefix(`/lisk-mainnet-archive`)}
       - traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.middlewares=lisk-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
-
   lisk-mainnet-archive-node:
     image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
@@ -99,14 +97,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  lisk-mainnet-op-erigon-archive-trace:
 
+  lisk-mainnet-op-erigon-archive-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -142,5 +140,4 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
-
 ...

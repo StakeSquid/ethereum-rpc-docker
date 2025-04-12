@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   bsc-chapel:
     image: ${BSC_BSC_IMAGE:-ghcr.io/bnb-chain/bsc}:${BSC_CHAPEL_BSC_VERSION:-v1.4.10}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10759:10759
       - 10759:10759/udp
@@ -64,11 +63,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/bsc-chapel`)}
       - ${NO_SSL:+traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.rule=PathPrefix(`/bsc-chapel`)}
       - traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.middlewares=bsc-chapel-bsc-pruned-pebble-path-stripprefix, ipwhitelist
-
 volumes:
-  bsc-chapel-bsc-pruned-pebble-path:
 
+  bsc-chapel-bsc-pruned-pebble-path:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -77,12 +76,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -101,5 +98,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

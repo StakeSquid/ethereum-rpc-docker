@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   ethereum-mainnet-archive:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.3.8}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10563:10563
       - 10563:10563/udp
@@ -65,7 +64,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=PathPrefix(`/ethereum-mainnet-archive`)}
       - traefik.http.routers.ethereum-mainnet-reth-archive-trace.middlewares=ethereum-mainnet-reth-archive-trace-stripprefix, ipwhitelist
-
   ethereum-mainnet-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.1}
     ports:
@@ -87,16 +85,16 @@ services:
       - --rpc-host=0.0.0.0
     networks:
       - chains
-
     volumes:
       - ${ETHEREUM_MAINNET_RETH_ARCHIVE_TRACE__PRYSM_DATA:-ethereum-mainnet-reth-archive-trace_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
+
   ethereum-mainnet-reth-archive-trace:
   ethereum-mainnet-reth-archive-trace_prysm:
-
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

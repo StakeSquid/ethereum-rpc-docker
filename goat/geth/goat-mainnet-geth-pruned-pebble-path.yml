@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   goat-mainnet:
     image: ${GOAT_GETH_IMAGE:-ghcr.io/goatnetwork/goat-geth}:${GOAT_MAINNET_GETH_VERSION:-v0.3.0}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10640:10640
       - 10640:10640/udp
@@ -43,12 +42,12 @@ services:
       - ${NO_SSL:-traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/goat-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.rule=PathPrefix(`/goat-mainnet`)}
       - traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.middlewares=goat-mainnet-geth-pruned-pebble-path-stripprefix, ipwhitelist
-
 volumes:
+
   goat-mainnet-geth-pruned-pebble-path:
   goat-mainnet-geth-pruned-pebble-path_node:
-
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -57,12 +56,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -81,5 +78,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

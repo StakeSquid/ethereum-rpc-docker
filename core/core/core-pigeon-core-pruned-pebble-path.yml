@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   core-pigeon:
     image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_PIGEON_CORE_VERSION:-1.0.15}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10478:10478
       - 10478:10478/udp
@@ -59,11 +58,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.core-pigeon-core-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/core-pigeon`)}
       - ${NO_SSL:+traefik.http.routers.core-pigeon-core-pruned-pebble-path.rule=PathPrefix(`/core-pigeon`)}
       - traefik.http.routers.core-pigeon-core-pruned-pebble-path.middlewares=core-pigeon-core-pruned-pebble-path-stripprefix, ipwhitelist
-
 volumes:
-  core-pigeon-core-pruned-pebble-path:
 
+  core-pigeon-core-pruned-pebble-path:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -72,7 +71,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:

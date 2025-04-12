@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   celo-alfajores:
     image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_ALFAJORES_GETH_VERSION:-celo-v2.0.0}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10457:10457
       - 10457:10457/udp
@@ -69,7 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-alfajores`)}
       - ${NO_SSL:+traefik.http.routers.celo-alfajores-op-geth-pruned-pebble-path.rule=PathPrefix(`/celo-alfajores`)}
       - traefik.http.routers.celo-alfajores-op-geth-pruned-pebble-path.middlewares=celo-alfajores-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
-
   celo-alfajores-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.0.0}
     ports:
@@ -107,7 +105,6 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
@@ -127,15 +124,15 @@ services:
       - EIGENDA_PROXY_VERSION=v1.6.4
     networks:
       - chains
-
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH__EIGENDA_DATA:-celo-alfajores-op-geth-pruned-pebble-path_eigenda}:/data
     restart: unless-stopped
 volumes:
+
   celo-alfajores-op-geth-pruned-pebble-path:
   celo-alfajores-op-geth-pruned-pebble-path_eigenda:
-
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -144,12 +141,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -168,5 +163,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

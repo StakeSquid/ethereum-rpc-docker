@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   ethereum-sepolia:
     image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_SEPOLIA_GETH_VERSION:-v1.15.7}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10710:10710
       - 10710:10710/udp
@@ -67,7 +66,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.rule=PathPrefix(`/ethereum-sepolia`)}
       - traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.middlewares=ethereum-sepolia-geth-pruned-pebble-path-stripprefix, ipwhitelist
-
   ethereum-sepolia-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v5.3.1}
     ports:
@@ -89,16 +87,16 @@ services:
       - --sepolia
     networks:
       - chains
-
     volumes:
       - ${ETHEREUM_SEPOLIA_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-sepolia-geth-pruned-pebble-path_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
+
   ethereum-sepolia-geth-pruned-pebble-path:
   ethereum-sepolia-geth-pruned-pebble-path_prysm:
-
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -107,12 +105,10 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
-
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
@@ -131,5 +127,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

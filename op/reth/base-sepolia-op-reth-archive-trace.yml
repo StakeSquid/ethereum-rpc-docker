@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   base-sepolia-archive:
     image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_SEPOLIA_RETH_VERSION:-v1.3.8}
     user: root
@@ -22,7 +22,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10390:10390
       - 10390:10390/udp
@@ -66,7 +65,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.base-sepolia-op-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/base-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.base-sepolia-op-reth-archive-trace.rule=PathPrefix(`/base-sepolia-archive`)}
       - traefik.http.routers.base-sepolia-op-reth-archive-trace.middlewares=base-sepolia-op-reth-archive-trace-stripprefix, ipwhitelist
-
   base-sepolia-archive-node:
     image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
@@ -98,14 +96,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  base-sepolia-op-reth-archive-trace:
 
+  base-sepolia-op-reth-archive-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

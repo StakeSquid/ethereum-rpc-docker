@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   boba-sepolia:
     image: ${BOBA_GETH_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-geth}:${BOBA_SEPOLIA_GETH_VERSION:-v1.101503.1}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10901:10901
       - 10901:10901/udp
@@ -69,7 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-geth-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.boba-sepolia-op-geth-pruned.rule=PathPrefix(`/boba-sepolia`)}
       - traefik.http.routers.boba-sepolia-op-geth-pruned.middlewares=boba-sepolia-op-geth-pruned-stripprefix, ipwhitelist
-
   boba-sepolia-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}
     ports:
@@ -101,14 +99,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  boba-sepolia-op-geth-pruned:
 
+  boba-sepolia-op-geth-pruned:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -117,7 +115,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -138,5 +135,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

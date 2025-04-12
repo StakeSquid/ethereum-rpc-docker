@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   fraxtal-testnet-archive:
     image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-geth}:${FRAXTAL_TESTNET_GETH_VERSION:-v1.101503.1-frax-1.2.0}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10370:10370
       - 10370:10370/udp
@@ -69,7 +68,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/fraxtal-testnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/fraxtal-testnet-archive`)}
       - traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash.middlewares=fraxtal-testnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
-
   fraxtal-testnet-archive-node:
     image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-node}:${FRAXTAL_TESTNET_NODE_VERSION:-v1.12.2-frax-1.1.0}
     ports:
@@ -101,14 +99,14 @@ services:
     entrypoint: [op-node]
     networks:
       - chains
-
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
 volumes:
-  fraxtal-testnet-op-geth-archive-leveldb-hash:
 
+  fraxtal-testnet-op-geth-archive-leveldb-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -117,7 +115,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -138,5 +135,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...

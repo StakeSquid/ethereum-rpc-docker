@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   fantom-mainnet:
     build:
       context: ./fantom
@@ -26,7 +26,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10897:10897
       - 10897:10897/udp
@@ -65,11 +64,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.fantom-mainnet-opera-pruned-trace.rule=PathPrefix(`/fantom-mainnet`)}
       - traefik.http.routers.fantom-mainnet-opera-pruned-trace.middlewares=fantom-mainnet-opera-pruned-trace-stripprefix, ipwhitelist
-
 volumes:
-  fantom-mainnet-opera-pruned-trace:
 
+  fantom-mainnet-opera-pruned-trace:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

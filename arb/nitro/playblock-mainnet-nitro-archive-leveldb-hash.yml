@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-
 services:
+
   playblock-mainnet-archive:
     image: ${PLAYBLOCK_NITRO_IMAGE:-offchainlabs/nitro-node}:${PLAYBLOCK_MAINNET_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -21,7 +21,6 @@ services:
     expose:
       - 8545
       - 8551
-
     ports:
       - 10728:10728
       - 10728:10728/udp
@@ -77,11 +76,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/playblock-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.rule=PathPrefix(`/playblock-mainnet-archive`)}
       - traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.middlewares=playblock-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
-
 volumes:
-  playblock-mainnet-nitro-archive-leveldb-hash:
 
+  playblock-mainnet-nitro-archive-leveldb-hash:
 x-upstreams:
+
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
@@ -90,7 +89,6 @@ x-upstreams:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
       enabled:
@@ -111,5 +109,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-
 ...
