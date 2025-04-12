@@ -60,6 +60,8 @@ services:
       - --syncmode=snap
       - --gcmode=full
 
+      - --
+
     networks:
       - chains
     restart: unless-stopped

@@ -104,7 +104,7 @@ x-upstreams:
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
-    chain: berachain
+    chain: bartio
     method-groups:
       enabled:
         - debug
