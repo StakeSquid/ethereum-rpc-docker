@@ -26,6 +26,8 @@ services:
       - 8551
     command:
       - --cache=8192
+      - --da.blob.beaconnode=${ETHEREUM_SEPOLIA_BEACON_REST}
+      - --da.blob.blobscan=https://api.sepolia.blobscan.com/blobs/
       - --datadir=/root/.ethereum
       - --gcmode=archive
       - --gpo.ignoreprice=1
