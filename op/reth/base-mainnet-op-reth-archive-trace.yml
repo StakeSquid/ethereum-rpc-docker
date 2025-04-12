@@ -39,6 +39,9 @@ services:
       - --http
       - --http.port=8545
 
+      - --max-outbound-peers=50
+      - --max-inbound-peers=50
+
       - --ws
       - --ws.port=8545
       - --ws.origins=*
@@ -46,7 +49,6 @@ services:
       - --ws.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
 
       - --http.addr=0.0.0.0
-      - --maxpeers=50
       - --http.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
 
       - --rpc.gascap=600000000
