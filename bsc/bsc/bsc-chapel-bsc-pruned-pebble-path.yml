@@ -50,7 +50,7 @@ services:
       - chains
     volumes:
       - ${BSC_CHAPEL_BSC_PRUNED_PEBBLE_PATH_DATA:-bsc-chapel-bsc-pruned-pebble-path}:/bsc/.ethereum
-      - .//chapel:/config
+      - ./bsc/chapel:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

@@ -45,7 +45,7 @@ services:
       - chains
     volumes:
       - ${CORE_BUFFALO_CORE_PRUNED_PEBBLE_PATH_DATA:-core-buffalo-core-pruned-pebble-path}:/core/.ethereum
-      - .//buffalo:/config
+      - ./core/buffalo:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

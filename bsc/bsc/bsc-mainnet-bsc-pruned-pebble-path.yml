@@ -50,7 +50,7 @@ services:
       - chains
     volumes:
       - ${BSC_MAINNET_BSC_PRUNED_PEBBLE_PATH_DATA:-bsc-mainnet-bsc-pruned-pebble-path}:/bsc/.ethereum
-      - .//mainnet:/config
+      - ./bsc/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

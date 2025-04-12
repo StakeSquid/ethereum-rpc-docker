@@ -28,7 +28,7 @@ services:
       - chains
     volumes:
       - ${ROOTSTOCK_MAINNET_RSKJ_ARCHIVE_DATA:-rootstock-mainnet-rskj-archive}:/var/lib/rsk/database/mainnet
-      - .//mainnet:/config
+      - ./rootstock/mainnet:/config
       - /slowdisk:/slowdisk
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)

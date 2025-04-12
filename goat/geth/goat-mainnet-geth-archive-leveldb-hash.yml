@@ -29,7 +29,7 @@ services:
       - chains
     volumes:
       - ${GOAT_MAINNET_GETH_ARCHIVE_LEVELDB_HASH_DATA:-goat-mainnet-geth-archive-leveldb-hash}:/root/.ethereum
-      - .//mainnet:/config
+      - ./goat/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

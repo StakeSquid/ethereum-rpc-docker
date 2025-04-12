@@ -30,7 +30,7 @@ services:
       - chains
     volumes:
       - ${THUNDERCORE_ZEUS_THUNDER_PRUNED_LEVELDB_HASH_DATA:-thundercore-zeus-thunder-pruned-leveldb-hash}:/datadir
-      - .//zeus:/config
+      - ./thundercore/zeus:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

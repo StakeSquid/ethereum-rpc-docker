@@ -37,7 +37,7 @@ services:
       - chains
     volumes:
       - ${VICTION_TESTNET_NODE_PRUNED_LEVELDB_HASH_DATA:-viction-testnet-node-pruned-leveldb-hash}:/tomochain/data
-      - .//testnet:/config
+      - ./viction/testnet:/config
       - /slowdisk:/slowdisk
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)

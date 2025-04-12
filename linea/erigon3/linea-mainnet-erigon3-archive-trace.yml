@@ -53,7 +53,7 @@ services:
       - chains
     volumes:
       - ${LINEA_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-linea-mainnet-erigon3-archive-trace}:/root/.local/share/erigon
-      - .//mainnet:/config
+      - ./linea/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

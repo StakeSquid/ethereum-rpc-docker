@@ -29,7 +29,7 @@ services:
       - chains
     volumes:
       - ${GOAT_TESTNET3_GETH_PRUNED_PEBBLE_PATH_DATA:-goat-testnet3-geth-pruned-pebble-path}:/root/.ethereum
-      - .//testnet3:/config
+      - ./goat/testnet3:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

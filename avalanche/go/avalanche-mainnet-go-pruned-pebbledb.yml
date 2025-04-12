@@ -36,7 +36,7 @@ services:
       - chains
     volumes:
       - ${AVALANCHE_MAINNET_GO_PRUNED_PEBBLEDB_DATA:-avalanche-mainnet-go-pruned-pebbledb}:/root/.avalanchego
-      - .//mainnet:/config
+      - ./avalanche/mainnet:/config
       - /slowdisk:/slowdisk
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)

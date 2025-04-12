@@ -37,7 +37,7 @@ services:
       - chains
     volumes:
       - ${VICTION_MAINNET_NODE_PRUNED_LEVELDB_HASH_DATA:-viction-mainnet-node-pruned-leveldb-hash}:/tomochain/data
-      - .//mainnet:/config
+      - ./viction/mainnet:/config
       - /slowdisk:/slowdisk
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)

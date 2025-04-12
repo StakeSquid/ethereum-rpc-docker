@@ -45,7 +45,7 @@ services:
       - chains
     volumes:
       - ${CORE_PIGEON_CORE_PRUNED_PEBBLE_PATH_DATA:-core-pigeon-core-pruned-pebble-path}:/core/.ethereum
-      - .//pigeon:/config
+      - ./core/pigeon:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

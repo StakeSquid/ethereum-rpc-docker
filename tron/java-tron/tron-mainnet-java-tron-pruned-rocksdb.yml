@@ -28,7 +28,7 @@ services:
       - chains
     volumes:
       - ${TRON_MAINNET_JAVA_TRON_PRUNED_ROCKSDB_DATA:-tron-mainnet-java-tron-pruned-rocksdb}:/java-tron/output-directory
-      - .//mainnet:/config
+      - ./tron/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

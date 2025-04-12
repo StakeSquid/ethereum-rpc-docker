@@ -36,7 +36,7 @@ services:
       - chains
     volumes:
       - ${AVALANCHE_FUJI_GO_PRUNED_PEBBLEDB_DATA:-avalanche-fuji-go-pruned-pebbledb}:/root/.avalanchego
-      - .//fuji:/config
+      - ./avalanche/fuji:/config
       - /slowdisk:/slowdisk
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)

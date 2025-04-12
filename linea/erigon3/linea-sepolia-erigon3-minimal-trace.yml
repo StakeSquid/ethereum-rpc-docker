@@ -53,7 +53,7 @@ services:
       - chains
     volumes:
       - ${LINEA_SEPOLIA_ERIGON3_MINIMAL_TRACE_DATA:-linea-sepolia-erigon3-minimal-trace}:/root/.local/share/erigon
-      - .//sepolia:/config
+      - ./linea/sepolia:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

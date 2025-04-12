@@ -36,7 +36,7 @@ services:
       - chains
     volumes:
       - ${AVALANCHE_FUJI_GO_ARCHIVE_LEVELDB_DATA:-avalanche-fuji-go-archive-leveldb}:/root/.avalanchego
-      - .//fuji:/config
+      - ./avalanche/fuji:/config
       - /slowdisk:/slowdisk
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)

@@ -63,7 +63,7 @@ services:
       - chains
     volumes:
       - ${OPENCAMPUSCODEX_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-opencampuscodex-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
-      - .//sepolia:/config
+      - ./arb/sepolia:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

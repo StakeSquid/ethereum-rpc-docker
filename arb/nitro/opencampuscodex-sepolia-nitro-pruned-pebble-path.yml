@@ -63,7 +63,7 @@ services:
       - chains
     volumes:
       - ${OPENCAMPUSCODEX_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_DATA:-opencampuscodex-sepolia-nitro-pruned-pebble-path}:/root/.arbitrum
-      - .//sepolia:/config
+      - ./arb/sepolia:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

@@ -45,7 +45,7 @@ services:
       - chains
     volumes:
       - ${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_DATA:-core-mainnet-core-archive-leveldb-hash}:/core/.ethereum
-      - .//mainnet:/config
+      - ./core/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
