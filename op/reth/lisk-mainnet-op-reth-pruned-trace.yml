@@ -58,10 +58,7 @@ services:
 
       - --authrpc.jwtsecret=/jwtsecret
 
-      - --db.engine=
-      - --state.scheme=
-      - --syncmode=snap
-      - --gcmode=full
+      - --full
 
       - --chain=lisk
       - --rollup.sequencer-http=https://rpc.api.lisk.com

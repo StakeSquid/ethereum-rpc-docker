@@ -58,10 +58,7 @@ services:
 
       - --authrpc.jwtsecret=/jwtsecret
 
-      - --db.engine=
-      - --state.scheme=
-      - --syncmode=snap
-      - --gcmode=full
+      - --full
 
       - --chain=op
       - --rollup.sequencer-http=https://mainnet-sequencer.optimism.org

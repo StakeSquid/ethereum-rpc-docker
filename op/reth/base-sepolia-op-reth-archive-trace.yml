@@ -58,11 +58,6 @@ services:
 
       - --authrpc.jwtsecret=/jwtsecret
 
-      - --db.engine=
-      - --state.scheme=
-      - --syncmode=full
-      - --gcmode=archive
-
       - --chain=base-sepolia
       - --rollup.sequencer-http=https://sepolia-sequencer.base.org
 
