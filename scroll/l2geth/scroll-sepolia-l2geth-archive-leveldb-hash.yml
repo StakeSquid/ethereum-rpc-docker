@@ -55,9 +55,6 @@ services:
       - --cache=8192
       - --l1.endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - --scroll-sepolia
-      - --da.sync
-      - --da.blob.beaconnode=${ETHEREUM_SEPOLIA_BEACON_REST}
-      - --da.blob.blobscan=https://api.sepolia.blobscan.com/blobs/
 
       - --rollup.verify
       - --gpo.ignoreprice=1
