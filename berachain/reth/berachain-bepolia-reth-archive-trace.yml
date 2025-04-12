@@ -58,6 +58,7 @@ services:
       - chains
     volumes:
       - ${BERACHAIN_BEPOLIA_RETH_ARCHIVE_TRACE_DATA:-berachain-bepolia-reth-archive-trace}:/root/.local/share/reth
+      - ./berachain/bepolia:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:

@@ -58,6 +58,7 @@ services:
       - chains
     volumes:
       - ${BERACHAIN_BARTIO_RETH_ARCHIVE_TRACE_DATA:-berachain-bartio-reth-archive-trace}:/root/.local/share/reth
+      - ./berachain/bartio:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:

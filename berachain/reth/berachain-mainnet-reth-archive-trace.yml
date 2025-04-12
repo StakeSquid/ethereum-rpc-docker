@@ -58,6 +58,7 @@ services:
       - chains
     volumes:
       - ${BERACHAIN_MAINNET_RETH_ARCHIVE_TRACE_DATA:-berachain-mainnet-reth-archive-trace}:/root/.local/share/reth
+      - ./berachain/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
