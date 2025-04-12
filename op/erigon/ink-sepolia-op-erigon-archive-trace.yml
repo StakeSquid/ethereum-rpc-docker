@@ -56,6 +56,7 @@ services:
 
       - --authrpc.addr=0.0.0.0
       - --authrpc.vhosts=*
+
       - --authrpc.jwtsecret=/jwtsecret
 
       - --p2p.allowed-ports=30826

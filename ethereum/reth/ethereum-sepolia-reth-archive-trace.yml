@@ -55,7 +55,7 @@ services:
       - --rpc.gascap=600000000
 
       - --authrpc.addr=0.0.0.0
-      - --authrpc.vhosts=*
+
       - --authrpc.jwtsecret=/jwtsecret
 
       - --chain=sepolia

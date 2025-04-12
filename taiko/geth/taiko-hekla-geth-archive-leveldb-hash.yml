@@ -55,6 +55,7 @@ services:
 
       - --authrpc.addr=0.0.0.0
       - --authrpc.vhosts=*
+
       - --authrpc.jwtsecret=/jwtsecret
 
       - --db.engine=leveldb
