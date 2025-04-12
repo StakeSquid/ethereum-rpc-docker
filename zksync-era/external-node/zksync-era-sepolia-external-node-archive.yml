@@ -97,7 +97,6 @@ volumes:
   zksync-era-sepolia-external-node-archive_db:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

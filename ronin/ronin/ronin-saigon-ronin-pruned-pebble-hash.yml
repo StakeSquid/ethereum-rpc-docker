@@ -58,7 +58,6 @@ volumes:
   ronin-saigon-ronin-pruned-pebble-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

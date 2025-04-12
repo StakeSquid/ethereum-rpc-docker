@@ -82,7 +82,6 @@ volumes:
   connext-sepolia-nitro-pruned-pebble-path:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

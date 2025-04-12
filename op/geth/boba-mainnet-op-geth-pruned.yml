@@ -107,7 +107,6 @@ volumes:
   boba-mainnet-op-geth-pruned:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

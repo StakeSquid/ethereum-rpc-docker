@@ -46,7 +46,6 @@ volumes:
   haqq-mainnet-haqq-pruned:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

@@ -89,7 +89,6 @@ volumes:
   ethereum-mainnet-erigon3-archive-trace:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

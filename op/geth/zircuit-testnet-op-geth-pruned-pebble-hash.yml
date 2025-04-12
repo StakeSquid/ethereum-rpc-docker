@@ -110,7 +110,6 @@ volumes:
   zircuit-testnet-op-geth-pruned-pebble-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

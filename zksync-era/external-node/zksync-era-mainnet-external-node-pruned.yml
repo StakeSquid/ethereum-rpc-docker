@@ -97,7 +97,6 @@ volumes:
   zksync-era-mainnet-external-node-pruned_db:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

@@ -95,7 +95,6 @@ volumes:
   taiko-hekla-geth-archive-leveldb-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

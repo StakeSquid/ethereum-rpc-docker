@@ -68,7 +68,6 @@ volumes:
   avalanche-fuji-go-archive-leveldb:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

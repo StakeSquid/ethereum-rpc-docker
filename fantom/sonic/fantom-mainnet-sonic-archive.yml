@@ -69,7 +69,6 @@ volumes:
   fantom-mainnet-sonic-archive:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

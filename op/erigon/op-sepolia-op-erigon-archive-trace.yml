@@ -107,7 +107,6 @@ volumes:
   op-sepolia-op-erigon-archive-trace:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

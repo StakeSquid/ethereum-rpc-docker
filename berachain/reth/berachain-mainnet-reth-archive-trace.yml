@@ -94,7 +94,6 @@ volumes:
   berachain-mainnet-reth-archive-trace_node:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

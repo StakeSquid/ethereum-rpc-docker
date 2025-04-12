@@ -89,7 +89,6 @@ volumes:
   gnosis-chiado-erigon3-minimal-trace:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

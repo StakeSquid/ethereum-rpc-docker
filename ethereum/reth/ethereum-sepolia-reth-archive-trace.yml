@@ -96,7 +96,6 @@ volumes:
   ethereum-sepolia-reth-archive-trace_prysm:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

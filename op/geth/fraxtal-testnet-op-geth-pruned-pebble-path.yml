@@ -108,7 +108,6 @@ volumes:
   fraxtal-testnet-op-geth-pruned-pebble-path:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

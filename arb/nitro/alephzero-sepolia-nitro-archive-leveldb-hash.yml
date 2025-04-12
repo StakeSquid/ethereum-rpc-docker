@@ -83,7 +83,6 @@ volumes:
   alephzero-sepolia-nitro-archive-leveldb-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

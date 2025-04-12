@@ -135,7 +135,6 @@ volumes:
   celo-alfajores-op-geth-pruned-pebble-path_eigenda:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

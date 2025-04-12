@@ -46,7 +46,6 @@ volumes:
   tron-mainnet-java-tron-pruned-rocksdb:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

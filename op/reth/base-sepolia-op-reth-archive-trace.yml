@@ -105,7 +105,6 @@ volumes:
   base-sepolia-op-reth-archive-trace:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

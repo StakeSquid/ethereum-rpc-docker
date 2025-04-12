@@ -94,7 +94,6 @@ volumes:
   berachain-bartio-reth-archive-trace_node:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

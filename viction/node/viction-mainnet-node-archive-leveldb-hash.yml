@@ -69,7 +69,6 @@ volumes:
   viction-mainnet-node-archive-leveldb-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

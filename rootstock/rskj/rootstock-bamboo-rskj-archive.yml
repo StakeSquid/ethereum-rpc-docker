@@ -59,7 +59,6 @@ volumes:
   rootstock-bamboo-rskj-archive:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

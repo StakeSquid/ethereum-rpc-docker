@@ -60,7 +60,6 @@ volumes:
   rootstock-mainnet-rskj-archive:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

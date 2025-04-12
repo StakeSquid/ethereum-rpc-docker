@@ -48,7 +48,6 @@ volumes:
   goat-mainnet-geth-archive-leveldb-hash_node:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

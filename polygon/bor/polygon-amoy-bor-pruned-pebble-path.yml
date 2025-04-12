@@ -71,7 +71,6 @@ volumes:
   polygon-amoy-bor-pruned-pebble-path:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

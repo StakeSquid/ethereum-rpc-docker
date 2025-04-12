@@ -68,7 +68,6 @@ volumes:
   fantom-testnet-opera-pruned:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

@@ -108,7 +108,6 @@ volumes:
   boba-sepolia-op-geth-pruned:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

@@ -48,7 +48,6 @@ volumes:
   thundercore-venus-thunder-pruned-leveldb-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

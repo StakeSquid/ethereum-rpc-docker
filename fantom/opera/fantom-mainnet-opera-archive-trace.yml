@@ -69,7 +69,6 @@ volumes:
   fantom-mainnet-opera-archive-trace:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

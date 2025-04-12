@@ -109,7 +109,6 @@ volumes:
   zircuit-mainnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

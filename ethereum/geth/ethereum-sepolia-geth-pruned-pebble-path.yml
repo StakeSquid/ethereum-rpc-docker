@@ -98,7 +98,6 @@ volumes:
   ethereum-sepolia-geth-pruned-pebble-path_prysm:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

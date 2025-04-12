@@ -76,7 +76,6 @@ volumes:
   arbitrum-nova-nitro-pruned-pebble-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

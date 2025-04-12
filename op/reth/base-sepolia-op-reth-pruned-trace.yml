@@ -106,7 +106,6 @@ volumes:
   base-sepolia-op-reth-pruned-trace:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

@@ -108,7 +108,6 @@ volumes:
   mantle-mainnet-op-geth-pruned-leveldb-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

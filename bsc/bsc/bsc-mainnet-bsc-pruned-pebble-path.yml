@@ -68,7 +68,6 @@ volumes:
   bsc-mainnet-bsc-pruned-pebble-path:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

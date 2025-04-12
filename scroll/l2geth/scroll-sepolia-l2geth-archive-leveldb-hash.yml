@@ -69,7 +69,6 @@ volumes:
   scroll-sepolia-l2geth-archive-leveldb-hash:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

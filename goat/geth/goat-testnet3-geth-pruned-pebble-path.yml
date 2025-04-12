@@ -48,7 +48,6 @@ volumes:
   goat-testnet3-geth-pruned-pebble-path_node:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

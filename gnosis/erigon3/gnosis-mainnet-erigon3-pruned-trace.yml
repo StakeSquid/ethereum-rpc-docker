@@ -89,7 +89,6 @@ volumes:
   gnosis-mainnet-erigon3-pruned-trace:
 
 x-upstreams:
-
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
