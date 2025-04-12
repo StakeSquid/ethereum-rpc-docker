@@ -4,6 +4,13 @@
 services:
   taiko-hekla-archive:
     image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HEKLA_GETH_VERSION:-v1.14.1}
+    user: root
+    ports:
+      - 10396:10396
+      - 10396:10396/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_NETWORKID=167009
     command:
@@ -31,16 +38,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10396:10396
-      - 10396:10396/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${TAIKO_HEKLA_GETH_ARCHIVE_LEVELDB_HASH_DATA:-taiko-hekla-geth-archive-leveldb-hash}:/root/.ethereum
       - .jwtsecret:/jwtsecret:ro
@@ -70,6 +70,9 @@ services:
 
   taiko-hekla-archive-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.4.1}
+    ports:
+      - 15396:15396
+      - 15396:15396/udp
     env_file:
       - ./taiko/hekla.env
     environment:
@@ -85,9 +88,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15396:15396
-      - 15396:15396/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

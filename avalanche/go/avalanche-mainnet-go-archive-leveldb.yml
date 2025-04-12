@@ -4,6 +4,13 @@
 services:
   avalanche-mainnet-archive-client:
     image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_MAINNET_GO_VERSION:-v1.13.0}
+    user: root
+    ports:
+      - 10929:10929
+      - 10929:10929/udp
+    expose:
+      - 9650
+      - 9650
     entrypoint: [/avalanchego/build/avalanchego]
     command:
       - --chain-config-dir /config/archive
@@ -13,16 +20,9 @@ services:
       - --public-ip=${IP}"
       - --staking-port=10929
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10929:10929
-      - 10929:10929/udp
-    expose:
-      - 9650
-      - 9650
     volumes:
       - ${AVALANCHE_MAINNET_GO_ARCHIVE_LEVELDB_DATA:-avalanche-mainnet-go-archive-leveldb}:/root/.avalanchego
       - .//mainnet:/config

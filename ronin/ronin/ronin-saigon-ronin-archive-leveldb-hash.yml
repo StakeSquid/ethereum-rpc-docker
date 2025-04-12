@@ -4,6 +4,12 @@
 services:
   ronin-saigon-archive:
     image: ${RONIN_RONIN_IMAGE:-ghcr.io/ronin-chain/ronin}:${RONIN_SAIGON_RONIN_VERSION:-v1.0.2-eaef5a2}
+    user: root
+    ports:
+      - 10493:10493
+      - 10493:10493/udp
+    expose:
+      - 8545
     environment:
       - DB_ENGINE=
       - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
@@ -19,15 +25,9 @@ services:
       - --txpool.nolocals
       - --txpool.pricelimit 20000000000
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10493:10493
-      - 10493:10493/udp
-    expose:
-      - 8545
     volumes:
       - ${RONIN_SAIGON_RONIN_ARCHIVE_LEVELDB_HASH_DATA:-ronin-saigon-ronin-archive-leveldb-hash}:/ronin
       - /slowdisk:/slowdisk

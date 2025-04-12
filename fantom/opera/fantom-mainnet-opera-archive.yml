@@ -9,6 +9,13 @@ services:
       args:
         VERSION: v1.1.3-rc.5
         REPO: https://github.com/Fantom-foundation/go-opera.git
+    user: root
+    ports:
+      - 10897:10897
+      - 10897:10897/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GENESIS=https://download.fantom.network/opera/mainnet/mainnet-5577-full-mpt.g
     command:
@@ -28,16 +35,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10897:10897
-      - 10897:10897/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${FANTOM_MAINNET_OPERA_ARCHIVE_DATA:-fantom-mainnet-opera-archive}:/datadir
       - /slowdisk:/slowdisk

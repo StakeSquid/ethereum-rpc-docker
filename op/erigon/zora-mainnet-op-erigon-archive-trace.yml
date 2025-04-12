@@ -4,6 +4,17 @@
 services:
   zora-mainnet-archive:
     image: ${ZORA_ERIGON_IMAGE:-testinprod/erigon}:${ZORA_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
+    user: root
+    ports:
+      - 10360:10360
+      - 10360:10360/udp
+      - 30360:30360
+      - 30360:30360/udp
+      - 35360:35360
+      - 35360:35360/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [erigon]
     command:
       - --authrpc.addr=0.0.0.0
@@ -26,20 +37,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10360:10360
-      - 10360:10360/udp
-      - 30360:30360
-      - 30360:30360/udp
-      - 35360:35360
-      - 35360:35360/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ZORA_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-zora-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
       - .jwtsecret:/jwtsecret:ro
@@ -70,6 +70,9 @@ services:
 
   zora-mainnet-archive-node:
     image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.1}
+    ports:
+      - 15360:15360
+      - 15360:15360/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -96,9 +99,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15360:15360
-      - 15360:15360/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

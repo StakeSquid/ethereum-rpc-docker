@@ -4,6 +4,13 @@
 services:
   snax-mainnet-archive:
     image: ${SNAX_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SNAX_MAINNET_GETH_VERSION:-v1.101503.3}
+    user: root
+    ports:
+      - 10332:10332
+      - 10332:10332/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_OP_NETWORK=snax-mainnet
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
@@ -32,16 +39,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10332:10332
-      - 10332:10332/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${SNAX_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-snax-mainnet-op-geth-archive-leveldb-hash}:/data
       - .jwtsecret:/jwtsecret:ro
@@ -71,6 +71,9 @@ services:
 
   snax-mainnet-archive-node:
     image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.1}
+    ports:
+      - 15332:15332
+      - 15332:15332/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -97,9 +100,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15332:15332
-      - 15332:15332/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

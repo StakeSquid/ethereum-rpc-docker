@@ -4,6 +4,17 @@
 services:
   boba-sepolia-archive:
     image: ${BOBA_ERIGON_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon}:${BOBA_SEPOLIA_ERIGON_VERSION:-v1.2.11}
+    user: root
+    ports:
+      - 10249:10249
+      - 10249:10249/udp
+      - 30249:30249
+      - 30249:30249/udp
+      - 35249:35249
+      - 35249:35249/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [erigon]
     command:
       - --authrpc.addr=0.0.0.0
@@ -26,20 +37,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10249:10249
-      - 10249:10249/udp
-      - 30249:30249
-      - 30249:30249/udp
-      - 35249:35249
-      - 35249:35249/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${BOBA_SEPOLIA_OP_ERIGON_ARCHIVE_TRACE_DATA:-boba-sepolia-op-erigon-archive-trace}:/db
       - .jwtsecret:/jwtsecret:ro
@@ -70,6 +70,9 @@ services:
 
   boba-sepolia-archive-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}
+    ports:
+      - 15249:15249
+      - 15249:15249/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -97,9 +100,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15249:15249
-      - 15249:15249/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

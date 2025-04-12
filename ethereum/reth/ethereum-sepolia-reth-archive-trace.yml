@@ -4,6 +4,13 @@
 services:
   ethereum-sepolia-archive:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_SEPOLIA_RETH_VERSION:-v1.3.8}
+    user: root
+    ports:
+      - 10330:10330
+      - 10330:10330/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [reth, node]
     command:
       - --authrpc.addr=0.0.0.0
@@ -27,16 +34,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10330:10330
-      - 10330:10330/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ETHEREUM_SEPOLIA_RETH_ARCHIVE_TRACE_DATA:-ethereum-sepolia-reth-archive-trace}:/root/.local/share/reth
       - .jwtsecret:/jwtsecret:ro
@@ -67,6 +67,9 @@ services:
 
   ethereum-sepolia-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v5.3.1}
+    ports:
+      - 15330:15330
+      - 15330:15330/udp
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -84,9 +87,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15330:15330
-      - 15330:15330/udp
     volumes:
       - ${ETHEREUM_SEPOLIA_RETH_ARCHIVE_TRACE__PRYSM_DATA:-ethereum-sepolia-reth-archive-trace_prysm}:/data
       - .jwtsecret:/jwtsecret:ro

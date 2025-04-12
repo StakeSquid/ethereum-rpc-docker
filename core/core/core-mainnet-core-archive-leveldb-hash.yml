@@ -4,6 +4,13 @@
 services:
   core-mainnet-archive:
     image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_MAINNET_CORE_VERSION:-1.0.15}
+    user: root
+    ports:
+      - 10169:10169
+      - 10169:10169/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --config=/config/config.toml
       - --datadir=/core/.ethereum
@@ -22,16 +29,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10169:10169
-      - 10169:10169/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_DATA:-core-mainnet-core-archive-leveldb-hash}:/core/.ethereum
       - .//mainnet:/config

@@ -4,6 +4,13 @@
 services:
   op-mainnet-archive:
     image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_MAINNET_RETH_VERSION:-v1.3.8}
+    user: root
+    ports:
+      - 10114:10114
+      - 10114:10114/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [op-reth, node]
     command:
       - --authrpc.addr=0.0.0.0
@@ -28,16 +35,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10114:10114
-      - 10114:10114/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${OP_MAINNET_OP_RETH_ARCHIVE_TRACE_DATA:-op-mainnet-op-reth-archive-trace}:/root/.local/share/reth
       - .jwtsecret:/jwtsecret:ro
@@ -68,6 +68,9 @@ services:
 
   op-mainnet-archive-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.1}
+    ports:
+      - 15114:15114
+      - 15114:15114/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -94,9 +97,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15114:15114
-      - 15114:15114/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

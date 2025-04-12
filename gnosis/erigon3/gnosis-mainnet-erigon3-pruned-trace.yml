@@ -4,6 +4,21 @@
 services:
   gnosis-mainnet:
     image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.0}
+    user: root
+    ports:
+      - 10974:10974
+      - 10974:10974/udp
+      - 15974:15974
+      - 15974:15974/udp
+      - 25974:25974
+      - 25974:25974/udp
+      - 30974:30974
+      - 30974:30974/udp
+      - 35974:35974
+      - 35974:35974/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [erigon]
     command:
       - --beacon.api.addr=0.0.0.0
@@ -32,24 +47,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10974:10974
-      - 10974:10974/udp
-      - 15974:15974
-      - 15974:15974/udp
-      - 25974:25974
-      - 25974:25974/udp
-      - 30974:30974
-      - 30974:30974/udp
-      - 35974:35974
-      - 35974:35974/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${GNOSIS_MAINNET_ERIGON3_PRUNED_TRACE_DATA:-gnosis-mainnet-erigon3-pruned-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk

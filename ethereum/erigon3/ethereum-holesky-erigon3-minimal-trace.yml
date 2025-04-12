@@ -4,6 +4,21 @@
 services:
   ethereum-holesky-minimal:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOLESKY_ERIGON3_VERSION:-v3.0.0}
+    user: root
+    ports:
+      - 10947:10947
+      - 10947:10947/udp
+      - 15947:15947
+      - 15947:15947/udp
+      - 25947:25947
+      - 25947:25947/udp
+      - 30947:30947
+      - 30947:30947/udp
+      - 35947:35947
+      - 35947:35947/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [erigon]
     command:
       - --beacon.api.addr=0.0.0.0
@@ -32,24 +47,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10947:10947
-      - 10947:10947/udp
-      - 15947:15947
-      - 15947:15947/udp
-      - 25947:25947
-      - 25947:25947/udp
-      - 30947:30947
-      - 30947:30947/udp
-      - 35947:35947
-      - 35947:35947/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ETHEREUM_HOLESKY_ERIGON3_MINIMAL_TRACE_DATA:-ethereum-holesky-erigon3-minimal-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk

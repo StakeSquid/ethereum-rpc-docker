@@ -4,19 +4,19 @@
 services:
   thundercore-zeus:
     image: ${THUNDERCORE_THUNDER_IMAGE:-thundercore/thunder}:${THUNDERCORE_ZEUS_THUNDER_VERSION:-r4.1.3}
-    environment:
-      PORT: 10645
-    entrypoint: [/sbin/tini, --, /entrypoint.sh, --logToConsole]
-    restart: unless-stopped
     user: root
-    stop_grace_period: 5m
-    networks:
-      - chains
     ports:
       - 10645:10645
       - 10645:10645/udp
     expose:
       - 8545
+    environment:
+      PORT: 10645
+    entrypoint: [/sbin/tini, --, /entrypoint.sh, --logToConsole]
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
     volumes:
       - ${THUNDERCORE_ZEUS_THUNDER_PRUNED_LEVELDB_HASH_DATA:-thundercore-zeus-thunder-pruned-leveldb-hash}:/datadir
       - .//zeus:/config

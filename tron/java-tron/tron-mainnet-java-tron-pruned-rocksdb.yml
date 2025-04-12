@@ -4,17 +4,17 @@
 services:
   tron-mainnet:
     image: ${TRON_JAVA_TRON_IMAGE:-tronprotocol/java-tron}:${TRON_MAINNET_JAVA_TRON_VERSION:-GreatVoyage-v4.7.7}
-    command: -c /config/config.conf --log-config /config/logback.xml
-    restart: unless-stopped
     user: root
-    stop_grace_period: 5m
-    networks:
-      - chains
     ports:
       - 25815:25815
       - 25815:25815/udp
     expose:
       - 8545
+    command: -c /config/config.conf --log-config /config/logback.xml
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
     volumes:
       - ${TRON_MAINNET_JAVA_TRON_PRUNED_ROCKSDB_DATA:-tron-mainnet-java-tron-pruned-rocksdb}:/java-tron/output-directory
       - .//mainnet:/config

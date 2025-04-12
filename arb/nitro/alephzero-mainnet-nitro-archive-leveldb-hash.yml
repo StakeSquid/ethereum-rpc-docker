@@ -4,6 +4,13 @@
 services:
   alephzero-mainnet-archive:
     image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_MAINNET_NITRO_VERSION:-v3.5.3-0a9c975}
+    user: root
+    ports:
+      - 10301:10301
+      - 10301:10301/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --conf.file=/config/baseConfig.json
       - --datadir=/root/.arbitrum
@@ -41,16 +48,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10301:10301
-      - 10301:10301/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ALEPHZERO_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-alephzero-mainnet-nitro-archive-leveldb-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk

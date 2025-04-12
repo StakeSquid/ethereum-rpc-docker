@@ -4,6 +4,21 @@
 services:
   ethereum-sepolia-minimal:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_SEPOLIA_ERIGON3_VERSION:-v3.0.0}
+    user: root
+    ports:
+      - 10317:10317
+      - 10317:10317/udp
+      - 15317:15317
+      - 15317:15317/udp
+      - 25317:25317
+      - 25317:25317/udp
+      - 30317:30317
+      - 30317:30317/udp
+      - 35317:35317
+      - 35317:35317/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [erigon]
     command:
       - --beacon.api.addr=0.0.0.0
@@ -32,24 +47,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10317:10317
-      - 10317:10317/udp
-      - 15317:15317
-      - 15317:15317/udp
-      - 25317:25317
-      - 25317:25317/udp
-      - 30317:30317
-      - 30317:30317/udp
-      - 35317:35317
-      - 35317:35317/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ETHEREUM_SEPOLIA_ERIGON3_MINIMAL_TRACE_DATA:-ethereum-sepolia-erigon3-minimal-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk

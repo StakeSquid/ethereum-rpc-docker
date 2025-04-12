@@ -4,6 +4,13 @@
 services:
   celo-alfajores-archive:
     image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_ALFAJORES_GETH_VERSION:-celo-v2.0.0}
+    user: root
+    ports:
+      - 10457:10457
+      - 10457:10457/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_OP_NETWORK=celo-alfajores
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
@@ -32,16 +39,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10457:10457
-      - 10457:10457/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-celo-alfajores-op-geth-archive-leveldb-hash}:/data
       - .jwtsecret:/jwtsecret:ro
@@ -71,6 +71,9 @@ services:
 
   celo-alfajores-archive-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.0.0}
+    ports:
+      - 15457:15457
+      - 15457:15457/udp
     environment:
       - NODE_IMAGE=us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node
       - NODE_VERSION=celo-v2.0.0
@@ -104,14 +107,14 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15457:15457
-      - 15457:15457/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 
   celo-alfajores-archive-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
+    ports:
+      - 20457:20457
+      - 20457:20457/udp
     environment:
       - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
       - EIGENDA_PROXY_EIGENDA_GRPC_DISABLE_TLS=false
@@ -124,9 +127,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 20457:20457
-      - 20457:20457/udp
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_DATA:-celo-alfajores-op-geth-archive-leveldb-hash_eigenda}:/data
 

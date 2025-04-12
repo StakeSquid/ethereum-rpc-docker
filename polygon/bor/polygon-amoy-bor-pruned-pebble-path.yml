@@ -4,6 +4,13 @@
 services:
   polygon-amoy:
     image: ${POLYGON_BOR_IMAGE:-0xpolygon/bor}:${POLYGON_AMOY_BOR_VERSION:-v1.3.10}
+    user: root
+    ports:
+      - 10188:10188
+      - 10188:10188/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [bor, server]
     command:
       - --bor.heimdall=https://polygon-amoy-heimdall-rest.publicnode.com
@@ -31,16 +38,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10188:10188
-      - 10188:10188/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${POLYGON_AMOY_BOR_PRUNED_PEBBLE_PATH_DATA:-polygon-amoy-bor-pruned-pebble-path}:/root.bor/
       - /slowdisk:/slowdisk

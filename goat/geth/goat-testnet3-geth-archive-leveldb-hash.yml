@@ -4,18 +4,18 @@
 services:
   goat-testnet3-archive:
     image: ${GOAT_GETH_IMAGE:-ghcr.io/goatnetwork/goat-geth}:${GOAT_TESTNET3_GETH_VERSION:-v0.1.7}
-    command: --goat=testnet3
-    restart: unless-stopped
     user: root
-    stop_grace_period: 5m
-    networks:
-      - chains
     ports:
       - 10272:10272
       - 10272:10272/udp
     expose:
       - 8545
       - 8551
+    command: --goat=testnet3
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
     volumes:
       - ${GOAT_TESTNET3_GETH_ARCHIVE_LEVELDB_HASH_DATA:-goat-testnet3-geth-archive-leveldb-hash}:/root/.ethereum
       - .//testnet3:/config

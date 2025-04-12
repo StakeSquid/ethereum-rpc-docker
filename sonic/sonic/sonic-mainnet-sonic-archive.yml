@@ -9,6 +9,13 @@ services:
       args:
         VERSION: v2.0.3
         REPO: https://github.com/0xsoniclabs/sonic.git
+    user: root
+    ports:
+      - 10658:10658
+      - 10658:10658/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - CACHE_GB=${SONIC_CACHE_GB:-28}
       - GENESIS=https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic-16500-full.g
@@ -29,16 +36,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10658:10658
-      - 10658:10658/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${SONIC_MAINNET_SONIC_ARCHIVE_DATA:-sonic-mainnet-sonic-archive}:/var/sonic
       - /slowdisk:/slowdisk

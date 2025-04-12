@@ -4,6 +4,21 @@
 services:
   gnosis-chiado-archive:
     image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_CHIADO_ERIGON3_VERSION:-v3.0.0}
+    user: root
+    ports:
+      - 10986:10986
+      - 10986:10986/udp
+      - 15986:15986
+      - 15986:15986/udp
+      - 25986:25986
+      - 25986:25986/udp
+      - 30986:30986
+      - 30986:30986/udp
+      - 35986:35986
+      - 35986:35986/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [erigon]
     command:
       - --beacon.api.addr=0.0.0.0
@@ -32,24 +47,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10986:10986
-      - 10986:10986/udp
-      - 15986:15986
-      - 15986:15986/udp
-      - 25986:25986
-      - 25986:25986/udp
-      - 30986:30986
-      - 30986:30986/udp
-      - 35986:35986
-      - 35986:35986/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${GNOSIS_CHIADO_ERIGON3_ARCHIVE_TRACE_DATA:-gnosis-chiado-erigon3-archive-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk

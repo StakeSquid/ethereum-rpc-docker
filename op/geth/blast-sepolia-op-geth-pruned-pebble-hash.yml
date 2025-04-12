@@ -4,6 +4,13 @@
 services:
   blast-sepolia:
     image: ${BLAST_GETH_IMAGE:-blastio/blast-geth}:${BLAST_SEPOLIA_GETH_VERSION:-sepolia-v1.2.3}
+    user: root
+    ports:
+      - 10591:10591
+      - 10591:10591/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_OP_NETWORK=blast-sepolia
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
@@ -32,16 +39,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10591:10591
-      - 10591:10591/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${BLAST_SEPOLIA_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-blast-sepolia-op-geth-pruned-pebble-hash}:/data
       - .jwtsecret:/jwtsecret:ro
@@ -71,6 +71,9 @@ services:
 
   blast-sepolia-node:
     image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_SEPOLIA_NODE_VERSION:-sepolia-v1.2.3}
+    ports:
+      - 15591:15591
+      - 15591:15591/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -99,9 +102,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15591:15591
-      - 15591:15591/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

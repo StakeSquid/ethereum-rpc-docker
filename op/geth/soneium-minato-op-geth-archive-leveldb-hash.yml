@@ -4,6 +4,13 @@
 services:
   soneium-minato-archive:
     image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MINATO_GETH_VERSION:-v1.101503.3}
+    user: root
+    ports:
+      - 10702:10702
+      - 10702:10702/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_OP_NETWORK=soneium-minato
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
@@ -32,16 +39,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10702:10702
-      - 10702:10702/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${SONEIUM_MINATO_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-soneium-minato-op-geth-archive-leveldb-hash}:/data
       - .jwtsecret:/jwtsecret:ro
@@ -71,6 +71,9 @@ services:
 
   soneium-minato-archive-node:
     image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.1}
+    ports:
+      - 15702:15702
+      - 15702:15702/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -98,9 +101,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15702:15702
-      - 15702:15702/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

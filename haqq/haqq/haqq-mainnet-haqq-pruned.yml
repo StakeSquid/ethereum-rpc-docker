@@ -4,18 +4,18 @@
 services:
   haqq-mainnet:
     image: ${HAQQ_HAQQ_IMAGE:-alhaqq/haqq}:${HAQQ_MAINNET_HAQQ_VERSION:-v1.8.2}
-    entrypoint: [haqqd, start]
-    command: --p2p.laddr=tcp://0.0.0.0:10465
-    restart: unless-stopped
     user: root
-    stop_grace_period: 5m
-    networks:
-      - chains
     ports:
       - 10465:10465
       - 10465:10465/udp
     expose:
       - 8545
+    entrypoint: [haqqd, start]
+    command: --p2p.laddr=tcp://0.0.0.0:10465
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
     volumes:
       - ${HAQQ_MAINNET_HAQQ_PRUNED_DATA:-haqq-mainnet-haqq-pruned}:/root/.haqqd
       - /slowdisk:/slowdisk

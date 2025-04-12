@@ -4,6 +4,13 @@
 services:
   scroll-mainnet-archive:
     image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_L2GETH_VERSION:-scroll-v5.7.2}
+    user: root
+    ports:
+      - 10083:10083
+      - 10083:10083/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --cache=8192
       - --datadir=/root/.ethereum
@@ -29,16 +36,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10083:10083
-      - 10083:10083/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${SCROLL_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-scroll-mainnet-l2geth-archive-leveldb-hash}:/root/.ethereum
       - /slowdisk:/slowdisk

@@ -4,6 +4,13 @@
 services:
   ethereum-mainnet:
     image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_GETH_VERSION:-v1.15.7}
+    user: root
+    ports:
+      - 10023:10023
+      - 10023:10023/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -30,16 +37,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10023:10023
-      - 10023:10023/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ETHEREUM_MAINNET_GETH_PRUNED_PEBBLE_PATH_DATA:-ethereum-mainnet-geth-pruned-pebble-path}:/root/.ethereum
       - .jwtsecret:/jwtsecret:ro
@@ -69,6 +69,9 @@ services:
 
   ethereum-mainnet-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.1}
+    ports:
+      - 15023:15023
+      - 15023:15023/udp
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -86,9 +89,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15023:15023
-      - 15023:15023/udp
     volumes:
       - ${ETHEREUM_MAINNET_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-mainnet-geth-pruned-pebble-path_prysm}:/data
       - .jwtsecret:/jwtsecret:ro

@@ -4,6 +4,17 @@
 services:
   mode-sepolia-archive:
     image: ${MODE_ERIGON_IMAGE:-testinprod/erigon}:${MODE_SEPOLIA_ERIGON_VERSION:-v2.61.1-0.8.3}
+    user: root
+    ports:
+      - 10212:10212
+      - 10212:10212/udp
+      - 30212:30212
+      - 30212:30212/udp
+      - 35212:35212
+      - 35212:35212/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [erigon]
     command:
       - --authrpc.addr=0.0.0.0
@@ -26,20 +37,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10212:10212
-      - 10212:10212/udp
-      - 30212:30212
-      - 30212:30212/udp
-      - 35212:35212
-      - 35212:35212/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${MODE_SEPOLIA_OP_ERIGON_ARCHIVE_TRACE_DATA:-mode-sepolia-op-erigon-archive-trace}:/root/.local/share/erigon
       - .jwtsecret:/jwtsecret:ro
@@ -70,6 +70,9 @@ services:
 
   mode-sepolia-archive-node:
     image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_SEPOLIA_NODE_VERSION:-v1.13.1}
+    ports:
+      - 15212:15212
+      - 15212:15212/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -97,9 +100,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15212:15212
-      - 15212:15212/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

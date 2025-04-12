@@ -4,6 +4,13 @@
 services:
   celo-mainnet-archive:
     image: ${CELO_GETH_IMAGE:-us.gcr.io/celo-org/geth}:${CELO_MAINNET_GETH_VERSION:-1.8.9}
+    user: root
+    ports:
+      - 10164:10164
+      - 10164:10164/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --datadir=/root/.celo
       - --db.engine=leveldb
@@ -26,16 +33,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10164:10164
-      - 10164:10164/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${CELO_MAINNET_GETH_ARCHIVE_LEVELDB_HASH_DATA:-celo-mainnet-geth-archive-leveldb-hash}:/root/.celo
       - /slowdisk:/slowdisk

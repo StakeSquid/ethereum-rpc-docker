@@ -4,6 +4,13 @@
 services:
   zircuit-mainnet:
     image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_MAINNET_GETH_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
+    user: root
+    ports:
+      - 10688:10688
+      - 10688:10688/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_ETHSTATS=d${DOMAIN}:${ZIRCUIT_MAINNET_WS_SECRET}@${ZIRCUIT_MAINNET_ETH_STATS_SERVER}:${ZIRCUIT_MAINNET_ETH_STATS_SERVER_PORT}
       - GETH_OP_NETWORK=zircuit-mainnet
@@ -34,16 +41,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10688:10688
-      - 10688:10688/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ZIRCUIT_MAINNET_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-zircuit-mainnet-op-geth-pruned-pebble-hash}:/data
       - .jwtsecret:/jwtsecret:ro
@@ -73,6 +73,9 @@ services:
 
   zircuit-mainnet-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_MAINNET_NODE_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
+    ports:
+      - 15688:15688
+      - 15688:15688/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -99,9 +102,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15688:15688
-      - 15688:15688/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

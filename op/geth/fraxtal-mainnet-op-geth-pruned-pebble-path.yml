@@ -4,6 +4,13 @@
 services:
   fraxtal-mainnet:
     image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-geth}:${FRAXTAL_MAINNET_GETH_VERSION:-v1.101503.1-frax-1.2.0}
+    user: root
+    ports:
+      - 10282:10282
+      - 10282:10282/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_OP_NETWORK=fraxtal-mainnet
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
@@ -32,16 +39,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10282:10282
-      - 10282:10282/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${FRAXTAL_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-fraxtal-mainnet-op-geth-pruned-pebble-path}:/data
       - .jwtsecret:/jwtsecret:ro
@@ -71,6 +71,9 @@ services:
 
   fraxtal-mainnet-node:
     image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-node}:${FRAXTAL_MAINNET_NODE_VERSION:-v1.12.2-frax-1.1.0}
+    ports:
+      - 15282:15282
+      - 15282:15282/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -97,9 +100,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15282:15282
-      - 15282:15282/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

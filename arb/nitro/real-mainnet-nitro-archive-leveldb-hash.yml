@@ -4,6 +4,13 @@
 services:
   real-mainnet-archive:
     image: ${REAL_NITRO_IMAGE:-offchainlabs/nitro-node}:${REAL_MAINNET_NITRO_VERSION:-v3.5.3-0a9c975}
+    user: root
+    ports:
+      - 10354:10354
+      - 10354:10354/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --conf.file=/config/baseConfig.json
       - --datadir=/root/.arbitrum
@@ -41,16 +48,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10354:10354
-      - 10354:10354/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${REAL_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-real-mainnet-nitro-archive-leveldb-hash}:/root/.arbitrum
       - /slowdisk:/slowdisk

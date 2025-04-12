@@ -4,6 +4,13 @@
 services:
   connext-sepolia-archive:
     image: ${CONNEXT_NITRO_IMAGE:-offchainlabs/nitro-node}:${CONNEXT_SEPOLIA_NITRO_VERSION:-v3.5.3-0a9c975}
+    user: root
+    ports:
+      - 10111:10111
+      - 10111:10111/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --conf.file=/config/baseConfig.json
       - --datadir=/root/.arbitrum
@@ -42,16 +49,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10111:10111
-      - 10111:10111/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${CONNEXT_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-connext-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
       - ./tmp/connext-sepolia-archive:/tmp

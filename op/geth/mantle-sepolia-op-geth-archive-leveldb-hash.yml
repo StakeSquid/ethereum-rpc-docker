@@ -4,6 +4,13 @@
 services:
   mantle-sepolia-archive:
     image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-geth}:${MANTLE_SEPOLIA_GETH_VERSION:-v1.1.1}
+    user: root
+    ports:
+      - 10358:10358
+      - 10358:10358/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_OP_NETWORK=mantle-sepolia
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
@@ -32,16 +39,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10358:10358
-      - 10358:10358/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${MANTLE_SEPOLIA_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-mantle-sepolia-op-geth-archive-leveldb-hash}:/data
       - .jwtsecret:/jwtsecret:ro
@@ -71,6 +71,9 @@ services:
 
   mantle-sepolia-archive-node:
     image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-node}:${MANTLE_SEPOLIA_NODE_VERSION:-v1.1.1}
+    ports:
+      - 15358:15358
+      - 15358:15358/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -98,9 +101,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15358:15358
-      - 15358:15358/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

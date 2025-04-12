@@ -4,6 +4,13 @@
 services:
   avalanche-fuji-archive-client:
     image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_FUJI_GO_VERSION:-v1.13.0-fuji}
+    user: root
+    ports:
+      - 10350:10350
+      - 10350:10350/udp
+    expose:
+      - 9650
+      - 9650
     entrypoint: [/avalanchego/build/avalanchego]
     command:
       - --chain-config-dir /config/archive
@@ -13,16 +20,9 @@ services:
       - --public-ip=${IP}"
       - --staking-port=10350
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10350:10350
-      - 10350:10350/udp
-    expose:
-      - 9650
-      - 9650
     volumes:
       - ${AVALANCHE_FUJI_GO_ARCHIVE_LEVELDB_DATA:-avalanche-fuji-go-archive-leveldb}:/root/.avalanchego
       - .//fuji:/config

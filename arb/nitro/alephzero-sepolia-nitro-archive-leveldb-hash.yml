@@ -4,6 +4,13 @@
 services:
   alephzero-sepolia-archive:
     image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_SEPOLIA_NITRO_VERSION:-v3.5.3-0a9c975}
+    user: root
+    ports:
+      - 10083:10083
+      - 10083:10083/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --conf.file=/config/baseConfig.json
       - --datadir=/root/.arbitrum
@@ -42,16 +49,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10083:10083
-      - 10083:10083/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ALEPHZERO_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-alephzero-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
       - ./tmp/alephzero-sepolia-archive:/tmp

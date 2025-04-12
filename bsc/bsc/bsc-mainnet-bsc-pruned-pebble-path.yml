@@ -4,6 +4,13 @@
 services:
   bsc-mainnet:
     image: ${BSC_BSC_IMAGE:-ghcr.io/bnb-chain/bsc}:${BSC_MAINNET_BSC_VERSION:-v1.4.10}
+    user: root
+    ports:
+      - 10037:10037
+      - 10037:10037/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --config=/config/config.toml
       - --datadir=/bsc/.ethereum
@@ -27,16 +34,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10037:10037
-      - 10037:10037/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${BSC_MAINNET_BSC_PRUNED_PEBBLE_PATH_DATA:-bsc-mainnet-bsc-pruned-pebble-path}:/bsc/.ethereum
       - .//mainnet:/config

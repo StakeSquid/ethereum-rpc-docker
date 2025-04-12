@@ -4,6 +4,13 @@
 services:
   avalanche-mainnet-client:
     image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_MAINNET_GO_VERSION:-v1.13.0}
+    user: root
+    ports:
+      - 10929:10929
+      - 10929:10929/udp
+    expose:
+      - 9650
+      - 9650
     entrypoint: [/avalanchego/build/avalanchego]
     command:
       - --chain-config-dir /config/pruned
@@ -13,16 +20,9 @@ services:
       - --public-ip=${IP}"
       - --staking-port=10929
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10929:10929
-      - 10929:10929/udp
-    expose:
-      - 9650
-      - 9650
     volumes:
       - ${AVALANCHE_MAINNET_GO_PRUNED_PEBBLEDB_DATA:-avalanche-mainnet-go-pruned-pebbledb}:/root/.avalanchego
       - .//mainnet:/config

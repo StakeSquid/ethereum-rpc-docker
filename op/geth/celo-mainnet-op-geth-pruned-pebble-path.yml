@@ -4,6 +4,13 @@
 services:
   celo-mainnet:
     image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_MAINNET_GETH_VERSION:-celo-v2.0.0}
+    user: root
+    ports:
+      - 10993:10993
+      - 10993:10993/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_OP_NETWORK=celo-mainnet
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
@@ -32,16 +39,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10993:10993
-      - 10993:10993/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${CELO_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-celo-mainnet-op-geth-pruned-pebble-path}:/data
       - .jwtsecret:/jwtsecret:ro
@@ -71,6 +71,9 @@ services:
 
   celo-mainnet-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_MAINNET_NODE_VERSION:-celo-v2.0.0}
+    ports:
+      - 15993:15993
+      - 15993:15993/udp
     environment:
       - NODE_IMAGE=us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node
       - NODE_VERSION=celo-v2.0.0
@@ -104,14 +107,14 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15993:15993
-      - 15993:15993/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 
   celo-mainnet-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_MAINNET_EIGENDA_PROXY_VERSION:-v1.6.4}
+    ports:
+      - 20993:20993
+      - 20993:20993/udp
     environment:
       - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
       - EIGENDA_PROXY_EIGENDA_GRPC_DISABLE_TLS=false
@@ -124,9 +127,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 20993:20993
-      - 20993:20993/udp
     volumes:
       - ${CELO_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH__EIGENDA_DATA:-celo-mainnet-op-geth-pruned-pebble-path_eigenda}:/data
 

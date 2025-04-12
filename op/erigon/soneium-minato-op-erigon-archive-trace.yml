@@ -4,6 +4,17 @@
 services:
   soneium-minato-archive:
     image: ${SONEIUM_ERIGON_IMAGE:-testinprod/erigon}:${SONEIUM_MINATO_ERIGON_VERSION:-v2.61.1-0.8.3}
+    user: root
+    ports:
+      - 10314:10314
+      - 10314:10314/udp
+      - 30314:30314
+      - 30314:30314/udp
+      - 35314:35314
+      - 35314:35314/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [erigon]
     command:
       - --authrpc.addr=0.0.0.0
@@ -26,20 +37,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10314:10314
-      - 10314:10314/udp
-      - 30314:30314
-      - 30314:30314/udp
-      - 35314:35314
-      - 35314:35314/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${SONEIUM_MINATO_OP_ERIGON_ARCHIVE_TRACE_DATA:-soneium-minato-op-erigon-archive-trace}:/root/.local/share/erigon
       - .jwtsecret:/jwtsecret:ro
@@ -70,6 +70,9 @@ services:
 
   soneium-minato-archive-node:
     image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.1}
+    ports:
+      - 15314:15314
+      - 15314:15314/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -97,9 +100,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15314:15314
-      - 15314:15314/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

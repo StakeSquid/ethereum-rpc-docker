@@ -4,6 +4,13 @@
 services:
   swell-mainnet:
     image: ${SWELL_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SWELL_MAINNET_GETH_VERSION:-v1.101503.3}
+    user: root
+    ports:
+      - 10312:10312
+      - 10312:10312/udp
+    expose:
+      - 8545
+      - 8551
     environment:
       - GETH_OP_NETWORK=swell-mainnet
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
@@ -32,16 +39,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10312:10312
-      - 10312:10312/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${SWELL_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-swell-mainnet-op-geth-pruned-pebble-path}:/data
       - .jwtsecret:/jwtsecret:ro
@@ -71,6 +71,9 @@ services:
 
   swell-mainnet-node:
     image: ${SWELL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SWELL_MAINNET_NODE_VERSION:-v1.13.1}
+    ports:
+      - 15312:15312
+      - 15312:15312/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -97,9 +100,6 @@ services:
     restart: unless-stopped
     networks:
       - chains
-    ports:
-      - 15312:15312
-      - 15312:15312/udp
     volumes:
       - .jwtsecret:/jwtsecret:ro
 

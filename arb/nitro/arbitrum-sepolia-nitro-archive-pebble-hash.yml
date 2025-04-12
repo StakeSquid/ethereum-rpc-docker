@@ -4,6 +4,13 @@
 services:
   arbitrum-sepolia-archive:
     image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_SEPOLIA_NITRO_VERSION:-v3.5.3-0a9c975}
+    user: root
+    ports:
+      - 10360:10360
+      - 10360:10360/udp
+    expose:
+      - 8545
+      - 8551
     command:
       - --chain.id=421614
       - --datadir=/root/.arbitrum
@@ -35,16 +42,9 @@ services:
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10360:10360
-      - 10360:10360/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ARBITRUM_SEPOLIA_NITRO_ARCHIVE_PEBBLE_HASH_DATA:-arbitrum-sepolia-nitro-archive-pebble-hash}:/root/.arbitrum
       - ./tmp/arbitrum-sepolia-archive:/tmp

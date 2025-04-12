@@ -4,6 +4,21 @@
 services:
   ethereum-mainnet-archive:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_MAINNET_ERIGON3_VERSION:-v3.0.0}
+    user: root
+    ports:
+      - 10675:10675
+      - 10675:10675/udp
+      - 15675:15675
+      - 15675:15675/udp
+      - 25675:25675
+      - 25675:25675/udp
+      - 30675:30675
+      - 30675:30675/udp
+      - 35675:35675
+      - 35675:35675/udp
+    expose:
+      - 8545
+      - 8551
     entrypoint: [erigon]
     command:
       - --beacon.api.addr=0.0.0.0
@@ -32,24 +47,9 @@ services:
       - --ws
       - --ws.port=8545
     restart: unless-stopped
-    user: root
     stop_grace_period: 5m
     networks:
       - chains
-    ports:
-      - 10675:10675
-      - 10675:10675/udp
-      - 15675:15675
-      - 15675:15675/udp
-      - 25675:25675
-      - 25675:25675/udp
-      - 30675:30675
-      - 30675:30675/udp
-      - 35675:35675
-      - 35675:35675/udp
-    expose:
-      - 8545
-      - 8551
     volumes:
       - ${ETHEREUM_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-ethereum-mainnet-erigon3-archive-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
