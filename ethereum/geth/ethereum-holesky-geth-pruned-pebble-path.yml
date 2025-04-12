@@ -60,7 +60,7 @@ services:
       - --syncmode=snap
       - --gcmode=full
 
-      - --
+      - --holesky
 
     networks:
       - chains
