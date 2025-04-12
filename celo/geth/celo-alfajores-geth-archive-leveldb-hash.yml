@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   celo-alfajores-archive:
     image: ${CELO_GETH_IMAGE:-us.gcr.io/celo-org/geth}:${CELO_ALFAJORES_GETH_VERSION:-1.8.9}
     user: root
@@ -61,10 +61,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-alfajores-archive`)}
       - ${NO_SSL:+traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.rule=PathPrefix(`/celo-alfajores-archive`)}
       - traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.middlewares=celo-alfajores-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   celo-alfajores-geth-archive-leveldb-hash:
+
   celo-alfajores-geth-archive-leveldb-hash_prysm:
+
 x-upstreams:
 
   - id: $${ID}

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   ronin-mainnet:
     image: ${RONIN_RONIN_IMAGE:-ghcr.io/ronin-chain/ronin}:${RONIN_MAINNET_RONIN_VERSION:-v1.0.2-eaef5a2}
     user: root
@@ -53,9 +53,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.rule=PathPrefix(`/ronin-mainnet`)}
       - traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.middlewares=ronin-mainnet-ronin-pruned-pebble-hash-stripprefix, ipwhitelist
+
 volumes:
 
   ronin-mainnet-ronin-pruned-pebble-hash:
+
 x-upstreams:
 
   - id: $${ID}

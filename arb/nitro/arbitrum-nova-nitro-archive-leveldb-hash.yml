@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   arbitrum-nova-archive:
     image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_NOVA_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -71,9 +71,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-nova-archive`)}
       - ${NO_SSL:+traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.rule=PathPrefix(`/arbitrum-nova-archive`)}
       - traefik.http.routers.arbitrum-nova-nitro-archive-leveldb-hash.middlewares=arbitrum-nova-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   arbitrum-nova-nitro-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

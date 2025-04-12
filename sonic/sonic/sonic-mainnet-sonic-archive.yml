@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   sonic-mainnet-archive:
     build:
       context: ./sonic
@@ -64,9 +64,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/sonic-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.sonic-mainnet-sonic-archive.rule=PathPrefix(`/sonic-mainnet-archive`)}
       - traefik.http.routers.sonic-mainnet-sonic-archive.middlewares=sonic-mainnet-sonic-archive-stripprefix, ipwhitelist
+
 volumes:
 
   sonic-mainnet-sonic-archive:
+
 x-upstreams:
 
   - id: $${ID}

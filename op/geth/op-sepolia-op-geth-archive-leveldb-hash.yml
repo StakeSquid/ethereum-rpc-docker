@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   op-sepolia-archive:
     image: ${OP_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${OP_SEPOLIA_GETH_VERSION:-v1.101503.3}
     user: root
@@ -68,6 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/op-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.op-sepolia-op-geth-archive-leveldb-hash.rule=PathPrefix(`/op-sepolia-archive`)}
       - traefik.http.routers.op-sepolia-op-geth-archive-leveldb-hash.middlewares=op-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
   op-sepolia-archive-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
@@ -102,9 +103,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   op-sepolia-op-geth-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

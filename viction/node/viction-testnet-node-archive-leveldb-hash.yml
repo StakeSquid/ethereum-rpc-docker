@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   viction-testnet-archive-client:
     image: ${VICTION_NODE_IMAGE:-buildonviction/node}:${VICTION_TESTNET_NODE_VERSION:-v2.4.5}
     user: root
@@ -41,6 +41,7 @@ services:
       - chains
     restart: unless-stopped
     stop_grace_period: 5m
+
   viction-testnet-archive:
     restart: unless-stopped
     image: nginx
@@ -63,9 +64,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.viction-testnet-node-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/viction-testnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.viction-testnet-node-archive-leveldb-hash.rule=PathPrefix(`/viction-testnet-archive`)}
       - traefik.http.routers.viction-testnet-node-archive-leveldb-hash.middlewares=viction-testnet-node-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   viction-testnet-node-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

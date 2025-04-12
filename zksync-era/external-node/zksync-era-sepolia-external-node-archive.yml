@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   zksync-era-sepolia-archive-client:
     image: ${ZKSYNC_ERA_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ZKSYNC_ERA_SEPOLIA_EXTERNAL_NODE_VERSION:-v26.2.1}
     user: root
@@ -38,6 +38,7 @@ services:
       - chains
     restart: unless-stopped
     stop_grace_period: 5m
+
   zksync-era-sepolia-archive:
     restart: unless-stopped
     image: nginx
@@ -60,6 +61,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.zksync-era-sepolia-external-node-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/zksync-era-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.zksync-era-sepolia-external-node-archive.rule=PathPrefix(`/zksync-era-sepolia-archive`)}
       - traefik.http.routers.zksync-era-sepolia-external-node-archive.middlewares=zksync-era-sepolia-external-node-archive-stripprefix, ipwhitelist
+
   zksync-era-sepolia-archive-db:
     image: postgres:14
     command: >
@@ -89,10 +91,13 @@ services:
       - POSTGRES_PASSWORD=notsecurepassword
     networks:
       - chains
+
 volumes:
 
   zksync-era-sepolia-external-node-archive:
+
   zksync-era-sepolia-external-node-archive_db:
+
 x-upstreams:
 
   - id: $${ID}

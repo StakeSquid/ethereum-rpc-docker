@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   base-sepolia:
     image: ${BASE_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${BASE_SEPOLIA_GETH_VERSION:-v1.101503.3}
     user: root
@@ -68,6 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.base-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/base-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.base-sepolia-op-geth-pruned-pebble-path.rule=PathPrefix(`/base-sepolia`)}
       - traefik.http.routers.base-sepolia-op-geth-pruned-pebble-path.middlewares=base-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+
   base-sepolia-node:
     image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
@@ -102,9 +103,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   base-sepolia-op-geth-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

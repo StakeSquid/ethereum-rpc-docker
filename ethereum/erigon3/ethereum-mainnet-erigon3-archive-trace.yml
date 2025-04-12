@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   ethereum-mainnet-archive:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_MAINNET_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -84,9 +84,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-archive/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-archive-trace-node.rule=PathPrefix(`/ethereum-mainnet-archive/eth`)}
       - traefik.http.routers.ethereum-mainnet-erigon3-archive-trace-node.middlewares=ethereum-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist
+
 volumes:
 
   ethereum-mainnet-erigon3-archive-trace:
+
 x-upstreams:
 
   - id: $${ID}

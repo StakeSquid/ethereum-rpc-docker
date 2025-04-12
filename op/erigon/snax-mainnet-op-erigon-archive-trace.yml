@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   snax-mainnet-archive:
     image: ${SNAX_ERIGON_IMAGE:-testinprod/erigon}:${SNAX_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     user: root
@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/snax-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-erigon-archive-trace.rule=PathPrefix(`/snax-mainnet-archive`)}
       - traefik.http.routers.snax-mainnet-op-erigon-archive-trace.middlewares=snax-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+
   snax-mainnet-archive-node:
     image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
@@ -100,9 +101,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   snax-mainnet-op-erigon-archive-trace:
+
 x-upstreams:
 
   - id: $${ID}

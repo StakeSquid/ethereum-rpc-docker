@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   fantom-testnet:
     build:
       context: ./fantom
@@ -63,9 +63,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-opera-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-testnet`)}
       - ${NO_SSL:+traefik.http.routers.fantom-testnet-opera-pruned.rule=PathPrefix(`/fantom-testnet`)}
       - traefik.http.routers.fantom-testnet-opera-pruned.middlewares=fantom-testnet-opera-pruned-stripprefix, ipwhitelist
+
 volumes:
 
   fantom-testnet-opera-pruned:
+
 x-upstreams:
 
   - id: $${ID}

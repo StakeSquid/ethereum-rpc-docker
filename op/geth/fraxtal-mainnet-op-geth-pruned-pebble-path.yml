@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   fraxtal-mainnet:
     image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-geth}:${FRAXTAL_MAINNET_GETH_VERSION:-v1.101503.1-frax-1.2.0}
     user: root
@@ -68,6 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/fraxtal-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path.rule=PathPrefix(`/fraxtal-mainnet`)}
       - traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path.middlewares=fraxtal-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+
   fraxtal-mainnet-node:
     image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-node}:${FRAXTAL_MAINNET_NODE_VERSION:-v1.12.2-frax-1.1.0}
     ports:
@@ -101,9 +102,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   fraxtal-mainnet-op-geth-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   taiko-hekla-archive:
     image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HEKLA_GETH_VERSION:-v1.14.1}
     user: root
@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-hekla-archive`)}
       - ${NO_SSL:+traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=PathPrefix(`/taiko-hekla-archive`)}
       - traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.middlewares=taiko-hekla-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
   taiko-hekla-archive-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.4.1}
     ports:
@@ -89,9 +90,11 @@ services:
     restart: unless-stopped
     env_file:
       - ./taiko/hekla.env
+
 volumes:
 
   taiko-hekla-geth-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

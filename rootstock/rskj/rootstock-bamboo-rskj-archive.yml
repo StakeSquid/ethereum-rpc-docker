@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   rootstock-bamboo-archive-client:
     image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_BAMBOO_RSKJ_VERSION:-}
     user: root
@@ -31,6 +31,7 @@ services:
       - chains
     restart: unless-stopped
     stop_grace_period: 5m
+
   rootstock-bamboo-archive:
     restart: unless-stopped
     image: nginx
@@ -53,9 +54,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.rootstock-bamboo-rskj-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/rootstock-bamboo-archive`)}
       - ${NO_SSL:+traefik.http.routers.rootstock-bamboo-rskj-archive.rule=PathPrefix(`/rootstock-bamboo-archive`)}
       - traefik.http.routers.rootstock-bamboo-rskj-archive.middlewares=rootstock-bamboo-rskj-archive-stripprefix, ipwhitelist
+
 volumes:
 
   rootstock-bamboo-rskj-archive:
+
 x-upstreams:
 
   - id: $${ID}

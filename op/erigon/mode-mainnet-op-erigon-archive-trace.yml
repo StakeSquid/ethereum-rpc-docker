@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   mode-mainnet-archive:
     image: ${MODE_ERIGON_IMAGE:-testinprod/erigon}:${MODE_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     user: root
@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/mode-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.mode-mainnet-op-erigon-archive-trace.rule=PathPrefix(`/mode-mainnet-archive`)}
       - traefik.http.routers.mode-mainnet-op-erigon-archive-trace.middlewares=mode-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+
   mode-mainnet-archive-node:
     image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
@@ -100,9 +101,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   mode-mainnet-op-erigon-archive-trace:
+
 x-upstreams:
 
   - id: $${ID}

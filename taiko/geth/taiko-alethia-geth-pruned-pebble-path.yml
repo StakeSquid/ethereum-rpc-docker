@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   taiko-alethia:
     image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_ALETHIA_GETH_VERSION:-v1.12.0}
     user: root
@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-alethia`)}
       - ${NO_SSL:+traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.rule=PathPrefix(`/taiko-alethia`)}
       - traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.middlewares=taiko-alethia-geth-pruned-pebble-path-stripprefix, ipwhitelist
+
   taiko-alethia-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v0.43.1}
     ports:
@@ -89,9 +90,11 @@ services:
     restart: unless-stopped
     env_file:
       - ./taiko/alethia.env
+
 volumes:
 
   taiko-alethia-geth-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   core-buffalo:
     image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_BUFFALO_CORE_VERSION:-1.0.15}
     user: root
@@ -58,9 +58,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.core-buffalo-core-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/core-buffalo`)}
       - ${NO_SSL:+traefik.http.routers.core-buffalo-core-pruned-pebble-path.rule=PathPrefix(`/core-buffalo`)}
       - traefik.http.routers.core-buffalo-core-pruned-pebble-path.middlewares=core-buffalo-core-pruned-pebble-path-stripprefix, ipwhitelist
+
 volumes:
 
   core-buffalo-core-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   boba-sepolia-archive:
     image: ${BOBA_ERIGON_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon}:${BOBA_SEPOLIA_ERIGON_VERSION:-v1.2.11}
     user: root
@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=PathPrefix(`/boba-sepolia-archive`)}
       - traefik.http.routers.boba-sepolia-op-erigon-archive-trace.middlewares=boba-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
+
   boba-sepolia-archive-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}
     ports:
@@ -101,9 +102,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   boba-sepolia-op-erigon-archive-trace:
+
 x-upstreams:
 
   - id: $${ID}

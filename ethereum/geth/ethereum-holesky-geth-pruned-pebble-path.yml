@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   ethereum-holesky:
     image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_HOLESKY_GETH_VERSION:-v1.15.7}
     user: root
@@ -66,6 +66,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.rule=PathPrefix(`/ethereum-holesky`)}
       - traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.middlewares=ethereum-holesky-geth-pruned-pebble-path-stripprefix, ipwhitelist
+
   ethereum-holesky-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v5.3.1}
     ports:
@@ -91,10 +92,13 @@ services:
       - ${ETHEREUM_HOLESKY_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-holesky-geth-pruned-pebble-path_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   ethereum-holesky-geth-pruned-pebble-path:
+
   ethereum-holesky-geth-pruned-pebble-path_prysm:
+
 x-upstreams:
 
   - id: $${ID}

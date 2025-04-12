@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   gnosis-chiado:
     image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_CHIADO_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -84,9 +84,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado/eth`)}
       - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-pruned-trace-node.rule=PathPrefix(`/gnosis-chiado/eth`)}
       - traefik.http.routers.gnosis-chiado-erigon3-pruned-trace-node.middlewares=gnosis-chiado-erigon3-pruned-trace-stripprefix, ipwhitelist
+
 volumes:
 
   gnosis-chiado-erigon3-pruned-trace:
+
 x-upstreams:
 
   - id: $${ID}

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   core-mainnet:
     image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_MAINNET_CORE_VERSION:-1.0.15}
     user: root
@@ -58,9 +58,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/core-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.rule=PathPrefix(`/core-mainnet`)}
       - traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.middlewares=core-mainnet-core-pruned-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   core-mainnet-core-pruned-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

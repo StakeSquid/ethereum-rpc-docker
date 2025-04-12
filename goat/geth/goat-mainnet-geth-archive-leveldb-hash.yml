@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   goat-mainnet-archive:
     image: ${GOAT_GETH_IMAGE:-ghcr.io/goatnetwork/goat-geth}:${GOAT_MAINNET_GETH_VERSION:-v0.3.0}
     user: root
@@ -42,10 +42,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/goat-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.rule=PathPrefix(`/goat-mainnet-archive`)}
       - traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.middlewares=goat-mainnet-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   goat-mainnet-geth-archive-leveldb-hash:
+
   goat-mainnet-geth-archive-leveldb-hash_node:
+
 x-upstreams:
 
   - id: $${ID}

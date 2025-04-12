@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   taiko-hekla:
     image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HEKLA_GETH_VERSION:-v1.14.1}
     user: root
@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-hekla`)}
       - ${NO_SSL:+traefik.http.routers.taiko-hekla-geth-pruned-pebble-path.rule=PathPrefix(`/taiko-hekla`)}
       - traefik.http.routers.taiko-hekla-geth-pruned-pebble-path.middlewares=taiko-hekla-geth-pruned-pebble-path-stripprefix, ipwhitelist
+
   taiko-hekla-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.4.1}
     ports:
@@ -89,9 +90,11 @@ services:
     restart: unless-stopped
     env_file:
       - ./taiko/hekla.env
+
 volumes:
 
   taiko-hekla-geth-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

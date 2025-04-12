@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   boba-mainnet:
     image: ${BOBA_GETH_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-geth}:${BOBA_MAINNET_GETH_VERSION:-v1.101503.1}
     user: root
@@ -68,6 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-geth-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.boba-mainnet-op-geth-pruned.rule=PathPrefix(`/boba-mainnet`)}
       - traefik.http.routers.boba-mainnet-op-geth-pruned.middlewares=boba-mainnet-op-geth-pruned-stripprefix, ipwhitelist
+
   boba-mainnet-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-v1.6.18}
     ports:
@@ -101,9 +102,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   boba-mainnet-op-geth-pruned:
+
 x-upstreams:
 
   - id: $${ID}

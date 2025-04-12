@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   ronin-saigon-archive:
     image: ${RONIN_RONIN_IMAGE:-ghcr.io/ronin-chain/ronin}:${RONIN_SAIGON_RONIN_VERSION:-v1.0.2-eaef5a2}
     user: root
@@ -53,9 +53,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-saigon-archive`)}
       - ${NO_SSL:+traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.rule=PathPrefix(`/ronin-saigon-archive`)}
       - traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.middlewares=ronin-saigon-ronin-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   ronin-saigon-ronin-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   arbitrum-sepolia-archive:
     image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_SEPOLIA_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -71,9 +71,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.rule=PathPrefix(`/arbitrum-sepolia-archive`)}
       - traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.middlewares=arbitrum-sepolia-nitro-archive-pebble-hash-stripprefix, ipwhitelist
+
 volumes:
 
   arbitrum-sepolia-nitro-archive-pebble-hash:
+
 x-upstreams:
 
   - id: $${ID}

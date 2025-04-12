@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   gnosis-mainnet-archive:
     image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -84,9 +84,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-mainnet-archive/eth`)}
       - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-archive-trace-node.rule=PathPrefix(`/gnosis-mainnet-archive/eth`)}
       - traefik.http.routers.gnosis-mainnet-erigon3-archive-trace-node.middlewares=gnosis-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist
+
 volumes:
 
   gnosis-mainnet-erigon3-archive-trace:
+
 x-upstreams:
 
   - id: $${ID}

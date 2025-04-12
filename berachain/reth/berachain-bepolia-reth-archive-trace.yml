@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   berachain-bepolia-archive:
     image: ${BERACHAIN_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${BERACHAIN_BEPOLIA_RETH_VERSION:-v1.3.8}
     user: root
@@ -66,6 +66,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/berachain-bepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.berachain-bepolia-reth-archive-trace.rule=PathPrefix(`/berachain-bepolia-archive`)}
       - traefik.http.routers.berachain-bepolia-reth-archive-trace.middlewares=berachain-bepolia-reth-archive-trace-stripprefix, ipwhitelist
+
   berachain-bepolia-archive-node:
     image: ${BERACHAIN_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}:${BERACHAIN_BEPOLIA_BEACON_KIT_VERSION:-v1.1.3}
     ports:
@@ -87,10 +88,13 @@ services:
       - ./berachain/scripts/init.sh:/init.sh
       - .jwtsecret:/root/.beacond/config/jwt.hex:ro
     restart: unless-stopped
+
 volumes:
 
   berachain-bepolia-reth-archive-trace:
+
   berachain-bepolia-reth-archive-trace_node:
+
 x-upstreams:
 
   - id: $${ID}

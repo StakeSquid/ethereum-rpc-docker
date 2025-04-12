@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   viction-mainnet-client:
     image: ${VICTION_NODE_IMAGE:-buildonviction/node}:${VICTION_MAINNET_NODE_VERSION:-v2.4.5}
     user: root
@@ -41,6 +41,7 @@ services:
       - chains
     restart: unless-stopped
     stop_grace_period: 5m
+
   viction-mainnet:
     restart: unless-stopped
     image: nginx
@@ -63,9 +64,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/viction-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.rule=PathPrefix(`/viction-mainnet`)}
       - traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.middlewares=viction-mainnet-node-pruned-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   viction-mainnet-node-pruned-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

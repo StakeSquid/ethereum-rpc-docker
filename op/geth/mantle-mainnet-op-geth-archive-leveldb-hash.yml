@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   mantle-mainnet-archive:
     image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-geth}:${MANTLE_MAINNET_GETH_VERSION:-v1.1.1}
     user: root
@@ -68,6 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/mantle-mainnet-archive`)}
       - traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.middlewares=mantle-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
   mantle-mainnet-archive-node:
     image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-node}:${MANTLE_MAINNET_NODE_VERSION:-v1.1.1}
     ports:
@@ -102,9 +103,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   mantle-mainnet-op-geth-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

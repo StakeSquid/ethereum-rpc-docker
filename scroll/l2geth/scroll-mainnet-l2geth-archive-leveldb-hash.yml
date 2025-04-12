@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   scroll-mainnet-archive:
     image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_L2GETH_VERSION:-scroll-v5.7.2}
     user: root
@@ -64,9 +64,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.rule=PathPrefix(`/scroll-mainnet-archive`)}
       - traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.middlewares=scroll-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   scroll-mainnet-l2geth-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

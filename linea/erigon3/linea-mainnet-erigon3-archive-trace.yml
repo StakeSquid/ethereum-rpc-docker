@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   linea-mainnet-archive:
     image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_MAINNET_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -67,9 +67,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=PathPrefix(`/linea-mainnet-archive`)}
       - traefik.http.routers.linea-mainnet-erigon3-archive-trace.middlewares=linea-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist
+
 volumes:
 
   linea-mainnet-erigon3-archive-trace:
+
 x-upstreams:
 
   - id: $${ID}

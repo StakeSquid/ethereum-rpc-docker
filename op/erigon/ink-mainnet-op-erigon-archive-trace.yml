@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   ink-mainnet-archive:
     image: ${INK_ERIGON_IMAGE:-testinprod/erigon}:${INK_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     user: root
@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ink-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.ink-mainnet-op-erigon-archive-trace.rule=PathPrefix(`/ink-mainnet-archive`)}
       - traefik.http.routers.ink-mainnet-op-erigon-archive-trace.middlewares=ink-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+
   ink-mainnet-archive-node:
     image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
@@ -100,9 +101,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   ink-mainnet-op-erigon-archive-trace:
+
 x-upstreams:
 
   - id: $${ID}

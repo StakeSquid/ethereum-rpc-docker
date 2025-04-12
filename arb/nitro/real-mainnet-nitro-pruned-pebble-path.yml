@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   real-mainnet:
     image: ${REAL_NITRO_IMAGE:-offchainlabs/nitro-node}:${REAL_MAINNET_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -76,9 +76,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/real-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.real-mainnet-nitro-pruned-pebble-path.rule=PathPrefix(`/real-mainnet`)}
       - traefik.http.routers.real-mainnet-nitro-pruned-pebble-path.middlewares=real-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
+
 volumes:
 
   real-mainnet-nitro-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   rootstock-mainnet-archive-client:
     image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_MAINNET_RSKJ_VERSION:-}
     user: root
@@ -32,6 +32,7 @@ services:
       - chains
     restart: unless-stopped
     stop_grace_period: 5m
+
   rootstock-mainnet-archive:
     restart: unless-stopped
     image: nginx
@@ -54,9 +55,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/rootstock-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.rootstock-mainnet-rskj-archive.rule=PathPrefix(`/rootstock-mainnet-archive`)}
       - traefik.http.routers.rootstock-mainnet-rskj-archive.middlewares=rootstock-mainnet-rskj-archive-stripprefix, ipwhitelist
+
 volumes:
 
   rootstock-mainnet-rskj-archive:
+
 x-upstreams:
 
   - id: $${ID}

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   bsc-mainnet:
     image: ${BSC_BSC_IMAGE:-ghcr.io/bnb-chain/bsc}:${BSC_MAINNET_BSC_VERSION:-v1.4.10}
     user: root
@@ -63,9 +63,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/bsc-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path.rule=PathPrefix(`/bsc-mainnet`)}
       - traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path.middlewares=bsc-mainnet-bsc-pruned-pebble-path-stripprefix, ipwhitelist
+
 volumes:
 
   bsc-mainnet-bsc-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

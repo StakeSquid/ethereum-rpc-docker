@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   celo-alfajores-archive:
     image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_ALFAJORES_GETH_VERSION:-celo-v2.0.0}
     user: root
@@ -68,6 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-alfajores-archive`)}
       - ${NO_SSL:+traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.rule=PathPrefix(`/celo-alfajores-archive`)}
       - traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.middlewares=celo-alfajores-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
   celo-alfajores-archive-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.0.0}
     ports:
@@ -108,6 +109,7 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
   celo-alfajores-archive-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
     ports:
@@ -127,10 +129,13 @@ services:
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_DATA:-celo-alfajores-op-geth-archive-leveldb-hash_eigenda}:/data
     restart: unless-stopped
+
 volumes:
 
   celo-alfajores-op-geth-archive-leveldb-hash:
+
   celo-alfajores-op-geth-archive-leveldb-hash_eigenda:
+
 x-upstreams:
 
   - id: $${ID}

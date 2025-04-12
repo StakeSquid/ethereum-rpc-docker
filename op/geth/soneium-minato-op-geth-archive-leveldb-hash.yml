@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   soneium-minato-archive:
     image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MINATO_GETH_VERSION:-v1.101503.3}
     user: root
@@ -68,6 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/soneium-minato-archive`)}
       - ${NO_SSL:+traefik.http.routers.soneium-minato-op-geth-archive-leveldb-hash.rule=PathPrefix(`/soneium-minato-archive`)}
       - traefik.http.routers.soneium-minato-op-geth-archive-leveldb-hash.middlewares=soneium-minato-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
   soneium-minato-archive-node:
     image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.1}
     ports:
@@ -102,9 +103,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   soneium-minato-op-geth-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

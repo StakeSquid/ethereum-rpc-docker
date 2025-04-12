@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   core-pigeon:
     image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_PIGEON_CORE_VERSION:-1.0.15}
     user: root
@@ -58,9 +58,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.core-pigeon-core-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/core-pigeon`)}
       - ${NO_SSL:+traefik.http.routers.core-pigeon-core-pruned-pebble-path.rule=PathPrefix(`/core-pigeon`)}
       - traefik.http.routers.core-pigeon-core-pruned-pebble-path.middlewares=core-pigeon-core-pruned-pebble-path-stripprefix, ipwhitelist
+
 volumes:
 
   core-pigeon-core-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

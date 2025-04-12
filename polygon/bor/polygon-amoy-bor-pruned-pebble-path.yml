@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   polygon-amoy:
     image: ${POLYGON_BOR_IMAGE:-0xpolygon/bor}:${POLYGON_AMOY_BOR_VERSION:-v1.3.10}
     user: root
@@ -66,9 +66,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.polygon-amoy-bor-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-amoy`)}
       - ${NO_SSL:+traefik.http.routers.polygon-amoy-bor-pruned-pebble-path.rule=PathPrefix(`/polygon-amoy`)}
       - traefik.http.routers.polygon-amoy-bor-pruned-pebble-path.middlewares=polygon-amoy-bor-pruned-pebble-path-stripprefix, ipwhitelist
+
 volumes:
 
   polygon-amoy-bor-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

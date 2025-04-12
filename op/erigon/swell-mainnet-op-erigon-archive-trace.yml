@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   swell-mainnet-archive:
     image: ${SWELL_ERIGON_IMAGE:-testinprod/erigon}:${SWELL_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     user: root
@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/swell-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.swell-mainnet-op-erigon-archive-trace.rule=PathPrefix(`/swell-mainnet-archive`)}
       - traefik.http.routers.swell-mainnet-op-erigon-archive-trace.middlewares=swell-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+
   swell-mainnet-archive-node:
     image: ${SWELL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SWELL_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
@@ -100,9 +101,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   swell-mainnet-op-erigon-archive-trace:
+
 x-upstreams:
 
   - id: $${ID}

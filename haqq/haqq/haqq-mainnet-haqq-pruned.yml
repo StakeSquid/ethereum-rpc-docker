@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   haqq-mainnet:
     image: ${HAQQ_HAQQ_IMAGE:-alhaqq/haqq}:${HAQQ_MAINNET_HAQQ_VERSION:-v1.8.2}
     user: root
@@ -41,9 +41,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/haqq-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.haqq-mainnet-haqq-pruned.rule=PathPrefix(`/haqq-mainnet`)}
       - traefik.http.routers.haqq-mainnet-haqq-pruned.middlewares=haqq-mainnet-haqq-pruned-stripprefix, ipwhitelist
+
 volumes:
 
   haqq-mainnet-haqq-pruned:
+
 x-upstreams:
 
   - id: $${ID}

@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   scroll-sepolia-archive:
     image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_SEPOLIA_L2GETH_VERSION:-scroll-v5.8.33}
     user: root
@@ -64,9 +64,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/scroll-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.rule=PathPrefix(`/scroll-sepolia-archive`)}
       - traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.middlewares=scroll-sepolia-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   scroll-sepolia-l2geth-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

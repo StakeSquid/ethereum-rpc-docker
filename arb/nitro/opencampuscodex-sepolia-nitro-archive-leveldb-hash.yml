@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   opencampuscodex-sepolia-archive:
     image: ${OPENCAMPUSCODEX_NITRO_IMAGE:-offchainlabs/nitro-node}:${OPENCAMPUSCODEX_SEPOLIA_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -76,9 +76,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/opencampuscodex-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.rule=PathPrefix(`/opencampuscodex-sepolia-archive`)}
       - traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.middlewares=opencampuscodex-sepolia-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   opencampuscodex-sepolia-nitro-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

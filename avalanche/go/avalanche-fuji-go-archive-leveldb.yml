@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   avalanche-fuji-archive-client:
     image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_FUJI_GO_VERSION:-v1.13.0-fuji}
     user: root
@@ -40,6 +40,7 @@ services:
       - chains
     restart: unless-stopped
     stop_grace_period: 5m
+
   avalanche-fuji-archive:
     restart: unless-stopped
     image: nginx
@@ -62,9 +63,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb.rule=Host(`$DOMAIN`) && PathPrefix(`/avalanche-fuji-archive`)}
       - ${NO_SSL:+traefik.http.routers.avalanche-fuji-go-archive-leveldb.rule=PathPrefix(`/avalanche-fuji-archive`)}
       - traefik.http.routers.avalanche-fuji-go-archive-leveldb.middlewares=avalanche-fuji-go-archive-leveldb-stripprefix, ipwhitelist
+
 volumes:
 
   avalanche-fuji-go-archive-leveldb:
+
 x-upstreams:
 
   - id: $${ID}

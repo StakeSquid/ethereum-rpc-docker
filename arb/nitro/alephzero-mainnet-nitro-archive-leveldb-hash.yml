@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   alephzero-mainnet-archive:
     image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_MAINNET_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -76,9 +76,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/alephzero-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.alephzero-mainnet-nitro-archive-leveldb-hash.rule=PathPrefix(`/alephzero-mainnet-archive`)}
       - traefik.http.routers.alephzero-mainnet-nitro-archive-leveldb-hash.middlewares=alephzero-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
+
 volumes:
 
   alephzero-mainnet-nitro-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

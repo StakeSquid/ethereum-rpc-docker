@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   ethereum-sepolia-archive:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_SEPOLIA_RETH_VERSION:-v1.3.8}
     user: root
@@ -64,6 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-archive`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=PathPrefix(`/ethereum-sepolia-archive`)}
       - traefik.http.routers.ethereum-sepolia-reth-archive-trace.middlewares=ethereum-sepolia-reth-archive-trace-stripprefix, ipwhitelist
+
   ethereum-sepolia-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v5.3.1}
     ports:
@@ -89,10 +90,13 @@ services:
       - ${ETHEREUM_SEPOLIA_RETH_ARCHIVE_TRACE__PRYSM_DATA:-ethereum-sepolia-reth-archive-trace_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   ethereum-sepolia-reth-archive-trace:
+
   ethereum-sepolia-reth-archive-trace_prysm:
+
 x-upstreams:
 
   - id: $${ID}

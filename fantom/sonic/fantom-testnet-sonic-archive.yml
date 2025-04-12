@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   fantom-testnet-archive:
     build:
       context: ./fantom
@@ -64,9 +64,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-sonic-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-testnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.fantom-testnet-sonic-archive.rule=PathPrefix(`/fantom-testnet-archive`)}
       - traefik.http.routers.fantom-testnet-sonic-archive.middlewares=fantom-testnet-sonic-archive-stripprefix, ipwhitelist
+
 volumes:
 
   fantom-testnet-sonic-archive:
+
 x-upstreams:
 
   - id: $${ID}

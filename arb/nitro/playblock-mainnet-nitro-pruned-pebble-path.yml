@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   playblock-mainnet:
     image: ${PLAYBLOCK_NITRO_IMAGE:-offchainlabs/nitro-node}:${PLAYBLOCK_MAINNET_NITRO_VERSION:-v3.5.3-0a9c975}
     user: root
@@ -76,9 +76,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/playblock-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.rule=PathPrefix(`/playblock-mainnet`)}
       - traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.middlewares=playblock-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
+
 volumes:
 
   playblock-mainnet-nitro-pruned-pebble-path:
+
 x-upstreams:
 
   - id: $${ID}

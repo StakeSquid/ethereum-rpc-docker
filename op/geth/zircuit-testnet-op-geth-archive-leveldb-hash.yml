@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   zircuit-testnet-archive:
     image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_TESTNET_GETH_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
     user: root
@@ -70,6 +70,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-testnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/zircuit-testnet-archive`)}
       - traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash.middlewares=zircuit-testnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
   zircuit-testnet-archive-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_TESTNET_NODE_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
     ports:
@@ -104,9 +105,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   zircuit-testnet-op-geth-archive-leveldb-hash:
+
 x-upstreams:
 
   - id: $${ID}

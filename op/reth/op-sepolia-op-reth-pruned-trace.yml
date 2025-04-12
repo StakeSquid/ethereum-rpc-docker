@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   op-sepolia:
     image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_SEPOLIA_RETH_VERSION:-v1.3.8}
     user: root
@@ -66,6 +66,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/op-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.op-sepolia-op-reth-pruned-trace.rule=PathPrefix(`/op-sepolia`)}
       - traefik.http.routers.op-sepolia-op-reth-pruned-trace.middlewares=op-sepolia-op-reth-pruned-trace-stripprefix, ipwhitelist
+
   op-sepolia-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
@@ -100,9 +101,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   op-sepolia-op-reth-pruned-trace:
+
 x-upstreams:
 
   - id: $${ID}

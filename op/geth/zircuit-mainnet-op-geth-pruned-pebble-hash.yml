@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   zircuit-mainnet:
     image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_MAINNET_GETH_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
     user: root
@@ -70,6 +70,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.rule=PathPrefix(`/zircuit-mainnet`)}
       - traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.middlewares=zircuit-mainnet-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
+
   zircuit-mainnet-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_MAINNET_NODE_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
     ports:
@@ -103,9 +104,11 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     restart: unless-stopped
+
 volumes:
 
   zircuit-mainnet-op-geth-pruned-pebble-hash:
+
 x-upstreams:
 
   - id: $${ID}

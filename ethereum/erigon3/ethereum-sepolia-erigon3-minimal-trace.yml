@@ -1,7 +1,7 @@
 ---
 # use at your own risk
-services:
 
+services:
   ethereum-sepolia-minimal:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_SEPOLIA_ERIGON3_VERSION:-v3.0.0}
     user: root
@@ -84,9 +84,11 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-minimal/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=PathPrefix(`/ethereum-sepolia-minimal/eth`)}
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist
+
 volumes:
 
   ethereum-sepolia-erigon3-minimal-trace:
+
 x-upstreams:
 
   - id: $${ID}
