@@ -25,16 +25,21 @@ services:
       - 8545
       - 8546
     environment:
-      - DATABASE_POOL_SIZE=10
+      - DATABASE_POOL_SIZE=50
       - DATABASE_URL=postgres://postgres:notsecurepassword@zksync-era-sepolia-archive-db:5430/zksync_local_ext_node
       - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
       - EN_ETH_CLIENT_URL=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - EN_HEALTHCHECK_PORT=3081
       - EN_HTTP_PORT=8545
       - EN_L1_CHAIN_ID=11155111
       - EN_L2_CHAIN_ID=300
       - EN_MAIN_NODE_URL=https://sepolia.era.zksync.dev
+      - EN_MAX_RESPONSE_BODY_SIZE_MB=30
+      - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
       - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
+      - EN_PROMETHEUS_PORT=3322
       - EN_PRUNING_ENABLED=
+      - EN_REQ_ENTITIES_LIMIT=100000
       - EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL=zksync-era-boojnet-external-node-snapshots
       - EN_SNAPSHOTS_OBJECT_STORE_MODE=GCSAnonymousReadOnly
       - EN_SNAPSHOTS_RECOVERY_ENABLED=true
