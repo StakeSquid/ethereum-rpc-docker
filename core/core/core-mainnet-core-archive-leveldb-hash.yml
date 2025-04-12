@@ -41,7 +41,6 @@ services:
       - --ws.port=8545
 
       - --http.addr=0.0.0.0
-      - --maxpeers=50
       - --http.api=eth,net,web3,txpool,debug,admin,satoshi
 
       - --rpc.gascap=600000000

@@ -39,6 +39,7 @@ services:
       - --http
       - --http.port=8545
       - --http.vhosts=*
+      - --maxpeers=50
 
       - --ws
       - --ws.port=8545
@@ -47,7 +48,6 @@ services:
       - --ws.api=eth,net,web3,debug,admin,txpool
 
       - --http.addr=0.0.0.0
-      - --maxpeers=50
       - --http.api=eth,net,web3,debug,admin,txpool
 
       - --rpc.gascap=600000000

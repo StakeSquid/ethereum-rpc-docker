@@ -43,12 +43,12 @@ services:
       - --http
       - --http.port=8545
       - --http.vhosts=*
+      - --maxpeers=50
 
       - --ws
       - --ws.port=8545
 
       - --http.addr=0.0.0.0
-      - --maxpeers=50
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
 
       - --rpc.returndata.limit=1100000
