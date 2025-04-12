@@ -58,9 +58,9 @@ services:
     image: nginx
     environment:
       PROXY_HOST: zksync-era-sepolia-archive-client
-      RPC_PATH:
+      RPC_PATH: ''
       RPC_PORT: 8545
-      WS_PATH:
+      WS_PATH: ''
       WS_PORT: 8546
     restart: unless-stopped
     networks:
