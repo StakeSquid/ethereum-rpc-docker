@@ -3,6 +3,12 @@
 
 services:
   fantom-testnet-archive:
+    build:
+      context: ./fantom
+      dockerfile: sonic.Dockerfile
+      args:
+        VERSION: v1.2.1-h
+        REPO: https://github.com/Fantom-foundation/sonic.git
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -16,12 +22,6 @@ services:
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
-    build:
-      context: ./fantom
-      dockerfile: sonic.Dockerfile
-      args:
-        VERSION: v1.2.1-h
-        REPO: https://github.com/Fantom-foundation/sonic.git
     user: root
     ports:
       - 10652:10652
