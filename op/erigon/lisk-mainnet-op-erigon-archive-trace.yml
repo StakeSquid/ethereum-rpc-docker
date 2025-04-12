@@ -3,7 +3,7 @@
 
 services:
   lisk-mainnet-archive:
-    image: ${LISK_ERIGON_IMAGE:-testinprod/erigon}:${LISK_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
+    image: ${LISK_ERIGON_IMAGE:-testinprod/op-erigon}:${LISK_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

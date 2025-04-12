@@ -3,7 +3,7 @@
 
 services:
   op-sepolia-archive:
-    image: ${OP_ERIGON_IMAGE:-testinprod/erigon}:${OP_SEPOLIA_ERIGON_VERSION:-v2.61.1-0.8.3}
+    image: ${OP_ERIGON_IMAGE:-testinprod/op-erigon}:${OP_SEPOLIA_ERIGON_VERSION:-v2.61.1-0.8.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
