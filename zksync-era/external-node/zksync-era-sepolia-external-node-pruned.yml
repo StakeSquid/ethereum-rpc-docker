@@ -38,7 +38,7 @@ services:
       - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
       - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
       - EN_PROMETHEUS_PORT=3322
-      - EN_PRUNING_ENABLED=True
+      - EN_PRUNING_ENABLED=true
       - EN_REQ_ENTITIES_LIMIT=100000
       - EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL=zksync-era-boojnet-external-node-snapshots
       - EN_SNAPSHOTS_OBJECT_STORE_MODE=GCSAnonymousReadOnly
