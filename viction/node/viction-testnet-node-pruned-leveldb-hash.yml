@@ -4,6 +4,9 @@
 services:
   viction-testnet-client:
     image: ${VICTION_NODE_IMAGE:-buildonviction/node}:${VICTION_TESTNET_NODE_VERSION:-v2.4.5}
+    environment:
+      EXTIP: ${IP}
+      P2P_PORT: 10254
     command:
       - --gcmode=full
       - --rpcapi=eth,debug,net,db,admin,web3
@@ -25,9 +28,6 @@ services:
       - ${VICTION_TESTNET_NODE_PRUNED_LEVELDB_HASH_DATA:-viction-testnet-node-pruned-leveldb-hash}:/tomochain/data
       - .//testnet:/config
       - /slowdisk:/slowdisk
-    environment:
-      EXTIP: ${IP}
-      P2P_PORT: 10254
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -44,17 +44,17 @@ services:
 
   viction-testnet:
     image: nginx
-    restart: unless-stopped
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
     environment:
       PROXY_HOST: viction-testnet-client
       RPC_PATH:
       RPC_PORT: 8545
       WS_PATH:
       WS_PORT: 8546
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.viction-testnet-node-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-testnet

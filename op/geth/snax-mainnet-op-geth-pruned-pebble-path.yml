@@ -4,6 +4,9 @@
 services:
   snax-mainnet:
     image: ${SNAX_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SNAX_MAINNET_GETH_VERSION:-v1.101503.3}
+    environment:
+      - GETH_OP_NETWORK=snax-mainnet
+    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -28,7 +31,6 @@ services:
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
       - --ws.origins=*
       - --ws.port=8545
-    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     restart: unless-stopped
     user: root
     stop_grace_period: 5m
@@ -44,8 +46,6 @@ services:
       - ${SNAX_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-snax-mainnet-op-geth-pruned-pebble-path}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
-    environment:
-      - GETH_OP_NETWORK=snax-mainnet
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.snax-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/snax-mainnet
@@ -71,15 +71,6 @@ services:
 
   snax-mainnet-node:
     image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.1}
-    entrypoint: [op-node]
-    restart: unless-stopped
-    networks:
-      - chains
-    ports:
-      - 15332:15332
-      - 15332:15332/udp
-    volumes:
-      - .jwtsecret:/jwtsecret:ro
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -102,6 +93,15 @@ services:
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
       - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    restart: unless-stopped
+    networks:
+      - chains
+    ports:
+      - 15332:15332
+      - 15332:15332/udp
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
 
 volumes:
   snax-mainnet-op-geth-pruned-pebble-path:

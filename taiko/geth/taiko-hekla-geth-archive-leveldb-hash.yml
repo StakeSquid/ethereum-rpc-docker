@@ -4,6 +4,8 @@
 services:
   taiko-hekla-archive:
     image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HEKLA_GETH_VERSION:-v1.14.1}
+    environment:
+      - GETH_NETWORKID=167009
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -43,8 +45,6 @@ services:
       - ${TAIKO_HEKLA_GETH_ARCHIVE_LEVELDB_HASH_DATA:-taiko-hekla-geth-archive-leveldb-hash}:/root/.ethereum
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
-    environment:
-      - GETH_NETWORKID=167009
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.taiko-hekla-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/taiko-hekla-archive
@@ -70,15 +70,6 @@ services:
 
   taiko-hekla-archive-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.4.1}
-    entrypoint: [taiko-client, driver]
-    restart: unless-stopped
-    networks:
-      - chains
-    ports:
-      - 15396:15396
-      - 15396:15396/udp
-    volumes:
-      - .jwtsecret:/jwtsecret:ro
     env_file:
       - ./taiko/hekla.env
     environment:
@@ -90,6 +81,15 @@ services:
       - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
       - P2P_CHECK_POINT_SYNC_URL=
       - P2P_SYNC=true
+    entrypoint: [taiko-client, driver]
+    restart: unless-stopped
+    networks:
+      - chains
+    ports:
+      - 15396:15396
+      - 15396:15396/udp
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
 
 volumes:
   taiko-hekla-geth-archive-leveldb-hash:

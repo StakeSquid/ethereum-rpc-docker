@@ -4,8 +4,8 @@
 services:
   haqq-mainnet:
     image: ${HAQQ_HAQQ_IMAGE:-alhaqq/haqq}:${HAQQ_MAINNET_HAQQ_VERSION:-v1.8.2}
-    command: --p2p.laddr=tcp://0.0.0.0:10465
     entrypoint: [haqqd, start]
+    command: --p2p.laddr=tcp://0.0.0.0:10465
     restart: unless-stopped
     user: root
     stop_grace_period: 5m

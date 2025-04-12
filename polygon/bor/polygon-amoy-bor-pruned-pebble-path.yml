@@ -4,6 +4,7 @@
 services:
   polygon-amoy:
     image: ${POLYGON_BOR_IMAGE:-0xpolygon/bor}:${POLYGON_AMOY_BOR_VERSION:-v1.3.10}
+    entrypoint: [bor, server]
     command:
       - --bor.heimdall=https://polygon-amoy-heimdall-rest.publicnode.com
       - --chain=amoy
@@ -29,7 +30,6 @@ services:
       - --ws.api=eth,net,web3,txpool,debug,admin,bor
       - --ws.origins=*
       - --ws.port=8545
-    entrypoint: [bor, server]
     restart: unless-stopped
     user: root
     stop_grace_period: 5m

@@ -4,6 +4,8 @@
 services:
   taiko-alethia:
     image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_ALETHIA_GETH_VERSION:-v1.12.0}
+    environment:
+      - GETH_NETWORKID=167000
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -43,8 +45,6 @@ services:
       - ${TAIKO_ALETHIA_GETH_PRUNED_PEBBLE_PATH_DATA:-taiko-alethia-geth-pruned-pebble-path}:/root/.ethereum
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
-    environment:
-      - GETH_NETWORKID=167000
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.taiko-alethia-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/taiko-alethia
@@ -70,15 +70,6 @@ services:
 
   taiko-alethia-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v0.43.1}
-    entrypoint: [taiko-client, driver]
-    restart: unless-stopped
-    networks:
-      - chains
-    ports:
-      - 15251:15251
-      - 15251:15251/udp
-    volumes:
-      - .jwtsecret:/jwtsecret:ro
     env_file:
       - ./taiko/alethia.env
     environment:
@@ -90,6 +81,15 @@ services:
       - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
       - P2P_CHECK_POINT_SYNC_URL=
       - P2P_SYNC=true
+    entrypoint: [taiko-client, driver]
+    restart: unless-stopped
+    networks:
+      - chains
+    ports:
+      - 15251:15251
+      - 15251:15251/udp
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
 
 volumes:
   taiko-alethia-geth-pruned-pebble-path:

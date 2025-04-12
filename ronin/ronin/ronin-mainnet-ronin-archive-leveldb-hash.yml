@@ -4,6 +4,12 @@
 services:
   ronin-mainnet-archive:
     image: ${RONIN_RONIN_IMAGE:-ghcr.io/ronin-chain/ronin}:${RONIN_MAINNET_RONIN_VERSION:-v1.0.2-eaef5a2}
+    environment:
+      - DB_ENGINE=
+      - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
+      - NETWORK_ID=2020
+      - NETWORK_PORT=10276
+      - STATE_SCHEME=
     command:
       - --discovery.dns enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.roninchain.com
       - --gcmode=archive
@@ -25,12 +31,6 @@ services:
     volumes:
       - ${RONIN_MAINNET_RONIN_ARCHIVE_LEVELDB_HASH_DATA:-ronin-mainnet-ronin-archive-leveldb-hash}:/ronin
       - /slowdisk:/slowdisk
-    environment:
-      - DB_ENGINE=
-      - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
-      - NETWORK_ID=2020
-      - NETWORK_PORT=10276
-      - STATE_SCHEME=
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ronin-mainnet-ronin-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/ronin-mainnet-archive

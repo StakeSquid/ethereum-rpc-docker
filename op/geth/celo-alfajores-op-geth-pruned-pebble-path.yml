@@ -4,6 +4,9 @@
 services:
   celo-alfajores:
     image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_ALFAJORES_GETH_VERSION:-celo-v2.0.0}
+    environment:
+      - GETH_OP_NETWORK=celo-alfajores
+    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -28,7 +31,6 @@ services:
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
       - --ws.origins=*
       - --ws.port=8545
-    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     restart: unless-stopped
     user: root
     stop_grace_period: 5m
@@ -44,8 +46,6 @@ services:
       - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-celo-alfajores-op-geth-pruned-pebble-path}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
-    environment:
-      - GETH_OP_NETWORK=celo-alfajores
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.celo-alfajores-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/celo-alfajores
@@ -71,15 +71,6 @@ services:
 
   celo-alfajores-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.0.0}
-    entrypoint: [op-node]
-    restart: unless-stopped
-    networks:
-      - chains
-    ports:
-      - 15457:15457
-      - 15457:15457/udp
-    volumes:
-      - .jwtsecret:/jwtsecret:ro
     environment:
       - NODE_IMAGE=us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node
       - NODE_VERSION=celo-v2.0.0
@@ -109,17 +100,18 @@ services:
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
       - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
-
-  celo-alfajores-relay:
-    image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
+    entrypoint: [op-node]
     restart: unless-stopped
     networks:
       - chains
     ports:
-      - 20457:20457
-      - 20457:20457/udp
+      - 15457:15457
+      - 15457:15457/udp
     volumes:
-      - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH__EIGENDA_DATA:-celo-alfajores-op-geth-pruned-pebble-path_eigenda}:/data
+      - .jwtsecret:/jwtsecret:ro
+
+  celo-alfajores-relay:
+    image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
     environment:
       - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
       - EIGENDA_PROXY_EIGENDA_GRPC_DISABLE_TLS=false
@@ -129,6 +121,14 @@ services:
       - EIGENDA_PROXY_IMAGE=ghcr.io/layr-labs/eigenda-proxy
       - EIGENDA_PROXY_PORT=20457
       - EIGENDA_PROXY_VERSION=v1.6.4
+    restart: unless-stopped
+    networks:
+      - chains
+    ports:
+      - 20457:20457
+      - 20457:20457/udp
+    volumes:
+      - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH__EIGENDA_DATA:-celo-alfajores-op-geth-pruned-pebble-path_eigenda}:/data
 
 volumes:
   celo-alfajores-op-geth-pruned-pebble-path:

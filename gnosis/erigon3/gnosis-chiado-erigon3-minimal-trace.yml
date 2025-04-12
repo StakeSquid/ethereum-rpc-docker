@@ -4,6 +4,7 @@
 services:
   gnosis-chiado-minimal:
     image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_CHIADO_ERIGON3_VERSION:-v3.0.0}
+    entrypoint: [erigon]
     command:
       - --beacon.api.addr=0.0.0.0
       - --beacon.api.cors.allow-origins=*
@@ -30,7 +31,6 @@ services:
       - --torrent.port=25986
       - --ws
       - --ws.port=8545
-    entrypoint: [erigon]
     restart: unless-stopped
     user: root
     stop_grace_period: 5m

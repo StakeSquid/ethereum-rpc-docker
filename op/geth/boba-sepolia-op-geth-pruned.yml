@@ -4,6 +4,9 @@
 services:
   boba-sepolia:
     image: ${BOBA_GETH_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-geth}:${BOBA_SEPOLIA_GETH_VERSION:-v1.101503.1}
+    environment:
+      - GETH_OP_NETWORK=boba-sepolia
+    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -28,7 +31,6 @@ services:
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
       - --ws.origins=*
       - --ws.port=8545
-    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     restart: unless-stopped
     user: root
     stop_grace_period: 5m
@@ -44,8 +46,6 @@ services:
       - ${BOBA_SEPOLIA_OP_GETH_PRUNED_DATA:-boba-sepolia-op-geth-pruned}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
-    environment:
-      - GETH_OP_NETWORK=boba-sepolia
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.boba-sepolia-op-geth-pruned-stripprefix.stripprefix.prefixes=/boba-sepolia
@@ -71,15 +71,6 @@ services:
 
   boba-sepolia-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}
-    entrypoint: [op-node]
-    restart: unless-stopped
-    networks:
-      - chains
-    ports:
-      - 15901:15901
-      - 15901:15901/udp
-    volumes:
-      - .jwtsecret:/jwtsecret:ro
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -103,6 +94,15 @@ services:
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
       - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    restart: unless-stopped
+    networks:
+      - chains
+    ports:
+      - 15901:15901
+      - 15901:15901/udp
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
 
 volumes:
   boba-sepolia-op-geth-pruned:

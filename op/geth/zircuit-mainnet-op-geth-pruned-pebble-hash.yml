@@ -4,6 +4,10 @@
 services:
   zircuit-mainnet:
     image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_MAINNET_GETH_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
+    environment:
+      - GETH_ETHSTATS=d${DOMAIN}:${ZIRCUIT_MAINNET_WS_SECRET}@${ZIRCUIT_MAINNET_ETH_STATS_SERVER}:${ZIRCUIT_MAINNET_ETH_STATS_SERVER_PORT}
+      - GETH_OP_NETWORK=zircuit-mainnet
+    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -29,7 +33,6 @@ services:
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
       - --ws.origins=*
       - --ws.port=8545
-    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     restart: unless-stopped
     user: root
     stop_grace_period: 5m
@@ -45,9 +48,6 @@ services:
       - ${ZIRCUIT_MAINNET_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-zircuit-mainnet-op-geth-pruned-pebble-hash}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
-    environment:
-      - GETH_ETHSTATS=d${DOMAIN}:${ZIRCUIT_MAINNET_WS_SECRET}@${ZIRCUIT_MAINNET_ETH_STATS_SERVER}:${ZIRCUIT_MAINNET_ETH_STATS_SERVER_PORT}
-      - GETH_OP_NETWORK=zircuit-mainnet
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.zircuit-mainnet-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/zircuit-mainnet
@@ -73,15 +73,6 @@ services:
 
   zircuit-mainnet-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_MAINNET_NODE_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
-    entrypoint: [op-node]
-    restart: unless-stopped
-    networks:
-      - chains
-    ports:
-      - 15688:15688
-      - 15688:15688/udp
-    volumes:
-      - .jwtsecret:/jwtsecret:ro
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -104,6 +95,15 @@ services:
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
       - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    restart: unless-stopped
+    networks:
+      - chains
+    ports:
+      - 15688:15688
+      - 15688:15688/udp
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
 
 volumes:
   zircuit-mainnet-op-geth-pruned-pebble-hash:

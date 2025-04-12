@@ -9,6 +9,9 @@ services:
       args:
         VERSION: v1.2.1-h
         REPO: https://github.com/Fantom-foundation/sonic.git
+    environment:
+      - CACHE_GB=${SONIC_CACHE_GB:-28}
+      - GENESIS=https://download.fantom.network/opera/testnet/testnet-26650-rpc.g
     command:
       - --datadir=/var/sonic
       - --db.engine=
@@ -39,9 +42,6 @@ services:
     volumes:
       - ${FANTOM_TESTNET_SONIC_ARCHIVE_DATA:-fantom-testnet-sonic-archive}:/var/sonic
       - /slowdisk:/slowdisk
-    environment:
-      - CACHE_GB=${SONIC_CACHE_GB:-28}
-      - GENESIS=https://download.fantom.network/opera/testnet/testnet-26650-rpc.g
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.fantom-testnet-sonic-archive-stripprefix.stripprefix.prefixes=/fantom-testnet-archive

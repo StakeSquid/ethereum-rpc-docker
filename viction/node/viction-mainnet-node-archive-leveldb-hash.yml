@@ -4,6 +4,9 @@
 services:
   viction-mainnet-archive-client:
     image: ${VICTION_NODE_IMAGE:-buildonviction/node}:${VICTION_MAINNET_NODE_VERSION:-v2.4.5}
+    environment:
+      EXTIP: ${IP}
+      P2P_PORT: 10670
     command:
       - --gcmode=archive
       - --rpcapi=eth,debug,net,db,admin,web3
@@ -25,9 +28,6 @@ services:
       - ${VICTION_MAINNET_NODE_ARCHIVE_LEVELDB_HASH_DATA:-viction-mainnet-node-archive-leveldb-hash}:/tomochain/data
       - .//mainnet:/config
       - /slowdisk:/slowdisk
-    environment:
-      EXTIP: ${IP}
-      P2P_PORT: 10670
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -44,17 +44,17 @@ services:
 
   viction-mainnet-archive:
     image: nginx
-    restart: unless-stopped
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
     environment:
       PROXY_HOST: viction-mainnet-archive-client
       RPC_PATH:
       RPC_PORT: 8545
       WS_PATH:
       WS_PORT: 8546
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.viction-mainnet-node-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet-archive

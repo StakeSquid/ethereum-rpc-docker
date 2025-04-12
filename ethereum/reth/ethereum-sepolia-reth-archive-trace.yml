@@ -4,6 +4,7 @@
 services:
   ethereum-sepolia-archive:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_SEPOLIA_RETH_VERSION:-v1.3.8}
+    entrypoint: [reth, node]
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -25,7 +26,6 @@ services:
       - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
       - --ws.origins=*
       - --ws.port=8545
-    entrypoint: [reth, node]
     restart: unless-stopped
     user: root
     stop_grace_period: 5m

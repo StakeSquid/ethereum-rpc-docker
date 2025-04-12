@@ -4,6 +4,13 @@
 services:
   zksync-era-mainnet-client:
     image: ${ZKSYNC_ERA_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_VERSION:-v26.2.1}
+    environment:
+      - DATABASE_URL=postgres://postgres:notsecurepassword@zksync-era-mainnet-external-node-pruned-db:5430/zksync_local_ext_node
+      - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
+      - EN_ETH_CLIENT_URL=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - EN_L2_CHAIN_ID=324
+      - EN_MAIN_NODE_URL=https://zksync2-mainnet.zksync.io
+      - EN_PRUNING_ENABLED=True
     restart: unless-stopped
     user: root
     stop_grace_period: 5m
@@ -18,13 +25,6 @@ services:
     volumes:
       - ${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-zksync-era-mainnet-external-node-pruned}:/db \
       - /slowdisk:/slowdisk
-    environment:
-      - DATABASE_URL=postgres://postgres:notsecurepassword@zksync-era-mainnet-external-node-pruned-db:5430/zksync_local_ext_node
-      - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
-      - EN_ETH_CLIENT_URL=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - EN_L2_CHAIN_ID=324
-      - EN_MAIN_NODE_URL=https://zksync2-mainnet.zksync.io
-      - EN_PRUNING_ENABLED=True
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -41,17 +41,17 @@ services:
 
   zksync-era-mainnet:
     image: nginx
-    restart: unless-stopped
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
     environment:
       PROXY_HOST: zksync-era-mainnet-client
       RPC_PATH:
       RPC_PORT: 8545
       WS_PATH:
       WS_PORT: 8546
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.zksync-era-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/zksync-era-mainnet
@@ -64,6 +64,9 @@ services:
 
   zksync-era-mainnet-db:
     image: postgres:14
+    environment:
+      - PGPORT=5430
+      - POSTGRES_PASSWORD=notsecurepassword
     command: >
       postgres
       -c max_connections=200
@@ -84,9 +87,6 @@ services:
       - 5430
     volumes:
       - ${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_PRUNED__DB_DATA:-zksync-era-mainnet-external-node-pruned_db}:/var/lib/postgresql/data
-    environment:
-      - PGPORT=5430
-      - POSTGRES_PASSWORD=notsecurepassword
     healthcheck:
       interval: 1s
       timeout: 3s

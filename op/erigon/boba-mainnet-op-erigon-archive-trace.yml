@@ -4,6 +4,7 @@
 services:
   boba-mainnet-archive:
     image: ${BOBA_ERIGON_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon}:${BOBA_MAINNET_ERIGON_VERSION:-v1.2.11}
+    entrypoint: [erigon]
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -24,7 +25,6 @@ services:
       - --rpc.returndata.limit=1100000
       - --ws
       - --ws.port=8545
-    entrypoint: [erigon]
     restart: unless-stopped
     user: root
     stop_grace_period: 5m
@@ -70,15 +70,6 @@ services:
 
   boba-mainnet-archive-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-v1.6.18}
-    entrypoint: [op-node]
-    restart: unless-stopped
-    networks:
-      - chains
-    ports:
-      - 15732:15732
-      - 15732:15732/udp
-    volumes:
-      - .jwtsecret:/jwtsecret:ro
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -101,6 +92,15 @@ services:
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
       - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    restart: unless-stopped
+    networks:
+      - chains
+    ports:
+      - 15732:15732
+      - 15732:15732/udp
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
 
 volumes:
   boba-mainnet-op-erigon-archive-trace:

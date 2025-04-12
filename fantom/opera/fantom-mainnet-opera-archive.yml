@@ -9,6 +9,8 @@ services:
       args:
         VERSION: v1.1.3-rc.5
         REPO: https://github.com/Fantom-foundation/go-opera.git
+    environment:
+      - GENESIS=https://download.fantom.network/opera/mainnet/mainnet-5577-full-mpt.g
     command:
       - --cache=${FANTOM_MAINNET_OPERA_ARCHIVE_CACHE_MB:-16000}
       - --datadir=/datadir
@@ -39,8 +41,6 @@ services:
     volumes:
       - ${FANTOM_MAINNET_OPERA_ARCHIVE_DATA:-fantom-mainnet-opera-archive}:/datadir
       - /slowdisk:/slowdisk
-    environment:
-      - GENESIS=https://download.fantom.network/opera/mainnet/mainnet-5577-full-mpt.g
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.fantom-mainnet-opera-archive-stripprefix.stripprefix.prefixes=/fantom-mainnet-archive

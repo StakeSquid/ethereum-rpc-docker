@@ -9,6 +9,9 @@ services:
       args:
         VERSION: v2.0.3
         REPO: https://github.com/0xsoniclabs/sonic.git
+    environment:
+      - CACHE_GB=${SONIC_CACHE_GB:-28}
+      - GENESIS=https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic-16500-full.g
     command:
       - --datadir=/var/sonic
       - --db.engine=
@@ -39,9 +42,6 @@ services:
     volumes:
       - ${SONIC_MAINNET_SONIC_ARCHIVE_DATA:-sonic-mainnet-sonic-archive}:/var/sonic
       - /slowdisk:/slowdisk
-    environment:
-      - CACHE_GB=${SONIC_CACHE_GB:-28}
-      - GENESIS=https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic-16500-full.g
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.sonic-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/sonic-mainnet-archive
