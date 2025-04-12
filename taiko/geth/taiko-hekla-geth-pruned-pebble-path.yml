@@ -24,8 +24,12 @@ services:
     expose:
       - 8545
       - 8551
+    env_file:
+      - ./taiko/hekla.env
     environment:
+      - GETH_GPO_DEFAULTPRICE=10000000
       - GETH_NETWORKID=167009
+      - GETH_TAIKO=true
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret

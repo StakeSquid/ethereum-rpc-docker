@@ -25,7 +25,10 @@ services:
       - 8545
       - 8551
     environment:
+      - BLOCK_SIGNER_ADDRESS=0x000000b36A00872bAF079426e012Cf5Cd2A74E8b
+      - BLOCK_SIGNER_KEY=9f50ccaebd966113a0ef09793f8a3288cd0bb2c05d20caa3c0015b4e665f1b2d
       - GETH_OP_NETWORK=mantle-mainnet
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
       - --authrpc.addr=0.0.0.0

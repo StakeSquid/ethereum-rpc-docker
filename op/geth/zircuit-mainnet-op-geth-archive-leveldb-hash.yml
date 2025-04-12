@@ -25,8 +25,11 @@ services:
       - 8545
       - 8551
     environment:
+      - GETH_CONFIG=/config/gethconfig.toml
       - GETH_ETHSTATS=d${DOMAIN}:${ZIRCUIT_MAINNET_WS_SECRET}@${ZIRCUIT_MAINNET_ETH_STATS_SERVER}:${ZIRCUIT_MAINNET_ETH_STATS_SERVER_PORT}
       - GETH_OP_NETWORK=zircuit-mainnet
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_TXPOOL_GLOBALQUEUE=1024
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
       - --authrpc.addr=0.0.0.0

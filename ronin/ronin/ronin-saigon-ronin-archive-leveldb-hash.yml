@@ -25,10 +25,16 @@ services:
       - 8545
     environment:
       - DB_ENGINE=
+      - DEPLOYMENT=test
       - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
+      - MINE=false
       - NETWORK_ID=2021
       - NETWORK_PORT=10493
+      - PASSWORD=stupidpassword
       - STATE_SCHEME=
+      - SYNC_MODE=full
+      - VERBOSITY=3
+      - WS_PORT=8545
     command:
       - --discovery.dns enrtree://AJCNIAXQIPO55NW3QE2NUBBDMPYZDOQUCAEUS65NHQFMUUFES5KOW@saigon.nodes.roninchain.com
       - --gcmode=archive

@@ -26,9 +26,14 @@ services:
     environment:
       - DB_ENGINE=
       - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
+      - MINE=false
       - NETWORK_ID=2020
       - NETWORK_PORT=10276
+      - PASSWORD=stupidpassword
       - STATE_SCHEME=
+      - SYNC_MODE=full
+      - VERBOSITY=3
+      - WS_PORT=8545
     command:
       - --discovery.dns enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.roninchain.com
       - --gcmode=full

@@ -26,6 +26,12 @@ services:
       - 8551
     environment:
       - GETH_OP_NETWORK=fraxtal-testnet
+      - GETH_OVERRIDE_CANYON=0
+      - GETH_OVERRIDE_ECOTONE=1714186800
+      - GETH_OVERRIDE_FJORD=1730401200
+      - GETH_OVERRIDE_GRANITE=1738191600
+      - GETH_OVERRIDE_HOLOCENE=1742583600
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
       - --authrpc.addr=0.0.0.0

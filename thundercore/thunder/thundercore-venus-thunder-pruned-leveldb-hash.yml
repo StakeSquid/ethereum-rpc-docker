@@ -24,6 +24,7 @@ services:
     expose:
       - 8545
     environment:
+      CONFIG_PATH: /config
       PORT: 10368
     entrypoint: [/sbin/tini, --, /entrypoint.sh, --logToConsole]
     restart: unless-stopped
