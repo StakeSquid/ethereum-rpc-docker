@@ -4,33 +4,6 @@
 services:
   op-mainnet-archive:
     image: ${OP_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${OP_MAINNET_GETH_VERSION:-v1.101503.3}
-    user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8551
-    ports:
-      - 10687:10687
-      - 10687:10687/udp
-    volumes:
-      - ${OP_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-op-mainnet-op-geth-archive-leveldb-hash}:/data
-      - .jwtsecret:/jwtsecret:ro
-      - /slowdisk:/slowdisk
-    environment:
-      - GETH_OP_NETWORK=op-mainnet
-    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -55,10 +28,24 @@ services:
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
       - --ws.origins=*
       - --ws.port=8545
+    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
+    restart: unless-stopped
+    user: root
+    stop_grace_period: 5m
     networks:
       - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ports:
+      - 10687:10687
+      - 10687:10687/udp
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ${OP_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-op-mainnet-op-geth-archive-leveldb-hash}:/data
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    environment:
+      - GETH_OP_NETWORK=op-mainnet
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.op-mainnet-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/op-mainnet-archive
@@ -68,12 +55,31 @@ services:
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/op-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/op-mainnet-archive`)}
       - traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash.middlewares=op-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   op-mainnet-archive-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.1}
+    entrypoint: [op-node]
+    restart: unless-stopped
+    networks:
+      - chains
     ports:
       - 15687:15687
       - 15687:15687/udp
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -96,12 +102,6 @@ services:
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
       - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
-    entrypoint: [op-node]
-    networks:
-      - chains
-    volumes:
-      - .jwtsecret:/jwtsecret:ro
-    restart: unless-stopped
 
 volumes:
   op-mainnet-op-geth-archive-leveldb-hash:

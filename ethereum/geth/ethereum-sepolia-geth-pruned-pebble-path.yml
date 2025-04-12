@@ -4,30 +4,6 @@
 services:
   ethereum-sepolia:
     image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_SEPOLIA_GETH_VERSION:-v1.15.7}
-    user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8551
-    ports:
-      - 10710:10710
-      - 10710:10710/udp
-    volumes:
-      - ${ETHEREUM_SEPOLIA_GETH_PRUNED_PEBBLE_PATH_DATA:-ethereum-sepolia-geth-pruned-pebble-path}:/root/.ethereum
-      - .jwtsecret:/jwtsecret:ro
-      - /slowdisk:/slowdisk
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -53,10 +29,21 @@ services:
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
       - --ws.origins=*
       - --ws.port=8545
+    restart: unless-stopped
+    user: root
+    stop_grace_period: 5m
     networks:
       - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ports:
+      - 10710:10710
+      - 10710:10710/udp
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ${ETHEREUM_SEPOLIA_GETH_PRUNED_PEBBLE_PATH_DATA:-ethereum-sepolia-geth-pruned-pebble-path}:/root/.ethereum
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-sepolia-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-sepolia
@@ -66,12 +53,22 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.rule=PathPrefix(`/ethereum-sepolia`)}
       - traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.middlewares=ethereum-sepolia-geth-pruned-pebble-path-stripprefix, ipwhitelist
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   ethereum-sepolia-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v5.3.1}
-    ports:
-      - 15710:15710
-      - 15710:15710/udp
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -86,12 +83,15 @@ services:
       - --p2p-udp-port=15710
       - --rpc-host=0.0.0.0
       - --sepolia
+    restart: unless-stopped
     networks:
       - chains
+    ports:
+      - 15710:15710
+      - 15710:15710/udp
     volumes:
       - ${ETHEREUM_SEPOLIA_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-sepolia-geth-pruned-pebble-path_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
-    restart: unless-stopped
 
 volumes:
   ethereum-sepolia-geth-pruned-pebble-path:

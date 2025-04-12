@@ -9,31 +9,6 @@ services:
       args:
         VERSION: v1.1.3-rc.5
         REPO: https://github.com/Fantom-foundation/go-opera.git
-    user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8551
-    ports:
-      - 10897:10897
-      - 10897:10897/udp
-    volumes:
-      - ${FANTOM_MAINNET_OPERA_PRUNED_DATA:-fantom-mainnet-opera-pruned}:/datadir
-      - /slowdisk:/slowdisk
-    environment:
-      - GENESIS=https://download.fantom.network/opera/mainnet/mainnet-109331-no-history.g
     command:
       - --cache=${FANTOM_MAINNET_OPERA_PRUNED_CACHE_MB:-16000}
       - --datadir=/datadir
@@ -50,10 +25,22 @@ services:
       - --syncmode snap
       - --ws
       - --ws.port=8545
+    restart: unless-stopped
+    user: root
+    stop_grace_period: 5m
     networks:
       - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ports:
+      - 10897:10897
+      - 10897:10897/udp
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ${FANTOM_MAINNET_OPERA_PRUNED_DATA:-fantom-mainnet-opera-pruned}:/datadir
+      - /slowdisk:/slowdisk
+    environment:
+      - GENESIS=https://download.fantom.network/opera/mainnet/mainnet-109331-no-history.g
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.fantom-mainnet-opera-pruned-stripprefix.stripprefix.prefixes=/fantom-mainnet
@@ -63,6 +50,19 @@ services:
       - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-mainnet`)}
       - ${NO_SSL:+traefik.http.routers.fantom-mainnet-opera-pruned.rule=PathPrefix(`/fantom-mainnet`)}
       - traefik.http.routers.fantom-mainnet-opera-pruned.middlewares=fantom-mainnet-opera-pruned-stripprefix, ipwhitelist
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
 volumes:
   fantom-mainnet-opera-pruned:

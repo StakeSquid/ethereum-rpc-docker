@@ -4,9 +4,29 @@
 services:
   avalanche-mainnet-client:
     image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_MAINNET_GO_VERSION:-v1.13.0}
+    command:
+      - --chain-config-dir /config/pruned
+      - --db-type=pebbledb
+      - --http-allowed-hosts=*
+      - --http-host=
+      - --public-ip=${IP}"
+      - --staking-port=10929
+    entrypoint: [/avalanchego/build/avalanchego]
+    restart: unless-stopped
     user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
+    stop_grace_period: 5m
+    networks:
+      - chains
+    ports:
+      - 10929:10929
+      - 10929:10929/udp
+    expose:
+      - 9650
+      - 9650
+    volumes:
+      - ${AVALANCHE_MAINNET_GO_PRUNED_PEBBLEDB_DATA:-avalanche-mainnet-go-pruned-pebbledb}:/root/.avalanchego
+      - .//mainnet:/config
+      - /slowdisk:/slowdisk
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -18,42 +38,22 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 9650
-      - 9650
-    ports:
-      - 10929:10929
-      - 10929:10929/udp
-    volumes:
-      - ${AVALANCHE_MAINNET_GO_PRUNED_PEBBLEDB_DATA:-avalanche-mainnet-go-pruned-pebbledb}:/root/.avalanchego
-      - .//mainnet:/config
-      - /slowdisk:/slowdisk
-    entrypoint: [/avalanchego/build/avalanchego]
-    command:
-      - --chain-config-dir /config/pruned
-      - --db-type=pebbledb
-      - --http-allowed-hosts=*
-      - --http-host=
-      - --public-ip=${IP}"
-      - --staking-port=10929
-    networks:
-      - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   avalanche-mainnet:
-    restart: unless-stopped
     image: nginx
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
     environment:
       PROXY_HOST: avalanche-mainnet-client
       RPC_PATH: /ext/bc/C/rpc
       RPC_PORT: 9650
       WS_PATH: /ext/bc/C/ws
       WS_PORT: 9650
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.avalanche-mainnet-go-pruned-pebbledb-stripprefix.stripprefix.prefixes=/avalanche-mainnet

@@ -4,36 +4,6 @@
 services:
   linea-sepolia:
     image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_SEPOLIA_ERIGON3_VERSION:-v3.0.0}
-    user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8551
-    ports:
-      - 10235:10235
-      - 10235:10235/udp
-      - 30235:30235
-      - 30235:30235/udp
-      - 35235:35235
-      - 35235:35235/udp
-    volumes:
-      - ${LINEA_SEPOLIA_ERIGON3_PRUNED_TRACE_DATA:-linea-sepolia-erigon3-pruned-trace}:/root/.local/share/erigon
-      - .//sepolia:/config
-      - /slowdisk:/slowdisk
-    entrypoint: [/bin/sh, -c, '[ ! -f /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init /config/genesis.json; exec erigon "$@"']
     command:
       - --bootnoodes=enode://6f20afbe4397e51b717a7c1ad3095e79aee48c835eebd9237a3e8a16951ade1fe0e66e981e30ea269849fcb6ba03d838da37f524fabd2a557474194a2e2604fa@18.221.100.27:31002,enode://ce1e0d8e0500cb5c0ac56bdcdafb2d6320c3a2c5125b5ccf12f5dfc9b47ee74acbcafc32559017613136c9c36a0ce74ba4f83b7fb8244f099f3b15708d9d3129@3.23.75.47:31000,enode://1b026a5eb0ae74300f58987d235ef0e3a550df963345cb3574be3b0b54378bd11f14dfd515a8976f2c2d2826090e9507b8ccc24f896a9ffffffcabcfd996a733@3.129.120.128:31001
       - --datadir=/root/.local/share/erigon
@@ -54,10 +24,26 @@ services:
       - --rpc.returndata.limit=1100000
       - --ws
       - --ws.port=8545
+    entrypoint: [/bin/sh, -c, '[ ! -f /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init /config/genesis.json; exec erigon "$@"']
+    restart: unless-stopped
+    user: root
+    stop_grace_period: 5m
     networks:
       - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ports:
+      - 10235:10235
+      - 10235:10235/udp
+      - 30235:30235
+      - 30235:30235/udp
+      - 35235:35235
+      - 35235:35235/udp
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ${LINEA_SEPOLIA_ERIGON3_PRUNED_TRACE_DATA:-linea-sepolia-erigon3-pruned-trace}:/root/.local/share/erigon
+      - .//sepolia:/config
+      - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.linea-sepolia-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/linea-sepolia
@@ -67,6 +53,20 @@ services:
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.linea-sepolia-erigon3-pruned-trace.rule=PathPrefix(`/linea-sepolia`)}
       - traefik.http.routers.linea-sepolia-erigon3-pruned-trace.middlewares=linea-sepolia-erigon3-pruned-trace-stripprefix, ipwhitelist
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
 
 volumes:
   linea-sepolia-erigon3-pruned-trace:

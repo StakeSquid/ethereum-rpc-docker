@@ -4,9 +4,42 @@
 services:
   ronin-mainnet-archive:
     image: ${RONIN_RONIN_IMAGE:-ghcr.io/ronin-chain/ronin}:${RONIN_MAINNET_RONIN_VERSION:-v1.0.2-eaef5a2}
+    command:
+      - --discovery.dns enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.roninchain.com
+      - --gcmode=archive
+      - --http.api admin,eth,net,web3,consortium,txpool,debug
+      - --nat=extip:${IP}
+      - --port=10276
+      - --txpool.nolocals
+      - --txpool.pricelimit 20000000000
+    restart: unless-stopped
     user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
+    stop_grace_period: 5m
+    networks:
+      - chains
+    ports:
+      - 10276:10276
+      - 10276:10276/udp
+    expose:
+      - 8545
+    volumes:
+      - ${RONIN_MAINNET_RONIN_ARCHIVE_LEVELDB_HASH_DATA:-ronin-mainnet-ronin-archive-leveldb-hash}:/ronin
+      - /slowdisk:/slowdisk
+    environment:
+      - DB_ENGINE=
+      - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
+      - NETWORK_ID=2020
+      - NETWORK_PORT=10276
+      - STATE_SCHEME=
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ronin-mainnet-ronin-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/ronin-mainnet-archive
+      - traefik.http.services.ronin-mainnet-ronin-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-mainnet-archive`)}
+      - ${NO_SSL:+traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.rule=PathPrefix(`/ronin-mainnet-archive`)}
+      - traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.middlewares=ronin-mainnet-ronin-archive-leveldb-hash-stripprefix, ipwhitelist
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -18,41 +51,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-    ports:
-      - 10276:10276
-      - 10276:10276/udp
-    volumes:
-      - ${RONIN_MAINNET_RONIN_ARCHIVE_LEVELDB_HASH_DATA:-ronin-mainnet-ronin-archive-leveldb-hash}:/ronin
-      - /slowdisk:/slowdisk
-    environment:
-      - DB_ENGINE=
-      - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
-      - NETWORK_ID=2020
-      - NETWORK_PORT=10276
-      - STATE_SCHEME=
-    command:
-      - --discovery.dns enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.roninchain.com
-      - --gcmode=archive
-      - --http.api admin,eth,net,web3,consortium,txpool,debug
-      - --nat=extip:${IP}
-      - --port=10276
-      - --txpool.nolocals
-      - --txpool.pricelimit 20000000000
-    networks:
-      - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
-    labels:
-      - traefik.enable=true
-      - traefik.http.middlewares.ronin-mainnet-ronin-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/ronin-mainnet-archive
-      - traefik.http.services.ronin-mainnet-ronin-archive-leveldb-hash.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-mainnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.rule=PathPrefix(`/ronin-mainnet-archive`)}
-      - traefik.http.routers.ronin-mainnet-ronin-archive-leveldb-hash.middlewares=ronin-mainnet-ronin-archive-leveldb-hash-stripprefix, ipwhitelist
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
 volumes:
   ronin-mainnet-ronin-archive-leveldb-hash:

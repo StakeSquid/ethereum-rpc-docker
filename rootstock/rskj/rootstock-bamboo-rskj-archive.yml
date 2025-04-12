@@ -4,9 +4,20 @@
 services:
   rootstock-bamboo-archive-client:
     image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_BAMBOO_RSKJ_VERSION:-}
+    restart: unless-stopped
     user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
+    stop_grace_period: 5m
+    networks:
+      - chains
+    ports:
+      - 10238:10238
+      - 10238:10238/udp
+    expose:
+      - 8545
+      - 8546
+    volumes:
+      - ${ROOTSTOCK_BAMBOO_RSKJ_ARCHIVE_DATA:-rootstock-bamboo-rskj-archive}:/var/lib/rsk/database/mainnet
+      - /slowdisk:/slowdisk
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -18,33 +29,22 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8546
-    ports:
-      - 10238:10238
-      - 10238:10238/udp
-    volumes:
-      - ${ROOTSTOCK_BAMBOO_RSKJ_ARCHIVE_DATA:-rootstock-bamboo-rskj-archive}:/var/lib/rsk/database/mainnet
-      - /slowdisk:/slowdisk
-    networks:
-      - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
   rootstock-bamboo-archive:
-    restart: unless-stopped
     image: nginx
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
     environment:
       PROXY_HOST: rootstock-bamboo-archive-client
       RPC_PATH: /
       RPC_PORT: 8545
       WS_PATH: /
       WS_PORT: 8546
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.rootstock-bamboo-rskj-archive-stripprefix.stripprefix.prefixes=/rootstock-bamboo-archive

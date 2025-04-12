@@ -4,9 +4,31 @@
 services:
   goat-testnet3:
     image: ${GOAT_GETH_IMAGE:-ghcr.io/goatnetwork/goat-geth}:${GOAT_TESTNET3_GETH_VERSION:-v0.1.7}
+    command: --goat=testnet3
+    restart: unless-stopped
     user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
+    stop_grace_period: 5m
+    networks:
+      - chains
+    ports:
+      - 10272:10272
+      - 10272:10272/udp
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ${GOAT_TESTNET3_GETH_PRUNED_PEBBLE_PATH_DATA:-goat-testnet3-geth-pruned-pebble-path}:/root/.ethereum
+      - .//testnet3:/config
+      - /slowdisk:/slowdisk
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.goat-testnet3-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/goat-testnet3
+      - traefik.http.services.goat-testnet3-geth-pruned-pebble-path.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/goat-testnet3`)}
+      - ${NO_SSL:+traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.rule=PathPrefix(`/goat-testnet3`)}
+      - traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.middlewares=goat-testnet3-geth-pruned-pebble-path-stripprefix, ipwhitelist
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -18,30 +40,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8551
-    ports:
-      - 10272:10272
-      - 10272:10272/udp
-    volumes:
-      - ${GOAT_TESTNET3_GETH_PRUNED_PEBBLE_PATH_DATA:-goat-testnet3-geth-pruned-pebble-path}:/root/.ethereum
-      - .//testnet3:/config
-      - /slowdisk:/slowdisk
-    command: --goat=testnet3
-    networks:
-      - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
-    labels:
-      - traefik.enable=true
-      - traefik.http.middlewares.goat-testnet3-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/goat-testnet3
-      - traefik.http.services.goat-testnet3-geth-pruned-pebble-path.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/goat-testnet3`)}
-      - ${NO_SSL:+traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.rule=PathPrefix(`/goat-testnet3`)}
-      - traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.middlewares=goat-testnet3-geth-pruned-pebble-path-stripprefix, ipwhitelist
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
 volumes:
   goat-testnet3-geth-pruned-pebble-path:

@@ -4,30 +4,6 @@
 services:
   core-buffalo:
     image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_BUFFALO_CORE_VERSION:-1.0.15}
-    user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8551
-    ports:
-      - 10384:10384
-      - 10384:10384/udp
-    volumes:
-      - ${CORE_BUFFALO_CORE_PRUNED_PEBBLE_PATH_DATA:-core-buffalo-core-pruned-pebble-path}:/core/.ethereum
-      - .//buffalo:/config
-      - /slowdisk:/slowdisk
     command:
       - --config=/config/config.toml
       - --datadir=/core/.ethereum
@@ -45,10 +21,21 @@ services:
       - --syncmode=snap
       - --ws
       - --ws.port=8545
+    restart: unless-stopped
+    user: root
+    stop_grace_period: 5m
     networks:
       - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ports:
+      - 10384:10384
+      - 10384:10384/udp
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ${CORE_BUFFALO_CORE_PRUNED_PEBBLE_PATH_DATA:-core-buffalo-core-pruned-pebble-path}:/core/.ethereum
+      - .//buffalo:/config
+      - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.core-buffalo-core-pruned-pebble-path-stripprefix.stripprefix.prefixes=/core-buffalo
@@ -58,6 +45,19 @@ services:
       - ${NO_SSL:-traefik.http.routers.core-buffalo-core-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/core-buffalo`)}
       - ${NO_SSL:+traefik.http.routers.core-buffalo-core-pruned-pebble-path.rule=PathPrefix(`/core-buffalo`)}
       - traefik.http.routers.core-buffalo-core-pruned-pebble-path.middlewares=core-buffalo-core-pruned-pebble-path-stripprefix, ipwhitelist
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
 volumes:
   core-buffalo-core-pruned-pebble-path:

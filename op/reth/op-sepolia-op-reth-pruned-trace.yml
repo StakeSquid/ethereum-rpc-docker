@@ -4,32 +4,6 @@
 services:
   op-sepolia:
     image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_SEPOLIA_RETH_VERSION:-v1.3.8}
-    user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8551
-    ports:
-      - 10326:10326
-      - 10326:10326/udp
-    volumes:
-      - ${OP_SEPOLIA_OP_RETH_PRUNED_TRACE_DATA:-op-sepolia-op-reth-pruned-trace}:/root/.local/share/reth
-      - .jwtsecret:/jwtsecret:ro
-      - /slowdisk:/slowdisk
-    entrypoint: [op-reth, node]
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -53,10 +27,22 @@ services:
       - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
       - --ws.origins=*
       - --ws.port=8545
+    entrypoint: [op-reth, node]
+    restart: unless-stopped
+    user: root
+    stop_grace_period: 5m
     networks:
       - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ports:
+      - 10326:10326
+      - 10326:10326/udp
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ${OP_SEPOLIA_OP_RETH_PRUNED_TRACE_DATA:-op-sepolia-op-reth-pruned-trace}:/root/.local/share/reth
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.op-sepolia-op-reth-pruned-trace-stripprefix.stripprefix.prefixes=/op-sepolia
@@ -66,12 +52,32 @@ services:
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/op-sepolia`)}
       - ${NO_SSL:+traefik.http.routers.op-sepolia-op-reth-pruned-trace.rule=PathPrefix(`/op-sepolia`)}
       - traefik.http.routers.op-sepolia-op-reth-pruned-trace.middlewares=op-sepolia-op-reth-pruned-trace-stripprefix, ipwhitelist
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
 
   op-sepolia-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_SEPOLIA_NODE_VERSION:-v1.13.1}
+    entrypoint: [op-node]
+    restart: unless-stopped
+    networks:
+      - chains
     ports:
       - 15326:15326
       - 15326:15326/udp
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -95,12 +101,6 @@ services:
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
       - OP_NODE_SYNCMODE=consensus-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
-    entrypoint: [op-node]
-    networks:
-      - chains
-    volumes:
-      - .jwtsecret:/jwtsecret:ro
-    restart: unless-stopped
 
 volumes:
   op-sepolia-op-reth-pruned-trace:

@@ -4,9 +4,32 @@
 services:
   thundercore-venus:
     image: ${THUNDERCORE_THUNDER_IMAGE:-thundercore/thunder}:${THUNDERCORE_VENUS_THUNDER_VERSION:-r4.1.3}
+    entrypoint: [/sbin/tini, --, /entrypoint.sh, --logToConsole]
+    restart: unless-stopped
     user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
+    stop_grace_period: 5m
+    networks:
+      - chains
+    ports:
+      - 10368:10368
+      - 10368:10368/udp
+    expose:
+      - 8545
+    volumes:
+      - ${THUNDERCORE_VENUS_THUNDER_PRUNED_LEVELDB_HASH_DATA:-thundercore-venus-thunder-pruned-leveldb-hash}:/datadir
+      - .//venus:/config
+      - /slowdisk:/slowdisk
+    environment:
+      PORT: 10368
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.thundercore-venus-thunder-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/thundercore-venus
+      - traefik.http.services.thundercore-venus-thunder-pruned-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/thundercore-venus`)}
+      - ${NO_SSL:+traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=PathPrefix(`/thundercore-venus`)}
+      - traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.middlewares=thundercore-venus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -18,31 +41,8 @@ services:
       # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-    ports:
-      - 10368:10368
-      - 10368:10368/udp
-    volumes:
-      - ${THUNDERCORE_VENUS_THUNDER_PRUNED_LEVELDB_HASH_DATA:-thundercore-venus-thunder-pruned-leveldb-hash}:/datadir
-      - .//venus:/config
-      - /slowdisk:/slowdisk
-    environment:
-      PORT: 10368
-    entrypoint: [/sbin/tini, --, /entrypoint.sh, --logToConsole]
-    networks:
-      - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
-    labels:
-      - traefik.enable=true
-      - traefik.http.middlewares.thundercore-venus-thunder-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/thundercore-venus
-      - traefik.http.services.thundercore-venus-thunder-pruned-leveldb-hash.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/thundercore-venus`)}
-      - ${NO_SSL:+traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.rule=PathPrefix(`/thundercore-venus`)}
-      - traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.middlewares=thundercore-venus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
 volumes:
   thundercore-venus-thunder-pruned-leveldb-hash:

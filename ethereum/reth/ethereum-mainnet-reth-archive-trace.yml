@@ -4,32 +4,6 @@
 services:
   ethereum-mainnet-archive:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.3.8}
-    user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8551
-    ports:
-      - 10563:10563
-      - 10563:10563/udp
-    volumes:
-      - ${ETHEREUM_MAINNET_RETH_ARCHIVE_TRACE_DATA:-ethereum-mainnet-reth-archive-trace}:/root/.local/share/reth
-      - .jwtsecret:/jwtsecret:ro
-      - /slowdisk:/slowdisk
-    entrypoint: [reth, node]
     command:
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
@@ -51,10 +25,22 @@ services:
       - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
       - --ws.origins=*
       - --ws.port=8545
+    entrypoint: [reth, node]
+    restart: unless-stopped
+    user: root
+    stop_grace_period: 5m
     networks:
       - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ports:
+      - 10563:10563
+      - 10563:10563/udp
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ${ETHEREUM_MAINNET_RETH_ARCHIVE_TRACE_DATA:-ethereum-mainnet-reth-archive-trace}:/root/.local/share/reth
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-reth-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-archive
@@ -64,12 +50,23 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-archive`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=PathPrefix(`/ethereum-mainnet-archive`)}
       - traefik.http.routers.ethereum-mainnet-reth-archive-trace.middlewares=ethereum-mainnet-reth-archive-trace-stripprefix, ipwhitelist
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
 
   ethereum-mainnet-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.1}
-    ports:
-      - 15563:15563
-      - 15563:15563/udp
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -84,12 +81,15 @@ services:
       - --p2p-tcp-port=15563
       - --p2p-udp-port=15563
       - --rpc-host=0.0.0.0
+    restart: unless-stopped
     networks:
       - chains
+    ports:
+      - 15563:15563
+      - 15563:15563/udp
     volumes:
       - ${ETHEREUM_MAINNET_RETH_ARCHIVE_TRACE__PRYSM_DATA:-ethereum-mainnet-reth-archive-trace_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
-    restart: unless-stopped
 
 volumes:
   ethereum-mainnet-reth-archive-trace:

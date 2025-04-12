@@ -4,30 +4,6 @@
 services:
   arbitrum-nova:
     image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_NOVA_NITRO_VERSION:-v3.5.3-0a9c975}
-    user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    expose:
-      - 8545
-      - 8551
-    ports:
-      - 10468:10468
-      - 10468:10468/udp
-    volumes:
-      - ${ARBITRUM_NOVA_NITRO_PRUNED_PEBBLE_HASH_DATA:-arbitrum-nova-nitro-pruned-pebble-hash}:/root/.arbitrum
-      - ./tmp/arbitrum-nova:/tmp
-      - /slowdisk:/slowdisk
     command:
       - --chain.id=42170
       - --datadir=/root/.arbitrum
@@ -58,10 +34,21 @@ services:
       - --ws.api=eth,net,web3,arb,txpool,debug
       - --ws.origins=*
       - --ws.port=8545
+    restart: unless-stopped
+    user: root
+    stop_grace_period: 5m
     networks:
       - chains
-    restart: unless-stopped
-    stop_grace_period: 5m
+    ports:
+      - 10468:10468
+      - 10468:10468/udp
+    expose:
+      - 8545
+      - 8551
+    volumes:
+      - ${ARBITRUM_NOVA_NITRO_PRUNED_PEBBLE_HASH_DATA:-arbitrum-nova-nitro-pruned-pebble-hash}:/root/.arbitrum
+      - ./tmp/arbitrum-nova:/tmp
+      - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.arbitrum-nova-nitro-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/arbitrum-nova
@@ -71,6 +58,19 @@ services:
       - ${NO_SSL:-traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-nova`)}
       - ${NO_SSL:+traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.rule=PathPrefix(`/arbitrum-nova`)}
       - traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.middlewares=arbitrum-nova-nitro-pruned-pebble-hash-stripprefix, ipwhitelist
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
 
 volumes:
   arbitrum-nova-nitro-pruned-pebble-hash:
