@@ -89,7 +89,6 @@ services:
       - IP=${IP}
       - MONIKER=d${DOMAIN:-local}
       - P2P_PORT=15527
-    entrypoint: [sh, /init.sh]
     restart: unless-stopped
     networks:
       - chains
