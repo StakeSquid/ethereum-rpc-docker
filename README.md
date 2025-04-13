@@ -81,6 +81,9 @@ The simplest examples have only a client. The compose files define one entrypoin
 
 In the root folder of this repository you can find convenience yml files which are symlinks to specific compose files. The naming  for the symlinks follow the principle {network_name}-{chain_name}.yml which leaves the client and bd type unspecified so they are defaults.
 
+
+### Naming conventions
+
 - default client is the default client for the network. Usually it's geth or op-geth.
 - default sync mode is pruned. If available clients are snap synced.
 - default node is op-node or prysm or whatever is the default for the network (e.g. beacon-kit for berachain, goat for goat, etc.)
@@ -91,6 +94,14 @@ In the root folder of this repository you can find convenience yml files which a
 - default db is postgres
 - default proxy is nginx
 
+
+### Container names
+
+The docker containers are generally named using the base name and the component suffix. The base name is generally the network name and the chain name and the sync mode archive in case of archive nodes. The rationale is that it doesn't make sense to run 2 pruned nodes for the same chain on the same machine as well as 2 archive nodes for the same chain. The volumes that are created in /var/lib/docker/volumes are using the full name of the node including the sync mode and database features. This is to allow switching out the implementation of parts of the configuration and not causing conflicts, e.g. exchanging prysm for nimbus as node implementation but keep using the same exection client. Environment variables are also using the full name of the component that they are defined for.
+
+### Syncing
+
+The configurations aim to work standalone restoring state as much as possible from public sources. Using snapshots can help syncing faster. For some configurations it's not reasonably possible to maintain a version that can be bootstrapped from scratch using only the compose file.
 
 
 ## Utility Scripts

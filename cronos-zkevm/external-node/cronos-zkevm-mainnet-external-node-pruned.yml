@@ -31,6 +31,7 @@ services:
       - EN_ETH_CLIENT_URL=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - EN_HEALTHCHECK_PORT=3081
       - EN_HTTP_PORT=8545
+      - EN_L1_BATCH_COMMIT_DATA_GENERATOR_MODE=Validium
       - EN_L1_CHAIN_ID=1
       - EN_L2_CHAIN_ID=388
       - EN_MAIN_NODE_URL=https://mainnet.zkevm.cronos.org
