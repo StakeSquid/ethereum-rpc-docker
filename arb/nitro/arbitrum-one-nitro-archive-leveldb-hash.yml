@@ -18,9 +18,6 @@ services:
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
-    ports:
-      - 14317:14317
-      - 14317:14317/udp
     expose:
       - 8545
       - 8551
@@ -30,14 +27,11 @@ services:
       - --execution.caching.state-scheme=hash
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
-      - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,arb,txpool,debug
-      - --http.port=8545
+      - --http.corsdomain=*
       - --http.vhosts=*
       - --init.latest=archive
-      - --maxpeers=50
-      - --nat=extip:${IP}
       - --node.batch-poster.enable=false
       - --node.sequencer=false
       - --node.staker.enable=false
@@ -45,14 +39,10 @@ services:
       - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --persistent.chain=/root/.arbitrum/arbitrum-one-archive
       - --persistent.db-engine=leveldb
-      - --port=14317
-      - --rpc.gascap=600000000
-      - --rpc.txfeecap=0
-      - --ws
       - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,arb,txpool,debug
       - --ws.origins=*
       - --ws.port=8545
+      - ./tmp/arbitrum-one-archive:/tmp
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
