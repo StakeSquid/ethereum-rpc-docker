@@ -67,6 +67,32 @@ To start nodes defined in your `.env` file:
 docker compose up -d
 ```
 
+### Node Structure
+
+In general Nodes can have one or all of the following components:
+
+- a client (execution layer)
+- a node (for consensus)
+- a relay (for data availability access)
+- a database (external to the client mostly zk rollups, can have mulitple databases)
+- a proxy (to map http access and websockets to the same endpoint)
+
+The simplest examples have only a client. The compose files define one entrypoint to query the node. usually it's the client otherwise it's the proxy. some clients have multiple entrypoints because they allow to query the consensus layer and the execution layer.
+
+In the root folder of this repository you can find convenience yml files which are symlinks to specific compose files. The naming  for the symlinks follow the principle {network_name}-{chain_name}.yml which leaves the client and bd type unspecified so they are defaults.
+
+- default client is the default client for the network. Usually it's geth or op-geth.
+- default sync mode is pruned. If available clients are snap synced.
+- default node is op-node or prysm or whatever is the default for the network (e.g. beacon-kit for berachain, goat for goat, etc.)
+- default sync mode for nodes is pruned
+- default client for archive nodes is (op-)erigon or (op-)reth
+- default sync mode for (op-)reth and (op-)erigon is archive-trace. 
+- default sync mode for erigon3 is pruned-trace.
+- default db is postgres
+- default proxy is nginx
+
+
+
 ## Utility Scripts
 
 This directory includes several useful scripts to help you manage and monitor your nodes:
@@ -91,6 +117,12 @@ This directory includes several useful scripts to help you manage and monitor yo
 - `cleanup-backups.sh` - Clean up old backup files
 - `list-backups.sh` - List available backup files
 - `op-wheel.sh` - Tool for Optimism rollup maintenance, including rewinding to a specific block
+
+#### Nuclear option to recreate a node
+
+```bash
+./stop.sh <config-name> && ./rm.sh <config-name> && ./delete-volumes.sh <config-name> && ./force-recreate.sh <config-name> && ./logs.sh <config-name>
+```
 
 #### OP Wheel Usage Example
 
