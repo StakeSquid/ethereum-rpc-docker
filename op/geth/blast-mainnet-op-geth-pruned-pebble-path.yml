@@ -61,7 +61,7 @@ services:
       - chains
     volumes:
       - ${BLAST_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-blast-mainnet-op-geth-pruned-pebble-path}:/data
-      - ./op/blast/-mainnet:/config
+      - ./op/blast/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -107,7 +107,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/blast/-mainnet:/config
+      - ./op/blast/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

@@ -57,7 +57,7 @@ services:
       - chains
     volumes:
       - ${EVERCLEAR_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-everclear-mainnet-nitro-archive-leveldb-hash}:/root/.arbitrum
-      - ./arb/everclear/-mainnet:/config
+      - ./arb/everclear/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

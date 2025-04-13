@@ -59,7 +59,7 @@ services:
       - chains
     volumes:
       - ${SNAX_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-snax-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
-      - ./op/snax/-mainnet:/config
+      - ./op/snax/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -104,7 +104,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/snax/-mainnet:/config
+      - ./op/snax/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

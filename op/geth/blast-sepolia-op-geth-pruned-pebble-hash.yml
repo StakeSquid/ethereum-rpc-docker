@@ -62,7 +62,7 @@ services:
       - chains
     volumes:
       - ${BLAST_SEPOLIA_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-blast-sepolia-op-geth-pruned-pebble-hash}:/data
-      - ./op/blast/-sepolia:/config
+      - ./op/blast/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -110,7 +110,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/blast/-sepolia:/config
+      - ./op/blast/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

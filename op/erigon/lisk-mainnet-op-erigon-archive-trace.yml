@@ -60,7 +60,7 @@ services:
       - chains
     volumes:
       - ${LISK_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-lisk-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
-      - ./op/lisk/-mainnet:/config
+      - ./op/lisk/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -105,7 +105,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/lisk/-mainnet:/config
+      - ./op/lisk/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

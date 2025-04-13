@@ -67,7 +67,7 @@ services:
       - chains
     volumes:
       - ${FRAXTAL_TESTNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-fraxtal-testnet-op-geth-archive-leveldb-hash}:/data
-      - ./op/fraxtal/-testnet:/config
+      - ./op/fraxtal/testnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -113,7 +113,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/fraxtal/-testnet:/config
+      - ./op/fraxtal/testnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

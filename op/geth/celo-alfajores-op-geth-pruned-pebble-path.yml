@@ -69,7 +69,7 @@ services:
       - chains
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-celo-alfajores-op-geth-pruned-pebble-path}:/data
-      - ./op/celo/-alfajores:/config
+      - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -126,7 +126,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/celo/-alfajores:/config
+      - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
 
   celo-alfajores-relay:

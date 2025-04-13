@@ -61,7 +61,7 @@ services:
       - chains
     volumes:
       - ${SNAX_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-snax-mainnet-op-geth-pruned-pebble-path}:/data
-      - ./op/snax/-mainnet:/config
+      - ./op/snax/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -106,7 +106,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/snax/-mainnet:/config
+      - ./op/snax/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

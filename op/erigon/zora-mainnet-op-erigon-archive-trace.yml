@@ -59,7 +59,7 @@ services:
       - chains
     volumes:
       - ${ZORA_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-zora-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
-      - ./op/zora/-mainnet:/config
+      - ./op/zora/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -104,7 +104,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/zora/-mainnet:/config
+      - ./op/zora/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

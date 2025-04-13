@@ -57,7 +57,7 @@ services:
       - chains
     volumes:
       - ${ALEPHZERO_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_DATA:-alephzero-sepolia-nitro-pruned-pebble-path}:/root/.arbitrum
-      - ./arb/alephzero/-sepolia:/config
+      - ./arb/alephzero/sepolia:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
