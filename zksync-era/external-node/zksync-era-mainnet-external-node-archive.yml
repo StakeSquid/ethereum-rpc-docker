@@ -63,6 +63,8 @@ services:
       WS_PATH: ''
       WS_PORT: 8546
     restart: unless-stopped
+    depends_on:
+      - zksync-era-mainnet-archive-client
     networks:
       - chains
     volumes:

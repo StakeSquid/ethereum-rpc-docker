@@ -50,6 +50,8 @@ services:
       WS_PATH: /ext/bc/C/ws
       WS_PORT: 9650
     restart: unless-stopped
+    depends_on:
+      - avalanche-mainnet-archive-client
     networks:
       - chains
     volumes:
