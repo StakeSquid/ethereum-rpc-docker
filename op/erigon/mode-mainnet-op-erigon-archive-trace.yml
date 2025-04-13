@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# op
+# True
 
 services:
   mode-mainnet-archive:
@@ -59,7 +59,7 @@ services:
       - chains
     volumes:
       - ${MODE_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-mode-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
-      - ./op/mainnet:/config
+      - ./op/mode/-mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:

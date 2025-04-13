@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# op
+# True
 
 services:
   celo-alfajores:
@@ -69,7 +69,7 @@ services:
       - chains
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-celo-alfajores-op-geth-pruned-pebble-path}:/data
-      - ./op/alfajores:/config
+      - ./op/celo/-alfajores:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:

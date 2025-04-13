@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# arb
+# True
 
 services:
   opencampuscodex-sepolia:
@@ -25,10 +25,9 @@ services:
       - 8545
       - 8551
     command:
-      - --conf.file=/config/baseConfig.json
+      - --chain.id=656476
       - --execution.caching.archive=false
       - --execution.caching.state-scheme=path
-      - --execution.forwarding-target=https://rpc.open-campus-codex.gelato.digital
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
@@ -36,12 +35,6 @@ services:
       - --http.corsdomain=*
       - --http.vhosts=*
       - --node.batch-poster.enable=false
-      - --node.data-availability.enable=true
-      - --node.data-availability.parent-chain-node-url=${ARBITRUM_SEPOLIA_EXECUTION_RPC}
-      - --node.data-availability.rest-aggregator.enable=true
-      - --node.data-availability.rest-aggregator.urls=https://das.open-campus-codex.gelato.digital
-      - --node.data-availability.sequencer-inbox-address=0xe347C1223381b9Dcd6c0F61cf81c90175A7Bae77
-      - --node.feed.input.url=wss://feed.open-campus-codex.gelato.digital
       - --node.sequencer=false
       - --node.staker.enable=false
       - --parent-chain.connection.url=${ARBITRUM_SEPOLIA_EXECUTION_RPC}
@@ -56,7 +49,7 @@ services:
       - chains
     volumes:
       - ${OPENCAMPUSCODEX_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_DATA:-opencampuscodex-sepolia-nitro-pruned-pebble-path}:/root/.arbitrum
-      - ./arb/sepolia:/config
+      - ./arb/opencampuscodex/arbitrum-sepolia:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

@@ -2,7 +2,7 @@
 # use at your own risk
 # False
 #
-# op
+# True
 
 services:
   boba-mainnet-archive:

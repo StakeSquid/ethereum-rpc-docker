@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# op
+# True
 
 services:
   zircuit-testnet:
@@ -65,7 +65,7 @@ services:
       - chains
     volumes:
       - ${ZIRCUIT_TESTNET_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-zircuit-testnet-op-geth-pruned-pebble-hash}:/data
-      - ./op/testnet:/config
+      - ./op/zircuit/-testnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:

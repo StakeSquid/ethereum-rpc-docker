@@ -2,7 +2,7 @@
 # use at your own risk
 # False
 #
-# op
+# True
 
 services:
   op-sepolia-archive:
@@ -119,7 +119,6 @@ x-upstreams:
         - trace
     methods:
       disabled:
-        - name: eth_maxPriorityFeePerGas
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
 ...

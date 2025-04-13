@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# op
+# True
 
 services:
   celo-mainnet:
@@ -70,7 +70,7 @@ services:
       - chains
     volumes:
       - ${CELO_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-celo-mainnet-op-geth-pruned-pebble-path}:/data
-      - ./op/mainnet:/config
+      - ./op/celo/-mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:

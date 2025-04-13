@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# op
+# True
 
 services:
   zircuit-garfield:
@@ -65,7 +65,7 @@ services:
       - chains
     volumes:
       - ${ZIRCUIT_GARFIELD_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-zircuit-garfield-op-geth-pruned-pebble-hash}:/data
-      - ./op/garfield:/config
+      - ./op/zircuit/-garfield:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
