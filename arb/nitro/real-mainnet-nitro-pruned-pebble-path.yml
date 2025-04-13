@@ -26,7 +26,6 @@ services:
       - 8551
     command:
       - --conf.file=/config/baseConfig.json
-      - --datadir=/root/.arbitrum
       - --execution.caching.archive=false
       - --execution.caching.state-scheme=path
       - --execution.forwarding-target=https://rpc.realforreal.gelato.digital

@@ -26,7 +26,6 @@ services:
       - 8551
     command:
       - --chain.id=421614
-      - --datadir=/root/.arbitrum
       - --execution.caching.archive=true
       - --execution.caching.state-scheme=hash
       - --execution.rpc.gas-cap=600000000

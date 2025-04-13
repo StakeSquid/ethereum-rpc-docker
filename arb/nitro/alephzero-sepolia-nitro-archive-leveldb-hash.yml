@@ -26,7 +26,6 @@ services:
       - 8551
     command:
       - --conf.file=/config/baseConfig.json
-      - --datadir=/root/.arbitrum
       - --execution.caching.archive=true
       - --execution.caching.state-scheme=hash
       - --execution.forwarding-target=https://rpc.alephzero-testnet.gelato.digital
