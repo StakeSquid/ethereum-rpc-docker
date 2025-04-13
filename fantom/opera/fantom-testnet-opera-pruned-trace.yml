@@ -34,7 +34,7 @@ services:
     command:
       - --cache=${FANTOM_TESTNET_OPERA_PRUNED_TRACE_CACHE_MB:-16000}
       - --datadir=/datadir
-      - --db.migration.mode reformat
+      - --db.migration.mode=reformat
       - --db.preset pbl-1
       - --http
       - --http.addr=0.0.0.0
@@ -44,7 +44,7 @@ services:
       - --port=10196
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-      - --syncmode snap
+      - --syncmode=snap
       - --tracenode
       - --ws
       - --ws.port=8545
