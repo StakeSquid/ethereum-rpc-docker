@@ -82,7 +82,6 @@ services:
       - 15370:15370
       - 15370:15370/udp
     environment:
-      - OP_NODE_DA_RPC=https://da-rpc.testnet.frax.com
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
       - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}

@@ -43,7 +43,7 @@ services:
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
-      - --syncmode=snap
+      - --syncmode=full
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,debug,admin,txpool,engine
@@ -82,7 +82,6 @@ services:
       - 15370:15370
       - 15370:15370/udp
     environment:
-      - OP_NODE_DA_RPC=https://da-rpc.testnet.frax.com
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
       - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
