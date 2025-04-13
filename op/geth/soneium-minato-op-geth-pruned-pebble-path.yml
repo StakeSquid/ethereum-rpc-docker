@@ -29,17 +29,9 @@ services:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
     entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
     command:
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.jwtsecret=/jwtsecret
-      - --authrpc.vhosts=*
       - --datadir=/data
       - --db.engine=pebble
       - --gcmode=full
-      - --http
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
-      - --http.port=8545
-      - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
       - --port=10702
@@ -47,11 +39,19 @@ services:
       - --rpc.txfeecap=0
       - --state.scheme=path
       - --syncmode=snap
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
       - --ws.origins=*
       - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
     networks:

@@ -31,16 +31,8 @@ services:
       - 8551
     entrypoint: [erigon]
     command:
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.jwtsecret=/jwtsecret
-      - --authrpc.vhosts=*
       - --chain=op-mainnet
       - --datadir=/root/.local/share/erigon
-      - --http
-      - --http.addr=0.0.0.0
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,engine
-      - --http.port=8545
-      - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
       - --p2p.allowed-ports=30509
@@ -48,8 +40,16 @@ services:
       - --port=10509
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,engine
+      - --http.port=8545
+      - --http.vhosts=*
       - --ws
       - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
     networks:

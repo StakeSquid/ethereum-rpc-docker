@@ -32,26 +32,26 @@ services:
       - CHAIN_SPEC=mainnet
     entrypoint: [/bin/bash, -c, "trap 'exit 0' SIGTERM; while [ ! -f /config/eth-genesis.json ] && [ ! -f /tmp/stop ]; do sleep 1 & wait $!; done; exec reth node \"$@\"", --]
     command:
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.jwtsecret=/jwtsecret
       - --chain=/config/eth-genesis.json
       - --datadir=/root/.local/share/reth
-      - --http
-      - --http.addr=0.0.0.0
-      - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
-      - --http.corsdomain=*
-      - --http.port=8545
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
       - --port=10881
       - --rpc.gascap=600000000
       - --rpc.max-logs-per-response=1100000
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --http.corsdomain=*
+      - --http.port=8545
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
       - --ws.origins=*
       - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
