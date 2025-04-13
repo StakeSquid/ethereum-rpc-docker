@@ -6,7 +6,8 @@ set -e
 datadir=/datadir
 FANTOM_HOME="$datadir"
 
-if existing_file=$(ls "$datadir"/*.g 2>/dev/null | head -n1); then
+existing_file=$(ls "$datadir"/*.g 2>/dev/null | head -n1)
+if [ -n "$existing_file" ]; then
     echo "Some genesis block seems to exist"
     filename=$(basename "$existing_file")
 else
