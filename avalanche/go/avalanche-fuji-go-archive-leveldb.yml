@@ -28,6 +28,7 @@ services:
     command:
       - --chain-config-dir=/config/archive
       - --db-type=leveldb
+      - --fuji
       - --http-allowed-hosts=*
       - --http-host=
       - --public-ip=${IP}"

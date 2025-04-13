@@ -28,6 +28,7 @@ services:
     command:
       - --chain-config-dir=/config/pruned
       - --db-type=pebbledb
+      - --fuji
       - --http-allowed-hosts=*
       - --http-host=
       - --public-ip=${IP}"
