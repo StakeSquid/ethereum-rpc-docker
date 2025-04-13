@@ -3,9 +3,19 @@ map $http_upgrade $proxy_connection {
     websocket "ws_backend${WS_PATH}";
 }
 
+ map $http_upgrade $connection_header {
+    default keep-alive;
+    websocket upgrade;
+}
+
 map $http_upgrade $is_websocket {
     default 0;
     websocket 1;
+}
+
+ map $status $loggable {
+    ~^[23] 0;  # Don't log 2xx and 3xx responses
+    default 1; # Log 4xx and 5xx responses
 }
 
 server {
@@ -19,24 +29,24 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-	proxy_set_header Upgrade $http_upgrade;  # Forward Upgrade header
-        proxy_set_header Connection $http_connection;  # Forward Connection header
+	    proxy_set_header Upgrade $http_upgrade;  # Forward Upgrade header
+        proxy_set_header Connection $connection_header;
+        
+        proxy_next_upstream error timeout http_502 http_503 http_504;
+        proxy_next_upstream_tries 5;     # Retry up to 5 times
 
-        proxy_connect_timeout 60s;
+        # Keep buffering enabled but prevent disk writes
+        proxy_buffering on;
+        proxy_buffers 8 16k;
+        proxy_buffer_size 16k;
+        proxy_max_temp_file_size 0;  # Prevent writing to disk
+        proxy_busy_buffers_size 32k;
+      
+        log_format minimal '$remote_addr - $status $request_time';
+        access_log /dev/stdout minimal;
+        error_log /dev/stdout error;
 
-        # Disable buffering for real-time traffic
-        proxy_buffering off;
-        access_log off;
-
-        #set $proxy_read_timeout 3600s;
-        #set $proxy_send_timeout 3600s;
-
-        # If it's a websocket, change timeouts
-        #if ($is_websocket) {
-        #    set $proxy_read_timeout 3600s;
-        #    set $proxy_send_timeout 3600s;
-        #}
-
+        proxy_connect_timeout 300s;
         proxy_read_timeout 3600s;
         proxy_send_timeout 3600s;
     }
@@ -44,6 +54,7 @@ server {
 
 upstream rpc_backend {
     server ${PROXY_HOST}:${RPC_PORT};
+    keepalive 16;
 }
 
 upstream ws_backend {
