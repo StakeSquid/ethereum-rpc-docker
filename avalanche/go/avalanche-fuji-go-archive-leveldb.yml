@@ -28,10 +28,10 @@ services:
     command:
       - --chain-config-dir=/config/archive
       - --db-type=leveldb
-      - --fuji
       - --http-allowed-hosts=*
       - --http-host=
-      - --public-ip=${IP}"
+      - --network-id=fuji
+      - --public-ip=${IP}
       - --staking-port=10350
     restart: unless-stopped
     stop_grace_period: 5m

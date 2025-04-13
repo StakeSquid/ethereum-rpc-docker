@@ -30,8 +30,8 @@ services:
       - --db-type=leveldb
       - --http-allowed-hosts=*
       - --http-host=
-      - --mainnet
-      - --public-ip=${IP}"
+      - --network-id=mainnet
+      - --public-ip=${IP}
       - --staking-port=11929
     restart: unless-stopped
     stop_grace_period: 5m
