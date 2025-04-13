@@ -1,6 +1,6 @@
 ---
 # You need to initialize the postgres database from a db dump as described
-# https://docs-zkevm.cronos.org/for-node-hosts/running-nodes/cronos-zkevm-sepolia-testnet
+# here https://docs-zkevm.cronos.org/for-node-hosts/running-nodes/cronos-zkevm-sepolia-testnet
 # and change this yaml file temporarily to run pg_restore
 
 services:
