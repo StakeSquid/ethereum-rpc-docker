@@ -34,7 +34,7 @@ services:
       - EN_L1_BATCH_COMMIT_DATA_GENERATOR_MODE=Validium
       - EN_L1_CHAIN_ID=1
       - EN_L2_CHAIN_ID=388
-      - EN_MAIN_NODE_URL=https://mainnet.zkevm.cronos.org
+      - EN_MAIN_NODE_URL=https://seed.zkevm.cronos.org
       - EN_MAX_RESPONSE_BODY_SIZE_MB=30
       - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
       - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
