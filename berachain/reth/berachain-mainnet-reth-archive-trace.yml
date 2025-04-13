@@ -58,9 +58,9 @@ services:
       - chains
     volumes:
       - ${BERACHAIN_MAINNET_RETH_ARCHIVE_TRACE_DATA:-berachain-mainnet-reth-archive-trace}:/root/.local/share/reth
-      - ./berachain/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+      - berachain-mainnet-reth-archive-trace_config:/config
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.berachain-mainnet-reth-archive-trace-stripprefix.stripprefix.prefixes=/berachain-mainnet-archive
@@ -90,12 +90,13 @@ services:
       - chains
     volumes:
       - ${BERACHAIN_MAINNET_RETH_ARCHIVE_TRACE__NODE_DATA:-berachain-mainnet-reth-archive-trace_node}:/root/.beacond/data
-      - ./berachain/mainnet:/root/.beacond/config
       - ./berachain/scripts/init.sh:/init.sh
       - .jwtsecret:/root/.beacond/config/jwt.hex:ro
+      - berachain-mainnet-reth-archive-trace_config:/root/.beacond/config
 
 volumes:
   berachain-mainnet-reth-archive-trace:
+  berachain-mainnet-reth-archive-trace_config:
   berachain-mainnet-reth-archive-trace_node:
 
 x-upstreams:

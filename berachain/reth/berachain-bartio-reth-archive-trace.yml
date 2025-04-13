@@ -58,9 +58,9 @@ services:
       - chains
     volumes:
       - ${BERACHAIN_BARTIO_RETH_ARCHIVE_TRACE_DATA:-berachain-bartio-reth-archive-trace}:/root/.local/share/reth
-      - ./berachain/bartio:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+      - berachain-bartio-reth-archive-trace_config:/config
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.berachain-bartio-reth-archive-trace-stripprefix.stripprefix.prefixes=/berachain-bartio-archive
@@ -90,12 +90,13 @@ services:
       - chains
     volumes:
       - ${BERACHAIN_BARTIO_RETH_ARCHIVE_TRACE__NODE_DATA:-berachain-bartio-reth-archive-trace_node}:/root/.beacond/data
-      - ./berachain/bartio:/root/.beacond/config
       - ./berachain/scripts/init.sh:/init.sh
       - .jwtsecret:/root/.beacond/config/jwt.hex:ro
+      - berachain-bartio-reth-archive-trace_config:/root/.beacond/config
 
 volumes:
   berachain-bartio-reth-archive-trace:
+  berachain-bartio-reth-archive-trace_config:
   berachain-bartio-reth-archive-trace_node:
 
 x-upstreams:
