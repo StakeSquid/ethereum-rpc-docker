@@ -69,7 +69,7 @@ services:
       - chains
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-celo-alfajores-op-geth-archive-leveldb-hash}:/data
-      - ./op/alfajores:/config
+      - ./op/celo/-alfajores:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -126,7 +126,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/alfajores:/config
+      - ./op/celo/-alfajores:/config
       - .jwtsecret:/jwtsecret:ro
 
   celo-alfajores-archive-relay:

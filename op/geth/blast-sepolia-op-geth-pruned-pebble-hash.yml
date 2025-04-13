@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   blast-sepolia:
@@ -110,7 +110,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/sepolia:/config
+      - ./op/blast/-sepolia:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

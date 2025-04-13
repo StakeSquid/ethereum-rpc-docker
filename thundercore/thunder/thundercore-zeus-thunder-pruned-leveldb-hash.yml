@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# False
+# thundercore
 
 services:
   thundercore-zeus:

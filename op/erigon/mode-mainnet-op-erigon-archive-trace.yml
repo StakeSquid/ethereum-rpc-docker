@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   mode-mainnet-archive:
@@ -104,7 +104,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/mainnet:/config
+      - ./op/mode/-mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

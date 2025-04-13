@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   zircuit-garfield:
@@ -110,7 +110,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/garfield:/config
+      - ./op/zircuit/-garfield:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

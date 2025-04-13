@@ -61,7 +61,7 @@ services:
       - chains
     volumes:
       - ${ZORA_SEPOLIA_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-zora-sepolia-op-geth-archive-leveldb-hash}:/data
-      - ./op/sepolia:/config
+      - ./op/zora/-sepolia:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -107,7 +107,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/sepolia:/config
+      - ./op/zora/-sepolia:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

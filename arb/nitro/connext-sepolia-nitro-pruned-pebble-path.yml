@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# arb
 
 services:
   connext-sepolia:
@@ -25,9 +25,10 @@ services:
       - 8545
       - 8551
     command:
-      - --chain.id=6398
+      - --conf.file=/config/baseConfig.json
       - --execution.caching.archive=false
       - --execution.caching.state-scheme=path
+      - --execution.forwarding-target=https://rpc.connext-sepolia.gelato.digital
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
@@ -35,6 +36,12 @@ services:
       - --http.corsdomain=*
       - --http.vhosts=*
       - --node.batch-poster.enable=false
+      - --node.data-availability.enable=true
+      - --node.data-availability.parent-chain-node-url=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - --node.data-availability.rest-aggregator.enable=true
+      - --node.data-availability.rest-aggregator.urls=https://das.connext-sepolia.gelato.digital
+      - --node.data-availability.sequencer-inbox-address=0x727095791318912381473707332248435763608420056676
+      - --node.feed.input.url=wss://feed.connext-sepolia.gelato.digital
       - --node.sequencer=false
       - --node.staker.enable=false
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_SEPOLIA_BEACON_REST}

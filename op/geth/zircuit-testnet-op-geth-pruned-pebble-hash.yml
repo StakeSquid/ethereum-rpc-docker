@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   zircuit-testnet:
@@ -111,7 +111,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/testnet:/config
+      - ./op/zircuit/-testnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

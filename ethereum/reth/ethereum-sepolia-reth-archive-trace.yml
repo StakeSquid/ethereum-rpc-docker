@@ -2,7 +2,7 @@
 # use at your own risk
 # False
 #
-# False
+# ethereum
 
 services:
   ethereum-sepolia-archive:

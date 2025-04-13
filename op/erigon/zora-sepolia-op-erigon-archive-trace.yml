@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   zora-sepolia-archive:
@@ -105,7 +105,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/sepolia:/config
+      - ./op/zora/-sepolia:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

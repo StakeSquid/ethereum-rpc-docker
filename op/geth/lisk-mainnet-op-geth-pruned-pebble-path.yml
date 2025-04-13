@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   lisk-mainnet:
@@ -107,7 +107,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/mainnet:/config
+      - ./op/lisk/-mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

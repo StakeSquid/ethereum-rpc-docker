@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   mantle-mainnet:
@@ -113,7 +113,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/mainnet:/config
+      - ./op/mantle/-mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   lisk-mainnet-archive:
@@ -103,7 +103,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/mainnet:/config
+      - ./op/lisk/-mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:
@@ -121,6 +121,7 @@ x-upstreams:
         - trace
     methods:
       disabled:
+        - name: eth_maxPriorityFeePerGas
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
 ...

@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# arb
 
 services:
   real-mainnet:
@@ -25,9 +25,10 @@ services:
       - 8545
       - 8551
     command:
-      - --chain.id=111188
+      - --conf.file=/config/baseConfig.json
       - --execution.caching.archive=false
       - --execution.caching.state-scheme=path
+      - --execution.forwarding-target=https://rpc.realforreal.gelato.digital
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
@@ -35,6 +36,12 @@ services:
       - --http.corsdomain=*
       - --http.vhosts=*
       - --node.batch-poster.enable=false
+      - --node.data-availability.enable=true
+      - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --node.data-availability.rest-aggregator.enable=true
+      - --node.data-availability.rest-aggregator.urls=https://das.realforreal.gelato.digital
+      - --node.data-availability.sequencer-inbox-address=0x466813324240923703236721233648302990016039913376
+      - --node.feed.input.url=wss://feed.realforreal.gelato.digital
       - --node.sequencer=false
       - --node.staker.enable=false
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}

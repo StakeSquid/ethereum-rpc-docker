@@ -2,7 +2,7 @@
 # use at your own risk
 # False
 #
-# True
+# arb
 
 services:
   playblock-mainnet:
@@ -25,9 +25,10 @@ services:
       - 8545
       - 8551
     command:
-      - --chain.id=1829
+      - --conf.file=/config/baseConfig.json
       - --execution.caching.archive=false
       - --execution.caching.state-scheme=path
+      - --execution.forwarding-target=https://rpc.playblock.io
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
@@ -35,6 +36,12 @@ services:
       - --http.corsdomain=*
       - --http.vhosts=*
       - --node.batch-poster.enable=false
+      - --node.data-availability.enable=true
+      - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --node.data-availability.rest-aggregator.enable=true
+      - --node.data-availability.rest-aggregator.urls=https://das.playblock.io
+      - --node.data-availability.sequencer-inbox-address=0x1297541082195356755105700451499873350464260779639
+      - --node.feed.input.url=wss://feed.playblock.io
       - --node.sequencer=false
       - --node.staker.enable=false
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}

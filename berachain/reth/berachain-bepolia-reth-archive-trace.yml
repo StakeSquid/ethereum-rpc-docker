@@ -2,7 +2,7 @@
 # use at your own risk
 # False
 #
-# False
+# berachain
 
 services:
   berachain-bepolia-archive:

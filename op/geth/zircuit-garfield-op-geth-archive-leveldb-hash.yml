@@ -65,7 +65,7 @@ services:
       - chains
     volumes:
       - ${ZIRCUIT_GARFIELD_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-zircuit-garfield-op-geth-archive-leveldb-hash}:/data
-      - ./op/garfield:/config
+      - ./op/zircuit/-garfield:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -110,7 +110,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/garfield:/config
+      - ./op/zircuit/-garfield:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

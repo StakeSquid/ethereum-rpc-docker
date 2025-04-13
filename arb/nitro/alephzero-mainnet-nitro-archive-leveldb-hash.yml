@@ -57,7 +57,7 @@ services:
       - chains
     volumes:
       - ${ALEPHZERO_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-alephzero-mainnet-nitro-archive-leveldb-hash}:/root/.arbitrum
-      - ./arb/mainnet:/config
+      - ./arb/alephzero/-mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

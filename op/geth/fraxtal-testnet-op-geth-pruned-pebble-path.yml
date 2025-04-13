@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   fraxtal-testnet:
@@ -113,7 +113,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/testnet:/config
+      - ./op/fraxtal/-testnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

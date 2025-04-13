@@ -2,7 +2,7 @@
 # use at your own risk
 # True
 #
-# True
+# op
 
 services:
   celo-alfajores:
@@ -126,7 +126,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/alfajores:/config
+      - ./op/celo/-alfajores:/config
       - .jwtsecret:/jwtsecret:ro
 
   celo-alfajores-relay:
