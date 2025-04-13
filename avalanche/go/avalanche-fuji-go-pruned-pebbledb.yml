@@ -26,7 +26,7 @@ services:
       - 9650
     entrypoint: [/avalanchego/build/avalanchego]
     command:
-      - --chain-config-dir /config/pruned
+      - --chain-config-dir=/config/pruned
       - --db-type=pebbledb
       - --http-allowed-hosts=*
       - --http-host=
