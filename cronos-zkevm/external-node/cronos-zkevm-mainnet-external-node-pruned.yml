@@ -2,8 +2,8 @@
 # use at your own risk
 
 services:
-  zksync-era-sepolia-client:
-    image: ${ZKSYNC_ERA_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ZKSYNC_ERA_SEPOLIA_EXTERNAL_NODE_VERSION:-v26.2.1}
+  cronos-zkevm-mainnet-client:
+    image: ${CRONOS_ZKEVM_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${CRONOS_ZKEVM_MAINNET_EXTERNAL_NODE_VERSION:-v26.2.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,28 +19,28 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10780:10780
-      - 10780:10780/udp
+      - 10270:10270
+      - 10270:10270/udp
     expose:
       - 8545
       - 8546
     environment:
       - DATABASE_POOL_SIZE=50
-      - DATABASE_URL=postgres://postgres:notsecurepassword@zksync-era-sepolia-db:5430/zksync_local_ext_node
+      - DATABASE_URL=postgres://postgres:notsecurepassword@cronos-zkevm-mainnet-db:5430/zksync_local_ext_node
       - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
-      - EN_ETH_CLIENT_URL=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - EN_ETH_CLIENT_URL=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - EN_HEALTHCHECK_PORT=3081
       - EN_HTTP_PORT=8545
-      - EN_L1_CHAIN_ID=11155111
-      - EN_L2_CHAIN_ID=300
-      - EN_MAIN_NODE_URL=https://sepolia.era.zksync.dev
+      - EN_L1_CHAIN_ID=1
+      - EN_L2_CHAIN_ID=388
+      - EN_MAIN_NODE_URL=https://mainnet.zkevm.cronos.org
       - EN_MAX_RESPONSE_BODY_SIZE_MB=30
       - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
       - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
       - EN_PROMETHEUS_PORT=3322
       - EN_PRUNING_ENABLED=true
       - EN_REQ_ENTITIES_LIMIT=100000
-      - EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL=zksync-era-boojnet-external-node-snapshots
+      - EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL=cronos-zkevm-mainnet-en-snapshot
       - EN_SNAPSHOTS_OBJECT_STORE_MODE=GCSAnonymousReadOnly
       - EN_SNAPSHOTS_RECOVERY_ENABLED=true
       - EN_STATE_CACHE_PATH=./db/ext-node/state_keeper
@@ -51,35 +51,35 @@ services:
     networks:
       - chains
     volumes:
-      - ${ZKSYNC_ERA_SEPOLIA_EXTERNAL_NODE_PRUNED_DATA:-zksync-era-sepolia-external-node-pruned}:/db \
+      - ${CRONOS_ZKEVM_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-cronos-zkevm-mainnet-external-node-pruned}:/db
       - /slowdisk:/slowdisk
 
-  zksync-era-sepolia:
+  cronos-zkevm-mainnet:
     image: nginx
     environment:
-      PROXY_HOST: zksync-era-sepolia-client
+      PROXY_HOST: cronos-zkevm-mainnet-client
       RPC_PATH: ''
       RPC_PORT: 8545
       WS_PATH: ''
       WS_PORT: 8546
     restart: unless-stopped
     depends_on:
-      - zksync-era-sepolia-client
+      - cronos-zkevm-mainnet-client
     networks:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.zksync-era-sepolia-external-node-pruned-stripprefix.stripprefix.prefixes=/zksync-era-sepolia
-      - traefik.http.services.zksync-era-sepolia-external-node-pruned.loadbalancer.server.port=80
-      - ${NO_SSL:-traefik.http.routers.zksync-era-sepolia-external-node-pruned.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.zksync-era-sepolia-external-node-pruned.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zksync-era-sepolia-external-node-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/zksync-era-sepolia`)}
-      - ${NO_SSL:+traefik.http.routers.zksync-era-sepolia-external-node-pruned.rule=PathPrefix(`/zksync-era-sepolia`)}
-      - traefik.http.routers.zksync-era-sepolia-external-node-pruned.middlewares=zksync-era-sepolia-external-node-pruned-stripprefix, ipwhitelist
+      - traefik.http.middlewares.cronos-zkevm-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/cronos-zkevm-mainnet
+      - traefik.http.services.cronos-zkevm-mainnet-external-node-pruned.loadbalancer.server.port=80
+      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/cronos-zkevm-mainnet`)}
+      - ${NO_SSL:+traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.rule=PathPrefix(`/cronos-zkevm-mainnet`)}
+      - traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.middlewares=cronos-zkevm-mainnet-external-node-pruned-stripprefix, ipwhitelist
 
-  zksync-era-sepolia-db:
+  cronos-zkevm-mainnet-db:
     image: postgres:14
     expose:
       - 5430
@@ -103,21 +103,21 @@ services:
     networks:
       - chains
     volumes:
-      - ${ZKSYNC_ERA_SEPOLIA_EXTERNAL_NODE_PRUNED__DB_DATA:-zksync-era-sepolia-external-node-pruned_db}:/var/lib/postgresql/data
+      - ${CRONOS_ZKEVM_MAINNET_EXTERNAL_NODE_PRUNED__DB_DATA:-cronos-zkevm-mainnet-external-node-pruned_db}:/var/lib/postgresql/data
     healthcheck:
       interval: 1s
       timeout: 3s
       test: [CMD-SHELL, psql -U postgres -c "select exists (select * from pg_stat_activity where datname = '' and application_name = 'pg_restore')" | grep -e ".f$$"]
 
 volumes:
-  zksync-era-sepolia-external-node-pruned:
-  zksync-era-sepolia-external-node-pruned_db:
+  cronos-zkevm-mainnet-external-node-pruned:
+  cronos-zkevm-mainnet-external-node-pruned_db:
 
 x-upstreams:
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
-    chain: zksync-sepolia
+    chain: cronos-zkevm
     method-groups:
       enabled:
         - debug
