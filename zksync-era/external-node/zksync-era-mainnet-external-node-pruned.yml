@@ -51,7 +51,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-zksync-era-mainnet-external-node-pruned}:/db \
+      - ${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-zksync-era-mainnet-external-node-pruned}:/db
       - /slowdisk:/slowdisk
 
   zksync-era-mainnet:
