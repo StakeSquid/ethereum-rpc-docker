@@ -1,5 +1,7 @@
 ---
-# use at your own risk
+# You need to initialize the postgres database from a db dump as described
+# here https://docs-zkevm.cronos.org/for-node-hosts/running-nodes/cronos-zkevm-mainnet
+# and change this yaml file temporary to run pg_restore
 
 services:
   cronos-zkevm-mainnet-archive-client:
@@ -88,8 +90,7 @@ services:
       - PGPORT=5430
       - POSTGRES_PASSWORD=notsecurepassword
     command: >
-      postgres
-      -c max_connections=200
+      postgres   -c max_connections=200
       -c log_error_verbosity=terse
       -c shared_buffers=2GB
       -c effective_cache_size=4GB
