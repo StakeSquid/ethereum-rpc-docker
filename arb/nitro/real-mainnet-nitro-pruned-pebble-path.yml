@@ -54,6 +54,7 @@ services:
       - chains
     volumes:
       - ${REAL_MAINNET_NITRO_PRUNED_PEBBLE_PATH_DATA:-real-mainnet-nitro-pruned-pebble-path}:/root/.arbitrum
+      - ./arb/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
