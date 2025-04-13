@@ -3,7 +3,7 @@
 
 services:
   cronos-zkevm-mainnet-archive-client:
-    image: ${CRONOS_ZKEVM_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${CRONOS_ZKEVM_MAINNET_EXTERNAL_NODE_VERSION:-v26.2.1}
+    image: ${CRONOS_ZKEVM_EXTERNAL_NODE_IMAGE:-ghcr.io/cronos-labs/external-node}:${CRONOS_ZKEVM_MAINNET_EXTERNAL_NODE_VERSION:-mainnet-v25.0.0-20250123}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
