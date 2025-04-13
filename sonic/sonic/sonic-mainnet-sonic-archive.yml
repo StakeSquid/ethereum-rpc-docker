@@ -32,6 +32,7 @@ services:
     environment:
       - CACHE_GB=${SONIC_CACHE_GB:-28}
       - GENESIS=https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic-16500-full.g
+      - IP=${IP}
     command:
       - --datadir=/var/sonic
       - --db.engine=

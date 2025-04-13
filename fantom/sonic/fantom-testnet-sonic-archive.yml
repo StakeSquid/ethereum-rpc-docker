@@ -32,6 +32,7 @@ services:
     environment:
       - CACHE_GB=${SONIC_CACHE_GB:-28}
       - GENESIS=https://download.fantom.network/opera/testnet/testnet-26650-rpc.g
+      - IP=${IP}
     command:
       - --datadir=/var/sonic
       - --db.engine=

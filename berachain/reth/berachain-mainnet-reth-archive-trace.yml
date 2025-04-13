@@ -72,7 +72,7 @@ services:
       - traefik.http.routers.berachain-mainnet-reth-archive-trace.middlewares=berachain-mainnet-reth-archive-trace-stripprefix, ipwhitelist
 
   berachain-mainnet-archive-node:
-    image: ${BERACHAIN_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}:${BERACHAIN_MAINNET_BEACON_KIT_VERSION:-v1.1.3}
+    image: ${BERACHAIN_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}:${BERACHAIN_MAINNET_BEACON_KIT_VERSION:-v1.1.1}
     ports:
       - 15881:15881
       - 15881:15881/udp
@@ -81,6 +81,7 @@ services:
       - CHAINID=80094
       - CHAINNAME=mainnet
       - CHAIN_SPEC=mainnet
+      - IP=${IP}
       - MONIKER=d${DOMAIN:-local}
       - P2P_PORT=15881
     entrypoint: [sh, /init.sh]
