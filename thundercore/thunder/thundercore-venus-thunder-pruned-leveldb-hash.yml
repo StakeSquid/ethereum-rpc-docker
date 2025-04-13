@@ -19,13 +19,13 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10368:10368
-      - 10368:10368/udp
+      - 13368:13368
+      - 13368:13368/udp
     expose:
       - 8545
     environment:
       CONFIG_PATH: /config
-      PORT: 10368
+      PORT: 13368
     entrypoint: [/sbin/tini, --, /entrypoint.sh, --logToConsole]
     restart: unless-stopped
     stop_grace_period: 5m

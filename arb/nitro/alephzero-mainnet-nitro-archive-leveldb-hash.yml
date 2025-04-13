@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10301:10301
-      - 10301:10301/udp
+      - 11301:11301
+      - 11301:11301/udp
     expose:
       - 8545
       - 8551
@@ -52,7 +52,7 @@ services:
       - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --persistent.chain=/root/.arbitrum/alephzero-mainnet-archive
       - --persistent.db-engine=leveldb
-      - --port=10301
+      - --port=11301
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --ws

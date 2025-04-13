@@ -20,8 +20,8 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10752:10752
-      - 10752:10752/udp
+      - 13752:13752
+      - 13752:13752/udp
     expose:
       - 8545
       - 8551
@@ -32,7 +32,7 @@ services:
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
-      - --port=10752
+      - --port=13752
       - --rpc.gascap=600000000
       - --rpc.max-logs-per-response=1100000
       - --http
@@ -68,8 +68,8 @@ services:
   ethereum-holesky-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v5.3.1}
     ports:
-      - 15752:15752
-      - 15752:15752/udp
+      - 18752:18752
+      - 18752:18752/udp
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -81,8 +81,8 @@ services:
       - --holesky
       - --jwt-secret=/jwtsecret
       - --monitoring-host=0.0.0.0
-      - --p2p-tcp-port=15752
-      - --p2p-udp-port=15752
+      - --p2p-tcp-port=18752
+      - --p2p-udp-port=18752
       - --rpc-host=0.0.0.0
     restart: unless-stopped
     networks:

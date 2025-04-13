@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10396:10396
-      - 10396:10396/udp
+      - 13396:13396
+      - 13396:13396/udp
     expose:
       - 8545
       - 8551
@@ -36,7 +36,7 @@ services:
       - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10396
+      - --port=13396
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -75,8 +75,8 @@ services:
   taiko-hekla-archive-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.4.1}
     ports:
-      - 15396:15396
-      - 15396:15396/udp
+      - 18396:18396
+      - 18396:18396/udp
     env_file:
       - ./taiko/hekla.env
     environment:

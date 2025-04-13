@@ -20,12 +20,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10415:10415
-      - 10415:10415/udp
-      - 30415:30415
-      - 30415:30415/udp
-      - 35415:35415
-      - 35415:35415/udp
+      - 11415:11415
+      - 11415:11415/udp
+      - 31415:31415
+      - 31415:31415/udp
+      - 36415:36415
+      - 36415:36415/udp
     expose:
       - 8545
       - 8551
@@ -35,9 +35,9 @@ services:
       - --datadir=/root/.local/share/erigon
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=30415
-      - --p2p.allowed-ports=35415
-      - --port=10415
+      - --p2p.allowed-ports=31415
+      - --p2p.allowed-ports=36415
+      - --port=11415
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http
@@ -71,8 +71,8 @@ services:
   unichain-mainnet-archive-node:
     image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
-      - 15415:15415
-      - 15415:15415/udp
+      - 16415:16415
+      - 16415:16415/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -88,8 +88,8 @@ services:
       - OP_NODE_NETWORK=unichain-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15415
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15415
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16415
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16415
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10455:10455
-      - 10455:10455/udp
+      - 11455:11455
+      - 11455:11455/udp
     expose:
       - 8545
       - 8551
@@ -39,7 +39,7 @@ services:
       - --l1.endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10455
+      - --port=11455
       - --rollup.verify
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0

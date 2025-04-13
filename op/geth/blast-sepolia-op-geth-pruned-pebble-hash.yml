@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10591:10591
-      - 10591:10591/udp
+      - 11591:11591
+      - 11591:11591/udp
     expose:
       - 8545
       - 8551
@@ -35,7 +35,7 @@ services:
       - --gcmode=full
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10591
+      - --port=11591
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -75,8 +75,8 @@ services:
   blast-sepolia-node:
     image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_SEPOLIA_NODE_VERSION:-sepolia-v1.2.3}
     ports:
-      - 15591:15591
-      - 15591:15591/udp
+      - 16591:16591
+      - 16591:16591/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -94,8 +94,8 @@ services:
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15591
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15591
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16591
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16591
       - OP_NODE_P2P_STATIC_PEERS=enr:-J64QGwHl9uYLfC_cnmxSA6wQH811nkOWJDWjzxqkEUlJoZHWvI66u-BXgVcPCeMUmg0dBpFQAPotFchG67FHJMZ9OSGAY3d6wevgmlkgnY0gmlwhANizeSHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaECg4pk0cskPAyJ7pOmo9E6RqGBwV-Lex4VS9a3MQvu7PWDdGNwgnZhg3VkcIJ2YQ,enr:-J64QDge2jYBQtcNEpRqmKfci5E5BHAhNBjgv4WSdwH1_wPqbueq2bDj38-TSW8asjy5lJj1Xftui6Or8lnaYFCqCI-GAY3d6wf3gmlkgnY0gmlwhCO2D9yHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaEDo4aCTq7pCEN8om9U5n_VyWdambGnQhwHNwKc8o-OicaDdGNwgnZhg3VkcIJ2YQ
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545

@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10953:10953
-      - 10953:10953/udp
+      - 11953:11953
+      - 11953:11953/udp
     expose:
       - 8545
       - 8551
@@ -51,7 +51,7 @@ services:
       - --parent-chain.connection.url=${ARBITRUM_SEPOLIA_EXECUTION_RPC}
       - --persistent.chain=/root/.arbitrum/opencampuscodex-sepolia-archive
       - --persistent.db-engine=leveldb
-      - --port=10953
+      - --port=11953
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --ws

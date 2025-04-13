@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10272:10272
-      - 10272:10272/udp
+      - 13272:13272
+      - 13272:13272/udp
     expose:
       - 8545
       - 8551

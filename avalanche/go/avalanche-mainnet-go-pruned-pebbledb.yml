@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10929:10929
-      - 10929:10929/udp
+      - 11929:11929
+      - 11929:11929/udp
     expose:
       - 9650
       - 9650
@@ -31,7 +31,7 @@ services:
       - --http-allowed-hosts=*
       - --http-host=
       - --public-ip=${IP}"
-      - --staking-port=10929
+      - --staking-port=11929
     restart: unless-stopped
     stop_grace_period: 5m
     networks:

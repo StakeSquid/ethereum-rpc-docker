@@ -20,16 +20,16 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10986:10986
-      - 10986:10986/udp
-      - 15986:15986
-      - 15986:15986/udp
-      - 25986:25986
-      - 25986:25986/udp
-      - 30986:30986
-      - 30986:30986/udp
-      - 35986:35986
-      - 35986:35986/udp
+      - 11986:11986
+      - 11986:11986/udp
+      - 16986:16986
+      - 16986:16986/udp
+      - 26986:26986
+      - 26986:26986/udp
+      - 31986:31986
+      - 31986:31986/udp
+      - 36986:36986
+      - 36986:36986/udp
     expose:
       - 8545
       - 8551
@@ -40,8 +40,8 @@ services:
       - --beacon.api.port=5555
       - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=15986
-      - --caplin.discovery.tcpport=15986
+      - --caplin.discovery.port=16986
+      - --caplin.discovery.tcpport=16986
       - --chain=chiado
       - --datadir=/root/.local/share/erigon
       - --http
@@ -51,13 +51,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=30986
-      - --p2p.allowed-ports=35986
-      - --port=10986
+      - --p2p.allowed-ports=31986
+      - --p2p.allowed-ports=36986
+      - --port=11986
       - --prune.mode=
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
-      - --torrent.port=25986
+      - --torrent.port=26986
       - --ws
       - --ws.port=8545
     restart: unless-stopped

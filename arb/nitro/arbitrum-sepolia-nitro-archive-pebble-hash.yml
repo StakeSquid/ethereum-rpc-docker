@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10360:10360
-      - 10360:10360/udp
+      - 12360:12360
+      - 12360:12360/udp
     expose:
       - 8545
       - 8551
@@ -46,7 +46,7 @@ services:
       - --parent-chain.connection.url=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - --persistent.chain=/root/.arbitrum/arbitrum-sepolia-archive
       - --persistent.db-engine=pebble
-      - --port=10360
+      - --port=12360
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --ws

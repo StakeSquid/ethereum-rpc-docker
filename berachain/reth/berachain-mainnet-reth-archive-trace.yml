@@ -20,8 +20,8 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10881:10881
-      - 10881:10881/udp
+      - 12881:12881
+      - 12881:12881/udp
     expose:
       - 8545
       - 8551
@@ -37,7 +37,7 @@ services:
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
-      - --port=10881
+      - --port=12881
       - --rpc.gascap=600000000
       - --rpc.max-logs-per-response=1100000
       - --http
@@ -79,8 +79,8 @@ services:
         BEACONKIT_VERSION: ${BERACHAIN_MAINNET_BEACON_KIT_VERSION:-v1.1.4}
         BEACONKIT_IMAGE: ${BERACHAIN_MAINNET_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}
     ports:
-      - 15881:15881
-      - 15881:15881/udp
+      - 17881:17881
+      - 17881:17881/udp
     environment:
       - AUTH_RPC=http://berachain-mainnet-archive:8551
       - CHAINID=80094
@@ -88,7 +88,7 @@ services:
       - CHAIN_SPEC=mainnet
       - IP=${IP}
       - MONIKER=d${DOMAIN:-local}
-      - P2P_PORT=15881
+      - P2P_PORT=17881
     restart: unless-stopped
     networks:
       - chains

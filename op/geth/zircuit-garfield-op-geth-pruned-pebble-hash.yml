@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10397:10397
-      - 10397:10397/udp
+      - 12397:12397
+      - 12397:12397/udp
     expose:
       - 8545
       - 8551
@@ -38,7 +38,7 @@ services:
       - --gcmode=full
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10397
+      - --port=12397
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -78,8 +78,8 @@ services:
   zircuit-garfield-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_GARFIELD_NODE_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
     ports:
-      - 15397:15397
-      - 15397:15397/udp
+      - 17397:17397
+      - 17397:17397/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_HOLESKY_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_HOLESKY_BEACON_ARCHIVER}
@@ -95,8 +95,8 @@ services:
       - OP_NODE_NETWORK=zircuit-garfield
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15397
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15397
+      - OP_NODE_P2P_LISTEN_TCP_PORT=17397
+      - OP_NODE_P2P_LISTEN_UDP_PORT=17397
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

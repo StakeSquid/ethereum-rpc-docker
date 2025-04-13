@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10096:10096
-      - 10096:10096/udp
+      - 11096:11096
+      - 11096:11096/udp
     expose:
       - 8545
       - 8551
@@ -34,7 +34,7 @@ services:
       - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10096
+      - --port=11096
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -73,8 +73,8 @@ services:
   worldchain-mainnet-archive-node:
     image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
-      - 15096:15096
-      - 15096:15096/udp
+      - 16096:16096
+      - 16096:16096/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -90,8 +90,8 @@ services:
       - OP_NODE_NETWORK=worldchain-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15096
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15096
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16096
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16096
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

@@ -20,12 +20,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10046:10046
-      - 10046:10046/udp
-      - 30046:30046
-      - 30046:30046/udp
-      - 35046:35046
-      - 35046:35046/udp
+      - 11046:11046
+      - 11046:11046/udp
+      - 31046:31046
+      - 31046:31046/udp
+      - 36046:36046
+      - 36046:36046/udp
     expose:
       - 8545
       - 8551
@@ -35,9 +35,9 @@ services:
       - --datadir=/root/.local/share/erigon
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=30046
-      - --p2p.allowed-ports=35046
-      - --port=10046
+      - --p2p.allowed-ports=31046
+      - --p2p.allowed-ports=36046
+      - --port=11046
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http
@@ -71,8 +71,8 @@ services:
   worldchain-sepolia-archive-node:
     image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_SEPOLIA_NODE_VERSION:-v1.13.1}
     ports:
-      - 15046:15046
-      - 15046:15046/udp
+      - 16046:16046
+      - 16046:16046/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -89,8 +89,8 @@ services:
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15046
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15046
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16046
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16046
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

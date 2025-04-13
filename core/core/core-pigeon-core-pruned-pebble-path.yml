@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10478:10478
-      - 10478:10478/udp
+      - 14478:14478
+      - 14478:14478/udp
     expose:
       - 8545
       - 8551
@@ -34,7 +34,7 @@ services:
       - --http.api=eth,net,web3,txpool,debug,admin,satoshi
       - --http.port=8545
       - --nat=extip:${IP}
-      - --port=10478
+      - --port=14478
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=

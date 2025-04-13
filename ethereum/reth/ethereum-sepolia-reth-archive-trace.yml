@@ -20,8 +20,8 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10330:10330
-      - 10330:10330/udp
+      - 14330:14330
+      - 14330:14330/udp
     expose:
       - 8545
       - 8551
@@ -32,7 +32,7 @@ services:
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
-      - --port=10330
+      - --port=14330
       - --rpc.gascap=600000000
       - --rpc.max-logs-per-response=1100000
       - --http
@@ -68,8 +68,8 @@ services:
   ethereum-sepolia-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v5.3.1}
     ports:
-      - 15330:15330
-      - 15330:15330/udp
+      - 19330:19330
+      - 19330:19330/udp
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -80,8 +80,8 @@ services:
       - --grpc-gateway-host=0.0.0.0
       - --jwt-secret=/jwtsecret
       - --monitoring-host=0.0.0.0
-      - --p2p-tcp-port=15330
-      - --p2p-udp-port=15330
+      - --p2p-tcp-port=19330
+      - --p2p-udp-port=19330
       - --rpc-host=0.0.0.0
       - --sepolia
     restart: unless-stopped

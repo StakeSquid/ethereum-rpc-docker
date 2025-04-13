@@ -20,8 +20,8 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10563:10563
-      - 10563:10563/udp
+      - 14563:14563
+      - 14563:14563/udp
     expose:
       - 8545
       - 8551
@@ -32,7 +32,7 @@ services:
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
-      - --port=10563
+      - --port=14563
       - --rpc.gascap=600000000
       - --rpc.max-logs-per-response=1100000
       - --http
@@ -68,8 +68,8 @@ services:
   ethereum-mainnet-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.1}
     ports:
-      - 15563:15563
-      - 15563:15563/udp
+      - 19563:19563
+      - 19563:19563/udp
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -81,8 +81,8 @@ services:
       - --jwt-secret=/jwtsecret
       - --mainnet
       - --monitoring-host=0.0.0.0
-      - --p2p-tcp-port=15563
-      - --p2p-udp-port=15563
+      - --p2p-tcp-port=19563
+      - --p2p-udp-port=19563
       - --rpc-host=0.0.0.0
     restart: unless-stopped
     networks:

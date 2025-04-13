@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10023:10023
-      - 10023:10023/udp
+      - 12023:12023
+      - 12023:12023/udp
     expose:
       - 8545
       - 8551
@@ -31,7 +31,7 @@ services:
       - --mainnet
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10023
+      - --port=12023
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
@@ -70,8 +70,8 @@ services:
   ethereum-mainnet-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.1}
     ports:
-      - 15023:15023
-      - 15023:15023/udp
+      - 17023:17023
+      - 17023:17023/udp
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -83,8 +83,8 @@ services:
       - --jwt-secret=/jwtsecret
       - --mainnet
       - --monitoring-host=0.0.0.0
-      - --p2p-tcp-port=15023
-      - --p2p-udp-port=15023
+      - --p2p-tcp-port=17023
+      - --p2p-udp-port=17023
       - --rpc-host=0.0.0.0
     restart: unless-stopped
     networks:

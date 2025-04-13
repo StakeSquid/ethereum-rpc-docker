@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10688:10688
-      - 10688:10688/udp
+      - 13688:13688
+      - 13688:13688/udp
     expose:
       - 8545
       - 8551
@@ -38,7 +38,7 @@ services:
       - --gcmode=full
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10688
+      - --port=13688
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -78,8 +78,8 @@ services:
   zircuit-mainnet-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_MAINNET_NODE_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
     ports:
-      - 15688:15688
-      - 15688:15688/udp
+      - 18688:18688
+      - 18688:18688/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -95,8 +95,8 @@ services:
       - OP_NODE_NETWORK=zircuit-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15688
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15688
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18688
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18688
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

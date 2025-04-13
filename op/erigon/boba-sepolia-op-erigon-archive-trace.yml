@@ -20,12 +20,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10249:10249
-      - 10249:10249/udp
-      - 30249:30249
-      - 30249:30249/udp
-      - 35249:35249
-      - 35249:35249/udp
+      - 11249:11249
+      - 11249:11249/udp
+      - 31249:31249
+      - 31249:31249/udp
+      - 36249:36249
+      - 36249:36249/udp
     expose:
       - 8545
       - 8551
@@ -35,9 +35,9 @@ services:
       - --datadir=/db
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=30249
-      - --p2p.allowed-ports=35249
-      - --port=10249
+      - --p2p.allowed-ports=31249
+      - --p2p.allowed-ports=36249
+      - --port=11249
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http
@@ -71,8 +71,8 @@ services:
   boba-sepolia-archive-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}
     ports:
-      - 15249:15249
-      - 15249:15249/udp
+      - 16249:16249
+      - 16249:16249/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -89,8 +89,8 @@ services:
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15249
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15249
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16249
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16249
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

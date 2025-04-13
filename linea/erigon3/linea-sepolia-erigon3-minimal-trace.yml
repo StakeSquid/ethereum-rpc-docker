@@ -20,12 +20,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10235:10235
-      - 10235:10235/udp
-      - 30235:30235
-      - 30235:30235/udp
-      - 35235:35235
-      - 35235:35235/udp
+      - 12235:12235
+      - 12235:12235/udp
+      - 32235:32235
+      - 32235:32235/udp
+      - 37235:37235
+      - 37235:37235/udp
     expose:
       - 8545
       - 8551
@@ -42,9 +42,9 @@ services:
       - --nat=extip:${IP}
       - --network=goerli
       - --networkid=59141
-      - --p2p.allowed-ports=30235
-      - --p2p.allowed-ports=35235
-      - --port=10235
+      - --p2p.allowed-ports=32235
+      - --p2p.allowed-ports=37235
+      - --port=12235
       - --prune.mode=
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000

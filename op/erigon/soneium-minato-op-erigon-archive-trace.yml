@@ -20,12 +20,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10314:10314
-      - 10314:10314/udp
-      - 30314:30314
-      - 30314:30314/udp
-      - 35314:35314
-      - 35314:35314/udp
+      - 13314:13314
+      - 13314:13314/udp
+      - 33314:33314
+      - 33314:33314/udp
+      - 38314:38314
+      - 38314:38314/udp
     expose:
       - 8545
       - 8551
@@ -35,9 +35,9 @@ services:
       - --datadir=/root/.local/share/erigon
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=30314
-      - --p2p.allowed-ports=35314
-      - --port=10314
+      - --p2p.allowed-ports=33314
+      - --p2p.allowed-ports=38314
+      - --port=13314
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http
@@ -71,8 +71,8 @@ services:
   soneium-minato-archive-node:
     image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.1}
     ports:
-      - 15314:15314
-      - 15314:15314/udp
+      - 18314:18314
+      - 18314:18314/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -89,8 +89,8 @@ services:
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15314
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15314
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18314
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18314
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

@@ -19,14 +19,14 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10254:10254
-      - 10254:10254/udp
+      - 12254:12254
+      - 12254:12254/udp
     expose:
       - 8545
       - 8546
     environment:
       EXTIP: ${IP}
-      P2P_PORT: 10254
+      P2P_PORT: 12254
     command:
       - --gcmode=archive
       - --rpcapi=eth,debug,net,db,admin,web3

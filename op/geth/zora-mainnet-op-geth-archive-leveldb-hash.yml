@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10714:10714
-      - 10714:10714/udp
+      - 13714:13714
+      - 13714:13714/udp
     expose:
       - 8545
       - 8551
@@ -34,7 +34,7 @@ services:
       - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10714
+      - --port=13714
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -74,8 +74,8 @@ services:
   zora-mainnet-archive-node:
     image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
-      - 15714:15714
-      - 15714:15714/udp
+      - 18714:18714
+      - 18714:18714/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -91,8 +91,8 @@ services:
       - OP_NODE_NETWORK=zora-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15714
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15714
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18714
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18714
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

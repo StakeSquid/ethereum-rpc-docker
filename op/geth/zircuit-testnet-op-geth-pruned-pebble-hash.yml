@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10357:10357
-      - 10357:10357/udp
+      - 11357:11357
+      - 11357:11357/udp
     expose:
       - 8545
       - 8551
@@ -38,7 +38,7 @@ services:
       - --gcmode=full
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10357
+      - --port=11357
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -78,8 +78,8 @@ services:
   zircuit-testnet-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/node}:${ZIRCUIT_TESTNET_NODE_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}
     ports:
-      - 15357:15357
-      - 15357:15357/udp
+      - 16357:16357
+      - 16357:16357/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -96,8 +96,8 @@ services:
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15357
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15357
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16357
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16357
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

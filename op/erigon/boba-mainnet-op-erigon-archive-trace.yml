@@ -20,12 +20,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10732:10732
-      - 10732:10732/udp
-      - 30732:30732
-      - 30732:30732/udp
-      - 35732:35732
-      - 35732:35732/udp
+      - 11732:11732
+      - 11732:11732/udp
+      - 31732:31732
+      - 31732:31732/udp
+      - 36732:36732
+      - 36732:36732/udp
     expose:
       - 8545
       - 8551
@@ -35,9 +35,9 @@ services:
       - --datadir=/db
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=30732
-      - --p2p.allowed-ports=35732
-      - --port=10732
+      - --p2p.allowed-ports=31732
+      - --p2p.allowed-ports=36732
+      - --port=11732
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http
@@ -71,8 +71,8 @@ services:
   boba-mainnet-archive-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-v1.6.18}
     ports:
-      - 15732:15732
-      - 15732:15732/udp
+      - 16732:16732
+      - 16732:16732/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -88,8 +88,8 @@ services:
       - OP_NODE_NETWORK=boba-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15732
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15732
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16732
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16732
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

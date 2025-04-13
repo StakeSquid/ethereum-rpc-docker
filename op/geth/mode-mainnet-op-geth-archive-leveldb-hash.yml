@@ -19,8 +19,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10054:10054
-      - 10054:10054/udp
+      - 12054:12054
+      - 12054:12054/udp
     expose:
       - 8545
       - 8551
@@ -34,7 +34,7 @@ services:
       - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10054
+      - --port=12054
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -74,8 +74,8 @@ services:
   mode-mainnet-archive-node:
     image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
-      - 15054:15054
-      - 15054:15054/udp
+      - 17054:17054
+      - 17054:17054/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -91,8 +91,8 @@ services:
       - OP_NODE_NETWORK=mode-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15054
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15054
+      - OP_NODE_P2P_LISTEN_TCP_PORT=17054
+      - OP_NODE_P2P_LISTEN_UDP_PORT=17054
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
