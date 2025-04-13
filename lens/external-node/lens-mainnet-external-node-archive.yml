@@ -1,0 +1,136 @@
+---
+
+services:
+  lens-mainnet-archive-client:
+    image: ${LENS_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${LENS_MAINNET_EXTERNAL_NODE_VERSION:-2.0-v26.7.1_lens_custom_genesis-alpha}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 10044:10044
+      - 10044:10044/udp
+    expose:
+      - 8545
+      - 8546
+    environment:
+      - DATABASE_POOL_SIZE=50
+      - DATABASE_URL=postgres://postgres:notsecurepassword@lens-mainnet-archive-db:5430/zksync_local_ext_node
+      - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
+      - EN_DA_API_NODE_URL=wss://mainnet.avail-rpc.com
+      - EN_DA_APP_ID=26
+      - EN_DA_AVAIL_CLIENT_TYPE=FullClient
+      - EN_DA_BRIDGE_API_URL=https://bridge-api.avail.so
+      - EN_DA_CLIENT=Avail
+      - EN_DA_SECRETS_SEED_PHRASE=toilet extra dragon uniform crumble picnic duty forest toward clinic human hope
+      - EN_DA_TIMEOUT_MS=20000
+      - EN_ETH_CLIENT_URL=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - EN_HEALTHCHECK_PORT=3081
+      - EN_HTTP_PORT=8545
+      - EN_L1_BATCH_COMMIT_DATA_GENERATOR_MODE=Validium
+      - EN_L1_CHAIN_ID=1
+      - EN_L2_CHAIN_ID=232
+      - EN_MAIN_NODE_URL=https://rpc.lens.xyz
+      - EN_MAX_RESPONSE_BODY_SIZE_MB=30
+      - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
+      - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
+      - EN_PROMETHEUS_PORT=3322
+      - EN_PRUNING_ENABLED=false
+      - EN_REQ_ENTITIES_LIMIT=100000
+      - EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL=raas-lens-mainnet-external-node-snapshots
+      - EN_SNAPSHOTS_OBJECT_STORE_MODE=GCSAnonymousReadOnly
+      - EN_SNAPSHOTS_RECOVERY_ENABLED=false
+      - EN_STATE_CACHE_PATH=./db/ext-node/state_keeper
+      - EN_WS_PORT=8546
+      - RUST_LOG=warn,zksync=info,zksync_core::metadata_calculator=debug,zksync_state=info,zksync_utils=info,zksync_web3_decl::client=error
+    command: ['--components=all,da_fetcher']
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${LENS_MAINNET_EXTERNAL_NODE_ARCHIVE_DATA:-lens-mainnet-external-node-archive}:/db
+      - /slowdisk:/slowdisk
+
+  lens-mainnet-archive:
+    image: nginx
+    environment:
+      PROXY_HOST: lens-mainnet-archive-client
+      RPC_PATH: ''
+      RPC_PORT: 8545
+      WS_PATH: ''
+      WS_PORT: 8546
+    restart: unless-stopped
+    depends_on:
+      - lens-mainnet-archive-client
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.lens-mainnet-external-node-archive-stripprefix.stripprefix.prefixes=/lens-mainnet-archive
+      - traefik.http.services.lens-mainnet-external-node-archive.loadbalancer.server.port=80
+      - ${NO_SSL:-traefik.http.routers.lens-mainnet-external-node-archive.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.lens-mainnet-external-node-archive.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.lens-mainnet-external-node-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/lens-mainnet-archive`)}
+      - ${NO_SSL:+traefik.http.routers.lens-mainnet-external-node-archive.rule=PathPrefix(`/lens-mainnet-archive`)}
+      - traefik.http.routers.lens-mainnet-external-node-archive.middlewares=lens-mainnet-external-node-archive-stripprefix, ipwhitelist
+
+  lens-mainnet-archive-db:
+    image: postgres:14
+    expose:
+      - 5430
+    environment:
+      - PGPORT=5430
+      - POSTGRES_PASSWORD=notsecurepassword
+    command: >
+      postgres   -c max_connections=200
+      -c log_error_verbosity=terse
+      -c shared_buffers=2GB
+      -c effective_cache_size=4GB
+      -c maintenance_work_mem=1GB
+      -c checkpoint_completion_target=0.9
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c min_wal_size=4GB
+      -c max_wal_size=16GB
+      -c max_worker_processes=16
+      -c checkpoint_timeout=1800
+    networks:
+      - chains
+    volumes:
+      - ${LENS_MAINNET_EXTERNAL_NODE_ARCHIVE__DB_DATA:-lens-mainnet-external-node-archive_db}:/var/lib/postgresql/data
+    healthcheck:
+      interval: 1s
+      timeout: 3s
+      test: [CMD-SHELL, psql -U postgres -c "select exists (select * from pg_stat_activity where datname = '' and application_name = 'pg_restore')" | grep -e ".f$$"]
+
+volumes:
+  lens-mainnet-external-node-archive:
+  lens-mainnet-external-node-archive_db:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    chain: lens
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
