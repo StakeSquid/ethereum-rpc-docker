@@ -72,7 +72,12 @@ services:
       - traefik.http.routers.berachain-bartio-reth-archive-trace.middlewares=berachain-bartio-reth-archive-trace-stripprefix, ipwhitelist
 
   berachain-bartio-archive-node:
-    image: ${BERACHAIN_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}:${BERACHAIN_BARTIO_BEACON_KIT_VERSION:-v1.1.1}
+    build:
+      context: ./berachain
+      dockerfile: beacon-kit.Dockerfile
+      args:
+        BEACONKIT_VERSION: ${BERACHAIN_BARTIO_BEACON_KIT_VERSION:-v1.1.4}
+        BEACONKIT_IMAGE: ${BERACHAIN_BARTIO_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}
     ports:
       - 15527:15527
       - 15527:15527/udp

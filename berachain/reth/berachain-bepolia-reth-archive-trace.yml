@@ -72,7 +72,12 @@ services:
       - traefik.http.routers.berachain-bepolia-reth-archive-trace.middlewares=berachain-bepolia-reth-archive-trace-stripprefix, ipwhitelist
 
   berachain-bepolia-archive-node:
-    image: ${BERACHAIN_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}:${BERACHAIN_BEPOLIA_BEACON_KIT_VERSION:-v1.1.1}
+    build:
+      context: ./berachain
+      dockerfile: beacon-kit.Dockerfile
+      args:
+        BEACONKIT_VERSION: ${BERACHAIN_BEPOLIA_BEACON_KIT_VERSION:-v1.1.4}
+        BEACONKIT_IMAGE: ${BERACHAIN_BEPOLIA_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}
     ports:
       - 15347:15347
       - 15347:15347/udp
