@@ -49,7 +49,7 @@ services:
       - EN_REQ_ENTITIES_LIMIT=100000
       - EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL=raas-lens-mainnet-external-node-snapshots
       - EN_SNAPSHOTS_OBJECT_STORE_MODE=GCSAnonymousReadOnly
-      - EN_SNAPSHOTS_RECOVERY_ENABLED=false
+      - EN_SNAPSHOTS_RECOVERY_ENABLED=true
       - EN_STATE_CACHE_PATH=./db/ext-node/state_keeper
       - EN_WS_PORT=8546
       - RUST_LOG=warn,zksync=info,zksync_core::metadata_calculator=debug,zksync_state=info,zksync_utils=info,zksync_web3_decl::client=error
