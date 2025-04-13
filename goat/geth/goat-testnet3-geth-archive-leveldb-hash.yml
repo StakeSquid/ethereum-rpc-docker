@@ -1,5 +1,7 @@
 ---
 # use at your own risk
+# True
+#
 
 services:
   goat-testnet3-archive:

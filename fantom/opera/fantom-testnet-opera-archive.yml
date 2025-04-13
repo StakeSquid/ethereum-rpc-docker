@@ -1,5 +1,7 @@
 ---
 # use at your own risk
+# False
+#
 
 services:
   fantom-testnet-archive:
