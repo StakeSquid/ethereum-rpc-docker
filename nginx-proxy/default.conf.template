@@ -13,16 +13,16 @@ map $http_upgrade $is_websocket {
     websocket 1;
 }
 
- map $status $loggable {
+map $status $loggable {
     ~^[23] 0;  # Don't log 2xx and 3xx responses
     default 1; # Log 4xx and 5xx responses
 }
 
+log_format minimal '$remote_addr - $status $request_time';
+
 server {
     listen 80;
     server_name _;
-
-    log_format minimal '$remote_addr - $status $request_time';
 
     location / {
         proxy_pass http://$proxy_connection;
