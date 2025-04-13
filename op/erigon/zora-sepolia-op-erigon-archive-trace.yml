@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#
+#op
 # op
 
 services:
@@ -59,7 +59,7 @@ services:
       - chains
     volumes:
       - ${ZORA_SEPOLIA_OP_ERIGON_ARCHIVE_TRACE_DATA:-zora-sepolia-op-erigon-archive-trace}:/root/.local/share/erigon
-      - ./op/sepolia:/config
+      - ./op/zora/-sepolia:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -105,7 +105,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/sepolia:/config
+      - ./op/zora/-sepolia:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

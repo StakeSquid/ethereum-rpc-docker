@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#
+#arb
 # arb
 
 services:
@@ -57,7 +57,7 @@ services:
       - chains
     volumes:
       - ${CONNEXT_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-connext-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
-      - ./arb/sepolia:/config
+      - ./arb/connext/-sepolia:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

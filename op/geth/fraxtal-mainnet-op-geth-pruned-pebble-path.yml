@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#
+#op
 # op
 
 services:
@@ -66,7 +66,7 @@ services:
       - chains
     volumes:
       - ${FRAXTAL_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-fraxtal-mainnet-op-geth-pruned-pebble-path}:/data
-      - ./op/mainnet:/config
+      - ./op/fraxtal/-mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -112,7 +112,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/mainnet:/config
+      - ./op/fraxtal/-mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

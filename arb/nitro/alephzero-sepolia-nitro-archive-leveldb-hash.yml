@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#
+#arb
 # arb
 
 services:
@@ -57,7 +57,7 @@ services:
       - chains
     volumes:
       - ${ALEPHZERO_SEPOLIA_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-alephzero-sepolia-nitro-archive-leveldb-hash}:/root/.arbitrum
-      - ./arb/sepolia:/config
+      - ./arb/alephzero/-sepolia:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
