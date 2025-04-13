@@ -74,7 +74,7 @@ services:
   berachain-bepolia-archive-node:
     build:
       context: ./berachain
-      dockerfile: beacon-kit.Dockerfile
+      dockerfile: ./berachain/beacon-kit.Dockerfile
       args:
         BEACONKIT_VERSION: ${BERACHAIN_BEPOLIA_BEACON_KIT_VERSION:-v1.1.4}
         BEACONKIT_IMAGE: ${BERACHAIN_BEPOLIA_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}
