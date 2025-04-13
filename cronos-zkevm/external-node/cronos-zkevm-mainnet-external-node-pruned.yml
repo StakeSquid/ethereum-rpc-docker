@@ -1,7 +1,7 @@
 ---
 # You need to initialize the postgres database from a db dump as described
 # here https://docs-zkevm.cronos.org/for-node-hosts/running-nodes/cronos-zkevm-mainnet
-# and change this yaml file temporary to run pg_restore
+# and change this yaml file temporarily to run pg_restore
 
 services:
   cronos-zkevm-mainnet-client:
