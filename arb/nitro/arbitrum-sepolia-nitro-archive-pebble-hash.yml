@@ -42,7 +42,6 @@ services:
       - --ws.addr=0.0.0.0
       - --ws.origins=*
       - --ws.port=8545
-      - ./tmp/arbitrum-sepolia-archive:/tmp
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
