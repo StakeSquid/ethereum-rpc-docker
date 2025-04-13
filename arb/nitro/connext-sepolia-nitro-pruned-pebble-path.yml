@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#arb
+#
 # arb
 
 services:
@@ -57,7 +57,7 @@ services:
       - chains
     volumes:
       - ${CONNEXT_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_DATA:-connext-sepolia-nitro-pruned-pebble-path}:/root/.arbitrum
-      - ./arb/connext/-sepolia:/config
+      - ./arb/sepolia:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

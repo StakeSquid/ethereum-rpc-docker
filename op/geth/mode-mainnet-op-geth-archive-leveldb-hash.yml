@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#op
+#
 # op
 
 services:
@@ -61,7 +61,7 @@ services:
       - chains
     volumes:
       - ${MODE_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-mode-mainnet-op-geth-archive-leveldb-hash}:/data
-      - ./op/mode/-mainnet:/config
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -106,7 +106,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/mode/-mainnet:/config
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

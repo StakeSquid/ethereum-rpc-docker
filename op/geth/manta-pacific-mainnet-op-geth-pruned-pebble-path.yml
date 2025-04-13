@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#op
+#
 # op
 
 services:
@@ -61,7 +61,7 @@ services:
       - chains
     volumes:
       - ${MANTA_PACIFIC_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-manta-pacific-mainnet-op-geth-pruned-pebble-path}:/data
-      - ./op/manta-pacific/-mainnet:/config
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -107,7 +107,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/manta-pacific/-mainnet:/config
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

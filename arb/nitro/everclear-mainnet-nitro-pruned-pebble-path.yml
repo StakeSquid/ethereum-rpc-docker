@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#arb
+#
 # arb
 
 services:
@@ -57,7 +57,7 @@ services:
       - chains
     volumes:
       - ${EVERCLEAR_MAINNET_NITRO_PRUNED_PEBBLE_PATH_DATA:-everclear-mainnet-nitro-pruned-pebble-path}:/root/.arbitrum
-      - ./arb/everclear/-mainnet:/config
+      - ./arb/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

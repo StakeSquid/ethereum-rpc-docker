@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#op
+#
 # op
 
 services:
@@ -63,7 +63,7 @@ services:
       - chains
     volumes:
       - ${MANTLE_MAINNET_OP_GETH_PRUNED_LEVELDB_HASH_DATA:-mantle-mainnet-op-geth-pruned-leveldb-hash}:/data
-      - ./op/mantle/-mainnet:/config
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -113,7 +113,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/mantle/-mainnet:/config
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

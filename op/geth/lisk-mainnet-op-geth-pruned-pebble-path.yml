@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#op
+#
 # op
 
 services:
@@ -62,7 +62,7 @@ services:
       - chains
     volumes:
       - ${LISK_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-lisk-mainnet-op-geth-pruned-pebble-path}:/data
-      - ./op/lisk/-mainnet:/config
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -107,7 +107,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/lisk/-mainnet:/config
+      - ./op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

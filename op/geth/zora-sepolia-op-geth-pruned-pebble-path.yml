@@ -1,7 +1,7 @@
 ---
 # use at your own risk
 # True
-#op
+#
 # op
 
 services:
@@ -61,7 +61,7 @@ services:
       - chains
     volumes:
       - ${ZORA_SEPOLIA_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-zora-sepolia-op-geth-pruned-pebble-path}:/data
-      - ./op/zora/-sepolia:/config
+      - ./op/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -107,7 +107,7 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/zora/-sepolia:/config
+      - ./op/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:
