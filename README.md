@@ -135,6 +135,15 @@ This directory includes several useful scripts to help you manage and monitor yo
 ./stop.sh <config-name> && ./rm.sh <config-name> && ./delete-volumes.sh <config-name> && ./force-recreate.sh <config-name> && ./logs.sh <config-name>
 ```
 
+#### Debugging tips
+
+To get the configuration name for one of the commands use `./show-status.sh` which lists all the configrations and their status to copy paste for further inspection with e.g. `./catchup.sh <config-name>` or repeated use of `./latest.sh <config-name>` which will give you and idea if the sync is actually progressing and if it is on the canonical chain.
+Note: some configurations use staged sync which means that there is no measurable progress on the RPC in between bacthes of processed blocks. In any case `./logs.sh <config-name>` will give you insights into problems, potentially filtered by a LLM to spot common errors. It could be that clients are syncing slower than the chain progresses.
+
+#### Further automation
+
+You can chain `./success-if-almost-synced.sh <config-name> <age-of-last-block-in-seconds-to-be-considered-almost-synced>` with other scripts to create more complex automation, e.g. notify you once a node synced up to chainhead or adding the node to the dshackle configuration or taking a backup to clone the node to a different server.
+
 #### OP Wheel Usage Example
 
 ```bash
