@@ -22,6 +22,7 @@ mkdir -p "$CONFIG_DIR"
 
 #JWTSECRET="0x$(cat /jwtsecret)" # reth and bepolia don't speak the same language
 P2P_STRING="tcp:\\/\\/0\\.0\\.0\\.0\\:${P2P_PORT:-55696}"
+NAT_STRING="${IP}:${P2P_PORT:-55696}"
 
 #echo "$JWTSECRET" > "$CONFIG_DIR/jwt.hex"
 
@@ -59,6 +60,8 @@ fi
 # apply a port change to the config
 sed -i "/^\[p2p\]/,/^\[/{s|^laddr = .*|laddr = \"$P2P_STRING\"|}" "$CONFIG_DIR/config.toml"
 #sed -i "s/^laddr = \".*\"/laddr = \"$P2P_STRING\"/" "$CONFIG_DIR/config.toml"
+sed -i "/^\[p2p\]/,/^\[/{s|^external_address = .*|external_address = \"$NAT_STRING\"|}" "$CONFIG_DIR/config.toml"
+
 
 # Fetch and format SEEDS
 SEEDS=$(curl -s "$SEEDS_URL" | tail -n +2 | tr '\n' ',' | sed 's/,$//')
