@@ -35,7 +35,7 @@ services:
       - --cache=${FANTOM_TESTNET_OPERA_PRUNED_CACHE_MB:-16000}
       - --datadir=/datadir
       - --db.migration.mode=reformat
-      - --db.preset pbl-1
+      - --db.preset=pbl-1
       - --http
       - --http.addr=0.0.0.0
       - --http.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm,sfc
