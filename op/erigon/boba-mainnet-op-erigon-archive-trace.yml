@@ -32,6 +32,7 @@ services:
     command:
       - --chain=boba-mainnet
       - --datadir=/db
+      - --db.size.limit=8TB
       - --maxpeers=50
       - --nat=extip:${IP}
       - --p2p.allowed-ports=31732

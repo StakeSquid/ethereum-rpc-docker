@@ -32,6 +32,7 @@ services:
     command:
       - --chain=op-mainnet
       - --datadir=/root/.local/share/erigon
+      - --db.size.limit=8TB
       - --maxpeers=50
       - --nat=extip:${IP}
       - --p2p.allowed-ports=32509
