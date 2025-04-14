@@ -36,7 +36,6 @@ services:
       - --port=13358
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-      - --state.scheme=hash
       - --syncmode=full
       - --http
       - --http.addr=0.0.0.0
