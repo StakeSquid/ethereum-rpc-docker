@@ -42,29 +42,37 @@ latest_block_timestamp_decimal=$(./timestamp.sh $1)
 current_time=$(date +%s)
 time_difference2=$((current_time - latest_block_timestamp_decimal))	       
 
-# Calculate catchup rate
-progress=$((time_difference - time_difference2))
-progress_per_second=$(echo "scale=4; $progress / $seconds_to_measure" | bc)
+# Calculate how much the gap changed
+gap_change=$((time_difference2 - time_difference))
 
-# Calculate time to catch up
-if (( $(echo "$progress_per_second <= 0" | bc -l) )); then
-    echo -e "${RED}ERROR: Node is not catching up! It's falling behind by $(echo "scale=2; -1 * $progress_per_second" | bc) seconds per second.${NC}"
+# Calculate real catchup rate (accounting for the natural progression of time)
+# The node caught up by (gap_change + seconds_to_measure) seconds in seconds_to_measure real time
+effective_progress=$((seconds_to_measure - gap_change))
+catchup_rate=$(echo "scale=4; $effective_progress / $seconds_to_measure" | bc)
+
+# Display debug info if needed
+# echo "Debug: time_difference=$time_difference, time_difference2=$time_difference2, gap_change=$gap_change"
+# echo "Debug: effective_progress=$effective_progress, catchup_rate=$catchup_rate"
+
+# Calculate time to catch up (only if actually catching up)
+if (( $(echo "$catchup_rate <= 0" | bc -l) )); then
+    echo -e "${RED}ERROR: Node is not catching up! It's falling behind by $(echo "scale=2; -1 * $catchup_rate" | bc) seconds per second.${NC}"
     exit 1
 fi
 
-# Time until caught up
-time_to_catchup=$(echo "scale=0; $time_difference2 / $progress_per_second" | bc)
+# Time until caught up (if the rate continues)
+time_to_catchup=$(echo "scale=0; $time_difference2 / $catchup_rate" | bc)
 
-# Calculate if catchup rate is faster than chain growth rate
-# Chain growth is typically 1 second of block time per second of real time
-chain_growth_rate=1.0  # 1 second per second as baseline
-catchup_needed=$(echo "scale=4; $chain_growth_rate + 0.01" | bc)  # Slight buffer for safety
+# Check if catchup rate is enough to eventually catch up
+# The node needs to catch up faster than 1.0 to make progress
+min_required_rate=1.0
+required_rate_with_buffer=$(echo "scale=4; $min_required_rate + 0.01" | bc)  # Slight buffer
 
-if (( $(echo "$progress_per_second < $catchup_needed" | bc -l) )); then
-    echo -e "${YELLOW}WARNING: Node catchup rate ($progress_per_second seconds/second) is slower than chain growth rate ($chain_growth_rate seconds/second).${NC}"
-    echo -e "${YELLOW}The node will likely never catch up to the chain head!${NC}"
+if (( $(echo "$catchup_rate < $required_rate_with_buffer" | bc -l) )); then
+    echo -e "${YELLOW}WARNING: Node catchup rate ($catchup_rate times realtime) is too slow.${NC}"
+    echo -e "${YELLOW}The node needs > 1.0 to catch up, but will likely never catch up to the chain head!${NC}"
 else
-    echo -e "${GREEN}Node catchup rate is good: $progress_per_second seconds/second${NC}"
+    echo -e "${GREEN}Node catchup rate is good: $catchup_rate times realtime${NC}"
     echo -e "${GREEN}Estimated time to sync:${NC}"
     s_to_human_readable $time_to_catchup
 fi
