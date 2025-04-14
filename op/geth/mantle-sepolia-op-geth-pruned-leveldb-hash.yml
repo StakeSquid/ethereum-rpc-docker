@@ -2,7 +2,7 @@
 
 services:
   mantle-sepolia:
-    image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-geth}:${MANTLE_SEPOLIA_GETH_VERSION:-v1.1.1}
+    image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-op-geth}:${MANTLE_SEPOLIA_GETH_VERSION:-v1.1.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -70,7 +70,7 @@ services:
       - traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.middlewares=mantle-sepolia-op-geth-pruned-leveldb-hash-stripprefix, ipwhitelist
 
   mantle-sepolia-node:
-    image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-node}:${MANTLE_SEPOLIA_NODE_VERSION:-v1.1.1}
+    image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-op-node}:${MANTLE_SEPOLIA_NODE_VERSION:-v1.1.1}
     ports:
       - 18358:18358
       - 18358:18358/udp
