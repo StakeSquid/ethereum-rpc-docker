@@ -19,45 +19,41 @@ s_to_human_readable() {
 }
 
 BASEPATH="$(dirname "$0")"
-source $BASEPATH/.env
+source $BASEPATH/.env 2>/dev/null || true
 
 seconds_to_measure=${2:-10}
 
 # First measurement
+echo "Checking sync status for $1..."
 latest_block_timestamp_decimal=$(./timestamp.sh $1)
-current_time=$(date +%s)
+timestamp_exit_code=$?
 
-# Handle the case when timestamp.sh returns a very old timestamp
-if [[ $latest_block_timestamp_decimal -lt 1000000000 ]]; then
-    echo -e "${RED}Error: Failed to get valid block timestamp (got $latest_block_timestamp_decimal)${NC}"
+if [[ $timestamp_exit_code -ne 0 || -z "$latest_block_timestamp_decimal" ]]; then
+    echo -e "${RED}Error: Failed to get valid block timestamp. Is the node running?${NC}"
     exit 1
 fi
 
+current_time=$(date +%s)
 time_difference=$((current_time - latest_block_timestamp_decimal))
 
-# Check for reasonable time difference (< 1 year)
-if [[ $time_difference -lt 31536000 ]]; then
-    echo "Current chain head is $time_difference seconds behind real time"
-    s_to_human_readable $time_difference
-else
-    echo -e "${YELLOW}Warning: Block timestamp appears to be very old ($(s_to_human_readable $time_difference))${NC}"
-    echo -e "${YELLOW}This may be a historical node or there's an issue with the timestamp${NC}"
-fi
+# Check for reasonable time difference 
+echo "Current chain head is $time_difference seconds behind real time"
+s_to_human_readable $time_difference
 
 # Wait to measure progress
-echo "Measuring catchup progress over $seconds_to_measure seconds..."
+echo "Measuring progress over $seconds_to_measure seconds..."
 sleep $seconds_to_measure
 
 # Second measurement
 latest_block_timestamp2=$(./timestamp.sh $1)
-current_time2=$(date +%s)
+timestamp_exit_code=$?
 
-# Handle the case when timestamp.sh returns a very old timestamp
-if [[ $latest_block_timestamp2 -lt 1000000000 ]]; then
+if [[ $timestamp_exit_code -ne 0 || -z "$latest_block_timestamp2" ]]; then
     echo -e "${RED}Error: Failed to get valid block timestamp on second measurement${NC}"
     exit 1
 fi
 
+current_time2=$(date +%s)
 time_difference2=$((current_time2 - latest_block_timestamp2))
 
 # Calculate the gap change
@@ -65,26 +61,22 @@ time_difference2=$((current_time2 - latest_block_timestamp2))
 # Negative = gap decreased (catching up)
 gap_change=$((time_difference2 - time_difference))
 
-# Check if there was any progress (did timestamp change?)
-if [[ $latest_block_timestamp_decimal -eq $latest_block_timestamp2 ]]; then
-    echo -e "${YELLOW}Warning: Block timestamp didn't change during measurement. Node may be inactive.${NC}"
-    exit 1
-fi
-
 # Calculate catch-up rate (how many seconds of blockchain time processed in 1 second real time)
-# Formula: (seconds gap decreased + seconds of real time elapsed) / seconds of real time elapsed
 effective_catchup_seconds=$((seconds_to_measure - gap_change))
 catchup_rate=$(echo "scale=3; $effective_catchup_seconds / $seconds_to_measure" | bc)
 
-echo "Debug: first_gap=$time_difference, second_gap=$time_difference2, gap_change=$gap_change"
-echo "Debug: effective_catchup_seconds=$effective_catchup_seconds, catchup_rate=$catchup_rate"
+# Display debug info
+echo "First measurement: Time behind = $time_difference seconds"
+echo "Second measurement: Time behind = $time_difference2 seconds"
+echo "Gap change in $seconds_to_measure seconds: $gap_change seconds"
+echo "Calculated catchup rate: $catchup_rate× realtime"
 
 # Interpret results
 if (( $(echo "$catchup_rate < 0" | bc -l) )); then
     # Node is falling behind
     falling_behind_rate=$(echo "scale=2; -1 * $catchup_rate" | bc)
     echo -e "${RED}Node is FALLING BEHIND by $falling_behind_rate× realtime${NC}"
-    echo -e "${RED}The gap is increasing by $gap_change seconds over $seconds_to_measure seconds of measurement${NC}"
+    echo -e "${RED}The gap increased by $gap_change seconds over $seconds_to_measure seconds${NC}"
     exit 1
 elif (( $(echo "$catchup_rate < 1" | bc -l) )); then
     # Node is processing slower than realtime
