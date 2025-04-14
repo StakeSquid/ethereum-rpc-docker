@@ -1,6 +1,0 @@
-{
-  "chain": {
-    "info-json": "[{\"chain-id\":1829,\"parent-chain-id\":42170,\"parent-chain-is-arbitrum\":true,\"chain-name\":\"Playblock\",\"chain-config\":{\"homesteadBlock\":0,\"daoForkBlock\":null,\"daoForkSupport\":true,\"eip150Block\":0,\"eip150Hash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"eip155Block\":0,\"eip158Block\":0,\"byzantiumBlock\":0,\"constantinopleBlock\":0,\"petersburgBlock\":0,\"istanbulBlock\":0,\"muirGlacierBlock\":0,\"berlinBlock\":0,\"londonBlock\":0,\"clique\":{\"period\":0,\"epoch\":0},\"arbitrum\":{\"EnableArbOS\":true,\"AllowDebugPrecompiles\":false,\"DataAvailabilityCommittee\":true,\"InitialArbOSVersion\":11,\"GenesisBlockNum\":0,\"MaxCodeSize\":24576,\"MaxInitCodeSize\":49152,\"InitialChainOwner\":\"0x10Fe3cb853F7ef551E1598d91436e95d41Aea45a\"},\"chainId\":1829},\"rollup\":{\"bridge\":\"0xD4FE46D2533E7d03382ac6cACF0547F336e59DC0\",\"inbox\":\"0xFF55fB76F5671dD9eB6c62EffF8D693Bb161a3ad\",\"sequencer-inbox\":\"0xe347C1223381b9Dcd6c0F61cf81c90175A7Bae77\",\"rollup\":\"0x04ea347cC6A258A7F65D67aFb60B1d487062A1d0\",\"validator-utils\":\"0x6c21303F5986180B1394d2C89f3e883890E2867b\",\"validator-wallet-creator\":\"0x2b0E04Dc90e3fA58165CB41E2834B44A56E766aF\",\"deployed-at\":55663578}}]",
-    "name": "Playblock"
-  }
-}

@@ -1,6 +1,0 @@
-{
-  "chain": {
-    "info-json": "[{\"chain-id\":656476,\"parent-chain-id\":421614,\"parent-chain-is-arbitrum\":true,\"chain-name\":\"Codex\",\"chain-config\":{\"homesteadBlock\":0,\"daoForkBlock\":null,\"daoForkSupport\":true,\"eip150Block\":0,\"eip150Hash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"eip155Block\":0,\"eip158Block\":0,\"byzantiumBlock\":0,\"constantinopleBlock\":0,\"petersburgBlock\":0,\"istanbulBlock\":0,\"muirGlacierBlock\":0,\"berlinBlock\":0,\"londonBlock\":0,\"clique\":{\"period\":0,\"epoch\":0},\"arbitrum\":{\"EnableArbOS\":true,\"AllowDebugPrecompiles\":false,\"DataAvailabilityCommittee\":true,\"InitialArbOSVersion\":20,\"GenesisBlockNum\":0,\"MaxCodeSize\":24576,\"MaxInitCodeSize\":49152,\"InitialChainOwner\":\"0xF46B08D9E85df74b6f24Ad85A6a655c02857D5b8\"},\"chainId\":656476},\"rollup\":{\"bridge\":\"0xbf3D64671154D1FB0b27Cb1decbE1094d7016448\",\"inbox\":\"0x67F231eDC83a66556148673863e73D705422A678\",\"sequencer-inbox\":\"0xd5131c1924f080D45CA3Ae97262c0015F675004b\",\"rollup\":\"0x0A94003d3482128c89395aBd94a41DA8eeBB59f7\",\"validator-utils\":\"0xB11EB62DD2B352886A4530A9106fE427844D515f\",\"validator-wallet-creator\":\"0xEb9885B6c0e117D339F47585cC06a2765AaE2E0b\",\"deployed-at\":41549214}}]",
-    "name": "Codex"
-  }
-}
