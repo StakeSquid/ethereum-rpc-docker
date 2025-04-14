@@ -1,61 +1,107 @@
-
-
+---
 
 services:
   polygon-mainnet:
-    image: erigontech/erigon:${ERIGON3_VERSION:-v3.0.0}
+    image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_MAINNET_ERIGON3_VERSION:-v3.0.0}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
-    expose:
-      - "8545"
     ports:
-      - "10320:10320"
-      - "10320:10320/udp"
-      - "25320:25320"
-      - "25320:25320/udp"
-      - "30320:30320"
-      - "30320:30320/udp"
-      
-    environment:
-      - "IP=${IP}"
-    volumes:
-      - polygon-mainnet-erigon3-pruned-trace:/root/.local/share/erigon
-      - /slowdisk:/slowdisk
-            
+      - 10400:10400
+      - 10400:10400/udp
+      - 30400:30400
+      - 30400:30400/udp
+      - 35400:35400
+      - 35400:35400/udp
+    expose:
+      - 8545
+    entrypoint: [erigon]
+    command:
+      - --bor.heimdall=https://polygon-heimdall-rest.publicnode.com
+      - --chain=bor-mainnet
+      - --datadir=/root/.local/share/erigon
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --http.port=8545
+      - --http.vhosts=*
+      - --maxpeers=50
+      - --nat=extip:${IP}
+      - --p2p.allowed-ports=30400
+      - --p2p.allowed-ports=35400
+      - --port=10400
+      - --prune.mode=full
+      - --rpc.gascap=6000000000
+      - --rpc.returndata.limit=1100000
+      - --torrent.port=25400
+      - --ws
+      - --ws.port=8545
+    restart: unless-stopped
+    stop_grace_period: 5m
     networks:
       - chains
-    
-    entrypoint: ["erigon"]
-    command:
-      - --chain=bor-mainnet
-      
-      - --prune.mode=full
-      - --port=10320
-      - --p2p.allowed-ports=25320
-      - --p2p.allowed-ports=30320      
-      - --nat=extip:${IP}
-      - --http.addr=0.0.0.0
-      - --http.vhosts=*
-      - --http.corsdomain=*
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
-      - --rpc.returndata.limit=1100000
-      - --rpc.gascap=5000000000
-      - --ws.port=8545
-      - --ws
-       
-      - --torrent.port=20320
-      - --bor.heimdall=${POLYGON_HEIMDALL_REST:-None} 
-      
-
-    restart: unless-stopped
-    stop_grace_period: 1m
+    volumes:
+      - ${POLYGON_MAINNET_ERIGON3_PRUNED_TRACE_DATA:-polygon-mainnet-erigon3-pruned-trace}:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.polygon-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/polygon-mainnet"
-      - "traefik.http.services.polygon-mainnet-erigon3-pruned-trace.loadbalancer.server.port=8545"
-      - "traefik.http.routers.polygon-mainnet-erigon3-pruned-trace.entrypoints=websecure"
-      - "traefik.http.routers.polygon-mainnet-erigon3-pruned-trace.tls.certresolver=myresolver"
-      - "traefik.http.routers.polygon-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-mainnet`)"
-      - "traefik.http.routers.polygon-mainnet-erigon3-pruned-trace.middlewares=polygon-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist"
-      
+      - traefik.enable=true
+      - traefik.http.middlewares.polygon-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/polygon-mainnet
+      - traefik.http.services.polygon-mainnet-erigon3-pruned-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-pruned-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-pruned-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/polygon-mainnet`)}
+      - ${NO_SSL:+traefik.http.routers.polygon-mainnet-erigon3-pruned-trace.rule=PathPrefix(`/polygon-mainnet`)}
+      - traefik.http.routers.polygon-mainnet-erigon3-pruned-trace.middlewares=polygon-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist
+
 volumes:
-    polygon-mainnet-erigon3-pruned-trace:
+  polygon-mainnet-erigon3-pruned-trace:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    chain:
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+        # non standard erigon only
+        - name: eth_getBlockReceipts
+        - name: eth_protocolVersion
+        - name: eth_callMany
+        - name: eth_callBundle
+        - name: debug_accountAt
+        - name: debug_traceCallMany
+        - name: erigon_getHeaderByHash
+        - name: erigon_getBlockReceiptsByBlockHash
+        - name: erigon_getHeaderByNumber
+        - name: erigon_getLogsByHash
+        - name: erigon_forks
+        - name: erigon_getBlockByTimestamp
+        - name: erigon_BlockNumber
+        - name: erigon_getLatestLogs
+...
