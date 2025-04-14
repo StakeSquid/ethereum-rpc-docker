@@ -23,6 +23,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 18545 18546 5050 5050/udp
 
-VOLUME /var/sonic
-
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

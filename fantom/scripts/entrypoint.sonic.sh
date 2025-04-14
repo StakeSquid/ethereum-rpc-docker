@@ -1,6 +1,6 @@
 #!/bin/bash
 
-datadir=/var/sonic
+datadir=${SONIC_HOME:-/var/sonic}
 
 if [ ! -f "$datadir/initialized" ]; then
     echo "Initializing Sonic..."
