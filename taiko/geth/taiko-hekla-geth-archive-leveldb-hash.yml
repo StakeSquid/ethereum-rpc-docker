@@ -86,7 +86,7 @@ services:
       - L2_AUTH=http://taiko-hekla-archive:8551
       - L2_WS=ws://taiko-hekla-archive:8545
       - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
-      - P2P_CHECK_POINT_SYNC_URL=
+      - P2P_CHECK_POINT_SYNC_URL=https://rpc.hekla.taiko.xyz
       - P2P_SYNC=true
     entrypoint: [taiko-client, driver]
     restart: unless-stopped
