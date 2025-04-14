@@ -95,7 +95,7 @@ services:
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
       - OP_NODE_P2P_LISTEN_TCP_PORT=18688
       - OP_NODE_P2P_LISTEN_UDP_PORT=18688
-      - OP_NODE_P2P_STATIC_PEERS=/dns4/node1-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm5Uxn3E8RXEM2e5YsR9VNM8uKoPmZzwQjqp7r64ZLspd5,/dns4/node2-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmPoLg64PL2X2oLrUSmYaqAbkATPAMNRxLCZTBavUP8UEB,/dns4/node3-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmB9iZKfv9RPRZj6JwcwjbwZWECFwJ67b1LJMHrczTnbjf
+      - OP_NODE_P2P_STATIC=/dns4/node1-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm5Uxn3E8RXEM2e5YsR9VNM8uKoPmZzwQjqp7r64ZLspd5,/dns4/node2-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmPoLg64PL2X2oLrUSmYaqAbkATPAMNRxLCZTBavUP8UEB,/dns4/node3-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmB9iZKfv9RPRZj6JwcwjbwZWECFwJ67b1LJMHrczTnbjf
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
