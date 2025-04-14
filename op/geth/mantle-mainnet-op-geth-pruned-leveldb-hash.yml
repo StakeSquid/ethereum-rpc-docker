@@ -17,9 +17,6 @@ services:
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
-    ports:
-      - 12067:12067
-      - 12067:12067/udp
     expose:
       - 8545
       - 8551
@@ -36,6 +33,7 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --networkid=5000
+      - --nodiscover
       - --port=12067
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
