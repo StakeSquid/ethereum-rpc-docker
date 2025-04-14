@@ -1,0 +1,188 @@
+---
+
+services:
+  celo-alfajores:
+    image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_ALFAJORES_GETH_VERSION:-celo-v2.0.0}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 13457:13457
+      - 13457:13457/udp
+    expose:
+      - 8545
+      - 8551
+    environment:
+      - CLIENT_BOOTNODES=enode://ac0f42fa46f8cc10bd02a103894d71d495537465133e7c442bc02dc76721a5f41761cc2d8c69e7ba1b33e14e28f516436864d3e0836e2dcdaf032387f72447dd@34.83.164.192:30303,enode://596002969b8b269a4fa34b4709b9600b64201e7d02e2f5f1350affd021b0cbda6ce2b913ebe24f0fb1edcf66b6c730a8a3b02cd940f4de995f73d3b290a0fc92@34.82.177.77:30303,enode://3619455064ef1ce667171bba1df80cfd4c097f018cf0205aaad496f0d509611b7c40396893d9e490ee390cd098888279e177a4d9bb09c58387bb0a6031d237f1@34.19.90.27:30303,enode://e3c54db6004a92d4ee87504f073f3234a25759b485274cc224037e3e5ee792f3b482c3f4fffcb764af6e1859a1aea9710b71e1991e32c1dee7f40352124bb182@35.233.249.87:30303,enode://674410b34fd54c8406a4f945292b96111688d4bab49aecdc34b4f1b346891f4673dcb03ed44c38ab467ef7bec0b20f6031ad88aa1d35ce1333b343d00fa19fb1@34.168.43.76:30303
+      - CLIENT_IMAGE=us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth
+      - CLIENT_VERSION=celo-v2.0.0
+      - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
+      - EIGENDA_PROXY_SERVICE_MANAGER_ADDR=0xD4A7E1Bd8015057293f0D0A557088c286942e84b
+      - GETH_BOOTNODES=enode://ac0f42fa46f8cc10bd02a103894d71d495537465133e7c442bc02dc76721a5f41761cc2d8c69e7ba1b33e14e28f516436864d3e0836e2dcdaf032387f72447dd@34.83.164.192:30303,enode://596002969b8b269a4fa34b4709b9600b64201e7d02e2f5f1350affd021b0cbda6ce2b913ebe24f0fb1edcf66b6c730a8a3b02cd940f4de995f73d3b290a0fc92@34.82.177.77:30303,enode://3619455064ef1ce667171bba1df80cfd4c097f018cf0205aaad496f0d509611b7c40396893d9e490ee390cd098888279e177a4d9bb09c58387bb0a6031d237f1@34.19.90.27:30303,enode://e3c54db6004a92d4ee87504f073f3234a25759b485274cc224037e3e5ee792f3b482c3f4fffcb764af6e1859a1aea9710b71e1991e32c1dee7f40352124bb182@35.233.249.87:30303,enode://674410b34fd54c8406a4f945292b96111688d4bab49aecdc34b4f1b346891f4673dcb03ed44c38ab467ef7bec0b20f6031ad88aa1d35ce1333b343d00fa19fb1@34.168.43.76:30303
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://sequencer.alfajores.celo-testnet.org
+      - NODE_STATICPEERS=/ip4/35.197.25.52/tcp/9222/p2p/16Uiu2HAmQEdyLRSAVZDr5SqbJ1RnKmNDhtQJcEKmemrVxe4FxKwR,/ip4/34.105.22.4/tcp/9222/p2p/16Uiu2HAm1SZBDSugT5MMu7vBY8auDgfZFNhoDeXPLc9Me5FsAxwT,/ip4/34.83.209.168/tcp/9222/p2p/16Uiu2HAmGJAiUX6HLSo4nLh8T984qxzokwL23cVsYuNZy2SrK7C6,/ip4/34.83.214.149/tcp/9222/p2p/16Uiu2HAmAko2Kr3eAjM7tnshtEhYrxQYfKUvN2kwiygeFoBAoi8S,/ip4/34.169.5.52/tcp/9222/p2p/16Uiu2HAmKc6YKHzYgsjBDaj36uAufxpgZFgrzDqVBt6zTPwdhhJD
+      - SEQUENCER=https://sequencer.alfajores.celo-testnet.org
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init /config/genesis.json; exec geth "$@"' --
+    command:
+      - --bootnodes=enode://ac0f42fa46f8cc10bd02a103894d71d495537465133e7c442bc02dc76721a5f41761cc2d8c69e7ba1b33e14e28f516436864d3e0836e2dcdaf032387f72447dd@34.83.164.192:30303,enode://596002969b8b269a4fa34b4709b9600b64201e7d02e2f5f1350affd021b0cbda6ce2b913ebe24f0fb1edcf66b6c730a8a3b02cd940f4de995f73d3b290a0fc92@34.82.177.77:30303,enode://3619455064ef1ce667171bba1df80cfd4c097f018cf0205aaad496f0d509611b7c40396893d9e490ee390cd098888279e177a4d9bb09c58387bb0a6031d237f1@34.19.90.27:30303,enode://e3c54db6004a92d4ee87504f073f3234a25759b485274cc224037e3e5ee792f3b482c3f4fffcb764af6e1859a1aea9710b71e1991e32c1dee7f40352124bb182@35.233.249.87:30303,enode://674410b34fd54c8406a4f945292b96111688d4bab49aecdc34b4f1b346891f4673dcb03ed44c38ab467ef7bec0b20f6031ad88aa1d35ce1333b343d00fa19fb1@34.168.43.76:30303
+      - --datadir=/data
+      - --db.engine=pebble
+      - --gcmode=full
+      - --maxpeers=50
+      - --nat=extip:${IP}
+      - --networkid=44787
+      - --port=13457
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=hash
+      - --syncmode=snap
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-celo-alfajores-op-geth-pruned-pebble-hash}:/data
+      - ./op/celo/alfajores:/config
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.celo-alfajores-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/celo-alfajores
+      - traefik.http.services.celo-alfajores-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-pruned-pebble-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-alfajores`)}
+      - ${NO_SSL:+traefik.http.routers.celo-alfajores-op-geth-pruned-pebble-hash.rule=PathPrefix(`/celo-alfajores`)}
+      - traefik.http.routers.celo-alfajores-op-geth-pruned-pebble-hash.middlewares=celo-alfajores-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
+
+  celo-alfajores-node:
+    image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.0.0}
+    ports:
+      - 18457:18457
+      - 18457:18457/udp
+    environment:
+      - CLIENT_BOOTNODES=enode://ac0f42fa46f8cc10bd02a103894d71d495537465133e7c442bc02dc76721a5f41761cc2d8c69e7ba1b33e14e28f516436864d3e0836e2dcdaf032387f72447dd@34.83.164.192:30303,enode://596002969b8b269a4fa34b4709b9600b64201e7d02e2f5f1350affd021b0cbda6ce2b913ebe24f0fb1edcf66b6c730a8a3b02cd940f4de995f73d3b290a0fc92@34.82.177.77:30303,enode://3619455064ef1ce667171bba1df80cfd4c097f018cf0205aaad496f0d509611b7c40396893d9e490ee390cd098888279e177a4d9bb09c58387bb0a6031d237f1@34.19.90.27:30303,enode://e3c54db6004a92d4ee87504f073f3234a25759b485274cc224037e3e5ee792f3b482c3f4fffcb764af6e1859a1aea9710b71e1991e32c1dee7f40352124bb182@35.233.249.87:30303,enode://674410b34fd54c8406a4f945292b96111688d4bab49aecdc34b4f1b346891f4673dcb03ed44c38ab467ef7bec0b20f6031ad88aa1d35ce1333b343d00fa19fb1@34.168.43.76:30303
+      - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
+      - EIGENDA_PROXY_SERVICE_MANAGER_ADDR=0xD4A7E1Bd8015057293f0D0A557088c286942e84b
+      - NODE_IMAGE=us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node
+      - NODE_STATICPEERS=/ip4/35.197.25.52/tcp/9222/p2p/16Uiu2HAmQEdyLRSAVZDr5SqbJ1RnKmNDhtQJcEKmemrVxe4FxKwR,/ip4/34.105.22.4/tcp/9222/p2p/16Uiu2HAm1SZBDSugT5MMu7vBY8auDgfZFNhoDeXPLc9Me5FsAxwT,/ip4/34.83.209.168/tcp/9222/p2p/16Uiu2HAmGJAiUX6HLSo4nLh8T984qxzokwL23cVsYuNZy2SrK7C6,/ip4/34.83.214.149/tcp/9222/p2p/16Uiu2HAmAko2Kr3eAjM7tnshtEhYrxQYfKUvN2kwiygeFoBAoi8S,/ip4/34.169.5.52/tcp/9222/p2p/16Uiu2HAmKc6YKHzYgsjBDaj36uAufxpgZFgrzDqVBt6zTPwdhhJD
+      - NODE_VERSION=celo-v2.0.0
+      - OP_NODE_ALTDA_DA_SERVER=http://celo-alfajores-eigenda-proxy:4242
+      - OP_NODE_ALTDA_DA_SERVICE=true
+      - OP_NODE_ALTDA_ENABLED=true
+      - OP_NODE_ALTDA_VERIFY_ON_READ=false
+      - OP_NODE_L1_BEACON=${ETHEREUM_HOLESKY_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_HOLESKY_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_HOLESKY_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_HOLESKY_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_HOLESKY_EXECUTION_TRUST:-false}
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://celo-alfajores:8551
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18457
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18457
+      - OP_NODE_P2P_STATIC_PEERS=/ip4/35.197.25.52/tcp/9222/p2p/16Uiu2HAmQEdyLRSAVZDr5SqbJ1RnKmNDhtQJcEKmemrVxe4FxKwR,/ip4/34.105.22.4/tcp/9222/p2p/16Uiu2HAm1SZBDSugT5MMu7vBY8auDgfZFNhoDeXPLc9Me5FsAxwT,/ip4/34.83.209.168/tcp/9222/p2p/16Uiu2HAmGJAiUX6HLSo4nLh8T984qxzokwL23cVsYuNZy2SrK7C6,/ip4/34.83.214.149/tcp/9222/p2p/16Uiu2HAmAko2Kr3eAjM7tnshtEhYrxQYfKUvN2kwiygeFoBAoi8S,/ip4/34.169.5.52/tcp/9222/p2p/16Uiu2HAmKc6YKHzYgsjBDaj36uAufxpgZFgrzDqVBt6zTPwdhhJD
+      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_VERIFIER_L1_CONFS=0
+      - SEQUENCER=https://sequencer.alfajores.celo-testnet.org
+    entrypoint: [op-node]
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./op/celo/alfajores:/config
+      - .jwtsecret:/jwtsecret:ro
+
+  celo-alfajores-relay:
+    image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
+    ports:
+      - 23457:23457
+      - 23457:23457/udp
+    environment:
+      - CLIENT_BOOTNODES=enode://ac0f42fa46f8cc10bd02a103894d71d495537465133e7c442bc02dc76721a5f41761cc2d8c69e7ba1b33e14e28f516436864d3e0836e2dcdaf032387f72447dd@34.83.164.192:30303,enode://596002969b8b269a4fa34b4709b9600b64201e7d02e2f5f1350affd021b0cbda6ce2b913ebe24f0fb1edcf66b6c730a8a3b02cd940f4de995f73d3b290a0fc92@34.82.177.77:30303,enode://3619455064ef1ce667171bba1df80cfd4c097f018cf0205aaad496f0d509611b7c40396893d9e490ee390cd098888279e177a4d9bb09c58387bb0a6031d237f1@34.19.90.27:30303,enode://e3c54db6004a92d4ee87504f073f3234a25759b485274cc224037e3e5ee792f3b482c3f4fffcb764af6e1859a1aea9710b71e1991e32c1dee7f40352124bb182@35.233.249.87:30303,enode://674410b34fd54c8406a4f945292b96111688d4bab49aecdc34b4f1b346891f4673dcb03ed44c38ab467ef7bec0b20f6031ad88aa1d35ce1333b343d00fa19fb1@34.168.43.76:30303
+      - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
+      - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
+      - EIGENDA_PROXY_EIGENDA_GRPC_DISABLE_TLS=false
+      - EIGENDA_PROXY_EIGENDA_MAX_BLOB_LENGTH=32MiB
+      - EIGENDA_PROXY_EIGENDA_STATUS_QUERY_TIMEOUT=45m
+      - EIGENDA_PROXY_ETH_RPC=${ETHEREUM_HOLESKY_EXECUTION_RPC}
+      - EIGENDA_PROXY_IMAGE=ghcr.io/layr-labs/eigenda-proxy
+      - EIGENDA_PROXY_PORT=23457
+      - EIGENDA_PROXY_SERVICE_MANAGER_ADDR=0xD4A7E1Bd8015057293f0D0A557088c286942e84b
+      - EIGENDA_PROXY_VERSION=v1.6.4
+      - NODE_STATICPEERS=/ip4/35.197.25.52/tcp/9222/p2p/16Uiu2HAmQEdyLRSAVZDr5SqbJ1RnKmNDhtQJcEKmemrVxe4FxKwR,/ip4/34.105.22.4/tcp/9222/p2p/16Uiu2HAm1SZBDSugT5MMu7vBY8auDgfZFNhoDeXPLc9Me5FsAxwT,/ip4/34.83.209.168/tcp/9222/p2p/16Uiu2HAmGJAiUX6HLSo4nLh8T984qxzokwL23cVsYuNZy2SrK7C6,/ip4/34.83.214.149/tcp/9222/p2p/16Uiu2HAmAko2Kr3eAjM7tnshtEhYrxQYfKUvN2kwiygeFoBAoi8S,/ip4/34.169.5.52/tcp/9222/p2p/16Uiu2HAmKc6YKHzYgsjBDaj36uAufxpgZFgrzDqVBt6zTPwdhhJD
+      - SEQUENCER=https://sequencer.alfajores.celo-testnet.org
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_HASH__EIGENDA_DATA:-celo-alfajores-op-geth-pruned-pebble-hash_eigenda}:/data
+
+volumes:
+  celo-alfajores-op-geth-pruned-pebble-hash:
+  celo-alfajores-op-geth-pruned-pebble-hash_eigenda:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    chain: celo-alfajores
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
