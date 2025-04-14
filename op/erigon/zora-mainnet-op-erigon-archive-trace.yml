@@ -31,7 +31,6 @@ services:
     entrypoint: [/bin/sh, -c, '[ ! -f /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init --datadir=/root/.local/share/erigon /config/genesis.json; exec erigon "$@"']
     command:
       - --datadir=/root/.local/share/erigon
-      - --db.size.limit=8TB
       - --maxpeers=50
       - --nat=extip:${IP}
       - --networkid=7777777
