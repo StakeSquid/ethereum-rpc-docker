@@ -38,7 +38,7 @@ for part in "${parts[@]}"; do
     if $include; then
 
 	#pathlist=$(cat $BASEPATH/$part | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
-        pathlist=$(cat $BASEPATH/$part | grep -oP "(?<=PathPrefix).*\"" | cut -d'`' -f2-2)
+        pathlist=$(cat $BASEPATH/$part | grep -oP "stripprefix\.prefixes.*?/\K[^\"]+")
 
 	for path in $pathlist; do
 	    path_include=true
@@ -53,16 +53,16 @@ for part in "${parts[@]}"; do
 		#echo "LOCAL: $LOCAL"
 		if $LOCAL; then
 		    url=$("$BASEPATH/get-local-url.sh" "${part%.yml}")
-                    export TEST_URL="$PROTO://$DOMAIN$path"
+            export TEST_URL="$PROTO://$DOMAIN/$path"
 		    export RPC_URL="http://$url"
 		    export WS_URL="ws://$url"		   
 		    export ID=$(echo "$DOMAIN$path" | sed -E "$GENERATE_ID_FROM_PATH_EXPRESSION")
 		else
-		    url="$DOMAIN$path"
+		    url="$DOMAIN/$path"
 		    export RPC_URL="$PROTO://$url"
 		    export TEST_URL="$RPC_URL"
 		    export WS_URL="wss://$url"		    
-                    export ID=$(echo "$url" | sed -E "$GENERATE_ID_FROM_PATH_EXPRESSION")
+            export ID=$(echo "$url" | sed -E "$GENERATE_ID_FROM_PATH_EXPRESSION")
 		fi
 		
 		export PROVIDER=${ORGANIZATION}-${ID}
