@@ -92,10 +92,10 @@ services:
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
-      - OP_NODE_P2P_BOOTNODES=/dns4/node1-us-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmFa6dADkqYEFVxDzrgaLbSArEKev4syqUksU4Vc4kWEPj,/dns4/node2-us-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmDpE7eFBy9HMC5ToV4ioDtQSgWhudbWZCex4TD8u8xzRX,/dns4/node3-us-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm4wPvLMeP4Ycicse9k7cAxHWBpN5V431nFirXZ6kUxNbn,/dns4/node1-eu-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmBtmdnVtGJS8ZSUo3ruPYQi5G6quRWvFJs7nT7SHgRKjV
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
       - OP_NODE_P2P_LISTEN_TCP_PORT=17397
       - OP_NODE_P2P_LISTEN_UDP_PORT=17397
+      - OP_NODE_P2P_STATIC_PEERS=/dns4/node1-us-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmFa6dADkqYEFVxDzrgaLbSArEKev4syqUksU4Vc4kWEPj,/dns4/node2-us-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmDpE7eFBy9HMC5ToV4ioDtQSgWhudbWZCex4TD8u8xzRX,/dns4/node3-us-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm4wPvLMeP4Ycicse9k7cAxHWBpN5V431nFirXZ6kUxNbn,/dns4/node1-eu-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmBtmdnVtGJS8ZSUo3ruPYQi5G6quRWvFJs7nT7SHgRKjV
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545

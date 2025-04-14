@@ -93,10 +93,10 @@ services:
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
-      - OP_NODE_P2P_BOOTNODES=/dns4/node1-us-p2p.testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmDP6pC6FKqkyLhar5762uV2Ycs2YNxK9p6CqqGav8DwzV,/dns4/node2-us-p2p.testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm5ehptRkg6yUuJDpqD4RceFJUEBEPuxqBqnr5XEk9rq7t,/dns4/node3-us-p2p.testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmMRDuDmmEtFTegcuBJ7eg5DZRxohqs3KRcKss2FqNUZdh
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
       - OP_NODE_P2P_LISTEN_TCP_PORT=16357
       - OP_NODE_P2P_LISTEN_UDP_PORT=16357
+      - OP_NODE_P2P_STATIC_PEERS=/dns4/node1-us-p2p.testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmDP6pC6FKqkyLhar5762uV2Ycs2YNxK9p6CqqGav8DwzV,/dns4/node2-us-p2p.testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm5ehptRkg6yUuJDpqD4RceFJUEBEPuxqBqnr5XEk9rq7t,/dns4/node3-us-p2p.testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmMRDuDmmEtFTegcuBJ7eg5DZRxohqs3KRcKss2FqNUZdh
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
