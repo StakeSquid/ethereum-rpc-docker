@@ -90,6 +90,14 @@ x-upstreams:
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
     chain: gnosis-chiado
     method-groups:
       enabled:

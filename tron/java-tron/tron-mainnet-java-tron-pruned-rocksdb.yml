@@ -48,6 +48,10 @@ x-upstreams:
   - id: $${ID}
     labels:
       provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
     chain: tron
     method-groups:
       enabled:
