@@ -29,7 +29,7 @@ services:
       - GETH_OP_NETWORK=zircuit-garfield
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_TXPOOL_GLOBALQUEUE=1024
-    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
+    entrypoint: /bin/sh -c 'exec /usr/local/bin/geth "$@"' --
     command:
       - --circuit-capacity-check=false
       - --datadir=/data

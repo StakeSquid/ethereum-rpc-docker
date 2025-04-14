@@ -26,7 +26,7 @@ services:
     environment:
       - GETH_OP_NETWORK=manta-pacific-mainnet
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
-    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
+    entrypoint: /bin/sh -c 'exec /usr/local/bin/geth "$@"' --
     command:
       - --datadir=/data
       - --db.engine=leveldb
