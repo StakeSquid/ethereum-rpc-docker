@@ -3,8 +3,7 @@
 # exit script on any error
 set -e
 
-datadir=/datadir
-FANTOM_HOME="$datadir"
+datadir=${FANTOM_HOME:-/datadir}
 
 existing_file=$(ls "$datadir"/*.g 2>/dev/null | head -n1)
 if [ -n "$existing_file" ]; then
