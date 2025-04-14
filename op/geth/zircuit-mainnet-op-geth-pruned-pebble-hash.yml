@@ -35,7 +35,7 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --nodiscover
-      - --port=13688
+      - --port=13359
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -75,8 +75,8 @@ services:
   zircuit-mainnet-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${ZIRCUIT_MAINNET_NODE_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}
     ports:
-      - 18688:18688
-      - 18688:18688/udp
+      - 18359:18359
+      - 18359:18359/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -91,8 +91,8 @@ services:
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=18688
-      - OP_NODE_P2P_LISTEN_UDP_PORT=18688
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18359
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18359
       - OP_NODE_P2P_STATIC=/dns4/node1-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm5Uxn3E8RXEM2e5YsR9VNM8uKoPmZzwQjqp7r64ZLspd5,/dns4/node2-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmPoLg64PL2X2oLrUSmYaqAbkATPAMNRxLCZTBavUP8UEB,/dns4/node3-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmB9iZKfv9RPRZj6JwcwjbwZWECFwJ67b1LJMHrczTnbjf
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
