@@ -33,8 +33,7 @@ services:
       - IP=${IP}
       - SONIC_HOME=/var/sonic
     command:
-      - --db.engine=
-      - --gcmode=archive
+      - --cache=${SONIC_MAINNET_SONIC_ARCHIVE_CACHE_MB:-16000}
       - --http
       - --http.addr=0.0.0.0
       - --http.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm,sfc
@@ -45,8 +44,6 @@ services:
       - --port=10658
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-      - --state.scheme=
-      - --syncmode=full
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm,sfc
