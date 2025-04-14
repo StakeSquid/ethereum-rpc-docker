@@ -29,6 +29,7 @@ services:
       - chains
     volumes:
       - ${ROOTSTOCK_MAINNET_RSKJ_ARCHIVE_DATA:-rootstock-mainnet-rskj-archive}:/var/lib/rsk/database/mainnet
+      - ./rootstock/mainnet/node.conf:/etc/rsk/node.conf
       - ./rootstock/mainnet:/config
       - /slowdisk:/slowdisk
 
