@@ -26,10 +26,10 @@ services:
     environment:
       - GETH_CONFIG=/config/gethconfig.toml
       - GETH_ETHSTATS=d${DOMAIN}:${ZIRCUIT_MAINNET_WS_SECRET}@${ZIRCUIT_MAINNET_ETH_STATS_SERVER}:${ZIRCUIT_MAINNET_ETH_STATS_SERVER_PORT}
-      - GETH_OP_NETWORK=zircuit-mainnet
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://proxyd-ingress-eu.mainnet.zircuit.com/?token=drpcvATEn3gsYCLyLw7ztFLCBwQNoDJr2QjpcsNNkksu
       - GETH_TXPOOL_GLOBALQUEUE=1024
-    entrypoint: /bin/sh -c 'exec /usr/local/bin/geth "$@"' --
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json; exec /usr/local/bin/geth "$@"' --
     command:
       - --circuit-capacity-check=false
       - --datadir=/data
@@ -91,11 +91,12 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
-      - OP_NODE_NETWORK=zircuit-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_BOOTNODES=/dns4/node1-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm5Uxn3E8RXEM2e5YsR9VNM8uKoPmZzwQjqp7r64ZLspd5,/dns4/node2-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmPoLg64PL2X2oLrUSmYaqAbkATPAMNRxLCZTBavUP8UEB,/dns4/node3-eu-p2p.mainnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmB9iZKfv9RPRZj6JwcwjbwZWECFwJ67b1LJMHrczTnbjf
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
       - OP_NODE_P2P_LISTEN_TCP_PORT=18688
       - OP_NODE_P2P_LISTEN_UDP_PORT=18688
+      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
