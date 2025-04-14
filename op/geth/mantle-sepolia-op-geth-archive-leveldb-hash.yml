@@ -24,8 +24,8 @@ services:
       - 8545
       - 8551
     environment:
-      - GETH_OP_NETWORK=mantle-sepolia
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data
@@ -33,6 +33,7 @@ services:
       - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
+      - --networkid=5001
       - --port=13358
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
