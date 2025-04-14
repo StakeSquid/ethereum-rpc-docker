@@ -24,6 +24,7 @@ services:
       - 8545
       - 8551
     environment:
+      - GETH_NETWORKID=60808
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://bob-mainnet.public.blastapi.io
     entrypoint: /bin/sh -c '[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json; exec /usr/local/bin/geth "$@"' --
