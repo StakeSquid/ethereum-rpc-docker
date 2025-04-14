@@ -43,12 +43,12 @@ services:
       - --syncmode=snap
       - --http
       - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.api=eth,net,web3,debug,admin,txpool,engine,taiko
       - --http.port=8545
       - --http.vhosts=*
       - --ws
       - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine,taiko
       - --ws.origins=*
       - --ws.port=8545
       - --authrpc.addr=0.0.0.0
