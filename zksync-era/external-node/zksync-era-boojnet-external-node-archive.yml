@@ -121,7 +121,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: zksync-sepolia
+    chain: $${CHAIN}
     method-groups:
       enabled:
         - debug

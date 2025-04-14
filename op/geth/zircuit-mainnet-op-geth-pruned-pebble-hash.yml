@@ -123,7 +123,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: zircuit-mainnet
+    chain: $${CHAIN}
     method-groups:
       enabled:
         - debug

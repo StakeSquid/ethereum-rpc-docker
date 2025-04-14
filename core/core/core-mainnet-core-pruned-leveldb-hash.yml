@@ -79,7 +79,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: core
+    chain: $${CHAIN}
     method-groups:
       enabled:
         - debug
