@@ -56,7 +56,7 @@ for part in "${parts[@]}"; do
             export TEST_URL="$PROTO://$DOMAIN/$path"
 		    export RPC_URL="http://$url"
 		    export WS_URL="ws://$url"		   
-		    export ID=$(echo "$DOMAIN$path" | sed -E "$GENERATE_ID_FROM_PATH_EXPRESSION")
+		    export ID=$(echo "$DOMAIN/$path" | sed -E "$GENERATE_ID_FROM_PATH_EXPRESSION")
 		else
 		    url="$DOMAIN/$path"
 		    export RPC_URL="$PROTO://$url"
