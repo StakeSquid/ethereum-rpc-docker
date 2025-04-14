@@ -22,22 +22,29 @@ services:
       - 14478:14478/udp
     expose:
       - 8545
+    entrypoint: [geth]
     command:
       - --config=/config/config.toml
       - --datadir=/core/.ethereum
-      - --db.engine=
+      - --db.engine=pebble
       - --gcmode=full
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,txpool,debug,admin,satoshi
       - --http.port=8545
+      - --http.vhosts=*
+      - --maxpeers=50
       - --nat=extip:${IP}
+      - --pigeon
       - --port=14478
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-      - --state.scheme=
+      - --state.scheme=path
       - --syncmode=snap
       - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,txpool,debug,admin,satoshi
+      - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
     stop_grace_period: 5m
@@ -71,6 +78,24 @@ x-upstreams:
         - filter
     methods:
       disabled:
+        # not compatible with path state scheme
+        - name: debug_traceBlockByHash
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
 ...

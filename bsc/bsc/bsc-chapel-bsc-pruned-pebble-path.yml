@@ -22,7 +22,9 @@ services:
       - 12759:12759/udp
     expose:
       - 8545
+    entrypoint: [geth]
     command:
+      - --chapel
       - --config=/config/config.toml
       - --datadir=/bsc/.ethereum
       - --db.engine=pebble
