@@ -1,0 +1,144 @@
+---
+
+services:
+  lisk-mainnet:
+    image: ${LISK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${LISK_MAINNET_GETH_VERSION:-v1.101503.3}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 11971:11971
+      - 11971:11971/udp
+    expose:
+      - 8545
+      - 8551
+    environment:
+      - GETH_BOOTNODES=enode://87a32fd13bd596b2ffca97020e31aef4ddcc1bbd4b95bb633d16c1329f654f34049ed240a36b449fda5e5225d70fe40bc667f53c304b71f8e68fc9d448690b51@3.231.138.188:30301,enode://ca21ea8f176adb2e229ce2d700830c844af0ea941a1d8152a9513b966fe525e809c3a6c73a2c18a12b74ed6ec4380edf91662778fe0b79f6a591236e49e176f9@184.72.129.189:30301,enode://acf4507a211ba7c1e52cdf4eef62cdc3c32e7c9c47998954f7ba024026f9a6b2150cd3f0b734d9c78e507ab70d59ba61dfe5c45e1078c7ad0775fb251d7735a2@3.220.145.177:30301,enode://8a5a5006159bf079d06a04e5eceab2a1ce6e0f721875b2a9c96905336219dbe14203d38f70f3754686a6324f786c2f9852d8c0dd3adac2d080f4db35efc678c5@3.231.11.52:30301,enode://cdadbe835308ad3557f9a1de8db411da1a260a98f8421d62da90e71da66e55e98aaa8e90aa7ce01b408a54e4bd2253d701218081ded3dbe5efbbc7b41d7cef79@54.198.153.150:30301
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.api.lisk.com
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init /config/genesis.json; exec geth "$@"' --
+    command:
+      - --bootnodes=enode://87a32fd13bd596b2ffca97020e31aef4ddcc1bbd4b95bb633d16c1329f654f34049ed240a36b449fda5e5225d70fe40bc667f53c304b71f8e68fc9d448690b51@3.231.138.188:30301,enode://ca21ea8f176adb2e229ce2d700830c844af0ea941a1d8152a9513b966fe525e809c3a6c73a2c18a12b74ed6ec4380edf91662778fe0b79f6a591236e49e176f9@184.72.129.189:30301,enode://acf4507a211ba7c1e52cdf4eef62cdc3c32e7c9c47998954f7ba024026f9a6b2150cd3f0b734d9c78e507ab70d59ba61dfe5c45e1078c7ad0775fb251d7735a2@3.220.145.177:30301,enode://8a5a5006159bf079d06a04e5eceab2a1ce6e0f721875b2a9c96905336219dbe14203d38f70f3754686a6324f786c2f9852d8c0dd3adac2d080f4db35efc678c5@3.231.11.52:30301,enode://cdadbe835308ad3557f9a1de8db411da1a260a98f8421d62da90e71da66e55e98aaa8e90aa7ce01b408a54e4bd2253d701218081ded3dbe5efbbc7b41d7cef79@54.198.153.150:30301
+      - --datadir=/data
+      - --db.engine=pebble
+      - --gcmode=full
+      - --maxpeers=50
+      - --nat=extip:${IP}
+      - --networkid=1135
+      - --port=11971
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=hash
+      - --syncmode=snap
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${LISK_MAINNET_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-lisk-mainnet-op-geth-pruned-pebble-hash}:/data
+      - ./op/lisk/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.lisk-mainnet-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/lisk-mainnet
+      - traefik.http.services.lisk-mainnet-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-mainnet`)}
+      - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-hash.rule=PathPrefix(`/lisk-mainnet`)}
+      - traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-hash.middlewares=lisk-mainnet-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
+
+  lisk-mainnet-node:
+    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.13.1}
+    ports:
+      - 16971:16971
+      - 16971:16971/udp
+    environment:
+      - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://lisk-mainnet:8551
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_BOOTNODES=enr:-Iu4QBCIUw0OhAq5ErARIYBLIr6xPb83OqeFRqlUJGlJ9kWpNECaumPArYWsEFdM_cEKm26JJT_EA52f4dlavBldldgBgmlkgnY0gmlwhCPqq5CJc2VjcDI1NmsxoQLBE74gZyIHkwBEnkI4K7nR4SM2Lytj2VTLqJaj5nQevoN0Y3CCIyuDdWRwgiMs
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16971
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16971
+      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./op/lisk/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
+
+volumes:
+  lisk-mainnet-op-geth-pruned-pebble-hash:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    chain:
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...

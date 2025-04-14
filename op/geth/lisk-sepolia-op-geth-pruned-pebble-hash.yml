@@ -1,0 +1,151 @@
+---
+
+services:
+  lisk-sepolia:
+    image: ${LISK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${LISK_SEPOLIA_GETH_VERSION:-v1.101503.3}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 13490:13490
+      - 13490:13490/udp
+    expose:
+      - 8545
+      - 8551
+    environment:
+      - GETH_BOOTNODES=enode://548f715f3fc388a7c917ba644a2f16270f1ede48a5d88a4d14ea287cc916068363f3092e39936f1a3e7885198bef0e5af951f1d7b1041ce8ba4010917777e71f@18.210.176.114:30301,enode://6f10052847a966a725c9f4adf6716f9141155b99a0fb487fea3f51498f4c2a2cb8d534e680ee678f9447db85b93ff7c74562762c3714783a7233ac448603b25f@107.21.251.55:30301
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.sepolia-api.lisk.com
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init /config/genesis.json; exec geth "$@"' --
+    command:
+      - --bootnodes=enode://548f715f3fc388a7c917ba644a2f16270f1ede48a5d88a4d14ea287cc916068363f3092e39936f1a3e7885198bef0e5af951f1d7b1041ce8ba4010917777e71f@18.210.176.114:30301,enode://6f10052847a966a725c9f4adf6716f9141155b99a0fb487fea3f51498f4c2a2cb8d534e680ee678f9447db85b93ff7c74562762c3714783a7233ac448603b25f@107.21.251.55:30301
+      - --datadir=/data
+      - --db.engine=pebble
+      - --gcmode=full
+      - --maxpeers=50
+      - --nat=extip:${IP}
+      - --networkid=4202
+      - --port=13490
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=hash
+      - --syncmode=snap
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${LISK_SEPOLIA_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-lisk-sepolia-op-geth-pruned-pebble-hash}:/data
+      - ./op/lisk/sepolia:/config
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.lisk-sepolia-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/lisk-sepolia
+      - traefik.http.services.lisk-sepolia-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-sepolia`)}
+      - ${NO_SSL:+traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.rule=PathPrefix(`/lisk-sepolia`)}
+      - traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.middlewares=lisk-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
+
+  lisk-sepolia-node:
+    build:
+      context: ./op
+      dockerfile: node.Dockerfile
+      args:
+        OP_REPO: https://github.com/ethereum-optimism/optimism.git
+        OP_VERSION: v1.13.1
+        OP_PATCH: lisk/sepolia/node.patch
+    ports:
+      - 18490:18490
+      - 18490:18490/udp
+    environment:
+      - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://lisk-sepolia:8551
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_BOOTNODES=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIyuDdWRwgiMr
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18490
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18490
+      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./op/lisk/sepolia:/config
+      - .jwtsecret:/jwtsecret:ro
+
+volumes:
+  lisk-sepolia-op-geth-pruned-pebble-hash:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    chain:
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
