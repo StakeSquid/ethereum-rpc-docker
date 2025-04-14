@@ -24,7 +24,6 @@ services:
       - 8545
       - 8551
     environment:
-      - GETH_NETWORKID=168587773
       - GETH_OVERRIDE_ECOTONE_TIME=1713999600
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://sequencer.s2.testblast.io
@@ -35,6 +34,7 @@ services:
       - --gcmode=full
       - --maxpeers=50
       - --nat=extip:${IP}
+      - --networkid=168587773
       - --port=11591
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0

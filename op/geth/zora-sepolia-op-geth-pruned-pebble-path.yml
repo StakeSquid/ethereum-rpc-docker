@@ -24,7 +24,6 @@ services:
       - 8545
       - 8551
     environment:
-      - GETH_NETWORKID=999999999
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://sepolia.rpc.zora.energy
     entrypoint: /bin/sh -c '[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json; exec /usr/local/bin/geth "$@"' --
@@ -34,6 +33,7 @@ services:
       - --gcmode=full
       - --maxpeers=50
       - --nat=extip:${IP}
+      - --networkid=999999999
       - --port=14083
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0

@@ -26,7 +26,6 @@ services:
     environment:
       - GETH_CONFIG=/config/gethconfig.toml
       - GETH_ETHSTATS=d${DOMAIN}:${ZIRCUIT_MAINNET_WS_SECRET}@${ZIRCUIT_MAINNET_ETH_STATS_SERVER}:${ZIRCUIT_MAINNET_ETH_STATS_SERVER_PORT}
-      - GETH_NETWORKID=48900
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://proxyd-ingress-eu.mainnet.zircuit.com/?token=drpcvATEn3gsYCLyLw7ztFLCBwQNoDJr2QjpcsNNkksu
       - GETH_TXPOOL_GLOBALQUEUE=1024

@@ -24,7 +24,6 @@ services:
       - 8545
       - 8551
     environment:
-      - GETH_NETWORKID=34443
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://mainnet.mode.network
     entrypoint: /bin/sh -c '[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json; exec /usr/local/bin/geth "$@"' --
@@ -34,6 +33,7 @@ services:
       - --gcmode=full
       - --maxpeers=50
       - --nat=extip:${IP}
+      - --networkid=34443
       - --port=12054
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
