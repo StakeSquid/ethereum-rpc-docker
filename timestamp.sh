@@ -16,7 +16,7 @@ else
     PROTO="https"
 fi
 
-pathlist=$(cat $BASEPATH/$1.yml | grep -oP "(?<=stripprefix\.prefixes).*\"" | cut -d'=' -f2- | sed 's/.$//')
+pathlist=$(cat $BASEPATH/$1.yml | grep -oP "stripprefix\.prefixes.*?/\K[^\"]+")
 
 for path in $pathlist; do
     include=true
