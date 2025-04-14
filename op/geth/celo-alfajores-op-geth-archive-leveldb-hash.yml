@@ -110,6 +110,8 @@ services:
       - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
+    command:
+      - --rollup.load-protocol-versions=true
     restart: unless-stopped
     networks:
       - chains
