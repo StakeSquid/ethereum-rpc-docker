@@ -29,7 +29,7 @@ services:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://proxyd-ingress-eu.mainnet.zircuit.com/?token=drpcvATEn3gsYCLyLw7ztFLCBwQNoDJr2QjpcsNNkksu
       - GETH_TXPOOL_GLOBALQUEUE=1024
-    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
     command:
       - --circuit-capacity-check=false
       - --datadir=/data

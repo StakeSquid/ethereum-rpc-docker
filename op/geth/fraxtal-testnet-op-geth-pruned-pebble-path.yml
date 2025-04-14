@@ -32,7 +32,7 @@ services:
       - GETH_OVERRIDE_HOLOCENE=1742583600
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.testnet.frax.com
-    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
     command:
       - --bootnodes=enr:-J24QDtYraYQauFehDzkrR0PwSzs4WKRsA1KlwI4Svk1C44tCyB8hjGtTxpK_sAUHVssrcu1kzlLSLHGkUKx3S8nuoqGAY5Eq8cVgmlkgnY0gmlwhCLf6l6Hb3BzdGFja4PaEwCJc2VjcDI1NmsxoQLs4JhtI-2rswUlLDoyXafL1MZB2RJfo8G3WOoZDzXFDIN0Y3CCdl2DdWRwgnZd,enr:-J24QHgWVQqUZufbbT6M4kf_aZtRyqHw9Z6ZgFqmRENMDJobDk6KByswOFZMc_C3uhnjt2__qPxqg_F17_Yr9Nd5nf-GAY5ErEH6gmlkgnY0gmlwhDQt9NKHb3BzdGFja4PaEwCJc2VjcDI1NmsxoQI4DVmRnrhBsm9A4V_XPwSdrvco4J1AuMPcVG0nLqnF74N0Y3CCdl2DdWRwgnZd,enr:-J24QHh7oOw8AC3IKhdGFfVMPpnzOzlmuTUujgHRaHYV4iF-bfzC1BBTDudHms8a2bSgQq3Ph3lcacVghZdiW_9GijCGAY5Eq9B2gmlkgnY0gmlwhD8i6DSHb3BzdGFja4PaEwCJc2VjcDI1NmsxoQMrhBV5lJrxznHEKInBBwpKlN_Q_O-R5CcEuHQRb1q214N0Y3CCdl2DdWRwgnZd
       - --datadir=/data
