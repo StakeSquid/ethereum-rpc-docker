@@ -52,7 +52,7 @@ services:
       - --p2p.allowed-ports=32974
       - --p2p.allowed-ports=37974
       - --port=12974
-      - --prune.mode=
+      - --prune.mode=full
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --torrent.port=27974

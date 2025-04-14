@@ -44,7 +44,7 @@ services:
       - --p2p.allowed-ports=32235
       - --p2p.allowed-ports=37235
       - --port=12235
-      - --prune.mode=
+      - --prune.mode=archive
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --ws
