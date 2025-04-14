@@ -6,6 +6,17 @@ YELLOW='\033[0;33m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+# Enable debugging if needed
+# set -x
+
+# Check if timestamp.sh exists and is executable
+if [ ! -x "$(dirname "$0")/timestamp.sh" ]; then
+    echo -e "${RED}Error: timestamp.sh script not found or not executable${NC}"
+    echo "Looking in: $(dirname "$0")"
+    ls -la "$(dirname "$0")" | grep timestamp.sh
+    exit 1
+fi
+
 s_to_human_readable() {
     local seconds=$1
     local days=$((seconds / 86400))
@@ -25,11 +36,19 @@ seconds_to_measure=${2:-10}
 
 # First measurement
 echo "Checking sync status for $1..."
-latest_block_timestamp_decimal=$(./timestamp.sh $1)
+echo "Debug: Running ./timestamp.sh $1"
+timestamp_output=$(./timestamp.sh $1 2>&1)
 timestamp_exit_code=$?
+
+echo "Debug: timestamp.sh output: '$timestamp_output'"
+echo "Debug: timestamp.sh exit code: $timestamp_exit_code"
+
+# Try to extract a number, ignoring any errors or other text
+latest_block_timestamp_decimal=$(echo "$timestamp_output" | grep -o '[0-9]\+' | head -1)
 
 if [[ $timestamp_exit_code -ne 0 || -z "$latest_block_timestamp_decimal" ]]; then
     echo -e "${RED}Error: Failed to get valid block timestamp. Is the node running?${NC}"
+    echo -e "${RED}timestamp.sh returned: $timestamp_output${NC}"
     exit 1
 fi
 
@@ -45,11 +64,19 @@ echo "Measuring progress over $seconds_to_measure seconds..."
 sleep $seconds_to_measure
 
 # Second measurement
-latest_block_timestamp2=$(./timestamp.sh $1)
+echo "Debug: Running ./timestamp.sh $1 (second measurement)"
+timestamp_output=$(./timestamp.sh $1 2>&1)
 timestamp_exit_code=$?
+
+echo "Debug: timestamp.sh output (second): '$timestamp_output'"
+echo "Debug: timestamp.sh exit code (second): $timestamp_exit_code"
+
+# Try to extract a number, ignoring any errors or other text
+latest_block_timestamp2=$(echo "$timestamp_output" | grep -o '[0-9]\+' | head -1)
 
 if [[ $timestamp_exit_code -ne 0 || -z "$latest_block_timestamp2" ]]; then
     echo -e "${RED}Error: Failed to get valid block timestamp on second measurement${NC}"
+    echo -e "${RED}timestamp.sh returned: $timestamp_output${NC}"
     exit 1
 fi
 
