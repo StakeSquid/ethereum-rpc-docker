@@ -53,6 +53,7 @@ services:
       - chains
     volumes:
       - ${PLAYBLOCK_MAINNET_NITRO_PRUNED_PEBBLE_PATH_DATA:-playblock-mainnet-nitro-pruned-pebble-path}:/root/.arbitrum
+      - ./arb/playblock/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true

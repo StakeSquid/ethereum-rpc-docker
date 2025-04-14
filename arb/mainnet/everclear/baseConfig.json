@@ -1,6 +1,0 @@
-{
-  "chain": {
-    "name": "Everclear Mainnet",
-    "info-json": "[{\"chain-id\":25327,\"parent-chain-id\":1,\"parent-chain-is-arbitrum\":false,\"chain-name\":\"Everclear Mainnet\",\"chain-config\":{\"homesteadBlock\":0,\"daoForkBlock\":null,\"daoForkSupport\":true,\"eip150Block\":0,\"eip150Hash\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"eip155Block\":0,\"eip158Block\":0,\"byzantiumBlock\":0,\"constantinopleBlock\":0,\"petersburgBlock\":0,\"istanbulBlock\":0,\"muirGlacierBlock\":0,\"berlinBlock\":0,\"londonBlock\":0,\"clique\":{\"period\":0,\"epoch\":0},\"arbitrum\":{\"EnableArbOS\":true,\"AllowDebugPrecompiles\":false,\"DataAvailabilityCommittee\":true,\"InitialArbOSVersion\":20,\"GenesisBlockNum\":0,\"MaxCodeSize\":24576,\"MaxInitCodeSize\":49152,\"InitialChainOwner\":\"0x98a426C8ED821cAaef1b4BF7D29b514dcef970C0\"},\"chainId\":25327},\"rollup\":{\"bridge\":\"0x4eb4fB614e1aa3634513319F4Ec7334bC4321356\",\"inbox\":\"0x97FdC935c5E25613AA13a054C7Aa71cf751DB495\",\"sequencer-inbox\":\"0x7B0517E0104dB60198f9d573C0aB8d480207827E\",\"rollup\":\"0xc6CAd31D83E33Fc8fBc855f36ef9Cb2fCE070f5C\",\"validator-utils\":\"0x2b0E04Dc90e3fA58165CB41E2834B44A56E766aF\",\"validator-wallet-creator\":\"0x9CAd81628aB7D8e239F1A5B497313341578c5F71\",\"deployed-at\":20684364}}]"
-  }
-}
