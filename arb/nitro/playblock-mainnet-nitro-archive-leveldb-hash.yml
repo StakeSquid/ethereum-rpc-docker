@@ -33,15 +33,14 @@ services:
       - --http.vhosts=*
       - --node.batch-poster.enable=false
       - --node.data-availability.enable=true
-      - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --node.data-availability.parent-chain-node-url=${ARBITRUM_NOVA_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das.playblock.io
       - --node.data-availability.sequencer-inbox-address=0x1297541082195356755105700451499873350464260779639
       - --node.feed.input.url=wss://feed.playblock.io
       - --node.sequencer=false
       - --node.staker.enable=false
-      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
-      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --parent-chain.connection.url=${ARBITRUM_NOVA_EXECUTION_RPC}
       - --persistent.chain=/root/.arbitrum/playblock-mainnet-archive
       - --persistent.db-engine=leveldb
       - --ws.addr=0.0.0.0
@@ -53,7 +52,6 @@ services:
       - chains
     volumes:
       - ${PLAYBLOCK_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_DATA:-playblock-mainnet-nitro-archive-leveldb-hash}:/root/.arbitrum
-      - ./arb/playblock/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
