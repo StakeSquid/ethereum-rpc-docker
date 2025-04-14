@@ -1,7 +1,7 @@
 ---
 
 services:
-  manta-pacific-mainnet:
+  manta-pacific-mainnet-archive:
     image: ${MANTA_PACIFIC_GETH_IMAGE:-public.ecr.aws/i6b2w2n6/op-geth}:${MANTA_PACIFIC_MAINNET_GETH_VERSION:-5.2.0}
     sysctls:
       # TCP Performance
@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 12877:12877
-      - 12877:12877/udp
+      - 11437:11437
+      - 11437:11437/udp
     expose:
       - 8545
       - 8551
@@ -31,13 +31,13 @@ services:
     command:
       - --datadir=/data
       - --db.engine=pebble
-      - --gcmode=full
+      - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=12877
+      - --port=11437
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-      - --state.scheme=path
+      - --state.scheme=hash
       - --syncmode=full
       - --http
       - --http.addr=0.0.0.0
@@ -57,25 +57,25 @@ services:
     networks:
       - chains
     volumes:
-      - ${MANTA_PACIFIC_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-manta-pacific-mainnet-op-geth-pruned-pebble-path}:/data
+      - ${MANTA_PACIFIC_MAINNET_OP_GETH_ARCHIVE_PEBBLE_HASH_DATA:-manta-pacific-mainnet-op-geth-archive-pebble-hash}:/data
       - ./op/manta-pacific/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.manta-pacific-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/manta-pacific-mainnet
-      - traefik.http.services.manta-pacific-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/manta-pacific-mainnet`)}
-      - ${NO_SSL:+traefik.http.routers.manta-pacific-mainnet-op-geth-pruned-pebble-path.rule=PathPrefix(`/manta-pacific-mainnet`)}
-      - traefik.http.routers.manta-pacific-mainnet-op-geth-pruned-pebble-path.middlewares=manta-pacific-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.middlewares.manta-pacific-mainnet-op-geth-archive-pebble-hash-stripprefix.stripprefix.prefixes=/manta-pacific-mainnet-archive
+      - traefik.http.services.manta-pacific-mainnet-op-geth-archive-pebble-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/manta-pacific-mainnet-archive`)}
+      - ${NO_SSL:+traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.rule=PathPrefix(`/manta-pacific-mainnet-archive`)}
+      - traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.middlewares=manta-pacific-mainnet-op-geth-archive-pebble-hash-stripprefix, ipwhitelist
 
-  manta-pacific-mainnet-node:
+  manta-pacific-mainnet-archive-node:
     image: ${MANTA_PACIFIC_NODE_IMAGE:-public.ecr.aws/i6b2w2n6/op-node}:${MANTA_PACIFIC_MAINNET_NODE_VERSION:-celestia-3.0.0-dencun}
     ports:
-      - 17877:17877
-      - 17877:17877/udp
+      - 16437:16437
+      - 16437:16437/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -83,7 +83,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://manta-pacific-mainnet:8551
+      - OP_NODE_L2_ENGINE_RPC=http://manta-pacific-mainnet-archive:8551
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
@@ -91,8 +91,8 @@ services:
       - OP_NODE_NETWORK=manta-pacific-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=17877
-      - OP_NODE_P2P_LISTEN_UDP_PORT=17877
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16437
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16437
       - OP_NODE_P2P_STATIC_PEERS=/ip4/35.82.210.70/tcp/9003/p2p/16Uiu2HAmL4fvgBQi5jcuiEYDaNcg4hpGqCmyAv4DZuSM8f2USYwQ
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
@@ -108,7 +108,7 @@ services:
       - .jwtsecret:/jwtsecret:ro
 
 volumes:
-  manta-pacific-mainnet-op-geth-pruned-pebble-path:
+  manta-pacific-mainnet-op-geth-archive-pebble-hash:
 
 x-upstreams:
   - id: $${ID}
@@ -121,8 +121,6 @@ x-upstreams:
         - filter
     methods:
       disabled:
-        # not compatible with path state scheme
-        - name: debug_traceBlockByHash
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
