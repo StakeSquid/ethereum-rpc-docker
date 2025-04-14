@@ -26,7 +26,7 @@ services:
     environment:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://mainnet.snaxchain.io
-    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && /usr/local/bin/geth init /config/genesis.json; exec /usr/local/bin/geth "$@"' --
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init /config/genesis.json; exec geth "$@"' --
     command:
       - --datadir=/data
       - --db.engine=leveldb
