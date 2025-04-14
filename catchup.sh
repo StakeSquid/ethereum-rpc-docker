@@ -7,14 +7,13 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 s_to_human_readable() {
-    local ms=$1
-    local days=$((ms / 86400))
-    ms=$((ms % 86400))
-    local hours=$((ms / 3600))
-    ms=$((ms % 3600))
-    local minutes=$((ms / 60))
-    ms=$((ms % 60))
-    local seconds=$((ms % 60))
+    local seconds=$1
+    local days=$((seconds / 86400))
+    seconds=$((seconds % 86400))
+    local hours=$((seconds / 3600))
+    seconds=$((seconds % 3600))
+    local minutes=$((seconds / 60))
+    seconds=$((seconds % 60))
     
     printf "%d days, %02d hours, %02d minutes, %02d seconds\n" $days $hours $minutes $seconds
 }
@@ -23,56 +22,81 @@ BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
 
 seconds_to_measure=${2:-10}
-# Assume 1 block per 12 seconds as default chain block time
-chain_block_time=${3:-12}
 
 # First measurement
 latest_block_timestamp_decimal=$(./timestamp.sh $1)
 current_time=$(date +%s)
-time_difference=$((current_time - latest_block_timestamp_decimal))	       
 
-echo "Current chain head is $time_difference seconds behind real time"
-# s_to_human_readable $time_difference
-
-# Wait to measure progress
-sleep $seconds_to_measure
-
-# Second measurement
-latest_block_timestamp_decimal=$(./timestamp.sh $1)
-current_time=$(date +%s)
-time_difference2=$((current_time - latest_block_timestamp_decimal))	       
-
-# Calculate how much the gap changed
-gap_change=$((time_difference2 - time_difference))
-
-# Calculate real catchup rate (accounting for the natural progression of time)
-# The node caught up by (gap_change + seconds_to_measure) seconds in seconds_to_measure real time
-effective_progress=$((seconds_to_measure - gap_change))
-catchup_rate=$(echo "scale=4; $effective_progress / $seconds_to_measure" | bc)
-
-# Display debug info if needed
-# echo "Debug: time_difference=$time_difference, time_difference2=$time_difference2, gap_change=$gap_change"
-# echo "Debug: effective_progress=$effective_progress, catchup_rate=$catchup_rate"
-
-# Calculate time to catch up (only if actually catching up)
-if (( $(echo "$catchup_rate <= 0" | bc -l) )); then
-    echo -e "${RED}ERROR: Node is not catching up! It's falling behind by $(echo "scale=2; -1 * $catchup_rate" | bc) seconds per second.${NC}"
+# Handle the case when timestamp.sh returns a very old timestamp
+if [[ $latest_block_timestamp_decimal -lt 1000000000 ]]; then
+    echo -e "${RED}Error: Failed to get valid block timestamp (got $latest_block_timestamp_decimal)${NC}"
     exit 1
 fi
 
-# Time until caught up (if the rate continues)
-time_to_catchup=$(echo "scale=0; $time_difference2 / $catchup_rate" | bc)
+time_difference=$((current_time - latest_block_timestamp_decimal))
 
-# Check if catchup rate is enough to eventually catch up
-# The node needs to catch up faster than 1.0 to make progress
-min_required_rate=1.0
-required_rate_with_buffer=$(echo "scale=4; $min_required_rate + 0.01" | bc)  # Slight buffer
-
-if (( $(echo "$catchup_rate < $required_rate_with_buffer" | bc -l) )); then
-    echo -e "${YELLOW}WARNING: Node catchup rate ($catchup_rate times realtime) is too slow.${NC}"
-    echo -e "${YELLOW}The node needs > 1.0 to catch up, but will likely never catch up to the chain head!${NC}"
+# Check for reasonable time difference (< 1 year)
+if [[ $time_difference -lt 31536000 ]]; then
+    echo "Current chain head is $time_difference seconds behind real time"
+    s_to_human_readable $time_difference
 else
-    echo -e "${GREEN}Node catchup rate is good: $catchup_rate times realtime${NC}"
-    echo -e "${GREEN}Estimated time to sync:${NC}"
+    echo -e "${YELLOW}Warning: Block timestamp appears to be very old ($(s_to_human_readable $time_difference))${NC}"
+    echo -e "${YELLOW}This may be a historical node or there's an issue with the timestamp${NC}"
+fi
+
+# Wait to measure progress
+echo "Measuring catchup progress over $seconds_to_measure seconds..."
+sleep $seconds_to_measure
+
+# Second measurement
+latest_block_timestamp2=$(./timestamp.sh $1)
+current_time2=$(date +%s)
+
+# Handle the case when timestamp.sh returns a very old timestamp
+if [[ $latest_block_timestamp2 -lt 1000000000 ]]; then
+    echo -e "${RED}Error: Failed to get valid block timestamp on second measurement${NC}"
+    exit 1
+fi
+
+time_difference2=$((current_time2 - latest_block_timestamp2))
+
+# Calculate the gap change
+# Positive = gap increased (falling behind)
+# Negative = gap decreased (catching up)
+gap_change=$((time_difference2 - time_difference))
+
+# Check if there was any progress (did timestamp change?)
+if [[ $latest_block_timestamp_decimal -eq $latest_block_timestamp2 ]]; then
+    echo -e "${YELLOW}Warning: Block timestamp didn't change during measurement. Node may be inactive.${NC}"
+    exit 1
+fi
+
+# Calculate catch-up rate (how many seconds of blockchain time processed in 1 second real time)
+# Formula: (seconds gap decreased + seconds of real time elapsed) / seconds of real time elapsed
+effective_catchup_seconds=$((seconds_to_measure - gap_change))
+catchup_rate=$(echo "scale=3; $effective_catchup_seconds / $seconds_to_measure" | bc)
+
+echo "Debug: first_gap=$time_difference, second_gap=$time_difference2, gap_change=$gap_change"
+echo "Debug: effective_catchup_seconds=$effective_catchup_seconds, catchup_rate=$catchup_rate"
+
+# Interpret results
+if (( $(echo "$catchup_rate < 0" | bc -l) )); then
+    # Node is falling behind
+    falling_behind_rate=$(echo "scale=2; -1 * $catchup_rate" | bc)
+    echo -e "${RED}Node is FALLING BEHIND by $falling_behind_rate× realtime${NC}"
+    echo -e "${RED}The gap is increasing by $gap_change seconds over $seconds_to_measure seconds of measurement${NC}"
+    exit 1
+elif (( $(echo "$catchup_rate < 1" | bc -l) )); then
+    # Node is processing slower than realtime
+    echo -e "${YELLOW}WARNING: Node is processing at $catchup_rate× realtime${NC}"
+    echo -e "${YELLOW}This is too slow - node will never catch up to chain head${NC}"
+    exit 2
+else
+    # Node is catching up
+    echo -e "${GREEN}Node is processing at $catchup_rate× realtime${NC}"
+    # Calculate time until caught up
+    time_to_catchup=$(echo "scale=0; $time_difference2 / ($catchup_rate - 1)" | bc)
+    echo -e "${GREEN}Estimated time until synced:${NC}"
     s_to_human_readable $time_to_catchup
+    exit 0
 fi
