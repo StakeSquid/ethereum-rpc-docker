@@ -22,7 +22,6 @@ services:
       - 11169:11169/udp
     expose:
       - 8545
-      - 8551
     command:
       - --config=/config/config.toml
       - --datadir=/core/.ethereum

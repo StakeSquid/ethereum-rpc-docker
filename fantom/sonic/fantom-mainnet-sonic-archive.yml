@@ -27,7 +27,6 @@ services:
       - 13335:13335/udp
     expose:
       - 8545
-      - 8551
     environment:
       - CACHE_GB=${SONIC_CACHE_GB:-28}
       - GENESIS=https://download.fantom.network/opera/testnet/testnet-26650-rpc.g

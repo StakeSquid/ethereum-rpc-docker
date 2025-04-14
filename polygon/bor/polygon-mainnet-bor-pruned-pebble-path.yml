@@ -22,7 +22,6 @@ services:
       - 14961:14961/udp
     expose:
       - 8545
-      - 8551
     entrypoint: [bor, server]
     command:
       - --bor.heimdall=https://polygon-heimdall-rest.publicnode.com

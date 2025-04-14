@@ -22,7 +22,6 @@ services:
       - 13272:13272/udp
     expose:
       - 8545
-      - 8551
     command: --goat=testnet3
     restart: unless-stopped
     stop_grace_period: 5m

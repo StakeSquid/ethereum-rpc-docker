@@ -31,7 +31,6 @@ services:
       - 36986:36986/udp
     expose:
       - 8545
-      - 8551
     entrypoint: [erigon]
     command:
       - --beacon.api.addr=0.0.0.0

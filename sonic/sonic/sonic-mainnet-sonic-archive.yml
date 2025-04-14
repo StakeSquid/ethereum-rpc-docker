@@ -27,7 +27,6 @@ services:
       - 10658:10658/udp
     expose:
       - 8545
-      - 8551
     environment:
       - CACHE_GB=${SONIC_CACHE_GB:-28}
       - GENESIS=https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic-16500-full.g
