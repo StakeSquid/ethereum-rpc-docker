@@ -1,8 +1,4 @@
 ---
-# use at your own risk
-# True
-#
-# rootstock
 
 services:
   rootstock-mainnet-archive-client:

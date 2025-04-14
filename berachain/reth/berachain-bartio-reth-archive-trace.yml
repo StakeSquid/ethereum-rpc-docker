@@ -1,8 +1,4 @@
 ---
-# use at your own risk
-# False
-#
-# berachain
 
 services:
   berachain-bartio-archive:

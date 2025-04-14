@@ -1,8 +1,4 @@
 ---
-# use at your own risk
-# False
-#
-# op
 
 services:
   op-sepolia-archive:

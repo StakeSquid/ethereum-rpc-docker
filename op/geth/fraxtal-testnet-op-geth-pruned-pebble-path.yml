@@ -1,8 +1,4 @@
 ---
-# use at your own risk
-# True
-#
-# op
 
 services:
   fraxtal-testnet:

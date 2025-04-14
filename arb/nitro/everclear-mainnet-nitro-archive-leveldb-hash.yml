@@ -1,8 +1,4 @@
 ---
-# use at your own risk
-# True
-#
-# arb
 
 services:
   everclear-mainnet-archive:
@@ -23,7 +19,6 @@ services:
     user: root
     expose:
       - 8545
-      - 8551
     command:
       - --conf.file=/config/baseConfig.json
       - --execution.caching.archive=true
@@ -34,6 +29,7 @@ services:
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,arb,txpool,debug
       - --http.corsdomain=*
+      - --http.port=8545
       - --http.vhosts=*
       - --node.batch-poster.enable=false
       - --node.data-availability.enable=true
