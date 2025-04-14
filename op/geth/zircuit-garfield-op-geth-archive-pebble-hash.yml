@@ -34,6 +34,7 @@ services:
       - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
+      - --nodiscover
       - --port=12397
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
