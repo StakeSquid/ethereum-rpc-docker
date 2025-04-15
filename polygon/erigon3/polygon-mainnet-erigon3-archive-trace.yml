@@ -27,7 +27,6 @@ services:
       - 35400:35400/udp
     expose:
       - 8545
-      - 5555
     entrypoint: [erigon]
     command:
       - --bor.heimdall=https://polygon-heimdall-rest.publicnode.com

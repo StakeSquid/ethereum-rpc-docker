@@ -27,7 +27,6 @@ services:
       - 37377:37377/udp
     expose:
       - 8545
-      - 5555
     entrypoint: [erigon]
     command:
       - --bor.heimdall=https://polygon-amoy-heimdall-rest.publicnode.com
