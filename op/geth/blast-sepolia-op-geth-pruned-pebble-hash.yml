@@ -68,8 +68,8 @@ services:
       - traefik.http.services.blast-sepolia-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/blast-sepolia/?$`)}
-      - ${NO_SSL:+traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=PathRegex(`^/blast-sepolia/?$`)}
+      - ${NO_SSL:-traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/blast-sepolia`) || Path(`/blast-sepolia/`))}
+      - ${NO_SSL:+traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=Path(`/blast-sepolia`) || Path(`/blast-sepolia/`)}
       - traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.middlewares=blast-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
 
   blast-sepolia-node:

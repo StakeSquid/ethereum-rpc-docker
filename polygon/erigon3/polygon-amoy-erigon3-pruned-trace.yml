@@ -61,8 +61,8 @@ services:
       - traefik.http.services.polygon-amoy-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/polygon-amoy/?$`)}
-      - ${NO_SSL:+traefik.http.routers.polygon-amoy-erigon3-pruned-trace.rule=PathRegex(`^/polygon-amoy/?$`)}
+      - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/polygon-amoy`) || Path(`/polygon-amoy/`))}
+      - ${NO_SSL:+traefik.http.routers.polygon-amoy-erigon3-pruned-trace.rule=Path(`/polygon-amoy`) || Path(`/polygon-amoy/`)}
       - traefik.http.routers.polygon-amoy-erigon3-pruned-trace.middlewares=polygon-amoy-erigon3-pruned-trace-stripprefix, ipwhitelist
 
 volumes:

@@ -55,8 +55,8 @@ services:
       - traefik.http.services.arbitrum-one-nitro-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/arbitrum-one-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.rule=PathRegex(`^/arbitrum-one-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-one-archive`) || Path(`/arbitrum-one-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.rule=Path(`/arbitrum-one-archive`) || Path(`/arbitrum-one-archive/`)}
       - traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.middlewares=arbitrum-one-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

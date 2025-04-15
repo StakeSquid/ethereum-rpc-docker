@@ -71,8 +71,8 @@ services:
       - traefik.http.services.ethereum-sepolia-erigon3-minimal-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/ethereum-sepolia-minimal/?$`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=PathRegex(`^/ethereum-sepolia-minimal/?$`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia-minimal`) || Path(`/ethereum-sepolia-minimal/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Path(`/ethereum-sepolia-minimal`) || Path(`/ethereum-sepolia-minimal/`)}
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.service=ethereum-sepolia-erigon3-minimal-trace
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.service=ethereum-sepolia-erigon3-minimal-trace-node

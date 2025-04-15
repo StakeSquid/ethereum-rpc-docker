@@ -54,8 +54,8 @@ services:
       - traefik.http.services.ronin-mainnet-ronin-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/ronin-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.rule=PathRegex(`^/ronin-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/ronin-mainnet`) || Path(`/ronin-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.rule=Path(`/ronin-mainnet`) || Path(`/ronin-mainnet/`)}
       - traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.middlewares=ronin-mainnet-ronin-pruned-pebble-hash-stripprefix, ipwhitelist
 
 volumes:

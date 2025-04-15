@@ -61,8 +61,8 @@ services:
       - traefik.http.services.op-mainnet-op-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/op-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-reth-archive-trace.rule=PathRegex(`^/op-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-reth-archive-trace.rule=Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`)}
       - traefik.http.routers.op-mainnet-op-reth-archive-trace.middlewares=op-mainnet-op-reth-archive-trace-stripprefix, ipwhitelist
 
   op-mainnet-archive-node:

@@ -62,8 +62,8 @@ services:
       - traefik.http.services.avalanche-mainnet-go-pruned-pebbledb.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.rule=Host(`$DOMAIN`) && PathRegex(`^/avalanche-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.rule=PathRegex(`^/avalanche-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.rule=Host(`$DOMAIN`) && (Path(`/avalanche-mainnet`) || Path(`/avalanche-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.rule=Path(`/avalanche-mainnet`) || Path(`/avalanche-mainnet/`)}
       - traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.middlewares=avalanche-mainnet-go-pruned-pebbledb-stripprefix, ipwhitelist
 
 volumes:

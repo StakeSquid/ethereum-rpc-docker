@@ -40,8 +40,8 @@ services:
       - traefik.http.services.thundercore-zeus-thunder-pruned-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/thundercore-zeus/?$`)}
-      - ${NO_SSL:+traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.rule=PathRegex(`^/thundercore-zeus/?$`)}
+      - ${NO_SSL:-traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/thundercore-zeus`) || Path(`/thundercore-zeus/`))}
+      - ${NO_SSL:+traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.rule=Path(`/thundercore-zeus`) || Path(`/thundercore-zeus/`)}
       - traefik.http.routers.thundercore-zeus-thunder-pruned-leveldb-hash.middlewares=thundercore-zeus-thunder-pruned-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

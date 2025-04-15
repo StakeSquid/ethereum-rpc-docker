@@ -65,8 +65,8 @@ services:
       - traefik.http.services.ink-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/ink-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.rule=PathRegex(`^/ink-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/ink-mainnet`) || Path(`/ink-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.rule=Path(`/ink-mainnet`) || Path(`/ink-mainnet/`)}
       - traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.middlewares=ink-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   ink-mainnet-node:

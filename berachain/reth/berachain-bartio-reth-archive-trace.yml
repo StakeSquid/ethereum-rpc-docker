@@ -67,8 +67,8 @@ services:
       - traefik.http.services.berachain-bartio-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/berachain-bartio-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.berachain-bartio-reth-archive-trace.rule=PathRegex(`^/berachain-bartio-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/berachain-bartio-archive`) || Path(`/berachain-bartio-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.berachain-bartio-reth-archive-trace.rule=Path(`/berachain-bartio-archive`) || Path(`/berachain-bartio-archive/`)}
       - traefik.http.routers.berachain-bartio-reth-archive-trace.middlewares=berachain-bartio-reth-archive-trace-stripprefix, ipwhitelist
 
   berachain-bartio-archive-node:

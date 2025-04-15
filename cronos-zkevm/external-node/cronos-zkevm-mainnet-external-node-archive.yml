@@ -78,8 +78,8 @@ services:
       - traefik.http.services.cronos-zkevm-mainnet-external-node-archive.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-archive.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-archive.rule=Host(`$DOMAIN`) && PathRegex(`^/cronos-zkevm-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.cronos-zkevm-mainnet-external-node-archive.rule=PathRegex(`^/cronos-zkevm-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-archive.rule=Host(`$DOMAIN`) && (Path(`/cronos-zkevm-mainnet-archive`) || Path(`/cronos-zkevm-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.cronos-zkevm-mainnet-external-node-archive.rule=Path(`/cronos-zkevm-mainnet-archive`) || Path(`/cronos-zkevm-mainnet-archive/`)}
       - traefik.http.routers.cronos-zkevm-mainnet-external-node-archive.middlewares=cronos-zkevm-mainnet-external-node-archive-stripprefix, ipwhitelist
 
   cronos-zkevm-mainnet-archive-db:

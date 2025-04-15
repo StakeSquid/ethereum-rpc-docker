@@ -69,8 +69,8 @@ services:
       - traefik.http.services.lisk-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/lisk-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-path.rule=PathRegex(`^/lisk-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/lisk-mainnet`) || Path(`/lisk-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-path.rule=Path(`/lisk-mainnet`) || Path(`/lisk-mainnet/`)}
       - traefik.http.routers.lisk-mainnet-op-geth-pruned-pebble-path.middlewares=lisk-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   lisk-mainnet-node:

@@ -68,8 +68,8 @@ services:
       - traefik.http.services.zircuit-garfield-op-geth-archive-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-archive-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-archive-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/zircuit-garfield-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.zircuit-garfield-op-geth-archive-pebble-hash.rule=PathRegex(`^/zircuit-garfield-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/zircuit-garfield-archive`) || Path(`/zircuit-garfield-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.zircuit-garfield-op-geth-archive-pebble-hash.rule=Path(`/zircuit-garfield-archive`) || Path(`/zircuit-garfield-archive/`)}
       - traefik.http.routers.zircuit-garfield-op-geth-archive-pebble-hash.middlewares=zircuit-garfield-op-geth-archive-pebble-hash-stripprefix, ipwhitelist
 
   zircuit-garfield-archive-node:

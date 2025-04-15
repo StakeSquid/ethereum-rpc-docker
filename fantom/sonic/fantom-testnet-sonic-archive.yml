@@ -63,8 +63,8 @@ services:
       - traefik.http.services.fantom-testnet-sonic-archive.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-sonic-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-sonic-archive.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.fantom-testnet-sonic-archive.rule=Host(`$DOMAIN`) && PathRegex(`^/fantom-testnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.fantom-testnet-sonic-archive.rule=PathRegex(`^/fantom-testnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.fantom-testnet-sonic-archive.rule=Host(`$DOMAIN`) && (Path(`/fantom-testnet-archive`) || Path(`/fantom-testnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.fantom-testnet-sonic-archive.rule=Path(`/fantom-testnet-archive`) || Path(`/fantom-testnet-archive/`)}
       - traefik.http.routers.fantom-testnet-sonic-archive.middlewares=fantom-testnet-sonic-archive-stripprefix, ipwhitelist
 
 volumes:

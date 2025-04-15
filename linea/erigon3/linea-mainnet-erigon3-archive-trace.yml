@@ -63,8 +63,8 @@ services:
       - traefik.http.services.linea-mainnet-erigon3-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/linea-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=PathRegex(`^/linea-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/linea-mainnet-archive`) || Path(`/linea-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-archive-trace.rule=Path(`/linea-mainnet-archive`) || Path(`/linea-mainnet-archive/`)}
       - traefik.http.routers.linea-mainnet-erigon3-archive-trace.middlewares=linea-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist
 
 volumes:

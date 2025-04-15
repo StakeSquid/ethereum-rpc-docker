@@ -61,8 +61,8 @@ services:
       - traefik.http.services.op-sepolia-op-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/op-sepolia-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.op-sepolia-op-reth-archive-trace.rule=PathRegex(`^/op-sepolia-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/op-sepolia-archive`) || Path(`/op-sepolia-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.op-sepolia-op-reth-archive-trace.rule=Path(`/op-sepolia-archive`) || Path(`/op-sepolia-archive/`)}
       - traefik.http.routers.op-sepolia-op-reth-archive-trace.middlewares=op-sepolia-op-reth-archive-trace-stripprefix, ipwhitelist
 
   op-sepolia-archive-node:

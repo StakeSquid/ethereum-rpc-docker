@@ -74,8 +74,8 @@ services:
       - traefik.http.services.zksync-era-mainnet-external-node-archive.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-archive.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-archive.rule=Host(`$DOMAIN`) && PathRegex(`^/zksync-era-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.zksync-era-mainnet-external-node-archive.rule=PathRegex(`^/zksync-era-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-archive.rule=Host(`$DOMAIN`) && (Path(`/zksync-era-mainnet-archive`) || Path(`/zksync-era-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.zksync-era-mainnet-external-node-archive.rule=Path(`/zksync-era-mainnet-archive`) || Path(`/zksync-era-mainnet-archive/`)}
       - traefik.http.routers.zksync-era-mainnet-external-node-archive.middlewares=zksync-era-mainnet-external-node-archive-stripprefix, ipwhitelist
 
   zksync-era-mainnet-archive-db:

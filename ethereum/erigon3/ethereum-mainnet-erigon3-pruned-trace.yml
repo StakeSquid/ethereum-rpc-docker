@@ -71,8 +71,8 @@ services:
       - traefik.http.services.ethereum-mainnet-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/ethereum-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=PathRegex(`^/ethereum-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet`) || Path(`/ethereum-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=Path(`/ethereum-mainnet`) || Path(`/ethereum-mainnet/`)}
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.middlewares=ethereum-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.service=ethereum-mainnet-erigon3-pruned-trace
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.service=ethereum-mainnet-erigon3-pruned-trace-node

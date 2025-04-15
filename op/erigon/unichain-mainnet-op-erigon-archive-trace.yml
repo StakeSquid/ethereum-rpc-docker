@@ -63,8 +63,8 @@ services:
       - traefik.http.services.unichain-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/unichain-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.rule=PathRegex(`^/unichain-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/unichain-mainnet-archive`) || Path(`/unichain-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.rule=Path(`/unichain-mainnet-archive`) || Path(`/unichain-mainnet-archive/`)}
       - traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.middlewares=unichain-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   unichain-mainnet-archive-node:

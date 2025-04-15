@@ -60,8 +60,8 @@ services:
       - traefik.http.services.ethereum-sepolia-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/ethereum-sepolia-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=PathRegex(`^/ethereum-sepolia-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia-archive`) || Path(`/ethereum-sepolia-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Path(`/ethereum-sepolia-archive`) || Path(`/ethereum-sepolia-archive/`)}
       - traefik.http.routers.ethereum-sepolia-reth-archive-trace.middlewares=ethereum-sepolia-reth-archive-trace-stripprefix, ipwhitelist
 
   ethereum-sepolia-archive-node:

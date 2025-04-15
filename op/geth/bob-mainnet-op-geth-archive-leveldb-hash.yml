@@ -67,8 +67,8 @@ services:
       - traefik.http.services.bob-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/bob-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash.rule=PathRegex(`^/bob-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/bob-mainnet-archive`) || Path(`/bob-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash.rule=Path(`/bob-mainnet-archive`) || Path(`/bob-mainnet-archive/`)}
       - traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash.middlewares=bob-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   bob-mainnet-archive-node:

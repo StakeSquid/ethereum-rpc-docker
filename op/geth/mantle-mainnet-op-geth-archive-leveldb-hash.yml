@@ -66,8 +66,8 @@ services:
       - traefik.http.services.mantle-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/mantle-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.rule=PathRegex(`^/mantle-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/mantle-mainnet-archive`) || Path(`/mantle-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.rule=Path(`/mantle-mainnet-archive`) || Path(`/mantle-mainnet-archive/`)}
       - traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.middlewares=mantle-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   mantle-mainnet-archive-node:

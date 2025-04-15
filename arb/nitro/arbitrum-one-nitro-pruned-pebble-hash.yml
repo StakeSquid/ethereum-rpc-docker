@@ -55,8 +55,8 @@ services:
       - traefik.http.services.arbitrum-one-nitro-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/arbitrum-one/?$`)}
-      - ${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.rule=PathRegex(`^/arbitrum-one/?$`)}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-one`) || Path(`/arbitrum-one/`))}
+      - ${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.rule=Path(`/arbitrum-one`) || Path(`/arbitrum-one/`)}
       - traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.middlewares=arbitrum-one-nitro-pruned-pebble-hash-stripprefix, ipwhitelist
 
 volumes:

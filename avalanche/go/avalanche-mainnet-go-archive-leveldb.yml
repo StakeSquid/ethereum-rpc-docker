@@ -62,8 +62,8 @@ services:
       - traefik.http.services.avalanche-mainnet-go-archive-leveldb.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-archive-leveldb.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-archive-leveldb.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-archive-leveldb.rule=Host(`$DOMAIN`) && PathRegex(`^/avalanche-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-archive-leveldb.rule=PathRegex(`^/avalanche-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-archive-leveldb.rule=Host(`$DOMAIN`) && (Path(`/avalanche-mainnet-archive`) || Path(`/avalanche-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-archive-leveldb.rule=Path(`/avalanche-mainnet-archive`) || Path(`/avalanche-mainnet-archive/`)}
       - traefik.http.routers.avalanche-mainnet-go-archive-leveldb.middlewares=avalanche-mainnet-go-archive-leveldb-stripprefix, ipwhitelist
 
 volumes:

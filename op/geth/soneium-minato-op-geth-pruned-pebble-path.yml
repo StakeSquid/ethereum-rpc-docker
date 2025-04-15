@@ -65,8 +65,8 @@ services:
       - traefik.http.services.soneium-minato-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/soneium-minato/?$`)}
-      - ${NO_SSL:+traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.rule=PathRegex(`^/soneium-minato/?$`)}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/soneium-minato`) || Path(`/soneium-minato/`))}
+      - ${NO_SSL:+traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.rule=Path(`/soneium-minato`) || Path(`/soneium-minato/`)}
       - traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.middlewares=soneium-minato-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   soneium-minato-node:

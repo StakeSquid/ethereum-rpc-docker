@@ -63,8 +63,8 @@ services:
       - traefik.http.services.swell-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/swell-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.swell-mainnet-op-erigon-archive-trace.rule=PathRegex(`^/swell-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/swell-mainnet-archive`) || Path(`/swell-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.swell-mainnet-op-erigon-archive-trace.rule=Path(`/swell-mainnet-archive`) || Path(`/swell-mainnet-archive/`)}
       - traefik.http.routers.swell-mainnet-op-erigon-archive-trace.middlewares=swell-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   swell-mainnet-archive-node:

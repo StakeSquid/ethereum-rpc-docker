@@ -71,8 +71,8 @@ services:
       - traefik.http.services.ethereum-sepolia-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/ethereum-sepolia/?$`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.rule=PathRegex(`^/ethereum-sepolia/?$`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia`) || Path(`/ethereum-sepolia/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.rule=Path(`/ethereum-sepolia`) || Path(`/ethereum-sepolia/`)}
       - traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.middlewares=ethereum-sepolia-erigon3-pruned-trace-stripprefix, ipwhitelist
       - traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.service=ethereum-sepolia-erigon3-pruned-trace
       - traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace-node.service=ethereum-sepolia-erigon3-pruned-trace-node

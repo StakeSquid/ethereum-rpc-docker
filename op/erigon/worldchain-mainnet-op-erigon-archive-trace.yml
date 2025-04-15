@@ -63,8 +63,8 @@ services:
       - traefik.http.services.worldchain-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/worldchain-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.rule=PathRegex(`^/worldchain-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/worldchain-mainnet-archive`) || Path(`/worldchain-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.rule=Path(`/worldchain-mainnet-archive`) || Path(`/worldchain-mainnet-archive/`)}
       - traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.middlewares=worldchain-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   worldchain-mainnet-archive-node:

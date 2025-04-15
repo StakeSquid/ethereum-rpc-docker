@@ -61,8 +61,8 @@ services:
       - traefik.http.services.connext-sepolia-nitro-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/connext-sepolia-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.rule=PathRegex(`^/connext-sepolia-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/connext-sepolia-archive`) || Path(`/connext-sepolia-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.rule=Path(`/connext-sepolia-archive`) || Path(`/connext-sepolia-archive/`)}
       - traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.middlewares=connext-sepolia-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

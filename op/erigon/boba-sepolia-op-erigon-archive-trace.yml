@@ -63,8 +63,8 @@ services:
       - traefik.http.services.boba-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/boba-sepolia-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=PathRegex(`^/boba-sepolia-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/boba-sepolia-archive`) || Path(`/boba-sepolia-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Path(`/boba-sepolia-archive`) || Path(`/boba-sepolia-archive/`)}
       - traefik.http.routers.boba-sepolia-op-erigon-archive-trace.middlewares=boba-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   boba-sepolia-archive-node:

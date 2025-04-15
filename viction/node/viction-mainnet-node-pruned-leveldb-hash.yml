@@ -62,8 +62,8 @@ services:
       - traefik.http.services.viction-mainnet-node-pruned-leveldb-hash.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/viction-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.rule=PathRegex(`^/viction-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/viction-mainnet`) || Path(`/viction-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.rule=Path(`/viction-mainnet`) || Path(`/viction-mainnet/`)}
       - traefik.http.routers.viction-mainnet-node-pruned-leveldb-hash.middlewares=viction-mainnet-node-pruned-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

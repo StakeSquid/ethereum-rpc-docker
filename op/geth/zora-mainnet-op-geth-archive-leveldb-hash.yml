@@ -67,8 +67,8 @@ services:
       - traefik.http.services.zora-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/zora-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.rule=PathRegex(`^/zora-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/zora-mainnet-archive`) || Path(`/zora-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.rule=Path(`/zora-mainnet-archive`) || Path(`/zora-mainnet-archive/`)}
       - traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.middlewares=zora-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   zora-mainnet-archive-node:

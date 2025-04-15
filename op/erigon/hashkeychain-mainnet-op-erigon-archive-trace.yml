@@ -63,8 +63,8 @@ services:
       - traefik.http.services.hashkeychain-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/hashkeychain-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.rule=PathRegex(`^/hashkeychain-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/hashkeychain-mainnet-archive`) || Path(`/hashkeychain-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.rule=Path(`/hashkeychain-mainnet-archive`) || Path(`/hashkeychain-mainnet-archive/`)}
       - traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.middlewares=hashkeychain-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   hashkeychain-mainnet-archive-node:

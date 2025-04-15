@@ -63,8 +63,8 @@ services:
       - traefik.http.services.metal-sepolia-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/metal-sepolia-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash.rule=PathRegex(`^/metal-sepolia-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/metal-sepolia-archive`) || Path(`/metal-sepolia-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash.rule=Path(`/metal-sepolia-archive`) || Path(`/metal-sepolia-archive/`)}
       - traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash.middlewares=metal-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   metal-sepolia-archive-node:
