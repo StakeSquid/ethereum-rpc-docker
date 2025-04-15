@@ -67,8 +67,8 @@ services:
       - traefik.http.services.bob-mainnet-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/bob-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-hash.rule=PathRegexp(`^/bob-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/bob-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-hash.rule=PathRegex(`^/bob-mainnet/?$`)}
       - traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-hash.middlewares=bob-mainnet-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
 
   bob-mainnet-node:

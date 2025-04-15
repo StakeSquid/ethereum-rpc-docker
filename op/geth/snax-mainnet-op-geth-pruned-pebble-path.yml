@@ -67,8 +67,8 @@ services:
       - traefik.http.services.snax-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/snax-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.rule=PathRegexp(`^/snax-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/snax-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.rule=PathRegex(`^/snax-mainnet/?$`)}
       - traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.middlewares=snax-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   snax-mainnet-node:

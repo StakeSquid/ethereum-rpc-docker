@@ -61,8 +61,8 @@ services:
       - traefik.http.services.alephzero-mainnet-nitro-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/alephzero-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=PathRegexp(`^/alephzero-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/alephzero-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=PathRegex(`^/alephzero-mainnet/?$`)}
       - traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.middlewares=alephzero-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:

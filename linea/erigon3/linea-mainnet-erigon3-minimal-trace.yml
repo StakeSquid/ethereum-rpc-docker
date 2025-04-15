@@ -63,8 +63,8 @@ services:
       - traefik.http.services.linea-mainnet-erigon3-minimal-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/linea-mainnet-minimal/?$`)}
-      - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=PathRegexp(`^/linea-mainnet-minimal/?$`)}
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/linea-mainnet-minimal/?$`)}
+      - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=PathRegex(`^/linea-mainnet-minimal/?$`)}
       - traefik.http.routers.linea-mainnet-erigon3-minimal-trace.middlewares=linea-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
 
 volumes:

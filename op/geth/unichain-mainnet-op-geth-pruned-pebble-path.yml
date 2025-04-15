@@ -65,8 +65,8 @@ services:
       - traefik.http.services.unichain-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/unichain-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.rule=PathRegexp(`^/unichain-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/unichain-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.rule=PathRegex(`^/unichain-mainnet/?$`)}
       - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.middlewares=unichain-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   unichain-mainnet-node:

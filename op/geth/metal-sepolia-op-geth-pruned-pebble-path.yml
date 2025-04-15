@@ -63,8 +63,8 @@ services:
       - traefik.http.services.metal-sepolia-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/metal-sepolia/?$`)}
-      - ${NO_SSL:+traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.rule=PathRegexp(`^/metal-sepolia/?$`)}
+      - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/metal-sepolia/?$`)}
+      - ${NO_SSL:+traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.rule=PathRegex(`^/metal-sepolia/?$`)}
       - traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.middlewares=metal-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   metal-sepolia-node:

@@ -60,8 +60,8 @@ services:
       - traefik.http.services.bsc-chapel-bsc-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/bsc-chapel/?$`)}
-      - ${NO_SSL:+traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.rule=PathRegexp(`^/bsc-chapel/?$`)}
+      - ${NO_SSL:-traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/bsc-chapel/?$`)}
+      - ${NO_SSL:+traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.rule=PathRegex(`^/bsc-chapel/?$`)}
       - traefik.http.routers.bsc-chapel-bsc-pruned-pebble-path.middlewares=bsc-chapel-bsc-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:

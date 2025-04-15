@@ -37,8 +37,8 @@ services:
       - traefik.http.services.goat-testnet3-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/goat-testnet3-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.rule=PathRegexp(`^/goat-testnet3-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/goat-testnet3-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.rule=PathRegex(`^/goat-testnet3-archive/?$`)}
       - traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.middlewares=goat-testnet3-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

@@ -83,8 +83,8 @@ services:
       - traefik.http.services.lens-mainnet-external-node-pruned.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.lens-mainnet-external-node-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.lens-mainnet-external-node-pruned.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.lens-mainnet-external-node-pruned.rule=Host(`$DOMAIN`) && PathRegexp(`^/lens-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.lens-mainnet-external-node-pruned.rule=PathRegexp(`^/lens-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.lens-mainnet-external-node-pruned.rule=Host(`$DOMAIN`) && PathRegex(`^/lens-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.lens-mainnet-external-node-pruned.rule=PathRegex(`^/lens-mainnet/?$`)}
       - traefik.http.routers.lens-mainnet-external-node-pruned.middlewares=lens-mainnet-external-node-pruned-stripprefix, ipwhitelist
 
   lens-mainnet-db:

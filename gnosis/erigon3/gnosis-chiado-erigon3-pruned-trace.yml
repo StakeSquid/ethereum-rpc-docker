@@ -71,8 +71,8 @@ services:
       - traefik.http.services.gnosis-chiado-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/gnosis-chiado/?$`)}
-      - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.rule=PathRegexp(`^/gnosis-chiado/?$`)}
+      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/gnosis-chiado/?$`)}
+      - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.rule=PathRegex(`^/gnosis-chiado/?$`)}
       - traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.middlewares=gnosis-chiado-erigon3-pruned-trace-stripprefix, ipwhitelist
       - traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.service=gnosis-chiado-erigon3-pruned-trace
       - traefik.http.routers.gnosis-chiado-erigon3-pruned-trace-node.service=gnosis-chiado-erigon3-pruned-trace-node

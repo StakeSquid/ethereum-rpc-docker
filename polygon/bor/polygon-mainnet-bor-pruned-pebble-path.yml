@@ -61,8 +61,8 @@ services:
       - traefik.http.services.polygon-mainnet-bor-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/polygon-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.rule=PathRegexp(`^/polygon-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/polygon-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.rule=PathRegex(`^/polygon-mainnet/?$`)}
       - traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.middlewares=polygon-mainnet-bor-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:

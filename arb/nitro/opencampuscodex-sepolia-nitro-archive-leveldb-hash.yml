@@ -60,8 +60,8 @@ services:
       - traefik.http.services.opencampuscodex-sepolia-nitro-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/opencampuscodex-sepolia-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.rule=PathRegexp(`^/opencampuscodex-sepolia-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/opencampuscodex-sepolia-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.rule=PathRegex(`^/opencampuscodex-sepolia-archive/?$`)}
       - traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.middlewares=opencampuscodex-sepolia-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

@@ -60,8 +60,8 @@ services:
       - traefik.http.services.core-mainnet-core-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.core-mainnet-core-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.core-mainnet-core-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.core-mainnet-core-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/core-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.core-mainnet-core-archive-leveldb-hash.rule=PathRegexp(`^/core-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.core-mainnet-core-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/core-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.core-mainnet-core-archive-leveldb-hash.rule=PathRegex(`^/core-mainnet-archive/?$`)}
       - traefik.http.routers.core-mainnet-core-archive-leveldb-hash.middlewares=core-mainnet-core-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

@@ -65,8 +65,8 @@ services:
       - traefik.http.services.metal-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/metal-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.rule=PathRegexp(`^/metal-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/metal-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.rule=PathRegex(`^/metal-mainnet/?$`)}
       - traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.middlewares=metal-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   metal-mainnet-node:

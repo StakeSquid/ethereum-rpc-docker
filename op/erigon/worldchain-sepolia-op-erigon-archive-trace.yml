@@ -63,8 +63,8 @@ services:
       - traefik.http.services.worldchain-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.worldchain-sepolia-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.worldchain-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.worldchain-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/worldchain-sepolia-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.worldchain-sepolia-op-erigon-archive-trace.rule=PathRegexp(`^/worldchain-sepolia-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.worldchain-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/worldchain-sepolia-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.worldchain-sepolia-op-erigon-archive-trace.rule=PathRegex(`^/worldchain-sepolia-archive/?$`)}
       - traefik.http.routers.worldchain-sepolia-op-erigon-archive-trace.middlewares=worldchain-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   worldchain-sepolia-archive-node:

@@ -60,8 +60,8 @@ services:
       - traefik.http.services.ethereum-mainnet-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/ethereum-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=PathRegexp(`^/ethereum-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/ethereum-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=PathRegex(`^/ethereum-mainnet-archive/?$`)}
       - traefik.http.routers.ethereum-mainnet-reth-archive-trace.middlewares=ethereum-mainnet-reth-archive-trace-stripprefix, ipwhitelist
 
   ethereum-mainnet-archive-node:

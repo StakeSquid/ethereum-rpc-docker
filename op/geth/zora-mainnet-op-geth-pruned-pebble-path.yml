@@ -67,8 +67,8 @@ services:
       - traefik.http.services.zora-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/zora-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-geth-pruned-pebble-path.rule=PathRegexp(`^/zora-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/zora-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-geth-pruned-pebble-path.rule=PathRegex(`^/zora-mainnet/?$`)}
       - traefik.http.routers.zora-mainnet-op-geth-pruned-pebble-path.middlewares=zora-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   zora-mainnet-node:

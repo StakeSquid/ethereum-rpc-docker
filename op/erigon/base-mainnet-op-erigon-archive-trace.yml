@@ -63,8 +63,8 @@ services:
       - traefik.http.services.base-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.base-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.base-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/base-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.base-mainnet-op-erigon-archive-trace.rule=PathRegexp(`^/base-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/base-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.base-mainnet-op-erigon-archive-trace.rule=PathRegex(`^/base-mainnet-archive/?$`)}
       - traefik.http.routers.base-mainnet-op-erigon-archive-trace.middlewares=base-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   base-mainnet-archive-node:

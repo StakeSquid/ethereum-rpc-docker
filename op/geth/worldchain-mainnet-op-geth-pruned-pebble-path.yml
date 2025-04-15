@@ -65,8 +65,8 @@ services:
       - traefik.http.services.worldchain-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/worldchain-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.worldchain-mainnet-op-geth-pruned-pebble-path.rule=PathRegexp(`^/worldchain-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/worldchain-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.worldchain-mainnet-op-geth-pruned-pebble-path.rule=PathRegex(`^/worldchain-mainnet/?$`)}
       - traefik.http.routers.worldchain-mainnet-op-geth-pruned-pebble-path.middlewares=worldchain-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   worldchain-mainnet-node:

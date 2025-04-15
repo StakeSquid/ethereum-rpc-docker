@@ -61,8 +61,8 @@ services:
       - traefik.http.services.real-mainnet-nitro-archive-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/real-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.rule=PathRegexp(`^/real-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/real-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.rule=PathRegex(`^/real-mainnet-archive/?$`)}
       - traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.middlewares=real-mainnet-nitro-archive-pebble-hash-stripprefix, ipwhitelist
 
 volumes:

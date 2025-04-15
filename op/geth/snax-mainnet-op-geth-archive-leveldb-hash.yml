@@ -67,8 +67,8 @@ services:
       - traefik.http.services.snax-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/snax-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash.rule=PathRegexp(`^/snax-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/snax-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash.rule=PathRegex(`^/snax-mainnet-archive/?$`)}
       - traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash.middlewares=snax-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   snax-mainnet-archive-node:

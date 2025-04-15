@@ -37,8 +37,8 @@ services:
       - traefik.http.services.haqq-mainnet-haqq-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.rule=Host(`$DOMAIN`) && PathRegexp(`^/haqq-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.haqq-mainnet-haqq-pruned.rule=PathRegexp(`^/haqq-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.rule=Host(`$DOMAIN`) && PathRegex(`^/haqq-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.haqq-mainnet-haqq-pruned.rule=PathRegex(`^/haqq-mainnet/?$`)}
       - traefik.http.routers.haqq-mainnet-haqq-pruned.middlewares=haqq-mainnet-haqq-pruned-stripprefix, ipwhitelist
 
 volumes:

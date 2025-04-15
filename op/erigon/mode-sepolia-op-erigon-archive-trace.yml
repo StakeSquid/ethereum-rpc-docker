@@ -63,8 +63,8 @@ services:
       - traefik.http.services.mode-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/mode-sepolia-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.mode-sepolia-op-erigon-archive-trace.rule=PathRegexp(`^/mode-sepolia-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/mode-sepolia-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.mode-sepolia-op-erigon-archive-trace.rule=PathRegex(`^/mode-sepolia-archive/?$`)}
       - traefik.http.routers.mode-sepolia-op-erigon-archive-trace.middlewares=mode-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   mode-sepolia-archive-node:

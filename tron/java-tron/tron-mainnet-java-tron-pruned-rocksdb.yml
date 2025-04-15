@@ -37,8 +37,8 @@ services:
       - traefik.http.services.tron-mainnet-java-tron-pruned-rocksdb.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=Host(`$DOMAIN`) && PathRegexp(`^/tron-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=PathRegexp(`^/tron-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=Host(`$DOMAIN`) && PathRegex(`^/tron-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=PathRegex(`^/tron-mainnet/?$`)}
       - traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.middlewares=tron-mainnet-java-tron-pruned-rocksdb-stripprefix, ipwhitelist
 
 volumes:

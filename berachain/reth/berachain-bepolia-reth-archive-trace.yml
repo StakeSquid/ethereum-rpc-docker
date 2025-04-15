@@ -67,8 +67,8 @@ services:
       - traefik.http.services.berachain-bepolia-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/berachain-bepolia-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.berachain-bepolia-reth-archive-trace.rule=PathRegexp(`^/berachain-bepolia-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/berachain-bepolia-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.berachain-bepolia-reth-archive-trace.rule=PathRegex(`^/berachain-bepolia-archive/?$`)}
       - traefik.http.routers.berachain-bepolia-reth-archive-trace.middlewares=berachain-bepolia-reth-archive-trace-stripprefix, ipwhitelist
 
   berachain-bepolia-archive-node:

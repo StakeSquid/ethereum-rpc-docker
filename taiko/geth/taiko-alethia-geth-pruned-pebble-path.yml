@@ -68,8 +68,8 @@ services:
       - traefik.http.services.taiko-alethia-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/taiko-alethia/?$`)}
-      - ${NO_SSL:+traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.rule=PathRegexp(`^/taiko-alethia/?$`)}
+      - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/taiko-alethia/?$`)}
+      - ${NO_SSL:+traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.rule=PathRegex(`^/taiko-alethia/?$`)}
       - traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.middlewares=taiko-alethia-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   taiko-alethia-node:

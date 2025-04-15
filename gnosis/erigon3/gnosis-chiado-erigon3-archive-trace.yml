@@ -71,8 +71,8 @@ services:
       - traefik.http.services.gnosis-chiado-erigon3-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/gnosis-chiado-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=PathRegexp(`^/gnosis-chiado-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/gnosis-chiado-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=PathRegex(`^/gnosis-chiado-archive/?$`)}
       - traefik.http.routers.gnosis-chiado-erigon3-archive-trace.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipwhitelist
       - traefik.http.routers.gnosis-chiado-erigon3-archive-trace.service=gnosis-chiado-erigon3-archive-trace
       - traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.service=gnosis-chiado-erigon3-archive-trace-node

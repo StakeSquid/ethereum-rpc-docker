@@ -67,8 +67,8 @@ services:
       - traefik.http.services.berachain-mainnet-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.berachain-mainnet-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.berachain-mainnet-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.berachain-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/berachain-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.berachain-mainnet-reth-archive-trace.rule=PathRegexp(`^/berachain-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.berachain-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegex(`^/berachain-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.berachain-mainnet-reth-archive-trace.rule=PathRegex(`^/berachain-mainnet-archive/?$`)}
       - traefik.http.routers.berachain-mainnet-reth-archive-trace.middlewares=berachain-mainnet-reth-archive-trace-stripprefix, ipwhitelist
 
   berachain-mainnet-archive-node:

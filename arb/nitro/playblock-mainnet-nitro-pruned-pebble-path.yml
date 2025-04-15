@@ -60,8 +60,8 @@ services:
       - traefik.http.services.playblock-mainnet-nitro-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/playblock-mainnet/?$`)}
-      - ${NO_SSL:+traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.rule=PathRegexp(`^/playblock-mainnet/?$`)}
+      - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegex(`^/playblock-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.rule=PathRegex(`^/playblock-mainnet/?$`)}
       - traefik.http.routers.playblock-mainnet-nitro-pruned-pebble-path.middlewares=playblock-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:

@@ -59,8 +59,8 @@ services:
       - traefik.http.services.scroll-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/scroll-mainnet-archive/?$`)}
-      - ${NO_SSL:+traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.rule=PathRegexp(`^/scroll-mainnet-archive/?$`)}
+      - ${NO_SSL:-traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegex(`^/scroll-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.rule=PathRegex(`^/scroll-mainnet-archive/?$`)}
       - traefik.http.routers.scroll-mainnet-l2geth-archive-leveldb-hash.middlewares=scroll-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:
