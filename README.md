@@ -71,7 +71,7 @@ docker compose up -d
 
 The default ports are defined in the templates. They are randomised to avoid conflicts. Some configurations can require 7 ports to be opened for P2P discovery. Docker will override any UFW firewall rule that you define on the host. You should prevent the containers to try to reach out to other nodes on local IP ranges.
 
-You can use the following service definition as a starting point. Replace the chains_subnet with the subnet of your network. Default is 192.168.0.0/26.
+You can use the following service definition as a starting point. Replace the {{ chains_subnet }} with the subnet of your network. Default is 192.168.0.0/26.
 
 ```
 [Unit]
