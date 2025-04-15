@@ -67,6 +67,50 @@ To start nodes defined in your `.env` file:
 docker compose up -d
 ```
 
+### Ports
+
+The default ports are defined in the templates. They are randomised to avoid conflicts. Some configurations can require 7 ports to be opened for P2P discovery. Docker will override any UFW firewall rule that you define on the host. You should prevent the containers to try to reach out to other nodes on local IP ranges.
+
+You can use the following service definition as a starting point. Replace the chains_subnet with the subnet of your network. Default is 192.168.0.0/26.
+
+```
+[Unit]
+Description= iptables firewall docker fix
+After=docker.service
+
+[Service]
+ExecStart=/usr/local/bin/iptables-firewall.sh start
+RemainAfterExit=true
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+#!/bin/bash
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+
+# Flush existing rules in the DOCKER-USER chain
+# this is potentially dangerous if other scripts write in that chain too but for now this should be the only one
+iptables -F DOCKER-USER
+
+# block heise.de to test it's working. ./ping.sh heise.de will ping from a container in the subnet.
+iptables -I DOCKER-USER -s {{ chains_subnet }} -d 193.99.144.80/32  -j REJECT
+
+# block local networks
+iptables -I DOCKER-USER -s {{ chains_subnet }} -d 192.168.0.0/16  -j REJECT
+iptables -I DOCKER-USER -s {{ chains_subnet }} -d 172.16.0.0/12 -j REJECT
+iptables -I DOCKER-USER -s {{ chains_subnet }} -d 10.0.0.0/8 -j REJECT
+
+# accept the subnet so containers can reach each other.
+iptables -I DOCKER-USER -s {{ chains_subnet }} -d {{ chains_subnet }}  -j ACCEPT
+
+# I don't know why that is
+iptables -I DOCKER-USER -s {{ chains_subnet }} -d 10.13.13.0/24  -j ACCEPT 
+```
+
+
 ### Node Structure
 
 In general Nodes can have one or all of the following components:
@@ -82,6 +126,11 @@ The simplest examples have only a client. The compose files define one entrypoin
 In the root folder of this repository you can find convenience yml files which are symlinks to specific compose files. The naming  for the symlinks follow the principle {network_name}-{chain_name}.yml which leaves the client and bd type unspecified so they are defaults.
 
 
+### Syncing
+
+The configurations aim to work standalone restoring state as much as possible from public sources. Using snapshots can help syncing faster. For some configurations it's not reasonably possible to maintain a version that can be bootstrapped from scratch using only the compose file.
+
+
 ### Naming conventions
 
 - default client is the default client for the network. Usually it's geth or op-geth.
@@ -94,14 +143,13 @@ In the root folder of this repository you can find convenience yml files which a
 - default db is postgres
 - default proxy is nginx
 
+#### Node features
 
-### Container names
+The idea is to assume a default node configuration that is able to drive the execution client. In case the beacon node database has special features then the file name would include the features after a double hyphen. e.g. `ethereum-mainnet-geth-pruned-pebble-hash--lighthouse-pruned-blobs.yml` would be a node that has a pruned execution client and a pruned beacon node database with a complete blob history.
+
+#### Container names
 
 The docker containers are generally named using the base name and the component suffix. The base name is generally the network name and the chain name and the sync mode archive in case of archive nodes. The rationale is that it doesn't make sense to run 2 pruned nodes for the same chain on the same machine as well as 2 archive nodes for the same chain. The volumes that are created in /var/lib/docker/volumes are using the full name of the node including the sync mode and database features. This is to allow switching out the implementation of parts of the configuration and not causing conflicts, e.g. exchanging prysm for nimbus as node implementation but keep using the same exection client. Environment variables are also using the full name of the component that they are defined for.
-
-### Syncing
-
-The configurations aim to work standalone restoring state as much as possible from public sources. Using snapshots can help syncing faster. For some configurations it's not reasonably possible to maintain a version that can be bootstrapped from scratch using only the compose file.
 
 
 ## Utility Scripts

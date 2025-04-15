@@ -7,6 +7,7 @@ GENERATE_ID_FROM_PATH_EXPRESSION=${GENERATE_ID_FROM_PATH_EXPRESSION:-'s/^rpc-(.*
 
 LOCAL=${1:-false}
 # make it always false beacuse I don't know yet how to handle multiple upstreams for local nodes
+# TODO: fix this by using a proxy that mounts the beacon nodes to the gateway as promised in the readme: 1 entrypoint only
 LOCAL=false
 
 if [ -n "$NO_SSL" ]; then
