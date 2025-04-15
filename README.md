@@ -279,10 +279,8 @@ This system includes support for DRPC (Decentralized RPC) integration, allowing 
 3. Generate the upstream configurations for dshackle:
    ```bash
    # Using domain URLs (default)
-   ./upstreams.sh
-   
-   # Using internal container URLs (recommended for lower latency)
-   ./upstreams.sh true
+   ./upstreams.sh   
+
    ```
 
 The `upstreams.sh` script automatically detects all running nodes on your machine and generates the appropriate configuration for the dshackle load balancer. This allows you to connect your nodes to drpc.org and sell RPC capacity.

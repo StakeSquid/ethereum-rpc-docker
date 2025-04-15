@@ -2,7 +2,7 @@
 
 services:
   fraxtal-mainnet-archive:
-    image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-geth}:${FRAXTAL_MAINNET_GETH_VERSION:-v1.101503.1-frax-1.2.0}
+    image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-geth}:${FRAXTAL_MAINNET_GETH_VERSION:-v1.101503.1-frax-1.2.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -78,7 +78,7 @@ services:
       - traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.middlewares=fraxtal-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   fraxtal-mainnet-archive-node:
-    image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-node}:${FRAXTAL_MAINNET_NODE_VERSION:-v1.12.2-frax-1.1.0}
+    image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-node}:${FRAXTAL_MAINNET_NODE_VERSION:-v1.12.2-frax-1.1.0}
     ports:
       - 15282:15282
       - 15282:15282/udp
