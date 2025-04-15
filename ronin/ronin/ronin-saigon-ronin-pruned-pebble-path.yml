@@ -23,7 +23,7 @@ services:
     expose:
       - 8545
     environment:
-      - DB_ENGINE=
+      - DB_ENGINE=pebble
       - DEPLOYMENT=test
       - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
       - MINE=false
@@ -81,6 +81,24 @@ x-upstreams:
         - filter
     methods:
       disabled:
+        # not compatible with path state scheme
+        - name: debug_traceBlockByHash
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
 ...
