@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10493:10493
-      - 10493:10493/udp
+      - 13559:13559
+      - 13559:13559/udp
     expose:
       - 8545
     environment:
@@ -28,7 +28,7 @@ services:
       - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
       - MINE=false
       - NETWORK_ID=2021
-      - NETWORK_PORT=10493
+      - NETWORK_PORT=13559
       - PASSWORD=stupidpassword
       - STATE_SCHEME=
       - SYNC_MODE=full
@@ -39,7 +39,7 @@ services:
       - --gcmode=full
       - --http.api=admin,eth,net,web3,consortium,txpool,debug
       - --nat=extip:${IP}
-      - --port=10493
+      - --port=13559
       - --txpool.nolocals
       - --txpool.pricelimit=20000000000
     restart: unless-stopped
