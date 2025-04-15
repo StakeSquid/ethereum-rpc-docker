@@ -74,14 +74,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-chiado-minimal`) || Path(`/gnosis-chiado-minimal/`))}
       - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-minimal-trace.rule=Path(`/gnosis-chiado-minimal`) || Path(`/gnosis-chiado-minimal/`)}
       - traefik.http.routers.gnosis-chiado-erigon3-minimal-trace.middlewares=gnosis-chiado-erigon3-minimal-trace-stripprefix, ipwhitelist
-      - traefik.http.routers.gnosis-chiado-erigon3-minimal-trace.service=gnosis-chiado-erigon3-minimal-trace
-      - traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.service=gnosis-chiado-erigon3-minimal-trace-node
-      - traefik.http.services.gnosis-chiado-erigon3-minimal-trace-node.loadbalancer.server.port=5555
-      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado-minimal/eth`)}
-      - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.rule=PathPrefix(`/gnosis-chiado-minimal/eth`)}
-      - traefik.http.routers.gnosis-chiado-erigon3-minimal-trace-node.middlewares=gnosis-chiado-erigon3-minimal-trace-stripprefix, ipwhitelist
 
 volumes:
   gnosis-chiado-erigon3-minimal-trace:

@@ -130,4 +130,12 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain-sepolia
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
 ...

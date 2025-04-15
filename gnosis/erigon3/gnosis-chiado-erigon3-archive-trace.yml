@@ -74,14 +74,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-chiado-archive`) || Path(`/gnosis-chiado-archive/`))}
       - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=Path(`/gnosis-chiado-archive`) || Path(`/gnosis-chiado-archive/`)}
       - traefik.http.routers.gnosis-chiado-erigon3-archive-trace.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipwhitelist
-      - traefik.http.routers.gnosis-chiado-erigon3-archive-trace.service=gnosis-chiado-erigon3-archive-trace
-      - traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.service=gnosis-chiado-erigon3-archive-trace-node
-      - traefik.http.services.gnosis-chiado-erigon3-archive-trace-node.loadbalancer.server.port=5555
-      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-chiado-archive/eth`)}
-      - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.rule=PathPrefix(`/gnosis-chiado-archive/eth`)}
-      - traefik.http.routers.gnosis-chiado-erigon3-archive-trace-node.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipwhitelist
 
 volumes:
   gnosis-chiado-erigon3-archive-trace:

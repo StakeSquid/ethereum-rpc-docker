@@ -74,14 +74,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-mainnet`) || Path(`/gnosis-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Path(`/gnosis-mainnet`) || Path(`/gnosis-mainnet/`)}
       - traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.middlewares=gnosis-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist
-      - traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.service=gnosis-mainnet-erigon3-pruned-trace
-      - traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace-node.service=gnosis-mainnet-erigon3-pruned-trace-node
-      - traefik.http.services.gnosis-mainnet-erigon3-pruned-trace-node.loadbalancer.server.port=5555
-      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace-node.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-mainnet/eth`)}
-      - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace-node.rule=PathPrefix(`/gnosis-mainnet/eth`)}
-      - traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace-node.middlewares=gnosis-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist
 
 volumes:
   gnosis-mainnet-erigon3-pruned-trace:

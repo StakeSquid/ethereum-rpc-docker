@@ -1,4 +1,6 @@
 ---
+# You should use a snapshot for Mantle
+# https://github.com/mantlenetworkio/networks/blob/main/run-node-mainnetv2.md
 
 services:
   mantle-mainnet:
