@@ -22,8 +22,31 @@ services:
       - 10640:10640/udp
     expose:
       - 8545
-      - 8551
-    command: --goat=mainnet
+    command:
+      - --datadir=/root/.ethereum
+      - --db.engine=pebble
+      - --gcmode=full
+      - --goat=mainnet
+      - --maxpeers=50
+      - --nat=extip:${IP}
+      - --port=10640
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=path
+      - --syncmode=snap
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
     networks:

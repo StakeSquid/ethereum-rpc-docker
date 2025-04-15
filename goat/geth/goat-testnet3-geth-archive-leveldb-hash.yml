@@ -22,8 +22,31 @@ services:
       - 13272:13272/udp
     expose:
       - 8545
-      - 8551
-    command: --goat=testnet3
+    command:
+      - --datadir=/root/.ethereum
+      - --db.engine=leveldb
+      - --gcmode=archive
+      - --goat=testnet3
+      - --maxpeers=50
+      - --nat=extip:${IP}
+      - --port=13272
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=hash
+      - --syncmode=full
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
