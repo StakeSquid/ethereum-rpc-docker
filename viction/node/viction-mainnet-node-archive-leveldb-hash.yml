@@ -58,6 +58,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.viction-mainnet-node-archive-leveldb-hash-set-path.replacepath.path=
       - traefik.http.middlewares.viction-mainnet-node-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet-archive
       - traefik.http.services.viction-mainnet-node-archive-leveldb-hash.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.entrypoints=websecure}

@@ -50,6 +50,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.rootstock-mainnet-rskj-archive-set-path.replacepath.path=
       - traefik.http.middlewares.rootstock-mainnet-rskj-archive-stripprefix.stripprefix.prefixes=/rootstock-mainnet-archive
       - traefik.http.services.rootstock-mainnet-rskj-archive.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.entrypoints=websecure}

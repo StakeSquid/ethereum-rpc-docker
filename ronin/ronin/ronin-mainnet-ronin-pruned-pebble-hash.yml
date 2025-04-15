@@ -50,6 +50,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.ronin-mainnet-ronin-pruned-pebble-hash-set-path.replacepath.path=
       - traefik.http.middlewares.ronin-mainnet-ronin-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/ronin-mainnet
       - traefik.http.services.ronin-mainnet-ronin-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.entrypoints=websecure}

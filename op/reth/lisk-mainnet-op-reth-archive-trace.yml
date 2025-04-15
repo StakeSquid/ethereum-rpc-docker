@@ -59,6 +59,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.lisk-mainnet-op-reth-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.lisk-mainnet-op-reth-archive-trace-stripprefix.stripprefix.prefixes=/lisk-mainnet-archive
       - traefik.http.services.lisk-mainnet-op-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-reth-archive-trace.entrypoints=websecure}

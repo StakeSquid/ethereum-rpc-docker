@@ -63,6 +63,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.mode-mainnet-op-geth-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.mode-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/mode-mainnet
       - traefik.http.services.mode-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}

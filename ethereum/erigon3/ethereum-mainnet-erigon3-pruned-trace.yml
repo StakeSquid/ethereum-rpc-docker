@@ -68,6 +68,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.ethereum-mainnet-erigon3-pruned-trace-set-path.replacepath.path=
       - traefik.http.middlewares.ethereum-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet
       - traefik.http.services.ethereum-mainnet-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.entrypoints=websecure}

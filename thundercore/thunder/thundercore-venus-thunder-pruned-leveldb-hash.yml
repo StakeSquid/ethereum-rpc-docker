@@ -36,6 +36,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.thundercore-venus-thunder-pruned-leveldb-hash-set-path.replacepath.path=
       - traefik.http.middlewares.thundercore-venus-thunder-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/thundercore-venus
       - traefik.http.services.thundercore-venus-thunder-pruned-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.thundercore-venus-thunder-pruned-leveldb-hash.entrypoints=websecure}

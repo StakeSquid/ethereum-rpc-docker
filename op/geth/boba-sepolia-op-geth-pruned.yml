@@ -61,6 +61,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.boba-sepolia-op-geth-pruned-set-path.replacepath.path=
       - traefik.http.middlewares.boba-sepolia-op-geth-pruned-stripprefix.stripprefix.prefixes=/boba-sepolia
       - traefik.http.services.boba-sepolia-op-geth-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-geth-pruned.entrypoints=websecure}

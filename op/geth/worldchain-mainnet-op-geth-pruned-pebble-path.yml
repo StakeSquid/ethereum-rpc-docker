@@ -61,6 +61,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.worldchain-mainnet-op-geth-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.worldchain-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/worldchain-mainnet
       - traefik.http.services.worldchain-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}

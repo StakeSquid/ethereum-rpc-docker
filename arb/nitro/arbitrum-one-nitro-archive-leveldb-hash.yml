@@ -51,6 +51,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.arbitrum-one-nitro-archive-leveldb-hash-set-path.replacepath.path=
       - traefik.http.middlewares.arbitrum-one-nitro-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/arbitrum-one-archive
       - traefik.http.services.arbitrum-one-nitro-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.entrypoints=websecure}

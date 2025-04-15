@@ -69,6 +69,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.fraxtal-mainnet-op-geth-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.fraxtal-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/fraxtal-mainnet
       - traefik.http.services.fraxtal-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}

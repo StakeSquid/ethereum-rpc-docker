@@ -58,6 +58,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.avalanche-mainnet-go-pruned-pebbledb-set-path.replacepath.path=
       - traefik.http.middlewares.avalanche-mainnet-go-pruned-pebbledb-stripprefix.stripprefix.prefixes=/avalanche-mainnet
       - traefik.http.services.avalanche-mainnet-go-pruned-pebbledb.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-pebbledb.entrypoints=websecure}

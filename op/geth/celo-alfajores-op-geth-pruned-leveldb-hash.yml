@@ -67,6 +67,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.celo-alfajores-op-geth-pruned-leveldb-hash-set-path.replacepath.path=
       - traefik.http.middlewares.celo-alfajores-op-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-alfajores
       - traefik.http.services.celo-alfajores-op-geth-pruned-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-pruned-leveldb-hash.entrypoints=websecure}

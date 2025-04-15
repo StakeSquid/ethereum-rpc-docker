@@ -61,6 +61,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.soneium-minato-op-geth-archive-leveldb-hash-set-path.replacepath.path=
       - traefik.http.middlewares.soneium-minato-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/soneium-minato-archive
       - traefik.http.services.soneium-minato-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-archive-leveldb-hash.entrypoints=websecure}

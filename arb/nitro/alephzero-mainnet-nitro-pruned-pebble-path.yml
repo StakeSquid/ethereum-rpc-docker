@@ -57,6 +57,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.alephzero-mainnet-nitro-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.alephzero-mainnet-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/alephzero-mainnet
       - traefik.http.services.alephzero-mainnet-nitro-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.entrypoints=websecure}

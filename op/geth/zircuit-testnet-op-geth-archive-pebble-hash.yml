@@ -64,6 +64,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.zircuit-testnet-op-geth-archive-pebble-hash-set-path.replacepath.path=
       - traefik.http.middlewares.zircuit-testnet-op-geth-archive-pebble-hash-stripprefix.stripprefix.prefixes=/zircuit-testnet-archive
       - traefik.http.services.zircuit-testnet-op-geth-archive-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-pebble-hash.entrypoints=websecure}

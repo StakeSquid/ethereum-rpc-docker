@@ -58,6 +58,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.ethereum-sepolia-geth-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.ethereum-sepolia-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-sepolia
       - traefik.http.services.ethereum-sepolia-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.entrypoints=websecure}

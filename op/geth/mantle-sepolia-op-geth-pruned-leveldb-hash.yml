@@ -63,6 +63,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.mantle-sepolia-op-geth-pruned-leveldb-hash-set-path.replacepath.path=
       - traefik.http.middlewares.mantle-sepolia-op-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/mantle-sepolia
       - traefik.http.services.mantle-sepolia-op-geth-pruned-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.entrypoints=websecure}

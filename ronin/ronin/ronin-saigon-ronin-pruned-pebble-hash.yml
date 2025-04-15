@@ -51,6 +51,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.ronin-saigon-ronin-pruned-pebble-hash-set-path.replacepath.path=
       - traefik.http.middlewares.ronin-saigon-ronin-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/ronin-saigon
       - traefik.http.services.ronin-saigon-ronin-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-pruned-pebble-hash.entrypoints=websecure}

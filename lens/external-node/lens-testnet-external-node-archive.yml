@@ -78,6 +78,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.lens-testnet-external-node-archive-set-path.replacepath.path=
       - traefik.http.middlewares.lens-testnet-external-node-archive-stripprefix.stripprefix.prefixes=/lens-testnet-archive
       - traefik.http.services.lens-testnet-external-node-archive.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.lens-testnet-external-node-archive.entrypoints=websecure}

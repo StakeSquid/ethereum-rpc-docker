@@ -61,6 +61,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.fantom-testnet-opera-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.fantom-testnet-opera-archive-trace-stripprefix.stripprefix.prefixes=/fantom-testnet-archive
       - traefik.http.services.fantom-testnet-opera-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-opera-archive-trace.entrypoints=websecure}

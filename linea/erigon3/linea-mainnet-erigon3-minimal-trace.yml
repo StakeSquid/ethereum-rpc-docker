@@ -59,6 +59,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.linea-mainnet-erigon3-minimal-trace-set-path.replacepath.path=
       - traefik.http.middlewares.linea-mainnet-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/linea-mainnet-minimal
       - traefik.http.services.linea-mainnet-erigon3-minimal-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.entrypoints=websecure}

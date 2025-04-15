@@ -60,6 +60,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.boba-mainnet-op-erigon-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.boba-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/boba-mainnet-archive
       - traefik.http.services.boba-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace.entrypoints=websecure}

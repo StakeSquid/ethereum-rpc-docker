@@ -58,6 +58,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.op-sepolia-op-reth-pruned-trace-set-path.replacepath.path=
       - traefik.http.middlewares.op-sepolia-op-reth-pruned-trace-stripprefix.stripprefix.prefixes=/op-sepolia
       - traefik.http.services.op-sepolia-op-reth-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-pruned-trace.entrypoints=websecure}

@@ -56,6 +56,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.core-buffalo-core-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.core-buffalo-core-pruned-pebble-path-stripprefix.stripprefix.prefixes=/core-buffalo
       - traefik.http.services.core-buffalo-core-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.core-buffalo-core-pruned-pebble-path.entrypoints=websecure}

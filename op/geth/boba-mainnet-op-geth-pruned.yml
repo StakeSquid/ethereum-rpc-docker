@@ -61,6 +61,7 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.boba-mainnet-op-geth-pruned-set-path.replacepath.path=
       - traefik.http.middlewares.boba-mainnet-op-geth-pruned-stripprefix.stripprefix.prefixes=/boba-mainnet
       - traefik.http.services.boba-mainnet-op-geth-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-geth-pruned.entrypoints=websecure}
