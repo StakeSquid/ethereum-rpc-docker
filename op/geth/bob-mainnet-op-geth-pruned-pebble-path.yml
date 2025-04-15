@@ -1,11 +1,8 @@
-# use at your own risk
+---
 
 services:
   bob-mainnet:
-    image: ${BOB_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/geth}:${BOB_MAINNET_GETH_VERSION:-v1.101503.1}
-    user: root
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
+    image: ${BOB_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${BOB_MAINNET_GETH_VERSION:-v1.101503.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -14,115 +11,127 @@ services:
       net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
       net.core.somaxconn: 32768                   # Higher connection queue
       # Memory/Connection Management
-      net.core.netdev_max_backlog: 50000          # Increase network buffer
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
       net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 13347:13347
+      - 13347:13347/udp
     expose:
       - 8545
       - 8551
-
-    ports:
-      - 10347:10347
-      - 10347:10347/udp
-    volumes:
-      - ${BOB_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-bob-mainnet-op-geth-pruned-pebble-path}:/data
-      - /slowdisk:/slowdisk
-
-      - .jwtsecret:/jwtsecret:ro
-
     environment:
-      - GETH_OP_NETWORK=bob-mainnet
-    entrypoint: [/bin/sh, -c, exec /usr/local/bin/geth "$@"]
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://bob-mainnet.public.blastapi.io
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
     command:
       - --datadir=/data
-      - --port=10347
-      - --bind=0.0.0.0
+      - --db.engine=pebble
+      - --gcmode=full
+      - --maxpeers=50
       - --nat=extip:${IP}
+      - --networkid=60808
+      - --port=13347
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=path
+      - --syncmode=snap
       - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
       - --http.port=8545
       - --http.vhosts=*
       - --ws
-      - --ws.port=8545
-      - --ws.origins=*
       - --ws.addr=0.0.0.0
-      - --http.addr=0.0.0.0
-      - --maxpeers=50
-      - --http.api=web3,net,eth,debug,admin
-      - --ws.api=web3,net,eth,debug,admin
-
-      - --rpc.gascap=600000000
-      - --rpc.returndatalimit=10000000
-      - --rpc.txfeecap=0
-
-      - --db.engine=pebble
-      - --state.scheme=path
-      - --syncmode=snap
-      - --gcmode=full
-
-    networks:
-      - chains
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${BOB_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-bob-mainnet-op-geth-pruned-pebble-path}:/data
+      - ./op/bob/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.bob-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/bob-mainnet
       - traefik.http.services.bob-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/bob-mainnet`)}
-      - ${NO_SSL:+traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-path.rule=PathPrefix(`/bob-mainnet`)}
+      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/bob-mainnet`) || Path(`/bob-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-path.rule=Path(`/bob-mainnet`) || Path(`/bob-mainnet/`)}
       - traefik.http.routers.bob-mainnet-op-geth-pruned-pebble-path.middlewares=bob-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   bob-mainnet-node:
-    image: ${BOB_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/node}:${BOB_MAINNET_NODE_VERSION:-v1.12.2}
+    image: ${BOB_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BOB_MAINNET_NODE_VERSION:-v1.13.1}
     ports:
-      - 15347:15347
-      - 15347:15347/udp
+      - 18347:18347
+      - 18347:18347/udp
     environment:
-      - OP_NODE_NETWORK=bob-mainnet
-      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - OP_NODE_L2_ENGINE_RPC=http://bob-mainnet:8551
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15347
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15347
-      - OP_NODE_P2P_ADVERTISE_IP=${IP}
-      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
-      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://bob-mainnet:8551
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_NETWORK=bob-mainnet
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18347
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18347
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
+    restart: unless-stopped
     networks:
       - chains
-
     volumes:
+      - ./op/bob/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
-    restart: unless-stopped
 volumes:
   bob-mainnet-op-geth-pruned-pebble-path:
 
 x-upstreams:
-  - chain:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: $${CHAIN}
     method-groups:
       enabled:
         - debug
         - filter
-
     methods:
       disabled:
         # not compatible with path state scheme
         - name: debug_traceBlockByHash
       enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
         - name: debug_getRawBlock
         - name: debug_getRawTransaction
@@ -139,3 +148,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+...
