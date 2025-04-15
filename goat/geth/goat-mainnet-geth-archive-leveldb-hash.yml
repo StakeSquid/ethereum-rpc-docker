@@ -44,7 +44,7 @@ services:
       - traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.middlewares=goat-mainnet-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   goat-mainnet-archive-node:
-    image: ${GOAT_NODE_IMAGE:-}:${GOAT_MAINNET_NODE_VERSION:-}
+    image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_MAINNET_NODE_VERSION:-v0.2.3}
     ports:
       - 15640:15640
       - 15640:15640/udp

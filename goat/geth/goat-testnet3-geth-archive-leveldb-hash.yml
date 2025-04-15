@@ -44,7 +44,7 @@ services:
       - traefik.http.routers.goat-testnet3-geth-archive-leveldb-hash.middlewares=goat-testnet3-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   goat-testnet3-archive-node:
-    image: ${GOAT_NODE_IMAGE:-}:${GOAT_TESTNET3_NODE_VERSION:-}
+    image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_TESTNET3_NODE_VERSION:-testnet3}
     ports:
       - 18272:18272
       - 18272:18272/udp
