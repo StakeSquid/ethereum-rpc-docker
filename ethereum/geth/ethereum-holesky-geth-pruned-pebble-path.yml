@@ -91,6 +91,15 @@ services:
     volumes:
       - ${ETHEREUM_HOLESKY_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-holesky-geth-pruned-pebble-path_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-holesky-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-holesky
+      - traefik.http.services.ethereum-holesky-geth-pruned-pebble-path-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path-node.rule=PathPrefix(`/ethereum-holesky/eth`)}
+      - traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path-node.middlewares=ethereum-holesky-geth-pruned-pebble-path-node-stripprefix, ipwhitelist
 
 volumes:
   ethereum-holesky-geth-pruned-pebble-path:

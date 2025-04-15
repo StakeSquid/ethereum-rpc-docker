@@ -91,6 +91,15 @@ services:
     volumes:
       - ${ETHEREUM_SEPOLIA_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-sepolia-geth-pruned-pebble-path_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-sepolia-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-sepolia
+      - traefik.http.services.ethereum-sepolia-geth-pruned-pebble-path-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.rule=PathPrefix(`/ethereum-sepolia/eth`)}
+      - traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.middlewares=ethereum-sepolia-geth-pruned-pebble-path-node-stripprefix, ipwhitelist
 
 volumes:
   ethereum-sepolia-geth-pruned-pebble-path:

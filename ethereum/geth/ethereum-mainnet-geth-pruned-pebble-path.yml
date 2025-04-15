@@ -91,6 +91,15 @@ services:
     volumes:
       - ${ETHEREUM_MAINNET_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-mainnet-geth-pruned-pebble-path_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-mainnet-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet
+      - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.rule=PathPrefix(`/ethereum-mainnet/eth`)}
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.middlewares=ethereum-mainnet-geth-pruned-pebble-path-node-stripprefix, ipwhitelist
 
 volumes:
   ethereum-mainnet-geth-pruned-pebble-path:

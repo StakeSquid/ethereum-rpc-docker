@@ -89,6 +89,15 @@ services:
     volumes:
       - ${ETHEREUM_SEPOLIA_RETH_ARCHIVE_TRACE__PRYSM_DATA:-ethereum-sepolia-reth-archive-trace_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-sepolia-reth-archive-trace-node-stripprefix.stripprefix.prefixes=/ethereum-sepolia-archive
+      - traefik.http.services.ethereum-sepolia-reth-archive-trace-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-archive/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.rule=PathPrefix(`/ethereum-sepolia-archive/eth`)}
+      - traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.middlewares=ethereum-sepolia-reth-archive-trace-node-stripprefix, ipwhitelist
 
 volumes:
   ethereum-sepolia-reth-archive-trace:
