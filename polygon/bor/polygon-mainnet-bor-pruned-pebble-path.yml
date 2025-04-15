@@ -57,7 +57,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.polygon-mainnet-bor-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.polygon-mainnet-bor-pruned-pebble-path-stripprefix.stripprefix.prefixes=/polygon-mainnet
       - traefik.http.services.polygon-mainnet-bor-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.entrypoints=websecure}

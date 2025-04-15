@@ -59,7 +59,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.unichain-sepolia-op-erigon-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.unichain-sepolia-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/unichain-sepolia-archive
       - traefik.http.services.unichain-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.unichain-sepolia-op-erigon-archive-trace.entrypoints=websecure}

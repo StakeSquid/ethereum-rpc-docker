@@ -59,7 +59,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.soneium-minato-op-erigon-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.soneium-minato-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/soneium-minato-archive
       - traefik.http.services.soneium-minato-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.entrypoints=websecure}

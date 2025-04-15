@@ -58,7 +58,6 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.avalanche-fuji-go-archive-leveldb-set-path.replacepath.path=
       - traefik.http.middlewares.avalanche-fuji-go-archive-leveldb-stripprefix.stripprefix.prefixes=/avalanche-fuji-archive
       - traefik.http.services.avalanche-fuji-go-archive-leveldb.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb.entrypoints=websecure}

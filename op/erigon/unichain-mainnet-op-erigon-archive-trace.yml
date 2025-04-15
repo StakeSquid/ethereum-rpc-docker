@@ -59,7 +59,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.unichain-mainnet-op-erigon-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.unichain-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/unichain-mainnet-archive
       - traefik.http.services.unichain-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.entrypoints=websecure}

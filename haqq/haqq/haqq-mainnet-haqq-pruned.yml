@@ -33,7 +33,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.haqq-mainnet-haqq-pruned-set-path.replacepath.path=
       - traefik.http.middlewares.haqq-mainnet-haqq-pruned-stripprefix.stripprefix.prefixes=/haqq-mainnet
       - traefik.http.services.haqq-mainnet-haqq-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.entrypoints=websecure}

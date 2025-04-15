@@ -68,7 +68,6 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.zksync-era-boojnet-external-node-archive-set-path.replacepath.path=
       - traefik.http.middlewares.zksync-era-boojnet-external-node-archive-stripprefix.stripprefix.prefixes=/zksync-era-boojnet-archive
       - traefik.http.services.zksync-era-boojnet-external-node-archive.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-archive.entrypoints=websecure}

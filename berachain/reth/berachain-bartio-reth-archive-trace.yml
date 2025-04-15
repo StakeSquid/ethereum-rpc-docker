@@ -63,7 +63,6 @@ services:
       - berachain-bartio-reth-archive-trace_config:/config
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.berachain-bartio-reth-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.berachain-bartio-reth-archive-trace-stripprefix.stripprefix.prefixes=/berachain-bartio-archive
       - traefik.http.services.berachain-bartio-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-archive-trace.entrypoints=websecure}

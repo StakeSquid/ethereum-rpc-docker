@@ -61,7 +61,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.mode-sepolia-op-geth-archive-leveldb-hash-set-path.replacepath.path=
       - traefik.http.middlewares.mode-sepolia-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/mode-sepolia-archive
       - traefik.http.services.mode-sepolia-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-geth-archive-leveldb-hash.entrypoints=websecure}

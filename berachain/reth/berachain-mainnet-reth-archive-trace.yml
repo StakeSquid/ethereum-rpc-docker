@@ -63,7 +63,6 @@ services:
       - berachain-mainnet-reth-archive-trace_config:/config
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.berachain-mainnet-reth-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.berachain-mainnet-reth-archive-trace-stripprefix.stripprefix.prefixes=/berachain-mainnet-archive
       - traefik.http.services.berachain-mainnet-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.berachain-mainnet-reth-archive-trace.entrypoints=websecure}

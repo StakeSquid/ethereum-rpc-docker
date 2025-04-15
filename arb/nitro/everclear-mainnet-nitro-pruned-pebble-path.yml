@@ -57,7 +57,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.everclear-mainnet-nitro-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.everclear-mainnet-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/everclear-mainnet
       - traefik.http.services.everclear-mainnet-nitro-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.everclear-mainnet-nitro-pruned-pebble-path.entrypoints=websecure}

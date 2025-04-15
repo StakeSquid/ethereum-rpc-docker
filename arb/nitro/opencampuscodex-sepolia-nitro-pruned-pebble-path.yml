@@ -56,7 +56,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.opencampuscodex-sepolia-nitro-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.opencampuscodex-sepolia-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/opencampuscodex-sepolia
       - traefik.http.services.opencampuscodex-sepolia-nitro-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-pruned-pebble-path.entrypoints=websecure}

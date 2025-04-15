@@ -64,7 +64,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.taiko-alethia-geth-archive-leveldb-hash-set-path.replacepath.path=
       - traefik.http.middlewares.taiko-alethia-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/taiko-alethia-archive
       - traefik.http.services.taiko-alethia-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.entrypoints=websecure}

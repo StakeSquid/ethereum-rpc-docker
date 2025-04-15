@@ -65,7 +65,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.lisk-sepolia-op-geth-pruned-pebble-hash-set-path.replacepath.path=
       - traefik.http.middlewares.lisk-sepolia-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/lisk-sepolia
       - traefik.http.services.lisk-sepolia-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.entrypoints=websecure}

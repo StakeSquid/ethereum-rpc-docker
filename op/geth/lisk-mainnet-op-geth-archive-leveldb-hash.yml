@@ -65,7 +65,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.lisk-mainnet-op-geth-archive-leveldb-hash-set-path.replacepath.path=
       - traefik.http.middlewares.lisk-mainnet-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/lisk-mainnet-archive
       - traefik.http.services.lisk-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}

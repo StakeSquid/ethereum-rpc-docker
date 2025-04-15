@@ -57,7 +57,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.polygon-amoy-erigon3-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.polygon-amoy-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/polygon-amoy-archive
       - traefik.http.services.polygon-amoy-erigon3-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-archive-trace.entrypoints=websecure}

@@ -51,7 +51,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.arbitrum-nova-nitro-pruned-pebble-hash-set-path.replacepath.path=
       - traefik.http.middlewares.arbitrum-nova-nitro-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/arbitrum-nova
       - traefik.http.services.arbitrum-nova-nitro-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.entrypoints=websecure}

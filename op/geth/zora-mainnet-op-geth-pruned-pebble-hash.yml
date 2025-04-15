@@ -63,7 +63,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.zora-mainnet-op-geth-pruned-pebble-hash-set-path.replacepath.path=
       - traefik.http.middlewares.zora-mainnet-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/zora-mainnet
       - traefik.http.services.zora-mainnet-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-pruned-pebble-hash.entrypoints=websecure}

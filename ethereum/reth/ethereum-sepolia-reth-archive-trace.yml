@@ -56,7 +56,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-sepolia-reth-archive-trace-set-path.replacepath.path=
       - traefik.http.middlewares.ethereum-sepolia-reth-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia-archive
       - traefik.http.services.ethereum-sepolia-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.entrypoints=websecure}

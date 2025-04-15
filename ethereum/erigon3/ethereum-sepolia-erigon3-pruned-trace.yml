@@ -68,7 +68,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-sepolia-erigon3-pruned-trace-set-path.replacepath.path=
       - traefik.http.middlewares.ethereum-sepolia-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia
       - traefik.http.services.ethereum-sepolia-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-pruned-trace.entrypoints=websecure}

@@ -57,7 +57,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.real-mainnet-nitro-archive-pebble-hash-set-path.replacepath.path=
       - traefik.http.middlewares.real-mainnet-nitro-archive-pebble-hash-stripprefix.stripprefix.prefixes=/real-mainnet-archive
       - traefik.http.services.real-mainnet-nitro-archive-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.entrypoints=websecure}

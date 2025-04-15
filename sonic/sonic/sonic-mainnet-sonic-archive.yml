@@ -58,7 +58,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.sonic-mainnet-sonic-archive-set-path.replacepath.path=
       - traefik.http.middlewares.sonic-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/sonic-mainnet-archive
       - traefik.http.services.sonic-mainnet-sonic-archive.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.entrypoints=websecure}

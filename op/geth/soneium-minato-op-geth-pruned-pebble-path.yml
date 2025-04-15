@@ -61,7 +61,6 @@ services:
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.soneium-minato-op-geth-pruned-pebble-path-set-path.replacepath.path=
       - traefik.http.middlewares.soneium-minato-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/soneium-minato
       - traefik.http.services.soneium-minato-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.entrypoints=websecure}
