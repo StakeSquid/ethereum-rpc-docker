@@ -28,7 +28,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${ROOTSTOCK_BAMBOO_RSKJ_ARCHIVE_DATA:-rootstock-bamboo-rskj-archive}:/var/lib/rsk/database/mainnet
+      - ${ROOTSTOCK_BAMBOO_RSKJ_ARCHIVE_DATA:-rootstock-bamboo-rskj-archive}:/var/lib/rsk/database/testnet
       - ./rootstock/bamboo/node.conf:/etc/rsk/node.conf
       - ./rootstock/bamboo:/config
       - /slowdisk:/slowdisk
