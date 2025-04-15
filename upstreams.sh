@@ -6,6 +6,8 @@ source $BASEPATH/.env
 GENERATE_ID_FROM_PATH_EXPRESSION=${GENERATE_ID_FROM_PATH_EXPRESSION:-'s/^rpc-(.*)\.stakesquid\.eu\/(.*)$/\1-\2/'}
 
 LOCAL=${1:-false}
+# make it always false beacuse I don't know yet how to handle multiple upstreams for local nodes
+LOCAL=false
 
 if [ -n "$NO_SSL" ]; then
     PROTO="http"
