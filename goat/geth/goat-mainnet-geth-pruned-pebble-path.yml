@@ -22,6 +22,7 @@ services:
       - 10640:10640/udp
     expose:
       - 8545
+      - 8551
     command: --goat=mainnet
     restart: unless-stopped
     stop_grace_period: 5m
@@ -30,6 +31,7 @@ services:
     volumes:
       - ${GOAT_MAINNET_GETH_PRUNED_PEBBLE_PATH_DATA:-goat-mainnet-geth-pruned-pebble-path}:/root/.ethereum
       - ./goat/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
@@ -40,6 +42,26 @@ services:
       - ${NO_SSL:-traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/goat-mainnet`) || Path(`/goat-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.rule=Path(`/goat-mainnet`) || Path(`/goat-mainnet/`)}
       - traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.middlewares=goat-mainnet-geth-pruned-pebble-path-stripprefix, ipwhitelist
+
+  goat-mainnet-node:
+    image: ${GOAT_NODE_IMAGE:-}:${GOAT_MAINNET_NODE_VERSION:-}
+    ports:
+      - 15640:15640
+      - 15640:15640/udp
+    entrypoint: [goatd, start]
+    command:
+      - --chain-id=goat-mainnet
+      - --goat.geth=/geth/geth.ipc
+      - --p2p.external-address=${IP}:15640
+      - --p2p.laddr=0.0.0.0:15640
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./goat/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
+      - goat-mainnet-geth-pruned-pebble-path:/geth
+      - goat-mainnet-geth-pruned-pebble-path_node:/root/.goat
 
 volumes:
   goat-mainnet-geth-pruned-pebble-path:

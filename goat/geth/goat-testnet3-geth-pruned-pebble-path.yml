@@ -22,6 +22,7 @@ services:
       - 13272:13272/udp
     expose:
       - 8545
+      - 8551
     command: --goat=testnet3
     restart: unless-stopped
     stop_grace_period: 5m
@@ -30,6 +31,7 @@ services:
     volumes:
       - ${GOAT_TESTNET3_GETH_PRUNED_PEBBLE_PATH_DATA:-goat-testnet3-geth-pruned-pebble-path}:/root/.ethereum
       - ./goat/testnet3:/config
+      - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
@@ -40,6 +42,26 @@ services:
       - ${NO_SSL:-traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/goat-testnet3`) || Path(`/goat-testnet3/`))}
       - ${NO_SSL:+traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.rule=Path(`/goat-testnet3`) || Path(`/goat-testnet3/`)}
       - traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.middlewares=goat-testnet3-geth-pruned-pebble-path-stripprefix, ipwhitelist
+
+  goat-testnet3-node:
+    image: ${GOAT_NODE_IMAGE:-}:${GOAT_TESTNET3_NODE_VERSION:-}
+    ports:
+      - 18272:18272
+      - 18272:18272/udp
+    entrypoint: [goatd, start]
+    command:
+      - --chain-id=goat-testnet3
+      - --goat.geth=/geth/geth.ipc
+      - --p2p.external-address=${IP}:18272
+      - --p2p.laddr=0.0.0.0:18272
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./goat/testnet3:/config
+      - .jwtsecret:/jwtsecret:ro
+      - goat-testnet3-geth-pruned-pebble-path:/geth
+      - goat-testnet3-geth-pruned-pebble-path_node:/root/.goat
 
 volumes:
   goat-testnet3-geth-pruned-pebble-path:
