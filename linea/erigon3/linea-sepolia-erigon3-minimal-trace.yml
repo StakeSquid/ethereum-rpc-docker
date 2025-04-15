@@ -63,8 +63,8 @@ services:
       - traefik.http.services.linea-sepolia-erigon3-minimal-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-minimal-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-sepolia-minimal`)}
-      - ${NO_SSL:+traefik.http.routers.linea-sepolia-erigon3-minimal-trace.rule=PathPrefix(`/linea-sepolia-minimal`)}
+      - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/linea-sepolia-minimal/?$`)}
+      - ${NO_SSL:+traefik.http.routers.linea-sepolia-erigon3-minimal-trace.rule=PathRegexp(`^/linea-sepolia-minimal/?$`)}
       - traefik.http.routers.linea-sepolia-erigon3-minimal-trace.middlewares=linea-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist
 
 volumes:

@@ -73,8 +73,8 @@ services:
       - traefik.http.services.fraxtal-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/fraxtal-mainnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/fraxtal-mainnet-archive`)}
+      - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/fraxtal-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.rule=PathRegexp(`^/fraxtal-mainnet-archive/?$`)}
       - traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.middlewares=fraxtal-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   fraxtal-mainnet-archive-node:

@@ -68,8 +68,8 @@ services:
       - traefik.http.services.zircuit-testnet-op-geth-archive-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-testnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.zircuit-testnet-op-geth-archive-pebble-hash.rule=PathPrefix(`/zircuit-testnet-archive`)}
+      - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/zircuit-testnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.zircuit-testnet-op-geth-archive-pebble-hash.rule=PathRegexp(`^/zircuit-testnet-archive/?$`)}
       - traefik.http.routers.zircuit-testnet-op-geth-archive-pebble-hash.middlewares=zircuit-testnet-op-geth-archive-pebble-hash-stripprefix, ipwhitelist
 
   zircuit-testnet-archive-node:

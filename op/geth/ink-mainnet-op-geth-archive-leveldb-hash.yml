@@ -65,8 +65,8 @@ services:
       - traefik.http.services.ink-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/ink-mainnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.ink-mainnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/ink-mainnet-archive`)}
+      - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/ink-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.ink-mainnet-op-geth-archive-leveldb-hash.rule=PathRegexp(`^/ink-mainnet-archive/?$`)}
       - traefik.http.routers.ink-mainnet-op-geth-archive-leveldb-hash.middlewares=ink-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   ink-mainnet-archive-node:

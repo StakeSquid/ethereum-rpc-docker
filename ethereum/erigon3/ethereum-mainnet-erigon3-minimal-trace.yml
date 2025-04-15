@@ -71,8 +71,8 @@ services:
       - traefik.http.services.ethereum-mainnet-erigon3-minimal-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-minimal`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.rule=PathPrefix(`/ethereum-mainnet-minimal`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/ethereum-mainnet-minimal/?$`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.rule=PathRegexp(`^/ethereum-mainnet-minimal/?$`)}
       - traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.middlewares=ethereum-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
       - traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace.service=ethereum-mainnet-erigon3-minimal-trace
       - traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace-node.service=ethereum-mainnet-erigon3-minimal-trace-node

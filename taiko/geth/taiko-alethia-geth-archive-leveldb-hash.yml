@@ -68,8 +68,8 @@ services:
       - traefik.http.services.taiko-alethia-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-alethia-archive`)}
-      - ${NO_SSL:+traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.rule=PathPrefix(`/taiko-alethia-archive`)}
+      - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/taiko-alethia-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.rule=PathRegexp(`^/taiko-alethia-archive/?$`)}
       - traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.middlewares=taiko-alethia-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   taiko-alethia-archive-node:

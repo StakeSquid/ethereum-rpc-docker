@@ -55,8 +55,8 @@ services:
       - traefik.http.services.ronin-saigon-ronin-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/ronin-saigon-archive`)}
-      - ${NO_SSL:+traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.rule=PathPrefix(`/ronin-saigon-archive`)}
+      - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/ronin-saigon-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.rule=PathRegexp(`^/ronin-saigon-archive/?$`)}
       - traefik.http.routers.ronin-saigon-ronin-archive-leveldb-hash.middlewares=ronin-saigon-ronin-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

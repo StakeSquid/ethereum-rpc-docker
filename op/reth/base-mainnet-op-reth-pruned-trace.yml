@@ -62,8 +62,8 @@ services:
       - traefik.http.services.base-mainnet-op-reth-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/base-mainnet`)}
-      - ${NO_SSL:+traefik.http.routers.base-mainnet-op-reth-pruned-trace.rule=PathPrefix(`/base-mainnet`)}
+      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-pruned-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/base-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.base-mainnet-op-reth-pruned-trace.rule=PathRegexp(`^/base-mainnet/?$`)}
       - traefik.http.routers.base-mainnet-op-reth-pruned-trace.middlewares=base-mainnet-op-reth-pruned-trace-stripprefix, ipwhitelist
 
   base-mainnet-node:

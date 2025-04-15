@@ -78,8 +78,8 @@ services:
       - traefik.http.services.cronos-zkevm-testnet-external-node-pruned.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/cronos-zkevm-testnet`)}
-      - ${NO_SSL:+traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.rule=PathPrefix(`/cronos-zkevm-testnet`)}
+      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.rule=Host(`$DOMAIN`) && PathRegexp(`^/cronos-zkevm-testnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.rule=PathRegexp(`^/cronos-zkevm-testnet/?$`)}
       - traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.middlewares=cronos-zkevm-testnet-external-node-pruned-stripprefix, ipwhitelist
 
   cronos-zkevm-testnet-db:

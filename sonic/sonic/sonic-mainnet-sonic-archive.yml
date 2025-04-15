@@ -62,8 +62,8 @@ services:
       - traefik.http.services.sonic-mainnet-sonic-archive.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && PathPrefix(`/sonic-mainnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.sonic-mainnet-sonic-archive.rule=PathPrefix(`/sonic-mainnet-archive`)}
+      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && PathRegexp(`^/sonic-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.sonic-mainnet-sonic-archive.rule=PathRegexp(`^/sonic-mainnet-archive/?$`)}
       - traefik.http.routers.sonic-mainnet-sonic-archive.middlewares=sonic-mainnet-sonic-archive-stripprefix, ipwhitelist
 
 volumes:

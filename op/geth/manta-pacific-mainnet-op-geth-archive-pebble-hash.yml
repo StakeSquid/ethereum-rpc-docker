@@ -65,8 +65,8 @@ services:
       - traefik.http.services.manta-pacific-mainnet-op-geth-archive-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/manta-pacific-mainnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.rule=PathPrefix(`/manta-pacific-mainnet-archive`)}
+      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/manta-pacific-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.rule=PathRegexp(`^/manta-pacific-mainnet-archive/?$`)}
       - traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.middlewares=manta-pacific-mainnet-op-geth-archive-pebble-hash-stripprefix, ipwhitelist
 
   manta-pacific-mainnet-archive-node:

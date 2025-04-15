@@ -61,8 +61,8 @@ services:
       - traefik.http.services.alephzero-sepolia-nitro-archive-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.alephzero-sepolia-nitro-archive-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.alephzero-sepolia-nitro-archive-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.alephzero-sepolia-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/alephzero-sepolia-archive`)}
-      - ${NO_SSL:+traefik.http.routers.alephzero-sepolia-nitro-archive-pebble-hash.rule=PathPrefix(`/alephzero-sepolia-archive`)}
+      - ${NO_SSL:-traefik.http.routers.alephzero-sepolia-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/alephzero-sepolia-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.alephzero-sepolia-nitro-archive-pebble-hash.rule=PathRegexp(`^/alephzero-sepolia-archive/?$`)}
       - traefik.http.routers.alephzero-sepolia-nitro-archive-pebble-hash.middlewares=alephzero-sepolia-nitro-archive-pebble-hash-stripprefix, ipwhitelist
 
 volumes:

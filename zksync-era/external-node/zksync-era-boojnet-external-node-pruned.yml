@@ -72,8 +72,8 @@ services:
       - traefik.http.services.zksync-era-boojnet-external-node-pruned.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-pruned.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/zksync-era-boojnet`)}
-      - ${NO_SSL:+traefik.http.routers.zksync-era-boojnet-external-node-pruned.rule=PathPrefix(`/zksync-era-boojnet`)}
+      - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-pruned.rule=Host(`$DOMAIN`) && PathRegexp(`^/zksync-era-boojnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.zksync-era-boojnet-external-node-pruned.rule=PathRegexp(`^/zksync-era-boojnet/?$`)}
       - traefik.http.routers.zksync-era-boojnet-external-node-pruned.middlewares=zksync-era-boojnet-external-node-pruned-stripprefix, ipwhitelist
 
   zksync-era-boojnet-db:

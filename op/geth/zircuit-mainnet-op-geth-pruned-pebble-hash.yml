@@ -68,8 +68,8 @@ services:
       - traefik.http.services.zircuit-mainnet-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-mainnet`)}
-      - ${NO_SSL:+traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.rule=PathPrefix(`/zircuit-mainnet`)}
+      - ${NO_SSL:-traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/zircuit-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.rule=PathRegexp(`^/zircuit-mainnet/?$`)}
       - traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-hash.middlewares=zircuit-mainnet-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
 
   zircuit-mainnet-node:

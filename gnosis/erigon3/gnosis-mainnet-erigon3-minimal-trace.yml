@@ -71,8 +71,8 @@ services:
       - traefik.http.services.gnosis-mainnet-erigon3-minimal-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/gnosis-mainnet-minimal`)}
-      - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.rule=PathPrefix(`/gnosis-mainnet-minimal`)}
+      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/gnosis-mainnet-minimal/?$`)}
+      - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.rule=PathRegexp(`^/gnosis-mainnet-minimal/?$`)}
       - traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.middlewares=gnosis-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
       - traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace.service=gnosis-mainnet-erigon3-minimal-trace
       - traefik.http.routers.gnosis-mainnet-erigon3-minimal-trace-node.service=gnosis-mainnet-erigon3-minimal-trace-node

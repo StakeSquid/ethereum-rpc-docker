@@ -56,8 +56,8 @@ services:
       - traefik.http.services.celo-alfajores-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-alfajores-archive`)}
-      - ${NO_SSL:+traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.rule=PathPrefix(`/celo-alfajores-archive`)}
+      - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/celo-alfajores-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.rule=PathRegexp(`^/celo-alfajores-archive/?$`)}
       - traefik.http.routers.celo-alfajores-geth-archive-leveldb-hash.middlewares=celo-alfajores-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

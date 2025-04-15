@@ -65,8 +65,8 @@ services:
       - traefik.http.services.swell-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/swell-mainnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.swell-mainnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/swell-mainnet-archive`)}
+      - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/swell-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.swell-mainnet-op-geth-archive-leveldb-hash.rule=PathRegexp(`^/swell-mainnet-archive/?$`)}
       - traefik.http.routers.swell-mainnet-op-geth-archive-leveldb-hash.middlewares=swell-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   swell-mainnet-archive-node:

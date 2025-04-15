@@ -62,8 +62,8 @@ services:
       - traefik.http.services.ethereum-holesky-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.rule=PathPrefix(`/ethereum-holesky`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/ethereum-holesky/?$`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.rule=PathRegexp(`^/ethereum-holesky/?$`)}
       - traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.middlewares=ethereum-holesky-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   ethereum-holesky-node:

@@ -60,8 +60,8 @@ services:
       - traefik.http.services.core-pigeon-core-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.core-pigeon-core-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.core-pigeon-core-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.core-pigeon-core-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/core-pigeon`)}
-      - ${NO_SSL:+traefik.http.routers.core-pigeon-core-pruned-pebble-path.rule=PathPrefix(`/core-pigeon`)}
+      - ${NO_SSL:-traefik.http.routers.core-pigeon-core-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/core-pigeon/?$`)}
+      - ${NO_SSL:+traefik.http.routers.core-pigeon-core-pruned-pebble-path.rule=PathRegexp(`^/core-pigeon/?$`)}
       - traefik.http.routers.core-pigeon-core-pruned-pebble-path.middlewares=core-pigeon-core-pruned-pebble-path-stripprefix, ipwhitelist
 
 volumes:

@@ -60,8 +60,8 @@ services:
       - traefik.http.services.playblock-mainnet-nitro-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/playblock-mainnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.rule=PathPrefix(`/playblock-mainnet-archive`)}
+      - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/playblock-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.rule=PathRegexp(`^/playblock-mainnet-archive/?$`)}
       - traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.middlewares=playblock-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

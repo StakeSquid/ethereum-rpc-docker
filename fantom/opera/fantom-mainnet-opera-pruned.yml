@@ -64,8 +64,8 @@ services:
       - traefik.http.services.fantom-mainnet-opera-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/fantom-mainnet`)}
-      - ${NO_SSL:+traefik.http.routers.fantom-mainnet-opera-pruned.rule=PathPrefix(`/fantom-mainnet`)}
+      - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned.rule=Host(`$DOMAIN`) && PathRegexp(`^/fantom-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.fantom-mainnet-opera-pruned.rule=PathRegexp(`^/fantom-mainnet/?$`)}
       - traefik.http.routers.fantom-mainnet-opera-pruned.middlewares=fantom-mainnet-opera-pruned-stripprefix, ipwhitelist
 
 volumes:

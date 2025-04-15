@@ -65,8 +65,8 @@ services:
       - traefik.http.services.snax-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/snax-mainnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-erigon-archive-trace.rule=PathPrefix(`/snax-mainnet-archive`)}
+      - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/snax-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-erigon-archive-trace.rule=PathRegexp(`^/snax-mainnet-archive/?$`)}
       - traefik.http.routers.snax-mainnet-op-erigon-archive-trace.middlewares=snax-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   snax-mainnet-archive-node:

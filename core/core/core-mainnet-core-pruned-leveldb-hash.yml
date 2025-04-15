@@ -60,8 +60,8 @@ services:
       - traefik.http.services.core-mainnet-core-pruned-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/core-mainnet`)}
-      - ${NO_SSL:+traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.rule=PathPrefix(`/core-mainnet`)}
+      - ${NO_SSL:-traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/core-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.rule=PathRegexp(`^/core-mainnet/?$`)}
       - traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.middlewares=core-mainnet-core-pruned-leveldb-hash-stripprefix, ipwhitelist
 
 volumes:

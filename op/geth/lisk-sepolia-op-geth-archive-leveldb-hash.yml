@@ -69,8 +69,8 @@ services:
       - traefik.http.services.lisk-sepolia-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-sepolia-archive`)}
-      - ${NO_SSL:+traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.rule=PathPrefix(`/lisk-sepolia-archive`)}
+      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/lisk-sepolia-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.rule=PathRegexp(`^/lisk-sepolia-archive/?$`)}
       - traefik.http.routers.lisk-sepolia-op-geth-archive-leveldb-hash.middlewares=lisk-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   lisk-sepolia-archive-node:

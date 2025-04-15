@@ -55,8 +55,8 @@ services:
       - traefik.http.services.arbitrum-sepolia-nitro-archive-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/arbitrum-sepolia-archive`)}
-      - ${NO_SSL:+traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.rule=PathPrefix(`/arbitrum-sepolia-archive`)}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/arbitrum-sepolia-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.rule=PathRegexp(`^/arbitrum-sepolia-archive/?$`)}
       - traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.middlewares=arbitrum-sepolia-nitro-archive-pebble-hash-stripprefix, ipwhitelist
 
 volumes:

@@ -65,8 +65,8 @@ services:
       - traefik.http.services.boba-mainnet-op-geth-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-geth-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-geth-pruned.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-geth-pruned.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-mainnet`)}
-      - ${NO_SSL:+traefik.http.routers.boba-mainnet-op-geth-pruned.rule=PathPrefix(`/boba-mainnet`)}
+      - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-geth-pruned.rule=Host(`$DOMAIN`) && PathRegexp(`^/boba-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.boba-mainnet-op-geth-pruned.rule=PathRegexp(`^/boba-mainnet/?$`)}
       - traefik.http.routers.boba-mainnet-op-geth-pruned.middlewares=boba-mainnet-op-geth-pruned-stripprefix, ipwhitelist
 
   boba-mainnet-node:

@@ -60,8 +60,8 @@ services:
       - traefik.http.services.ethereum-holesky-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-reth-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky-archive`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-holesky-reth-archive-trace.rule=PathPrefix(`/ethereum-holesky-archive`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-reth-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/ethereum-holesky-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-holesky-reth-archive-trace.rule=PathRegexp(`^/ethereum-holesky-archive/?$`)}
       - traefik.http.routers.ethereum-holesky-reth-archive-trace.middlewares=ethereum-holesky-reth-archive-trace-stripprefix, ipwhitelist
 
   ethereum-holesky-archive-node:

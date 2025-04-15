@@ -67,8 +67,8 @@ services:
       - traefik.http.services.blast-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathPrefix(`/blast-mainnet`)}
-      - ${NO_SSL:+traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.rule=PathPrefix(`/blast-mainnet`)}
+      - ${NO_SSL:-traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && PathRegexp(`^/blast-mainnet/?$`)}
+      - ${NO_SSL:+traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.rule=PathRegexp(`^/blast-mainnet/?$`)}
       - traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.middlewares=blast-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   blast-mainnet-node:

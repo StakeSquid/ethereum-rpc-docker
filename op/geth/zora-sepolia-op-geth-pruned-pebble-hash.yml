@@ -67,8 +67,8 @@ services:
       - traefik.http.services.zora-sepolia-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-geth-pruned-pebble-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-sepolia`)}
-      - ${NO_SSL:+traefik.http.routers.zora-sepolia-op-geth-pruned-pebble-hash.rule=PathPrefix(`/zora-sepolia`)}
+      - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/zora-sepolia/?$`)}
+      - ${NO_SSL:+traefik.http.routers.zora-sepolia-op-geth-pruned-pebble-hash.rule=PathRegexp(`^/zora-sepolia/?$`)}
       - traefik.http.routers.zora-sepolia-op-geth-pruned-pebble-hash.middlewares=zora-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
 
   zora-sepolia-node:

@@ -64,8 +64,8 @@ services:
       - traefik.http.services.mantle-sepolia-op-geth-pruned-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle-sepolia`)}
-      - ${NO_SSL:+traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.rule=PathPrefix(`/mantle-sepolia`)}
+      - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/mantle-sepolia/?$`)}
+      - ${NO_SSL:+traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.rule=PathRegexp(`^/mantle-sepolia/?$`)}
       - traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.middlewares=mantle-sepolia-op-geth-pruned-leveldb-hash-stripprefix, ipwhitelist
 
   mantle-sepolia-node:

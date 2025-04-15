@@ -65,8 +65,8 @@ services:
       - traefik.http.services.unichain-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/unichain-mainnet-archive`)}
-      - ${NO_SSL:+traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.rule=PathPrefix(`/unichain-mainnet-archive`)}
+      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/unichain-mainnet-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.rule=PathRegexp(`^/unichain-mainnet-archive/?$`)}
       - traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.middlewares=unichain-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   unichain-mainnet-archive-node:

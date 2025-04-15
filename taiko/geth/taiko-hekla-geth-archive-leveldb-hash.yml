@@ -68,8 +68,8 @@ services:
       - traefik.http.services.taiko-hekla-geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathPrefix(`/taiko-hekla-archive`)}
-      - ${NO_SSL:+traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=PathPrefix(`/taiko-hekla-archive`)}
+      - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && PathRegexp(`^/taiko-hekla-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=PathRegexp(`^/taiko-hekla-archive/?$`)}
       - traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.middlewares=taiko-hekla-geth-archive-leveldb-hash-stripprefix, ipwhitelist
 
   taiko-hekla-archive-node:

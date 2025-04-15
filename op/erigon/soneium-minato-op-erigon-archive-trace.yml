@@ -63,8 +63,8 @@ services:
       - traefik.http.services.soneium-minato-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/soneium-minato-archive`)}
-      - ${NO_SSL:+traefik.http.routers.soneium-minato-op-erigon-archive-trace.rule=PathPrefix(`/soneium-minato-archive`)}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/soneium-minato-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.soneium-minato-op-erigon-archive-trace.rule=PathRegexp(`^/soneium-minato-archive/?$`)}
       - traefik.http.routers.soneium-minato-op-erigon-archive-trace.middlewares=soneium-minato-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   soneium-minato-archive-node:

@@ -65,8 +65,8 @@ services:
       - traefik.http.services.zora-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-sepolia-archive`)}
-      - ${NO_SSL:+traefik.http.routers.zora-sepolia-op-erigon-archive-trace.rule=PathPrefix(`/zora-sepolia-archive`)}
+      - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathRegexp(`^/zora-sepolia-archive/?$`)}
+      - ${NO_SSL:+traefik.http.routers.zora-sepolia-op-erigon-archive-trace.rule=PathRegexp(`^/zora-sepolia-archive/?$`)}
       - traefik.http.routers.zora-sepolia-op-erigon-archive-trace.middlewares=zora-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
 
   zora-sepolia-archive-node:
