@@ -29,7 +29,7 @@ services:
       - NETWORK_ID=2020
       - NETWORK_PORT=13967
       - PASSWORD=stupidpassword
-      - STATE_SCHEME=
+      - STATE_SCHEME=path
       - SYNC_MODE=full
       - VERBOSITY=3
       - WS_PORT=8545

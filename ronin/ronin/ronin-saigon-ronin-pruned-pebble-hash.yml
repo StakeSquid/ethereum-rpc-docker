@@ -30,7 +30,7 @@ services:
       - NETWORK_ID=2021
       - NETWORK_PORT=13559
       - PASSWORD=stupidpassword
-      - STATE_SCHEME=
+      - STATE_SCHEME=hash
       - SYNC_MODE=full
       - VERBOSITY=3
       - WS_PORT=8545
