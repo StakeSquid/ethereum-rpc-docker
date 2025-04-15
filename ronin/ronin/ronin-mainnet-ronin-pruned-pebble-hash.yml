@@ -34,13 +34,13 @@ services:
       - VERBOSITY=3
       - WS_PORT=8545
     command:
-      - --discovery.dns enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.roninchain.com
+      - --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.roninchain.com
       - --gcmode=full
-      - --http.api admin,eth,net,web3,consortium,txpool,debug
+      - --http.api=admin,eth,net,web3,consortium,txpool,debug
       - --nat=extip:${IP}
       - --port=10276
       - --txpool.nolocals
-      - --txpool.pricelimit 20000000000
+      - --txpool.pricelimit=20000000000
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
