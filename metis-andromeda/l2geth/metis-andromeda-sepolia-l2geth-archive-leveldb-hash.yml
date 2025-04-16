@@ -2,7 +2,7 @@
 # Find archive snapshots on publicnode.com
 
 services:
-  metis-andromeda-sepolia-archive:
+  metis-andromeda-sepolia-archive-client:
     image: ${METIS_ANDROMEDA_L2GETH_IMAGE:-metisdao/l2geth}:${METIS_ANDROMEDA_SEPOLIA_L2GETH_VERSION:-v0.3.5}
     sysctls:
       # TCP Performance
@@ -23,6 +23,7 @@ services:
       - 14563:14563/udp
     expose:
       - 8545
+      - 8546
     environment:
       - BLOCK_SIGNER_ADDRESS=0x00000398232E2064F896018496b4b44b3D62751F
       - BLOCK_SIGNER_KEY=6587ae678cf4fc9a33000cdbf9f35226b71dcc6a4684a31203241f9bcfd55d27
@@ -72,10 +73,26 @@ services:
     volumes:
       - ${METIS_ANDROMEDA_SEPOLIA_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-metis-andromeda-sepolia-l2geth-archive-leveldb-hash}:/root/.ethereum
       - /slowdisk:/slowdisk
+
+  metis-andromeda-sepolia-archive:
+    image: nginx
+    environment:
+      PROXY_HOST: metis-andromeda-sepolia-archive-client
+      RPC_PATH: ''
+      RPC_PORT: 8545
+      WS_PATH: ''
+      WS_PORT: 8546
+    restart: unless-stopped
+    depends_on:
+      - metis-andromeda-sepolia-archive-client
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.metis-andromeda-sepolia-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/metis-andromeda-sepolia-archive
-      - traefik.http.services.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545
+      - traefik.http.services.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/metis-andromeda-sepolia-archive`) || Path(`/metis-andromeda-sepolia-archive/`))}
