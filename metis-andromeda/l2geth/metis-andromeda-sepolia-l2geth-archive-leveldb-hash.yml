@@ -33,11 +33,13 @@ services:
       - DESEQBLOCK=600000
       - ETH1_CTC_DEPLOYMENT_HEIGHT=5375027
       - ETH1_SYNC_SERVICE_ENABLE=false
+      - EXTERNAL_IP=${IP}
       - GCMODE=archive
       - IPC_DISABLE=false
       - MAX_PEER=150
       - NETWORK_ID=59902
       - NO_USB=true
+      - PORT=14563
       - ROLLUP_BACKEND=l1
       - ROLLUP_CLIENT_HTTP=http://metis-andromeda-sepolia-archive-node:7878
       - ROLLUP_ENFORCE_FEES=true
