@@ -2,7 +2,7 @@
 
 services:
   base-sepolia:
-    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_SEPOLIA_RETH_VERSION:-v1.3.8}
+    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_SEPOLIA_RETH_VERSION:-v1.3.10}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

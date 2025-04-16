@@ -2,7 +2,7 @@
 
 services:
   viction-testnet-archive-client:
-    image: ${VICTION_NODE_IMAGE:-buildonviction/node}:${VICTION_TESTNET_NODE_VERSION:-v2.4.5}
+    image: ${VICTION_NODE_IMAGE:-buildonviction/node}:${VICTION_TESTNET_NODE_VERSION:-v2.4.6}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

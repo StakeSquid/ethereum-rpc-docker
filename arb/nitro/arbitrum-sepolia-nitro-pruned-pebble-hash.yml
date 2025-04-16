@@ -2,7 +2,7 @@
 
 services:
   arbitrum-sepolia:
-    image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_SEPOLIA_NITRO_VERSION:-v3.5.3-0a9c975}
+    image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_SEPOLIA_NITRO_VERSION:-v3.5.5-90ee45c}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

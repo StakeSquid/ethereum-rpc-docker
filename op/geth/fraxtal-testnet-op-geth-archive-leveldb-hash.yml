@@ -2,7 +2,7 @@
 
 services:
   fraxtal-testnet-archive:
-    image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-geth}:${FRAXTAL_TESTNET_GETH_VERSION:-v1.101503.1-frax-1.2.0}
+    image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-geth}:${FRAXTAL_TESTNET_GETH_VERSION:-v1.101503.1-frax-1.2.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -82,6 +82,7 @@ services:
       - 16370:16370
       - 16370:16370/udp
     environment:
+      - OP_NODE_DA_RPC=https://da-rpc.testnet.frax.com
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
       - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}

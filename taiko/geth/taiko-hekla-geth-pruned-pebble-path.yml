@@ -2,7 +2,7 @@
 
 services:
   taiko-hekla:
-    image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HEKLA_GETH_VERSION:-v1.14.1}
+    image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HEKLA_GETH_VERSION:-v1.15.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -73,7 +73,7 @@ services:
       - traefik.http.routers.taiko-hekla-geth-pruned-pebble-path.middlewares=taiko-hekla-geth-pruned-pebble-path-stripprefix, ipwhitelist
 
   taiko-hekla-node:
-    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.4.1}
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.5.0}
     ports:
       - 18396:18396
       - 18396:18396/udp

@@ -2,7 +2,7 @@
 
 services:
   polygon-amoy-archive:
-    image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_AMOY_ERIGON3_VERSION:-v3.0.0}
+    image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_AMOY_ERIGON3_VERSION:-v3.0.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
