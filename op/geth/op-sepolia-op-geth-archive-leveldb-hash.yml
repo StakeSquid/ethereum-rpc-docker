@@ -26,6 +26,7 @@ services:
     environment:
       - GETH_OP_NETWORK=op-sepolia
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://sepolia-sequencer.optimism.org
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data

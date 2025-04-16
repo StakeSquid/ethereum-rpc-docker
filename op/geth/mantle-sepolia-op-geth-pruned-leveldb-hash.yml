@@ -25,7 +25,6 @@ services:
       - 8551
     environment:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
-      - GETH_ROLLUP_SEQUENCERHTTP=
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data

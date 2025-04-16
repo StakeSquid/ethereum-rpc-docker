@@ -26,6 +26,7 @@ services:
     environment:
       - GETH_OP_NETWORK=metal-mainnet
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.metall2.com
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data

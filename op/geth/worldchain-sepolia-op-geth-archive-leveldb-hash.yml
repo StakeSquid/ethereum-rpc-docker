@@ -26,6 +26,7 @@ services:
     environment:
       - GETH_OP_NETWORK=worldchain-sepolia
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://worldchain-sepolia.g.alchemy.com/public
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data

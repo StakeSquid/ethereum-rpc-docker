@@ -26,6 +26,7 @@ services:
     environment:
       - GETH_OP_NETWORK=mode-sepolia
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://sepolia.mode.network
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data

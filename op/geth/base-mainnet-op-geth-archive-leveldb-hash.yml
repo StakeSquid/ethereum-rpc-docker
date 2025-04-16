@@ -26,6 +26,7 @@ services:
     environment:
       - GETH_OP_NETWORK=base-mainnet
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://mainnet-sequencer.base.org
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data

@@ -26,6 +26,7 @@ services:
     environment:
       - GETH_OP_NETWORK=ink-sepolia
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc-gel-sepolia.inkonchain.com
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data

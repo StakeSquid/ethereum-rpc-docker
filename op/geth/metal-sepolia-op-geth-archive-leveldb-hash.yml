@@ -23,6 +23,7 @@ services:
     environment:
       - GETH_OP_NETWORK=metal-sepolia
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://testnet.rpc.metall2.com
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data
