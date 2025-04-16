@@ -1,0 +1,163 @@
+---
+# Find archive snapshots on publicnode.com
+
+services:
+  metis-andromeda-mainnet-archive:
+    image: ${METIS_ANDROMEDA_L2GETH_IMAGE:-metisdao/l2geth}:${METIS_ANDROMEDA_MAINNET_L2GETH_VERSION:-v0.3.5}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 10743:10743
+      - 10743:10743/udp
+    expose:
+      - 8545
+    environment:
+      - BOOTNODES=enode://61b617d2549296b0b950efcf8c1d87227d454d44362e642dde37d83092a445f2b6a6fd651d611b2893249d1e9d15c8f1d4b067142cff53280a08c9c7565c29e2@3.22.33.68:30303,enode://524e335aaa2a4555fe2d54f07fc34da83d80b0407d86c606b76ce918f96a348cf91947f7c60b0eabd29f68d2669cc0ced1360636daa53d0ccc948e154d0ce21e@3.129.121.37:30303,enode://c4cc213e3c5cb57b1ea6e1aa0b8a28240b03a5fa4b65ff08c53faf448182ae161d68c78fe48040da1e5d9087c6f19b60644605c4c2d78845627f09b90207e56c@3.17.198.212:30303,enode://690969c716d2e4f55936a2801ab1d513598f8f2afa85be1c9f9c41e8ce1f07ee352dac2925f86fd54449d7bdd9bddc7342d33c0c46c604db19de63e21362f2cd@54.237.23.7:30303,enode://9bbe2b0d7e2cd7c3de7f9674fb95059026667e9b9ce717f927b4f53132dde131fab34995a984ed47328f867e5efea4e5a27dc6a90b6b1f4106f07be215e0ece5@54.174.30.211:30303,enode://2577f7c6ffafcdf311e2f79bcc56671825f00a265e5cd1f0224d8bd4b484ba1870930584f37593abfb910a76b51fa82a8b48c53d2511848680beb00c357cf3e0@52.20.251.43:30303,enode://5a41bbc2a57c90b443244bc2d9c4470ee84b7af21aa27256178e53a1772950c3bf9a2b6c1a761688064aaa8456f6b4e918918cda867ce59d007ff825bbefe61d@3.126.202.64:30303,enode://c0c2826d5bc7baeb2b8fe3aa8726d2572508142aa2476e2d2a667c7452a3dc78b47c1176522a9b4c3203902c3ae487ae4b656c7089334536d9c1468056799939@52.57.227.34:30303,enode://86fffa408fca0afc8c9f5cf3f5831d1bc39c2a49d3690ae5219001ff7bec08cac6932dc7e94c65186f7d46daa738449f2eb361d50cde15212a8e8c84eec62605@18.193.199.155:30303
+      - CHAIN_ID=1088
+      - DATADIR=/root/.ethereum
+      - DESEQBLOCK=16500000
+      - ETH1_SYNC_SERVICE_ENABLE=false
+      - GCMODE=archive
+      - IPC_DISABLE=false
+      - MAX_PEER=150
+      - NETWORK_ID=1088
+      - NO_USB=true
+      - ROLLUP_BACKEND=l1
+      - ROLLUP_CLIENT_HTTP=http://metis-andromeda-mainnet-l2geth-archive-leveldb-hash-node:7878
+      - ROLLUP_ENFORCE_FEES=true
+      - ROLLUP_MAX_CALLDATA_SIZE=40000
+      - ROLLUP_POLL_INTERVAL_FLAG=10s
+      - ROLLUP_TIMESTAMP_REFRESH=10s
+      - RPC_ADDR=0.0.0.0
+      - RPC_API=admin,eth,net,web3,mvm,debug
+      - RPC_CORS_DOMAIN=*
+      - RPC_ENABLE=true
+      - RPC_PORT=8545
+      - RPC_VHOSTS=*
+      - SEQSET_CONTRACT=0x0fe382b74C3894B65c10E5C12ae60Bbd8FAf5b48
+      - SEQSET_VALID_HEIGHT=15214531
+      - SEQ_BRIDGE_URL=https://andromeda.metis.io
+      - USING_OVM=true
+      - VERBOSITY=3
+      - WS=true
+      - WS_ADDR=0.0.0.0
+      - WS_API=admin,eth,net,web3,mvm,debug
+      - WS_ORIGINS=*
+      - WS_PORT=8546
+    command:
+      - --cache.noprefetch=true
+      - --mine=false
+      - --miner.noverify
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${METIS_ANDROMEDA_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-metis-andromeda-mainnet-l2geth-archive-leveldb-hash}:/root/.ethereum
+      - /slowdisk:/slowdisk
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/metis-andromeda-mainnet-archive
+      - traefik.http.services.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/metis-andromeda-mainnet-archive`) || Path(`/metis-andromeda-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.rule=Path(`/metis-andromeda-mainnet-archive`) || Path(`/metis-andromeda-mainnet-archive/`)}
+      - traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.middlewares=metis-andromeda-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
+  metis-andromeda-mainnet-archive-node:
+    image: ${METIS_ANDROMEDA_DTL_IMAGE:-metisdao/dtl}:${METIS_ANDROMEDA_MAINNET_DTL_VERSION:-v0.1.3}
+    ports:
+      - 15743:15743
+      - 15743:15743/udp
+    environment:
+      - DATA_TRANSPORT_LAYER__BATCH_INBOX_ADDRESS=0xff00000000000000000000000000000000001088
+      - DATA_TRANSPORT_LAYER__BATCH_INBOX_L1_HEIGHT=19438451
+      - DATA_TRANSPORT_LAYER__BATCH_INBOX_SENDER=0x1a9da0aeda630ddf2748a453bf6d92560762d914
+      - DATA_TRANSPORT_LAYER__BATCH_INBOX_START_INDEX=42647
+      - DATA_TRANSPORT_LAYER__CONFIRMATIONS=12
+      - DATA_TRANSPORT_LAYER__DANGEROUSLY_CATCH_ALL_ERRORS=true
+      - DATA_TRANSPORT_LAYER__DB_PATH=/data/db
+      - DATA_TRANSPORT_LAYER__DESEQBLOCK=16500000
+      - DATA_TRANSPORT_LAYER__ETH_NETWORK_NAME=mainnet
+      - DATA_TRANSPORT_LAYER__L1_RPC_ENDPOINT=${ETHEREUM__EXECUTION_RPC}
+      - DATA_TRANSPORT_LAYER__L1_START_HEIGHT=13625200
+      - DATA_TRANSPORT_LAYER__L2_CHAIN_ID=1088
+      - DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT=https://andromeda.metis.io
+      - DATA_TRANSPORT_LAYER__LOGS_PER_POLLING_INTERVAL=1000
+      - DATA_TRANSPORT_LAYER__MINIO_ACCESS_KEY=metisread
+      - DATA_TRANSPORT_LAYER__MINIO_BUCKET=metis-1088-prod
+      - DATA_TRANSPORT_LAYER__MINIO_ENABLED=true
+      - DATA_TRANSPORT_LAYER__MINIO_ENDPOINT=memoapi.metis.io
+      - DATA_TRANSPORT_LAYER__MINIO_PORT=6083
+      - DATA_TRANSPORT_LAYER__MINIO_SECRET_KEY=8uyywb*7y3
+      - DATA_TRANSPORT_LAYER__MINIO_USE_SSL=true
+      - DATA_TRANSPORT_LAYER__POLLING_INTERVAL=10000
+      - DATA_TRANSPORT_LAYER__SERVER_HOSTNAME=0.0.0.0
+      - DATA_TRANSPORT_LAYER__SERVER_PORT=7878
+      - DATA_TRANSPORT_LAYER__SYNC_FROM_L1=true
+      - DATA_TRANSPORT_LAYER__SYNC_FROM_L2=false
+      - DATA_TRANSPORT_LAYER__SYNC_L1_BATCH=false
+      - DATA_TRANSPORT_LAYER__TRANSACTIONS_PER_POLLING_INTERVAL=1000
+      - URL=https://metisprotocol.github.io/metis-networks/andromeda-mainnet/addresses.json
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ${METIS_ANDROMEDA_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH__DTL_DATA:-metis-andromeda-mainnet-l2geth-archive-leveldb-hash_dtl}:/data
+      - .jwtsecret:/jwtsecret:ro
+
+volumes:
+  metis-andromeda-mainnet-l2geth-archive-leveldb-hash:
+  metis-andromeda-mainnet-l2geth-archive-leveldb-hash_dtl:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: $${CHAIN}
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...

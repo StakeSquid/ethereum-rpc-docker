@@ -1,0 +1,168 @@
+---
+# Find archive snapshots on publicnode.com
+
+services:
+  metis-andromeda-sepolia-archive:
+    image: ${METIS_ANDROMEDA_L2GETH_IMAGE:-metisdao/l2geth}:${METIS_ANDROMEDA_SEPOLIA_L2GETH_VERSION:-v0.3.5}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 14563:14563
+      - 14563:14563/udp
+    expose:
+      - 8545
+    environment:
+      - BLOCK_SIGNER_ADDRESS=0x00000398232E2064F896018496b4b44b3D62751F
+      - BLOCK_SIGNER_KEY=6587ae678cf4fc9a33000cdbf9f35226b71dcc6a4684a31203241f9bcfd55d27
+      - BOOTNODES=enode://0b07faff18115a46539fa34882bcae182ddcbf4dda135d3102d3cde8f3bd2b21928d9f65ad1c3c387aef4480d838ca090a5daea99e284802914dfb376a9d61a8@34.239.200.85:30303,enode://75d1da5e91369f56091b9358c921451c11523601341a5e25d7a779d4aaa720263d36ea408ac6aa4ee4b2c1a8f44a0bc2295de8c874ee289cc4428b54bfa7d85a@3.229.226.37:30303,enode://428037cd3656d83ac4dd11242926bb57879be4b3488ee3184d29654439095cb6d8824121d6fe2859398e06a259e959da017db81b5b67d9beb38052bbd59e1b88@34.206.236.62:30303
+      - CHAIN_ID=59902
+      - DATADIR=/root/.ethereum
+      - DESEQBLOCK=600000
+      - ETH1_CTC_DEPLOYMENT_HEIGHT=5375027
+      - ETH1_SYNC_SERVICE_ENABLE=false
+      - GCMODE=archive
+      - IPC_DISABLE=false
+      - MAX_PEER=150
+      - NETWORK_ID=59902
+      - NO_USB=true
+      - ROLLUP_BACKEND=l1
+      - ROLLUP_CLIENT_HTTP=http://metis-andromeda-sepolia-l2geth-archive-leveldb-hash-node:7878
+      - ROLLUP_ENFORCE_FEES=true
+      - ROLLUP_MAX_CALLDATA_SIZE=40000
+      - ROLLUP_POLL_INTERVAL_FLAG=10s
+      - ROLLUP_STATE_DUMP_PATH=https://metisprotocol.github.io/metis-networks/sepolia-testnet/state-dump.latest.json
+      - ROLLUP_TIMESTAMP_REFRESH=10s
+      - RPC_ADDR=0.0.0.0
+      - RPC_API=admin,eth,net,web3,mvm,debug
+      - RPC_CORS_DOMAIN=*
+      - RPC_ENABLE=true
+      - RPC_PORT=8545
+      - RPC_VHOSTS=*
+      - SEQSET_CONTRACT=0xdE8d56212118906a0CeCD331e842429714b4c47B
+      - SEQSET_VALID_HEIGHT=1000
+      - SEQ_BRIDGE_URL=https://sepolia.metisdevops.link
+      - TARGET_GAS_LIMIT=30000000
+      - USING_OVM=true
+      - VERBOSITY=3
+      - WS=true
+      - WS_ADDR=0.0.0.0
+      - WS_API=admin,eth,net,web3,mvm,debug
+      - WS_ORIGINS=*
+      - WS_PORT=8546
+    command:
+      - --cache.noprefetch=true
+      - --mine=false
+      - --miner.noverify
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${METIS_ANDROMEDA_SEPOLIA_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-metis-andromeda-sepolia-l2geth-archive-leveldb-hash}:/root/.ethereum
+      - /slowdisk:/slowdisk
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.metis-andromeda-sepolia-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/metis-andromeda-sepolia-archive
+      - traefik.http.services.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/metis-andromeda-sepolia-archive`) || Path(`/metis-andromeda-sepolia-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.rule=Path(`/metis-andromeda-sepolia-archive`) || Path(`/metis-andromeda-sepolia-archive/`)}
+      - traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.middlewares=metis-andromeda-sepolia-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist
+
+  metis-andromeda-sepolia-archive-node:
+    image: ${METIS_ANDROMEDA_DTL_IMAGE:-metisdao/dtl}:${METIS_ANDROMEDA_SEPOLIA_DTL_VERSION:-v0.1.3}
+    ports:
+      - 19563:19563
+      - 19563:19563/udp
+    environment:
+      - DATA_TRANSPORT_LAYER__BATCH_INBOX_ADDRESS=0xff00000000000000000000000001115511159902
+      - DATA_TRANSPORT_LAYER__BATCH_INBOX_L1_HEIGHT=5536000
+      - DATA_TRANSPORT_LAYER__BATCH_INBOX_SENDER=0x578c88eeee23db03e70adb2445f0043bec3c416e
+      - DATA_TRANSPORT_LAYER__BATCH_INBOX_START_INDEX=1
+      - DATA_TRANSPORT_LAYER__CONFIRMATIONS=12
+      - DATA_TRANSPORT_LAYER__DANGEROUSLY_CATCH_ALL_ERRORS=true
+      - DATA_TRANSPORT_LAYER__DB_PATH=/data/db
+      - DATA_TRANSPORT_LAYER__DESEQBLOCK=600000
+      - DATA_TRANSPORT_LAYER__ETH_NETWORK_NAME=sepolia
+      - DATA_TRANSPORT_LAYER__L1_RPC_ENDPOINT=${ETHEREUM__EXECUTION_RPC}
+      - DATA_TRANSPORT_LAYER__L1_START_HEIGHT=5375027
+      - DATA_TRANSPORT_LAYER__L2_CHAIN_ID=59902
+      - DATA_TRANSPORT_LAYER__L2_RPC_ENDPOINT=https://sepolia.metisdevops.link
+      - DATA_TRANSPORT_LAYER__LOGS_PER_POLLING_INTERVAL=1000
+      - DATA_TRANSPORT_LAYER__MINIO_ACCESS_KEY=readonly
+      - DATA_TRANSPORT_LAYER__MINIO_BUCKET=metis-1088-tx
+      - DATA_TRANSPORT_LAYER__MINIO_ENABLED=true
+      - DATA_TRANSPORT_LAYER__MINIO_ENDPOINT=metis.memosync.org
+      - DATA_TRANSPORT_LAYER__MINIO_PORT=6081
+      - DATA_TRANSPORT_LAYER__MINIO_SECRET_KEY=read888&
+      - DATA_TRANSPORT_LAYER__MINIO_USE_SSL=true
+      - DATA_TRANSPORT_LAYER__POLLING_INTERVAL=10000
+      - DATA_TRANSPORT_LAYER__SERVER_HOSTNAME=0.0.0.0
+      - DATA_TRANSPORT_LAYER__SERVER_PORT=7878
+      - DATA_TRANSPORT_LAYER__SYNC_FROM_L1=true
+      - DATA_TRANSPORT_LAYER__SYNC_FROM_L2=false
+      - DATA_TRANSPORT_LAYER__SYNC_L1_BATCH=false
+      - DATA_TRANSPORT_LAYER__TRANSACTIONS_PER_POLLING_INTERVAL=1000
+      - URL=https://metisprotocol.github.io/metis-networks/sepolia-testnet/addresses.json
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ${METIS_ANDROMEDA_SEPOLIA_L2GETH_ARCHIVE_LEVELDB_HASH__DTL_DATA:-metis-andromeda-sepolia-l2geth-archive-leveldb-hash_dtl}:/data
+      - .jwtsecret:/jwtsecret:ro
+
+volumes:
+  metis-andromeda-sepolia-l2geth-archive-leveldb-hash:
+  metis-andromeda-sepolia-l2geth-archive-leveldb-hash_dtl:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: $${CHAIN}
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
