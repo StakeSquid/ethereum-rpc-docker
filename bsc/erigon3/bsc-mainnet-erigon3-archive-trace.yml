@@ -29,6 +29,7 @@ services:
       - 8545
     entrypoint: [/bin/sh, -c, '[ ! -f /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init /config/genesis.json; exec erigon "$@"']
     command:
+      - --chain=bsc
       - --datadir=/root/.local/share/erigon
       - --http
       - --http.addr=0.0.0.0
@@ -37,7 +38,6 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --networkid=56
       - --p2p.allowed-ports=31327
       - --p2p.allowed-ports=36327
       - --port=11327
@@ -52,7 +52,7 @@ services:
       - chains
     volumes:
       - ${BSC_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-bsc-mainnet-erigon3-archive-trace}:/root/.local/share/erigon
-      - ./bsc/bsc:/config
+      - ./bsc/mainnet:/config
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
