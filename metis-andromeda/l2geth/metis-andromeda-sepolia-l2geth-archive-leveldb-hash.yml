@@ -39,7 +39,7 @@ services:
       - NETWORK_ID=59902
       - NO_USB=true
       - ROLLUP_BACKEND=l1
-      - ROLLUP_CLIENT_HTTP=http://metis-andromeda-sepolia-l2geth-archive-leveldb-hash-node:7878
+      - ROLLUP_CLIENT_HTTP=http://metis-andromeda-sepolia-archive-node:7878
       - ROLLUP_ENFORCE_FEES=true
       - ROLLUP_MAX_CALLDATA_SIZE=40000
       - ROLLUP_POLL_INTERVAL_FLAG=10s
