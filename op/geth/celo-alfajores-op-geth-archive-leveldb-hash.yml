@@ -59,6 +59,8 @@ services:
       - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
+    depends_on:
+      - celo-alfajores-archive-classic
     networks:
       - chains
     volumes:
@@ -75,8 +77,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/celo-alfajores-archive`) || Path(`/celo-alfajores-archive/`))}
       - ${NO_SSL:+traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.rule=Path(`/celo-alfajores-archive`) || Path(`/celo-alfajores-archive/`)}
       - traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.middlewares=celo-alfajores-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
-    depends:
-      - celo-alfajores-archive-classic
 
   celo-alfajores-archive-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.0.0}
