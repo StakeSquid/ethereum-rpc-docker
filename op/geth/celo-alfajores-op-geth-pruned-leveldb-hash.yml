@@ -172,7 +172,6 @@ services:
 
 volumes:
   celo-alfajores-geth-pruned-leveldb-hash:
-  celo-alfajores-geth-pruned-leveldb-hash_prysm:
   celo-alfajores-op-geth-pruned-leveldb-hash:
   celo-alfajores-op-geth-pruned-leveldb-hash_eigenda:
 

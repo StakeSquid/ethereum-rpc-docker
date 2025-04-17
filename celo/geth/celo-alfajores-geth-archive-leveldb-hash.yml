@@ -62,7 +62,6 @@ services:
 
 volumes:
   celo-alfajores-geth-archive-leveldb-hash:
-  celo-alfajores-geth-archive-leveldb-hash_prysm:
 
 x-upstreams:
   - id: $${ID}

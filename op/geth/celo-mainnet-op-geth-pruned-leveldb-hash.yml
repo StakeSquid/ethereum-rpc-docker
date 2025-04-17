@@ -173,7 +173,6 @@ services:
 
 volumes:
   celo-mainnet-geth-pruned-leveldb-hash:
-  celo-mainnet-geth-pruned-leveldb-hash_prysm:
   celo-mainnet-op-geth-pruned-leveldb-hash:
   celo-mainnet-op-geth-pruned-leveldb-hash_eigenda:
 

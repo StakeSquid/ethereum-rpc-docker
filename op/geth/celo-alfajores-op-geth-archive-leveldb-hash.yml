@@ -172,7 +172,6 @@ services:
 
 volumes:
   celo-alfajores-geth-archive-leveldb-hash:
-  celo-alfajores-geth-archive-leveldb-hash_prysm:
   celo-alfajores-op-geth-archive-leveldb-hash:
   celo-alfajores-op-geth-archive-leveldb-hash_eigenda:
 

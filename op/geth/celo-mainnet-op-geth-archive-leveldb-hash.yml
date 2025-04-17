@@ -173,7 +173,6 @@ services:
 
 volumes:
   celo-mainnet-geth-archive-leveldb-hash:
-  celo-mainnet-geth-archive-leveldb-hash_prysm:
   celo-mainnet-op-geth-archive-leveldb-hash:
   celo-mainnet-op-geth-archive-leveldb-hash_eigenda:
 

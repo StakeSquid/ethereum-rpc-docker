@@ -62,7 +62,6 @@ services:
 
 volumes:
   celo-mainnet-geth-archive-leveldb-hash:
-  celo-mainnet-geth-archive-leveldb-hash_prysm:
 
 x-upstreams:
   - id: $${ID}
