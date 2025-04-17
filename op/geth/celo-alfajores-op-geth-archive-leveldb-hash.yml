@@ -86,7 +86,7 @@ services:
     environment:
       - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
       - EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0xD4A7E1Bd8015057293f0D0A557088c286942e84b
-      - OP_NODE_ALTDA_DA_SERVER=http://celo-alfajores-archive-eigenda-proxy:4242
+      - OP_NODE_ALTDA_DA_SERVER=http://celo-alfajores-archive-relay:4242
       - OP_NODE_ALTDA_DA_SERVICE=true
       - OP_NODE_ALTDA_ENABLED=true
       - OP_NODE_ALTDA_VERIFY_ON_READ=false

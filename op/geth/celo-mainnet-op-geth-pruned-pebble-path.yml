@@ -83,7 +83,7 @@ services:
     environment:
       - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser.eigenda.xyz:443
       - EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0x870679e138bcdf293b7ff14dd44b70fc97e12fc0
-      - OP_NODE_ALTDA_DA_SERVER=http://celo-mainnet-eigenda-proxy:4242
+      - OP_NODE_ALTDA_DA_SERVER=http://celo-mainnet-relay:4242
       - OP_NODE_ALTDA_DA_SERVICE=true
       - OP_NODE_ALTDA_ENABLED=true
       - OP_NODE_ALTDA_VERIFY_ON_READ=false
