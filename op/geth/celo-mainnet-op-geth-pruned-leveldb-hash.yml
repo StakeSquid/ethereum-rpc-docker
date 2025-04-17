@@ -46,12 +46,12 @@ services:
       - --syncmode=snap
       - --http
       - --http.addr=0.0.0.0
-      - --http.api=admin,debug,web3,eth,istanbul,,net
+      - --http.api=admin,debug,web3,eth,istanbul,net
       - --http.port=8545
       - --http.vhosts=*
       - --ws
       - --ws.addr=0.0.0.0
-      - --ws.api=admin,debug,web3,eth,istanbul,,net
+      - --ws.api=admin,debug,web3,eth,istanbul,net
       - --ws.origins=*
       - --ws.port=8545
       - --authrpc.addr=0.0.0.0
