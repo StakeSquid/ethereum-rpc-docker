@@ -27,7 +27,7 @@ services:
       - --gcmode=archive
       - --http
       - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.api=admin,debug,web3,eth,istanbul,net
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
@@ -37,7 +37,7 @@ services:
       - --rpc.txfeecap=0
       - --ws
       - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.api=admin,debug,web3,eth,istanbul,net
       - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
