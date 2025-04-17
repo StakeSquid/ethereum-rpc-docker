@@ -122,6 +122,26 @@ services:
       - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
 
+  celo-alfajores-archive-relay:
+    image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
+    ports:
+      - 21649:21649
+      - 21649:21649/udp
+    environment:
+      - EIGENDA_PROXY_EIGENDAPORT=21649
+      - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
+      - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
+      - EIGENDA_PROXY_EIGENDA_ETH_RPC=${ETHEREUM_HOLESKY_EXECUTION_RPC}
+      - EIGENDA_PROXY_EIGENDA_GRPC_DISABLE_TLS=false
+      - EIGENDA_PROXY_EIGENDA_MAX_BLOB_LENGTH=32MiB
+      - EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0xD4A7E1Bd8015057293f0D0A557088c286942e84b
+      - EIGENDA_PROXY_EIGENDA_STATUS_QUERY_TIMEOUT=45m
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ${CELO_ALFAJORES_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_DATA:-celo-alfajores-op-geth-archive-leveldb-hash_eigenda}:/data
+
   celo-alfajores-archive-classic:
     image: ${CELO_GETH_IMAGE:-us.gcr.io/celo-org/geth}:${CELO_ALFAJORES_GETH_VERSION:-1.8.9}
     sysctls:
