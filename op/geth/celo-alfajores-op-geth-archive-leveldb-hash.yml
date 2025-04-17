@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 13457:13457
-      - 13457:13457/udp
+      - 11649:11649
+      - 11649:11649/udp
     expose:
       - 8545
       - 8551
@@ -38,7 +38,7 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --networkid=44787
-      - --port=13457
+      - --port=11649
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -78,8 +78,8 @@ services:
   celo-alfajores-archive-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.0.0}
     ports:
-      - 18457:18457
-      - 18457:18457/udp
+      - 16649:16649
+      - 16649:16649/udp
     environment:
       - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
       - EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0xD4A7E1Bd8015057293f0D0A557088c286942e84b
@@ -100,8 +100,8 @@ services:
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=18457
-      - OP_NODE_P2P_LISTEN_UDP_PORT=18457
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16649
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16649
       - OP_NODE_P2P_STATIC=/ip4/35.197.25.52/tcp/9222/p2p/16Uiu2HAmQEdyLRSAVZDr5SqbJ1RnKmNDhtQJcEKmemrVxe4FxKwR,/ip4/34.105.22.4/tcp/9222/p2p/16Uiu2HAm1SZBDSugT5MMu7vBY8auDgfZFNhoDeXPLc9Me5FsAxwT,/ip4/34.83.209.168/tcp/9222/p2p/16Uiu2HAmGJAiUX6HLSo4nLh8T984qxzokwL23cVsYuNZy2SrK7C6,/ip4/34.83.214.149/tcp/9222/p2p/16Uiu2HAmAko2Kr3eAjM7tnshtEhYrxQYfKUvN2kwiygeFoBAoi8S,/ip4/34.169.5.52/tcp/9222/p2p/16Uiu2HAmKc6YKHzYgsjBDaj36uAufxpgZFgrzDqVBt6zTPwdhhJD
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
@@ -118,26 +118,6 @@ services:
     volumes:
       - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
-
-  celo-alfajores-archive-relay:
-    image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
-    ports:
-      - 23457:23457
-      - 23457:23457/udp
-    environment:
-      - EIGENDA_PROXY_EIGENDAPORT=23457
-      - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
-      - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
-      - EIGENDA_PROXY_EIGENDA_ETH_RPC=${ETHEREUM_HOLESKY_EXECUTION_RPC}
-      - EIGENDA_PROXY_EIGENDA_GRPC_DISABLE_TLS=false
-      - EIGENDA_PROXY_EIGENDA_MAX_BLOB_LENGTH=32MiB
-      - EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0xD4A7E1Bd8015057293f0D0A557088c286942e84b
-      - EIGENDA_PROXY_EIGENDA_STATUS_QUERY_TIMEOUT=45m
-    restart: unless-stopped
-    networks:
-      - chains
-    volumes:
-      - ${CELO_ALFAJORES_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_DATA:-celo-alfajores-op-geth-archive-leveldb-hash_eigenda}:/data
 
 volumes:
   celo-alfajores-op-geth-archive-leveldb-hash:

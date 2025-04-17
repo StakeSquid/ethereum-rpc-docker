@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10164:10164
-      - 10164:10164/udp
+      - 11882:11882
+      - 11882:11882/udp
     expose:
       - 8545
     command:
@@ -33,7 +33,7 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10164
+      - --port=11882
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
