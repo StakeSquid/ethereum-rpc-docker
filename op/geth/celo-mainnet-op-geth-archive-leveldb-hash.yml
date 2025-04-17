@@ -75,6 +75,8 @@ services:
       - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/celo-mainnet-archive`) || Path(`/celo-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.celo-mainnet-op-geth-archive-leveldb-hash.rule=Path(`/celo-mainnet-archive`) || Path(`/celo-mainnet-archive/`)}
       - traefik.http.routers.celo-mainnet-op-geth-archive-leveldb-hash.middlewares=celo-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+    depends:
+      - celo-mainnet-archive-classic
 
   celo-mainnet-archive-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_MAINNET_NODE_VERSION:-celo-v2.0.0}
