@@ -39,6 +39,7 @@ services:
       - --nat=extip:${IP}
       - --networkid=42220
       - --port=14087
+      - --rollup.historicalrpc=http://celo-mainnet-classic:8545
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
