@@ -24,7 +24,6 @@ services:
       - 8545
     command:
       - --datadir=/root/.celo
-      - --db.engine=leveldb
       - --gcmode=full
       - --http
       - --http.addr=0.0.0.0
@@ -36,8 +35,6 @@ services:
       - --port=11882
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-      - --state.scheme=hash
-      - --syncmode=snap
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=eth,net,web3,debug,admin,txpool,engine

@@ -143,7 +143,6 @@ services:
       - 8545
     command:
       - --datadir=/root/.celo
-      - --db.engine=leveldb
       - --gcmode=archive
       - --http
       - --http.addr=0.0.0.0
@@ -155,8 +154,6 @@ services:
       - --port=13307
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-      - --state.scheme=hash
-      - --syncmode=full
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
