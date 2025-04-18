@@ -137,6 +137,8 @@ services:
       - DATA_TRANSPORT_LAYER__TRANSACTIONS_PER_POLLING_INTERVAL=1000
       - URL=https://metisprotocol.github.io/metis-networks/andromeda-mainnet/addresses.json
     restart: unless-stopped
+    depends_on:
+      - metis-andromeda-mainnet-archive-client
     networks:
       - chains
     volumes:

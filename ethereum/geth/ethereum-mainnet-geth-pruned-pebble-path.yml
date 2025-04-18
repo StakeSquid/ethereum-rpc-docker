@@ -86,6 +86,8 @@ services:
       - --p2p-udp-port=17023
       - --rpc-host=0.0.0.0
     restart: unless-stopped
+    depends_on:
+      - ethereum-mainnet
     networks:
       - chains
     volumes:

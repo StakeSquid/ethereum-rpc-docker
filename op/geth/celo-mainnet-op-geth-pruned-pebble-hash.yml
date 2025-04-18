@@ -115,6 +115,8 @@ services:
     command:
       - --rollup.load-protocol-versions=true
     restart: unless-stopped
+    depends_on:
+      - celo-mainnet
     networks:
       - chains
     volumes:

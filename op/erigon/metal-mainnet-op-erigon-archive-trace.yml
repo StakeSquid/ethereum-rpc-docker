@@ -98,6 +98,8 @@ services:
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
     restart: unless-stopped
+    depends_on:
+      - metal-mainnet-archive
     networks:
       - chains
     volumes:

@@ -86,6 +86,8 @@ services:
       - --p2p-udp-port=16993
       - --rpc-host=0.0.0.0
     restart: unless-stopped
+    depends_on:
+      - ethereum-holesky
     networks:
       - chains
     volumes:

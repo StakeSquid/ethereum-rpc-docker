@@ -78,6 +78,8 @@ services:
       - --p2p.external-address=${IP}:15640
       - --p2p.laddr=0.0.0.0:15640
     restart: unless-stopped
+    depends_on:
+      - goat-mainnet
     networks:
       - chains
     volumes:

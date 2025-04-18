@@ -90,6 +90,8 @@ services:
       - P2P_SYNC=true
     entrypoint: [taiko-client, driver]
     restart: unless-stopped
+    depends_on:
+      - taiko-hekla
     networks:
       - chains
     volumes:

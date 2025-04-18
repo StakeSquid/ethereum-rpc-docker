@@ -78,6 +78,8 @@ services:
       - --p2p.external-address=${IP}:17891
       - --p2p.laddr=0.0.0.0:17891
     restart: unless-stopped
+    depends_on:
+      - goat-mainnet-archive
     networks:
       - chains
     volumes:

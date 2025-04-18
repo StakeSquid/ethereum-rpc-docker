@@ -78,6 +78,8 @@ services:
       - --p2p.external-address=${IP}:19461
       - --p2p.laddr=0.0.0.0:19461
     restart: unless-stopped
+    depends_on:
+      - goat-testnet3-archive
     networks:
       - chains
     volumes:

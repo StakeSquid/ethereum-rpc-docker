@@ -86,6 +86,8 @@ services:
       - --rpc-host=0.0.0.0
       - --sepolia
     restart: unless-stopped
+    depends_on:
+      - ethereum-sepolia
     networks:
       - chains
     volumes:
