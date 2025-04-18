@@ -64,7 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/viction-testnet`) || Path(`/viction-testnet/`))}
       - ${NO_SSL:+traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.rule=Path(`/viction-testnet`) || Path(`/viction-testnet/`)}
-      - traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.middlewares=viction-testnet-node-pruned-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.middlewares=viction-testnet-node-pruned-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   viction-testnet-node-pruned-leveldb-hash:

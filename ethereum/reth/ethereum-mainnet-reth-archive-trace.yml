@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-archive`) || Path(`/ethereum-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Path(`/ethereum-mainnet-archive`) || Path(`/ethereum-mainnet-archive/`)}
-      - traefik.http.routers.ethereum-mainnet-reth-archive-trace.middlewares=ethereum-mainnet-reth-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-mainnet-reth-archive-trace.middlewares=ethereum-mainnet-reth-archive-trace-stripprefix, ipallowlist
 
   ethereum-mainnet-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.1}
@@ -97,7 +97,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-archive/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.rule=PathPrefix(`/ethereum-mainnet-archive/eth`)}
-      - traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.middlewares=ethereum-mainnet-reth-archive-trace-node-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.middlewares=ethereum-mainnet-reth-archive-trace-node-stripprefix, ipallowlist
 
 volumes:
   ethereum-mainnet-reth-archive-trace:

@@ -70,7 +70,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/zircuit-garfield`) || Path(`/zircuit-garfield/`))}
       - ${NO_SSL:+traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-path.rule=Path(`/zircuit-garfield`) || Path(`/zircuit-garfield/`)}
-      - traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-path.middlewares=zircuit-garfield-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-path.middlewares=zircuit-garfield-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   zircuit-garfield-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${ZIRCUIT_GARFIELD_NODE_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}

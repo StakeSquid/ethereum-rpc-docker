@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=31249
       - --p2p.allowed-ports=36249
       - --port=11249
+      - --rollup.sequencerhttp=https://sepolia.boba.network
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http
@@ -65,7 +66,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/boba-sepolia-archive`) || Path(`/boba-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.boba-sepolia-op-erigon-archive-trace.rule=Path(`/boba-sepolia-archive`) || Path(`/boba-sepolia-archive/`)}
-      - traefik.http.routers.boba-sepolia-op-erigon-archive-trace.middlewares=boba-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.boba-sepolia-op-erigon-archive-trace.middlewares=boba-sepolia-op-erigon-archive-trace-stripprefix, ipallowlist
 
   boba-sepolia-archive-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}

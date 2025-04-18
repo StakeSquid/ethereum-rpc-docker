@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-chapel-archive`) || Path(`/bsc-chapel-archive/`))}
       - ${NO_SSL:+traefik.http.routers.bsc-chapel-erigon3-archive-trace.rule=Path(`/bsc-chapel-archive`) || Path(`/bsc-chapel-archive/`)}
-      - traefik.http.routers.bsc-chapel-erigon3-archive-trace.middlewares=bsc-chapel-erigon3-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.bsc-chapel-erigon3-archive-trace.middlewares=bsc-chapel-erigon3-archive-trace-stripprefix, ipallowlist
 
 volumes:
   bsc-chapel-erigon3-archive-trace:

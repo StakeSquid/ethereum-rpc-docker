@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 11649:11649
-      - 11649:11649/udp
+      - 10895:10895
+      - 10895:10895/udp
     expose:
       - 8545
       - 8551
@@ -38,7 +38,7 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --networkid=44787
-      - --port=11649
+      - --port=10895
       - --rollup.historicalrpc=http://celo-alfajores-archive-classic:8545
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
@@ -76,13 +76,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/celo-alfajores-archive`) || Path(`/celo-alfajores-archive/`))}
       - ${NO_SSL:+traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.rule=Path(`/celo-alfajores-archive`) || Path(`/celo-alfajores-archive/`)}
-      - traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.middlewares=celo-alfajores-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash.middlewares=celo-alfajores-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   celo-alfajores-archive-node:
     image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.0.0}
     ports:
-      - 16649:16649
-      - 16649:16649/udp
+      - 15895:15895
+      - 15895:15895/udp
     environment:
       - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
       - EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0xD4A7E1Bd8015057293f0D0A557088c286942e84b
@@ -103,8 +103,8 @@ services:
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=16649
-      - OP_NODE_P2P_LISTEN_UDP_PORT=16649
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15895
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15895
       - OP_NODE_P2P_STATIC=/ip4/35.197.25.52/tcp/9222/p2p/16Uiu2HAmQEdyLRSAVZDr5SqbJ1RnKmNDhtQJcEKmemrVxe4FxKwR,/ip4/34.105.22.4/tcp/9222/p2p/16Uiu2HAm1SZBDSugT5MMu7vBY8auDgfZFNhoDeXPLc9Me5FsAxwT,/ip4/34.83.209.168/tcp/9222/p2p/16Uiu2HAmGJAiUX6HLSo4nLh8T984qxzokwL23cVsYuNZy2SrK7C6,/ip4/34.83.214.149/tcp/9222/p2p/16Uiu2HAmAko2Kr3eAjM7tnshtEhYrxQYfKUvN2kwiygeFoBAoi8S,/ip4/34.169.5.52/tcp/9222/p2p/16Uiu2HAmKc6YKHzYgsjBDaj36uAufxpgZFgrzDqVBt6zTPwdhhJD
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
@@ -157,8 +157,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 13307:13307
-      - 13307:13307/udp
+      - 12386:12386
+      - 12386:12386/udp
     expose:
       - 8545
     command:
@@ -171,7 +171,7 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=13307
+      - --port=12386
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --ws

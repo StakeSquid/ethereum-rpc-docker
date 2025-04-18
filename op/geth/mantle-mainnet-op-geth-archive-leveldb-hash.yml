@@ -26,6 +26,7 @@ services:
       - BLOCK_SIGNER_ADDRESS=0x000000b36A00872bAF079426e012Cf5Cd2A74E8b
       - BLOCK_SIGNER_KEY=9f50ccaebd966113a0ef09793f8a3288cd0bb2c05d20caa3c0015b4e665f1b2d
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.mantle.xyz
     entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
     command:
       - --datadir=/data
@@ -35,7 +36,7 @@ services:
       - --nat=extip:${IP}
       - --networkid=5000
       - --nodiscover
-      - --port=12067
+      - --port=11055
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --syncmode=full
@@ -69,13 +70,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/mantle-mainnet-archive`) || Path(`/mantle-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.rule=Path(`/mantle-mainnet-archive`) || Path(`/mantle-mainnet-archive/`)}
-      - traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.middlewares=mantle-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.middlewares=mantle-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   mantle-mainnet-archive-node:
     image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-op-node}:${MANTLE_MAINNET_NODE_VERSION:-v1.1.1}
     ports:
-      - 17067:17067
-      - 17067:17067/udp
+      - 16055:16055
+      - 16055:16055/udp
     environment:
       - OP_NODE_INDEXER_ENABLE=true
       - OP_NODE_INDEXER_SOCKET=da-indexer-api.mantle.xyz:443
@@ -94,8 +95,8 @@ services:
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_AGENT=mantle
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=17067
-      - OP_NODE_P2P_LISTEN_UDP_PORT=17067
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16055
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16055
       - OP_NODE_P2P_STATIC=/dns4/peer0.mantle.xyz/tcp/9003/p2p/16Uiu2HAmKVKzUAns2gLhZAz1PYcbnhY3WpxNxUZYeTN1x29tNBAW,/dns4/peer1.mantle.xyz/tcp/9003/p2p/16Uiu2HAm1AiZtVp8f5C8LvpSTAXC6GtwqAVKnB3VLawWYSEBmcFN,/dns4/peer2.mantle.xyz/tcp/9003/p2p/16Uiu2HAm2UHVKiPXpovs8VbbUQVPr7feBAqBJdFsH1z5XDiLEvHT
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0

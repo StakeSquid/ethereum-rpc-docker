@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 12769:12769
-      - 12769:12769/udp
+      - 10683:10683
+      - 10683:10683/udp
     expose:
       - 8545
       - 8551
@@ -36,7 +36,7 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --networkid=81457
-      - --port=12769
+      - --port=10683
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -71,13 +71,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.blast-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.blast-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/blast-mainnet-archive`) || Path(`/blast-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.blast-mainnet-op-geth-archive-leveldb-hash.rule=Path(`/blast-mainnet-archive`) || Path(`/blast-mainnet-archive/`)}
-      - traefik.http.routers.blast-mainnet-op-geth-archive-leveldb-hash.middlewares=blast-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.blast-mainnet-op-geth-archive-leveldb-hash.middlewares=blast-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   blast-mainnet-archive-node:
     image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_MAINNET_NODE_VERSION:-v1.1.0-mainnet}
     ports:
-      - 17769:17769
-      - 17769:17769/udp
+      - 15683:15683
+      - 15683:15683/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -93,8 +93,8 @@ services:
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_BOOTNODES=enr:-J64QGwHl9uYLfC_cnmxSA6wQH811nkOWJDWjzxqkEUlJoZHWvI66u-BXgVcPCeMUmg0dBpFQAPotFchG67FHJMZ9OSGAY3d6wevgmlkgnY0gmlwhANizeSHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaECg4pk0cskPAyJ7pOmo9E6RqGBwV-Lex4VS9a3MQvu7PWDdGNwgnZhg3VkcIJ2YQ,enr:-J64QDge2jYBQtcNEpRqmKfci5E5BHAhNBjgv4WSdwH1_wPqbueq2bDj38-TSW8asjy5lJj1Xftui6Or8lnaYFCqCI-GAY3d6wf3gmlkgnY0gmlwhCO2D9yHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaEDo4aCTq7pCEN8om9U5n_VyWdambGnQhwHNwKc8o-OicaDdGNwgnZhg3VkcIJ2YQ
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=17769
-      - OP_NODE_P2P_LISTEN_UDP_PORT=17769
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15683
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15683
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545

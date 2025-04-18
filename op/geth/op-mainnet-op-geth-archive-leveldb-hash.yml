@@ -2,7 +2,7 @@
 
 services:
   op-mainnet-archive:
-    image: ${OP_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${OP_MAINNET_GETH_VERSION:-v1.101503.3}
+    image: ${OP_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${OP_MAINNET_GETH_VERSION:-v1.101503.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 12687:12687
-      - 12687:12687/udp
+      - 13399:13399
+      - 13399:13399/udp
     expose:
       - 8545
       - 8551
@@ -34,7 +34,7 @@ services:
       - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=12687
+      - --port=13399
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -68,13 +68,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash.rule=Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`)}
-      - traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash.middlewares=op-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash.middlewares=op-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   op-mainnet-archive-node:
-    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
-      - 17687:17687
-      - 17687:17687/udp
+      - 18399:18399
+      - 18399:18399/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -90,8 +90,8 @@ services:
       - OP_NODE_NETWORK=op-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=17687
-      - OP_NODE_P2P_LISTEN_UDP_PORT=17687
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18399
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18399
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

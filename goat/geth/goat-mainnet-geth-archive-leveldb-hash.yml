@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10640:10640
-      - 10640:10640/udp
+      - 12891:12891
+      - 12891:12891/udp
     expose:
       - 8545
     command:
@@ -29,7 +29,7 @@ services:
       - --goat=mainnet
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10640
+      - --port=12891
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -64,19 +64,19 @@ services:
       - ${NO_SSL:-traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/goat-mainnet-archive`) || Path(`/goat-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.rule=Path(`/goat-mainnet-archive`) || Path(`/goat-mainnet-archive/`)}
-      - traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.middlewares=goat-mainnet-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.middlewares=goat-mainnet-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   goat-mainnet-archive-node:
     image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_MAINNET_NODE_VERSION:-v0.2.3}
     ports:
-      - 15640:15640
-      - 15640:15640/udp
+      - 17891:17891
+      - 17891:17891/udp
     entrypoint: [goatd, start]
     command:
       - --chain-id=goat-mainnet
       - --goat.geth=/geth/geth.ipc
-      - --p2p.external-address=${IP}:15640
-      - --p2p.laddr=0.0.0.0:15640
+      - --p2p.external-address=${IP}:17891
+      - --p2p.laddr=0.0.0.0:17891
     restart: unless-stopped
     networks:
       - chains

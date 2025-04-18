@@ -66,10 +66,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/soneium-minato-archive`) || Path(`/soneium-minato-archive/`))}
       - ${NO_SSL:+traefik.http.routers.soneium-minato-op-erigon-archive-trace.rule=Path(`/soneium-minato-archive`) || Path(`/soneium-minato-archive/`)}
-      - traefik.http.routers.soneium-minato-op-erigon-archive-trace.middlewares=soneium-minato-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.soneium-minato-op-erigon-archive-trace.middlewares=soneium-minato-op-erigon-archive-trace-stripprefix, ipallowlist
 
   soneium-minato-archive-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.1}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.2}
     ports:
       - 18314:18314
       - 18314:18314/udp

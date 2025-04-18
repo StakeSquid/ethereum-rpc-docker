@@ -70,7 +70,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/zircuit-testnet`) || Path(`/zircuit-testnet/`))}
       - ${NO_SSL:+traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-path.rule=Path(`/zircuit-testnet`) || Path(`/zircuit-testnet/`)}
-      - traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-path.middlewares=zircuit-testnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.zircuit-testnet-op-geth-pruned-pebble-path.middlewares=zircuit-testnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   zircuit-testnet-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${ZIRCUIT_TESTNET_NODE_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}

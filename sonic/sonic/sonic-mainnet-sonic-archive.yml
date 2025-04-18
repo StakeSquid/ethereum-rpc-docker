@@ -64,7 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && (Path(`/sonic-mainnet-archive`) || Path(`/sonic-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.sonic-mainnet-sonic-archive.rule=Path(`/sonic-mainnet-archive`) || Path(`/sonic-mainnet-archive/`)}
-      - traefik.http.routers.sonic-mainnet-sonic-archive.middlewares=sonic-mainnet-sonic-archive-stripprefix, ipwhitelist
+      - traefik.http.routers.sonic-mainnet-sonic-archive.middlewares=sonic-mainnet-sonic-archive-stripprefix, ipallowlist
 
 volumes:
   sonic-mainnet-sonic-archive:

@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 11882:11882
-      - 11882:11882/udp
+      - 10164:10164
+      - 10164:10164/udp
     expose:
       - 8545
     command:
@@ -32,7 +32,7 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=11882
+      - --port=10164
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --ws
@@ -55,7 +55,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.celo-mainnet-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.celo-mainnet-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/celo-mainnet-archive`) || Path(`/celo-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.celo-mainnet-geth-archive-leveldb-hash.rule=Path(`/celo-mainnet-archive`) || Path(`/celo-mainnet-archive/`)}
-      - traefik.http.routers.celo-mainnet-geth-archive-leveldb-hash.middlewares=celo-mainnet-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.celo-mainnet-geth-archive-leveldb-hash.middlewares=celo-mainnet-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   celo-mainnet-geth-archive-leveldb-hash:

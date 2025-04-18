@@ -67,7 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-opera-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-opera-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/fantom-testnet-archive`) || Path(`/fantom-testnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.fantom-testnet-opera-archive-trace.rule=Path(`/fantom-testnet-archive`) || Path(`/fantom-testnet-archive/`)}
-      - traefik.http.routers.fantom-testnet-opera-archive-trace.middlewares=fantom-testnet-opera-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.fantom-testnet-opera-archive-trace.middlewares=fantom-testnet-opera-archive-trace-stripprefix, ipallowlist
 
 volumes:
   fantom-testnet-opera-archive-trace:

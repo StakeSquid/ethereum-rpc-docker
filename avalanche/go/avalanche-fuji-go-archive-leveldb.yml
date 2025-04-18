@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10350:10350
-      - 10350:10350/udp
+      - 10046:10046
+      - 10046:10046/udp
     expose:
       - 9650
       - 9650
@@ -31,7 +31,7 @@ services:
       - --http-host=
       - --network-id=fuji
       - --public-ip=${IP}
-      - --staking-port=10350
+      - --staking-port=10046
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
@@ -64,7 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb.rule=Host(`$DOMAIN`) && (Path(`/avalanche-fuji-archive`) || Path(`/avalanche-fuji-archive/`))}
       - ${NO_SSL:+traefik.http.routers.avalanche-fuji-go-archive-leveldb.rule=Path(`/avalanche-fuji-archive`) || Path(`/avalanche-fuji-archive/`)}
-      - traefik.http.routers.avalanche-fuji-go-archive-leveldb.middlewares=avalanche-fuji-go-archive-leveldb-stripprefix, ipwhitelist
+      - traefik.http.routers.avalanche-fuji-go-archive-leveldb.middlewares=avalanche-fuji-go-archive-leveldb-stripprefix, ipallowlist
 
 volumes:
   avalanche-fuji-go-archive-leveldb:

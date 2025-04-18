@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/playblock-mainnet-archive`) || Path(`/playblock-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.rule=Path(`/playblock-mainnet-archive`) || Path(`/playblock-mainnet-archive/`)}
-      - traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.middlewares=playblock-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.playblock-mainnet-nitro-archive-leveldb-hash.middlewares=playblock-mainnet-nitro-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   playblock-mainnet-nitro-archive-leveldb-hash:

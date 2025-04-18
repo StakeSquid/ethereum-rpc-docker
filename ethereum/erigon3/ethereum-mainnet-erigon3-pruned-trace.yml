@@ -2,7 +2,7 @@
 
 services:
   ethereum-mainnet:
-    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_MAINNET_ERIGON3_VERSION:-v3.0.1}
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_MAINNET_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,16 +19,16 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 11675:11675
-      - 11675:11675/udp
-      - 16675:16675
-      - 16675:16675/udp
-      - 26675:26675
-      - 26675:26675/udp
-      - 31675:31675
-      - 31675:31675/udp
-      - 36675:36675
-      - 36675:36675/udp
+      - 14616:14616
+      - 14616:14616/udp
+      - 19616:19616
+      - 19616:19616/udp
+      - 29616:29616
+      - 29616:29616/udp
+      - 34616:34616
+      - 34616:34616/udp
+      - 39616:39616
+      - 39616:39616/udp
     expose:
       - 8545
       - 5555
@@ -39,8 +39,8 @@ services:
       - --beacon.api.port=5555
       - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=16675
-      - --caplin.discovery.tcpport=16675
+      - --caplin.discovery.port=19616
+      - --caplin.discovery.tcpport=19616
       - --chain=mainnet
       - --datadir=/root/.local/share/erigon
       - --http
@@ -50,13 +50,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=31675
-      - --p2p.allowed-ports=36675
-      - --port=11675
+      - --p2p.allowed-ports=34616
+      - --p2p.allowed-ports=39616
+      - --port=14616
       - --prune.mode=full
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
-      - --torrent.port=26675
+      - --torrent.port=29616
       - --ws
       - --ws.port=8545
     restart: unless-stopped
@@ -74,7 +74,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet`) || Path(`/ethereum-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=Path(`/ethereum-mainnet`) || Path(`/ethereum-mainnet/`)}
-      - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.middlewares=ethereum-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.middlewares=ethereum-mainnet-erigon3-pruned-trace-stripprefix, ipallowlist
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.service=ethereum-mainnet-erigon3-pruned-trace
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.service=ethereum-mainnet-erigon3-pruned-trace-node
       - traefik.http.services.ethereum-mainnet-erigon3-pruned-trace-node.loadbalancer.server.port=5555
@@ -82,7 +82,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.rule=PathPrefix(`/ethereum-mainnet/eth`)}
-      - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.middlewares=ethereum-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.middlewares=ethereum-mainnet-erigon3-pruned-trace-stripprefix, ipallowlist
 
 volumes:
   ethereum-mainnet-erigon3-pruned-trace:

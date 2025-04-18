@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 11169:11169
-      - 11169:11169/udp
+      - 14234:14234
+      - 14234:14234/udp
     expose:
       - 8545
     entrypoint: [geth]
@@ -36,7 +36,7 @@ services:
       - --mainnet
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=11169
+      - --port=14234
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.core-mainnet-core-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.core-mainnet-core-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/core-mainnet-archive`) || Path(`/core-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.core-mainnet-core-archive-leveldb-hash.rule=Path(`/core-mainnet-archive`) || Path(`/core-mainnet-archive/`)}
-      - traefik.http.routers.core-mainnet-core-archive-leveldb-hash.middlewares=core-mainnet-core-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.core-mainnet-core-archive-leveldb-hash.middlewares=core-mainnet-core-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   core-mainnet-core-archive-leveldb-hash:

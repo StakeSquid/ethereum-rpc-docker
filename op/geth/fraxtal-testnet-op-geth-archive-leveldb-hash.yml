@@ -39,7 +39,7 @@ services:
       - --nat=extip:${IP}
       - --networkid=2522
       - --nodiscover
-      - --port=11370
+      - --port=10294
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -74,13 +74,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/fraxtal-testnet-archive`) || Path(`/fraxtal-testnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash.rule=Path(`/fraxtal-testnet-archive`) || Path(`/fraxtal-testnet-archive/`)}
-      - traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash.middlewares=fraxtal-testnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash.middlewares=fraxtal-testnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   fraxtal-testnet-archive-node:
     image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-node}:${FRAXTAL_TESTNET_NODE_VERSION:-v1.12.2-frax-1.1.0}
     ports:
-      - 16370:16370
-      - 16370:16370/udp
+      - 15294:15294
+      - 15294:15294/udp
     environment:
       - OP_NODE_DA_RPC=https://da-rpc.testnet.frax.com
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
@@ -98,8 +98,8 @@ services:
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_BOOTNODES=enr:-J24QMswfOBuPJnTjWPN7p-jZDXlB0VIYznPmpbmdkYM6rWKXc9nP34X5iMECUJmO-r-ebFdB0lKKyCtwMx1K2iOWb6GAYv0JJTPgmlkgnY0gmlwhDaUK8yHb3BzdGFja4PaEwCJc2VjcDI1NmsxoQJ-3NmhyfH63mVHv81ZlfG95tW6RwHPh_4S5To1eqbJhYN0Y3CCJAaDdWRwgiQG,enr:-J24QAsDW6Q83Cxb_qZaKtjm4jkhYWX7S3zDOoore9_1gjgge-POCzksofNo-27mbnthX7T9m4y7tr6t5Limw52TVVqGAYv0JGdPgmlkgnY0gmlwhDavnMmHb3BzdGFja4PaEwCJc2VjcDI1NmsxoQM1128eBAblNUFycltYl2B6mvhDWuFs1ZInCkByriIWY4N0Y3CCJAaDdWRwgiQG,enr:-J24QNkAGsc3ptRO1I23guIZh6kPZfLRlkWRX5U--Fk3X27fdSnq3giOAOTsRFNDgUeuNy5wrpKBWR_5TueJTMRmg4eGAYv0JIFbgmlkgnY0gmlwhDbZXGmHb3BzdGFja4PaEwCJc2VjcDI1NmsxoQO8_h2GFnyeoW1GoxgGYtg_0qIXgO5IFdEsvXaCBh6RcIN0Y3CCJAaDdWRwgiQG
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=16370
-      - OP_NODE_P2P_LISTEN_UDP_PORT=16370
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15294
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15294
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545

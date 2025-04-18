@@ -19,12 +19,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 12810:12810
-      - 12810:12810/udp
-      - 32810:32810
-      - 32810:32810/udp
-      - 37810:37810
-      - 37810:37810/udp
+      - 10589:10589
+      - 10589:10589/udp
+      - 30589:30589
+      - 30589:30589/udp
+      - 35589:35589
+      - 35589:35589/udp
     expose:
       - 8545
     entrypoint: /bin/sh -c '[ ! -d /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init --datadir /root/.local/share/erigon /config/genesis.json; exec erigon "$@"' --
@@ -38,9 +38,9 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=32810
-      - --p2p.allowed-ports=37810
-      - --port=12810
+      - --p2p.allowed-ports=30589
+      - --p2p.allowed-ports=35589
+      - --port=10589
       - --prune.mode=full
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-pruned-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-chapel`) || Path(`/bsc-chapel/`))}
       - ${NO_SSL:+traefik.http.routers.bsc-chapel-erigon3-pruned-trace.rule=Path(`/bsc-chapel`) || Path(`/bsc-chapel/`)}
-      - traefik.http.routers.bsc-chapel-erigon3-pruned-trace.middlewares=bsc-chapel-erigon3-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.bsc-chapel-erigon3-pruned-trace.middlewares=bsc-chapel-erigon3-pruned-trace-stripprefix, ipallowlist
 
 volumes:
   bsc-chapel-erigon3-pruned-trace:

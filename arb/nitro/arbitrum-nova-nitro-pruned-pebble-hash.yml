@@ -57,7 +57,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-nova`) || Path(`/arbitrum-nova/`))}
       - ${NO_SSL:+traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.rule=Path(`/arbitrum-nova`) || Path(`/arbitrum-nova/`)}
-      - traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.middlewares=arbitrum-nova-nitro-pruned-pebble-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.arbitrum-nova-nitro-pruned-pebble-hash.middlewares=arbitrum-nova-nitro-pruned-pebble-hash-stripprefix, ipallowlist
 
 volumes:
   arbitrum-nova-nitro-pruned-pebble-hash:

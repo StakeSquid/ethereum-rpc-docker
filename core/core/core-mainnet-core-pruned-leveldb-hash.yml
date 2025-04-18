@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/core-mainnet`) || Path(`/core-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.rule=Path(`/core-mainnet`) || Path(`/core-mainnet/`)}
-      - traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.middlewares=core-mainnet-core-pruned-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.core-mainnet-core-pruned-leveldb-hash.middlewares=core-mainnet-core-pruned-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   core-mainnet-core-pruned-leveldb-hash:

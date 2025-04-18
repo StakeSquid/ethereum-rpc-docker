@@ -71,7 +71,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/blast-sepolia`) || Path(`/blast-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.rule=Path(`/blast-sepolia`) || Path(`/blast-sepolia/`)}
-      - traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.middlewares=blast-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.middlewares=blast-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipallowlist
 
   blast-sepolia-node:
     image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_SEPOLIA_NODE_VERSION:-sepolia-v1.2.3}

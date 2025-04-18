@@ -2,7 +2,7 @@
 
 services:
   polygon-amoy-minimal:
-    image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_AMOY_ERIGON3_VERSION:-v3.0.1}
+    image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_AMOY_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,12 +19,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 12377:12377
-      - 12377:12377/udp
-      - 32377:32377
-      - 32377:32377/udp
-      - 37377:37377
-      - 37377:37377/udp
+      - 10307:10307
+      - 10307:10307/udp
+      - 30307:30307
+      - 30307:30307/udp
+      - 35307:35307
+      - 35307:35307/udp
     expose:
       - 8545
     entrypoint: [erigon]
@@ -39,13 +39,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=32377
-      - --p2p.allowed-ports=37377
-      - --port=12377
+      - --p2p.allowed-ports=30307
+      - --p2p.allowed-ports=35307
+      - --port=10307
       - --prune.mode=minimal
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
-      - --torrent.port=27377
+      - --torrent.port=25307
       - --ws
       - --ws.port=8545
     restart: unless-stopped
@@ -63,7 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-minimal-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/polygon-amoy-minimal`) || Path(`/polygon-amoy-minimal/`))}
       - ${NO_SSL:+traefik.http.routers.polygon-amoy-erigon3-minimal-trace.rule=Path(`/polygon-amoy-minimal`) || Path(`/polygon-amoy-minimal/`)}
-      - traefik.http.routers.polygon-amoy-erigon3-minimal-trace.middlewares=polygon-amoy-erigon3-minimal-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.polygon-amoy-erigon3-minimal-trace.middlewares=polygon-amoy-erigon3-minimal-trace-stripprefix, ipallowlist
 
 volumes:
   polygon-amoy-erigon3-minimal-trace:

@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.bsc-mainnet-erigon3-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.bsc-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-mainnet-archive`) || Path(`/bsc-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.bsc-mainnet-erigon3-archive-trace.rule=Path(`/bsc-mainnet-archive`) || Path(`/bsc-mainnet-archive/`)}
-      - traefik.http.routers.bsc-mainnet-erigon3-archive-trace.middlewares=bsc-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.bsc-mainnet-erigon3-archive-trace.middlewares=bsc-mainnet-erigon3-archive-trace-stripprefix, ipallowlist
 
 volumes:
   bsc-mainnet-erigon3-archive-trace:

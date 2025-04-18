@@ -2,7 +2,7 @@
 
 services:
   gnosis-chiado:
-    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_CHIADO_ERIGON3_VERSION:-v3.0.1}
+    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_CHIADO_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,16 +19,16 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 11986:11986
-      - 11986:11986/udp
-      - 16986:16986
-      - 16986:16986/udp
-      - 26986:26986
-      - 26986:26986/udp
-      - 31986:31986
-      - 31986:31986/udp
-      - 36986:36986
-      - 36986:36986/udp
+      - 11886:11886
+      - 11886:11886/udp
+      - 16886:16886
+      - 16886:16886/udp
+      - 26886:26886
+      - 26886:26886/udp
+      - 31886:31886
+      - 31886:31886/udp
+      - 36886:36886
+      - 36886:36886/udp
     expose:
       - 8545
     entrypoint: [erigon]
@@ -38,8 +38,8 @@ services:
       - --beacon.api.port=5555
       - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=16986
-      - --caplin.discovery.tcpport=16986
+      - --caplin.discovery.port=16886
+      - --caplin.discovery.tcpport=16886
       - --chain=chiado
       - --datadir=/root/.local/share/erigon
       - --http
@@ -49,13 +49,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=31986
-      - --p2p.allowed-ports=36986
-      - --port=11986
+      - --p2p.allowed-ports=31886
+      - --p2p.allowed-ports=36886
+      - --port=11886
       - --prune.mode=full
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
-      - --torrent.port=26986
+      - --torrent.port=26886
       - --ws
       - --ws.port=8545
     restart: unless-stopped
@@ -73,7 +73,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-chiado`) || Path(`/gnosis-chiado/`))}
       - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.rule=Path(`/gnosis-chiado`) || Path(`/gnosis-chiado/`)}
-      - traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.middlewares=gnosis-chiado-erigon3-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.gnosis-chiado-erigon3-pruned-trace.middlewares=gnosis-chiado-erigon3-pruned-trace-stripprefix, ipallowlist
 
 volumes:
   gnosis-chiado-erigon3-pruned-trace:

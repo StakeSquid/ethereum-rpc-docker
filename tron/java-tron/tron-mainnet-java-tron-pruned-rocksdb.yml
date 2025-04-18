@@ -40,7 +40,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=Host(`$DOMAIN`) && (Path(`/tron-mainnet`) || Path(`/tron-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.rule=Path(`/tron-mainnet`) || Path(`/tron-mainnet/`)}
-      - traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.middlewares=tron-mainnet-java-tron-pruned-rocksdb-stripprefix, tron-mainnet-java-tron-pruned-rocksdb-set-path, ipwhitelist
+      - traefik.http.routers.tron-mainnet-java-tron-pruned-rocksdb.middlewares=tron-mainnet-java-tron-pruned-rocksdb-stripprefix, tron-mainnet-java-tron-pruned-rocksdb-set-path, ipallowlist
 
 volumes:
   tron-mainnet-java-tron-pruned-rocksdb:

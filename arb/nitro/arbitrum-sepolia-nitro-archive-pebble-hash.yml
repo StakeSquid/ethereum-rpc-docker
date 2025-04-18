@@ -57,7 +57,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-sepolia-archive`) || Path(`/arbitrum-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.rule=Path(`/arbitrum-sepolia-archive`) || Path(`/arbitrum-sepolia-archive/`)}
-      - traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.middlewares=arbitrum-sepolia-nitro-archive-pebble-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.arbitrum-sepolia-nitro-archive-pebble-hash.middlewares=arbitrum-sepolia-nitro-archive-pebble-hash-stripprefix, ipallowlist
 
 volumes:
   arbitrum-sepolia-nitro-archive-pebble-hash:

@@ -68,7 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-geth-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.boba-sepolia-op-geth-pruned.rule=Host(`$DOMAIN`) && (Path(`/boba-sepolia`) || Path(`/boba-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.boba-sepolia-op-geth-pruned.rule=Path(`/boba-sepolia`) || Path(`/boba-sepolia/`)}
-      - traefik.http.routers.boba-sepolia-op-geth-pruned.middlewares=boba-sepolia-op-geth-pruned-stripprefix, ipwhitelist
+      - traefik.http.routers.boba-sepolia-op-geth-pruned.middlewares=boba-sepolia-op-geth-pruned-stripprefix, ipallowlist
 
   boba-sepolia-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_SEPOLIA_NODE_VERSION:-v1.6.18}

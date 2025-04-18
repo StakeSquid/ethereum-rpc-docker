@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 13559:13559
-      - 13559:13559/udp
+      - 10493:10493
+      - 10493:10493/udp
     expose:
       - 8545
     environment:
@@ -28,7 +28,7 @@ services:
       - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
       - MINE=false
       - NETWORK_ID=2021
-      - NETWORK_PORT=13559
+      - NETWORK_PORT=10493
       - PASSWORD=stupidpassword
       - STATE_SCHEME=hash
       - SYNC_MODE=full
@@ -39,7 +39,7 @@ services:
       - --gcmode=full
       - --http.api=admin,eth,net,web3,consortium,txpool,debug
       - --nat=extip:${IP}
-      - --port=13559
+      - --port=10493
       - --txpool.nolocals
       - --txpool.pricelimit=20000000000
     restart: unless-stopped
@@ -57,7 +57,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-pruned-pebble-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ronin-saigon-ronin-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/ronin-saigon`) || Path(`/ronin-saigon/`))}
       - ${NO_SSL:+traefik.http.routers.ronin-saigon-ronin-pruned-pebble-hash.rule=Path(`/ronin-saigon`) || Path(`/ronin-saigon/`)}
-      - traefik.http.routers.ronin-saigon-ronin-pruned-pebble-hash.middlewares=ronin-saigon-ronin-pruned-pebble-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.ronin-saigon-ronin-pruned-pebble-hash.middlewares=ronin-saigon-ronin-pruned-pebble-hash-stripprefix, ipallowlist
 
 volumes:
   ronin-saigon-ronin-pruned-pebble-hash:

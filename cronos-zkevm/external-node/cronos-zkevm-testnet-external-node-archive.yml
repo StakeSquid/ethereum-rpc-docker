@@ -21,8 +21,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10397:10397
-      - 10397:10397/udp
+      - 11917:11917
+      - 11917:11917/udp
     expose:
       - 8545
       - 8546
@@ -80,7 +80,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-testnet-external-node-archive.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-testnet-external-node-archive.rule=Host(`$DOMAIN`) && (Path(`/cronos-zkevm-testnet-archive`) || Path(`/cronos-zkevm-testnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.cronos-zkevm-testnet-external-node-archive.rule=Path(`/cronos-zkevm-testnet-archive`) || Path(`/cronos-zkevm-testnet-archive/`)}
-      - traefik.http.routers.cronos-zkevm-testnet-external-node-archive.middlewares=cronos-zkevm-testnet-external-node-archive-stripprefix, ipwhitelist
+      - traefik.http.routers.cronos-zkevm-testnet-external-node-archive.middlewares=cronos-zkevm-testnet-external-node-archive-stripprefix, ipallowlist
 
   cronos-zkevm-testnet-archive-db:
     image: postgres:14

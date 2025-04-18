@@ -67,10 +67,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/mode-mainnet-archive`) || Path(`/mode-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.mode-mainnet-op-erigon-archive-trace.rule=Path(`/mode-mainnet-archive`) || Path(`/mode-mainnet-archive/`)}
-      - traefik.http.routers.mode-mainnet-op-erigon-archive-trace.middlewares=mode-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.mode-mainnet-op-erigon-archive-trace.middlewares=mode-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
 
   mode-mainnet-archive-node:
-    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 17509:17509
       - 17509:17509/udp

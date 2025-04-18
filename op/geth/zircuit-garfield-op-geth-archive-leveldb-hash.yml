@@ -35,7 +35,7 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --nodiscover
-      - --port=10072
+      - --port=12296
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -70,13 +70,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/zircuit-garfield-archive`) || Path(`/zircuit-garfield-archive/`))}
       - ${NO_SSL:+traefik.http.routers.zircuit-garfield-op-geth-archive-leveldb-hash.rule=Path(`/zircuit-garfield-archive`) || Path(`/zircuit-garfield-archive/`)}
-      - traefik.http.routers.zircuit-garfield-op-geth-archive-leveldb-hash.middlewares=zircuit-garfield-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.zircuit-garfield-op-geth-archive-leveldb-hash.middlewares=zircuit-garfield-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   zircuit-garfield-archive-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${ZIRCUIT_GARFIELD_NODE_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}
     ports:
-      - 15072:15072
-      - 15072:15072/udp
+      - 17296:17296
+      - 17296:17296/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_HOLESKY_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_HOLESKY_BEACON_ARCHIVER}
@@ -91,8 +91,8 @@ services:
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15072
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15072
+      - OP_NODE_P2P_LISTEN_TCP_PORT=17296
+      - OP_NODE_P2P_LISTEN_UDP_PORT=17296
       - OP_NODE_P2P_STATIC=/dns4/node1-us-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmFa6dADkqYEFVxDzrgaLbSArEKev4syqUksU4Vc4kWEPj,/dns4/node2-us-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmDpE7eFBy9HMC5ToV4ioDtQSgWhudbWZCex4TD8u8xzRX,/dns4/node3-us-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm4wPvLMeP4Ycicse9k7cAxHWBpN5V431nFirXZ6kUxNbn,/dns4/node1-eu-p2p.garfield-testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmBtmdnVtGJS8ZSUo3ruPYQi5G6quRWvFJs7nT7SHgRKjV
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0

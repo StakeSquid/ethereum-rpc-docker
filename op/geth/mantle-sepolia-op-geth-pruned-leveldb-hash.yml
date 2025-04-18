@@ -68,7 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/mantle-sepolia`) || Path(`/mantle-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.rule=Path(`/mantle-sepolia`) || Path(`/mantle-sepolia/`)}
-      - traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.middlewares=mantle-sepolia-op-geth-pruned-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.middlewares=mantle-sepolia-op-geth-pruned-leveldb-hash-stripprefix, ipallowlist
 
   mantle-sepolia-node:
     image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-op-node}:${MANTLE_SEPOLIA_NODE_VERSION:-v1.1.1}

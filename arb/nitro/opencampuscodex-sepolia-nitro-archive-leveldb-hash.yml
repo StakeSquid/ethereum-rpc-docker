@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/opencampuscodex-sepolia-archive`) || Path(`/opencampuscodex-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.rule=Path(`/opencampuscodex-sepolia-archive`) || Path(`/opencampuscodex-sepolia-archive/`)}
-      - traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.middlewares=opencampuscodex-sepolia-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.opencampuscodex-sepolia-nitro-archive-leveldb-hash.middlewares=opencampuscodex-sepolia-nitro-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   opencampuscodex-sepolia-nitro-archive-leveldb-hash:

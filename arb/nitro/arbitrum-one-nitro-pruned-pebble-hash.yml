@@ -57,7 +57,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-one`) || Path(`/arbitrum-one/`))}
       - ${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.rule=Path(`/arbitrum-one`) || Path(`/arbitrum-one/`)}
-      - traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.middlewares=arbitrum-one-nitro-pruned-pebble-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.middlewares=arbitrum-one-nitro-pruned-pebble-hash-stripprefix, ipallowlist
 
 volumes:
   arbitrum-one-nitro-pruned-pebble-hash:

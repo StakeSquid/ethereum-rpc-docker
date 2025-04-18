@@ -2,7 +2,7 @@
 
 services:
   ethereum-sepolia-minimal:
-    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_SEPOLIA_ERIGON3_VERSION:-v3.0.1}
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_SEPOLIA_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,16 +19,16 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 13317:13317
-      - 13317:13317/udp
-      - 18317:18317
-      - 18317:18317/udp
-      - 28317:28317
-      - 28317:28317/udp
-      - 33317:33317
-      - 33317:33317/udp
-      - 38317:38317
-      - 38317:38317/udp
+      - 11087:11087
+      - 11087:11087/udp
+      - 16087:16087
+      - 16087:16087/udp
+      - 26087:26087
+      - 26087:26087/udp
+      - 31087:31087
+      - 31087:31087/udp
+      - 36087:36087
+      - 36087:36087/udp
     expose:
       - 8545
       - 5555
@@ -39,8 +39,8 @@ services:
       - --beacon.api.port=5555
       - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=18317
-      - --caplin.discovery.tcpport=18317
+      - --caplin.discovery.port=16087
+      - --caplin.discovery.tcpport=16087
       - --chain=sepolia
       - --datadir=/root/.local/share/erigon
       - --http
@@ -50,13 +50,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=33317
-      - --p2p.allowed-ports=38317
-      - --port=13317
+      - --p2p.allowed-ports=31087
+      - --p2p.allowed-ports=36087
+      - --port=11087
       - --prune.mode=minimal
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
-      - --torrent.port=28317
+      - --torrent.port=26087
       - --ws
       - --ws.port=8545
     restart: unless-stopped
@@ -74,7 +74,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia-minimal`) || Path(`/ethereum-sepolia-minimal/`))}
       - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Path(`/ethereum-sepolia-minimal`) || Path(`/ethereum-sepolia-minimal/`)}
-      - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipallowlist
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.service=ethereum-sepolia-erigon3-minimal-trace
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.service=ethereum-sepolia-erigon3-minimal-trace-node
       - traefik.http.services.ethereum-sepolia-erigon3-minimal-trace-node.loadbalancer.server.port=5555
@@ -82,7 +82,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-minimal/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=PathPrefix(`/ethereum-sepolia-minimal/eth`)}
-      - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipallowlist
 
 volumes:
   ethereum-sepolia-erigon3-minimal-trace:

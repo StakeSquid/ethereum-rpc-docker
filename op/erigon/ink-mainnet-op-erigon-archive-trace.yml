@@ -66,10 +66,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ink-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ink-mainnet-archive`) || Path(`/ink-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.ink-mainnet-op-erigon-archive-trace.rule=Path(`/ink-mainnet-archive`) || Path(`/ink-mainnet-archive/`)}
-      - traefik.http.routers.ink-mainnet-op-erigon-archive-trace.middlewares=ink-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ink-mainnet-op-erigon-archive-trace.middlewares=ink-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
 
   ink-mainnet-archive-node:
-    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 16990:16990
       - 16990:16990/udp

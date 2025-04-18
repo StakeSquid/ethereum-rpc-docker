@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-reth-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-holesky-archive`) || Path(`/ethereum-holesky-archive/`))}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-reth-archive-trace.rule=Path(`/ethereum-holesky-archive`) || Path(`/ethereum-holesky-archive/`)}
-      - traefik.http.routers.ethereum-holesky-reth-archive-trace.middlewares=ethereum-holesky-reth-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-holesky-reth-archive-trace.middlewares=ethereum-holesky-reth-archive-trace-stripprefix, ipallowlist
 
   ethereum-holesky-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v5.3.1}
@@ -97,7 +97,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-reth-archive-trace-node.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-reth-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky-archive/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-reth-archive-trace-node.rule=PathPrefix(`/ethereum-holesky-archive/eth`)}
-      - traefik.http.routers.ethereum-holesky-reth-archive-trace-node.middlewares=ethereum-holesky-reth-archive-trace-node-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-holesky-reth-archive-trace-node.middlewares=ethereum-holesky-reth-archive-trace-node-stripprefix, ipallowlist
 
 volumes:
   ethereum-holesky-reth-archive-trace:

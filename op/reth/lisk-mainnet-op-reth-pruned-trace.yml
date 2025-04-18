@@ -19,8 +19,8 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10598:10598
-      - 10598:10598/udp
+      - 12812:12812
+      - 12812:12812/udp
     expose:
       - 8545
       - 8551
@@ -33,7 +33,7 @@ services:
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
-      - --port=10598
+      - --port=12812
       - --rollup.sequencer-http=https://rpc.api.lisk.com
       - --rpc.gascap=600000000
       - --rpc.max-logs-per-response=1100000
@@ -66,13 +66,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-reth-pruned-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/lisk-mainnet`) || Path(`/lisk-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-reth-pruned-trace.rule=Path(`/lisk-mainnet`) || Path(`/lisk-mainnet/`)}
-      - traefik.http.routers.lisk-mainnet-op-reth-pruned-trace.middlewares=lisk-mainnet-op-reth-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.lisk-mainnet-op-reth-pruned-trace.middlewares=lisk-mainnet-op-reth-pruned-trace-stripprefix, ipallowlist
 
   lisk-mainnet-node:
-    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
-      - 15598:15598
-      - 15598:15598/udp
+      - 17812:17812
+      - 17812:17812/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -89,8 +89,8 @@ services:
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_BOOTNODES=enr:-Iu4QBCIUw0OhAq5ErARIYBLIr6xPb83OqeFRqlUJGlJ9kWpNECaumPArYWsEFdM_cEKm26JJT_EA52f4dlavBldldgBgmlkgnY0gmlwhCPqq5CJc2VjcDI1NmsxoQLBE74gZyIHkwBEnkI4K7nR4SM2Lytj2VTLqJaj5nQevoN0Y3CCIyuDdWRwgiMs
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15598
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15598
+      - OP_NODE_P2P_LISTEN_TCP_PORT=17812
+      - OP_NODE_P2P_LISTEN_UDP_PORT=17812
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

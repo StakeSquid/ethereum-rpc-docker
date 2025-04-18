@@ -2,7 +2,7 @@
 
 services:
   gnosis-mainnet:
-    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.1}
+    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,16 +19,16 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 12974:12974
-      - 12974:12974/udp
-      - 17974:17974
-      - 17974:17974/udp
-      - 27974:27974
-      - 27974:27974/udp
-      - 32974:32974
-      - 32974:32974/udp
-      - 37974:37974
-      - 37974:37974/udp
+      - 12147:12147
+      - 12147:12147/udp
+      - 17147:17147
+      - 17147:17147/udp
+      - 27147:27147
+      - 27147:27147/udp
+      - 32147:32147
+      - 32147:32147/udp
+      - 37147:37147
+      - 37147:37147/udp
     expose:
       - 8545
     entrypoint: [erigon]
@@ -38,8 +38,8 @@ services:
       - --beacon.api.port=5555
       - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=17974
-      - --caplin.discovery.tcpport=17974
+      - --caplin.discovery.port=17147
+      - --caplin.discovery.tcpport=17147
       - --chain=gnosis
       - --datadir=/root/.local/share/erigon
       - --http
@@ -49,13 +49,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=32974
-      - --p2p.allowed-ports=37974
-      - --port=12974
+      - --p2p.allowed-ports=32147
+      - --p2p.allowed-ports=37147
+      - --port=12147
       - --prune.mode=full
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
-      - --torrent.port=27974
+      - --torrent.port=27147
       - --ws
       - --ws.port=8545
     restart: unless-stopped
@@ -73,7 +73,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-mainnet`) || Path(`/gnosis-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Path(`/gnosis-mainnet`) || Path(`/gnosis-mainnet/`)}
-      - traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.middlewares=gnosis-mainnet-erigon3-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.middlewares=gnosis-mainnet-erigon3-pruned-trace-stripprefix, ipallowlist
 
 volumes:
   gnosis-mainnet-erigon3-pruned-trace:

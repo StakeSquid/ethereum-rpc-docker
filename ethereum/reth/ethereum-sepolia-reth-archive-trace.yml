@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia-archive`) || Path(`/ethereum-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Path(`/ethereum-sepolia-archive`) || Path(`/ethereum-sepolia-archive/`)}
-      - traefik.http.routers.ethereum-sepolia-reth-archive-trace.middlewares=ethereum-sepolia-reth-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-sepolia-reth-archive-trace.middlewares=ethereum-sepolia-reth-archive-trace-stripprefix, ipallowlist
 
   ethereum-sepolia-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v5.3.1}
@@ -97,7 +97,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-archive/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.rule=PathPrefix(`/ethereum-sepolia-archive/eth`)}
-      - traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.middlewares=ethereum-sepolia-reth-archive-trace-node-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.middlewares=ethereum-sepolia-reth-archive-trace-node-stripprefix, ipallowlist
 
 volumes:
   ethereum-sepolia-reth-archive-trace:

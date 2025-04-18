@@ -65,7 +65,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.fantom-mainnet-sonic-archive.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.fantom-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && (Path(`/fantom-mainnet-archive`) || Path(`/fantom-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.fantom-mainnet-sonic-archive.rule=Path(`/fantom-mainnet-archive`) || Path(`/fantom-mainnet-archive/`)}
-      - traefik.http.routers.fantom-mainnet-sonic-archive.middlewares=fantom-mainnet-sonic-archive-stripprefix, ipwhitelist
+      - traefik.http.routers.fantom-mainnet-sonic-archive.middlewares=fantom-mainnet-sonic-archive-stripprefix, ipallowlist
 
 volumes:
   fantom-mainnet-sonic-archive:

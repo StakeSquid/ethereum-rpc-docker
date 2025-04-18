@@ -2,7 +2,7 @@
 
 services:
   op-sepolia:
-    image: ${OP_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${OP_SEPOLIA_GETH_VERSION:-v1.101503.3}
+    image: ${OP_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${OP_SEPOLIA_GETH_VERSION:-v1.101503.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -68,10 +68,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/op-sepolia`) || Path(`/op-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.op-sepolia-op-geth-pruned-pebble-path.rule=Path(`/op-sepolia`) || Path(`/op-sepolia/`)}
-      - traefik.http.routers.op-sepolia-op-geth-pruned-pebble-path.middlewares=op-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.op-sepolia-op-geth-pruned-pebble-path.middlewares=op-sepolia-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   op-sepolia-node:
-    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_SEPOLIA_NODE_VERSION:-v1.13.1}
+    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_SEPOLIA_NODE_VERSION:-v1.13.2}
     ports:
       - 16981:16981
       - 16981:16981/udp

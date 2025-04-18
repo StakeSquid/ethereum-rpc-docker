@@ -63,10 +63,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/base-mainnet-archive`) || Path(`/base-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.base-mainnet-op-reth-archive-trace.rule=Path(`/base-mainnet-archive`) || Path(`/base-mainnet-archive/`)}
-      - traefik.http.routers.base-mainnet-op-reth-archive-trace.middlewares=base-mainnet-op-reth-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.base-mainnet-op-reth-archive-trace.middlewares=base-mainnet-op-reth-archive-trace-stripprefix, ipallowlist
 
   base-mainnet-archive-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 19221:19221
       - 19221:19221/udp

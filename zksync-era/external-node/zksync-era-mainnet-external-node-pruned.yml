@@ -76,7 +76,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-pruned.rule=Host(`$DOMAIN`) && (Path(`/zksync-era-mainnet`) || Path(`/zksync-era-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.zksync-era-mainnet-external-node-pruned.rule=Path(`/zksync-era-mainnet`) || Path(`/zksync-era-mainnet/`)}
-      - traefik.http.routers.zksync-era-mainnet-external-node-pruned.middlewares=zksync-era-mainnet-external-node-pruned-stripprefix, ipwhitelist
+      - traefik.http.routers.zksync-era-mainnet-external-node-pruned.middlewares=zksync-era-mainnet-external-node-pruned-stripprefix, ipallowlist
 
   zksync-era-mainnet-db:
     image: postgres:14

@@ -2,7 +2,7 @@
 
 services:
   linea-mainnet-minimal:
-    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_MAINNET_ERIGON3_VERSION:-v3.0.1}
+    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_MAINNET_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,12 +19,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10060:10060
-      - 10060:10060/udp
-      - 30060:30060
-      - 30060:30060/udp
-      - 35060:35060
-      - 35060:35060/udp
+      - 14000:14000
+      - 14000:14000/udp
+      - 34000:34000
+      - 34000:34000/udp
+      - 39000:39000
+      - 39000:39000/udp
     expose:
       - 8545
     entrypoint: /bin/sh -c '[ ! -d /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init --datadir /root/.local/share/erigon /config/genesis.json; exec erigon "$@"' --
@@ -40,9 +40,9 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --networkid=59144
-      - --p2p.allowed-ports=30060
-      - --p2p.allowed-ports=35060
-      - --port=10060
+      - --p2p.allowed-ports=34000
+      - --p2p.allowed-ports=39000
+      - --port=14000
       - --prune.mode=minimal
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
@@ -64,7 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/linea-mainnet-minimal`) || Path(`/linea-mainnet-minimal/`))}
       - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Path(`/linea-mainnet-minimal`) || Path(`/linea-mainnet-minimal/`)}
-      - traefik.http.routers.linea-mainnet-erigon3-minimal-trace.middlewares=linea-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.linea-mainnet-erigon3-minimal-trace.middlewares=linea-mainnet-erigon3-minimal-trace-stripprefix, ipallowlist
 
 volumes:
   linea-mainnet-erigon3-minimal-trace:

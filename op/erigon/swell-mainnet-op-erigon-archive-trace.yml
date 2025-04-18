@@ -66,10 +66,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.swell-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/swell-mainnet-archive`) || Path(`/swell-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.swell-mainnet-op-erigon-archive-trace.rule=Path(`/swell-mainnet-archive`) || Path(`/swell-mainnet-archive/`)}
-      - traefik.http.routers.swell-mainnet-op-erigon-archive-trace.middlewares=swell-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.swell-mainnet-op-erigon-archive-trace.middlewares=swell-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
 
   swell-mainnet-archive-node:
-    image: ${SWELL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SWELL_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${SWELL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SWELL_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 15810:15810
       - 15810:15810/udp

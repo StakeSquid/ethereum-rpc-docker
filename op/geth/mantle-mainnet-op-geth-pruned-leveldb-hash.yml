@@ -26,6 +26,7 @@ services:
       - BLOCK_SIGNER_ADDRESS=0x000000b36A00872bAF079426e012Cf5Cd2A74E8b
       - BLOCK_SIGNER_KEY=9f50ccaebd966113a0ef09793f8a3288cd0bb2c05d20caa3c0015b4e665f1b2d
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.mantle.xyz
     entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
     command:
       - --datadir=/data
@@ -69,7 +70,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/mantle-mainnet`) || Path(`/mantle-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.rule=Path(`/mantle-mainnet`) || Path(`/mantle-mainnet/`)}
-      - traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.middlewares=mantle-mainnet-op-geth-pruned-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash.middlewares=mantle-mainnet-op-geth-pruned-leveldb-hash-stripprefix, ipallowlist
 
   mantle-mainnet-node:
     image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-op-node}:${MANTLE_MAINNET_NODE_VERSION:-v1.1.1}

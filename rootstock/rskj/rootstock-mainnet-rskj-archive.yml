@@ -56,7 +56,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Host(`$DOMAIN`) && (Path(`/rootstock-mainnet-archive`) || Path(`/rootstock-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Path(`/rootstock-mainnet-archive`) || Path(`/rootstock-mainnet-archive/`)}
-      - traefik.http.routers.rootstock-mainnet-rskj-archive.middlewares=rootstock-mainnet-rskj-archive-stripprefix, ipwhitelist
+      - traefik.http.routers.rootstock-mainnet-rskj-archive.middlewares=rootstock-mainnet-rskj-archive-stripprefix, ipallowlist
 
 volumes:
   rootstock-mainnet-rskj-archive:

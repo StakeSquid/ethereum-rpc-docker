@@ -63,7 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/real-mainnet-archive`) || Path(`/real-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.rule=Path(`/real-mainnet-archive`) || Path(`/real-mainnet-archive/`)}
-      - traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.middlewares=real-mainnet-nitro-archive-pebble-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.real-mainnet-nitro-archive-pebble-hash.middlewares=real-mainnet-nitro-archive-pebble-hash-stripprefix, ipallowlist
 
 volumes:
   real-mainnet-nitro-archive-pebble-hash:

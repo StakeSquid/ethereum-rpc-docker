@@ -99,7 +99,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/metis-andromeda-sepolia-archive`) || Path(`/metis-andromeda-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.rule=Path(`/metis-andromeda-sepolia-archive`) || Path(`/metis-andromeda-sepolia-archive/`)}
-      - traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.middlewares=metis-andromeda-sepolia-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.metis-andromeda-sepolia-l2geth-archive-leveldb-hash.middlewares=metis-andromeda-sepolia-l2geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   metis-andromeda-sepolia-archive-node:
     image: ${METIS_ANDROMEDA_DTL_IMAGE:-metisdao/dtl}:${METIS_ANDROMEDA_SEPOLIA_DTL_VERSION:-v0.1.3}

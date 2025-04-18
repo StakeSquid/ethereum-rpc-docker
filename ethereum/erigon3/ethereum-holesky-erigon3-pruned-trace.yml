@@ -2,7 +2,7 @@
 
 services:
   ethereum-holesky:
-    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOLESKY_ERIGON3_VERSION:-v3.0.1}
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOLESKY_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,16 +19,16 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 13947:13947
-      - 13947:13947/udp
-      - 18947:18947
-      - 18947:18947/udp
-      - 28947:28947
-      - 28947:28947/udp
-      - 33947:33947
-      - 33947:33947/udp
-      - 38947:38947
-      - 38947:38947/udp
+      - 11685:11685
+      - 11685:11685/udp
+      - 16685:16685
+      - 16685:16685/udp
+      - 26685:26685
+      - 26685:26685/udp
+      - 31685:31685
+      - 31685:31685/udp
+      - 36685:36685
+      - 36685:36685/udp
     expose:
       - 8545
       - 5555
@@ -39,8 +39,8 @@ services:
       - --beacon.api.port=5555
       - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=18947
-      - --caplin.discovery.tcpport=18947
+      - --caplin.discovery.port=16685
+      - --caplin.discovery.tcpport=16685
       - --chain=holesky
       - --datadir=/root/.local/share/erigon
       - --http
@@ -50,13 +50,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=33947
-      - --p2p.allowed-ports=38947
-      - --port=13947
+      - --p2p.allowed-ports=31685
+      - --p2p.allowed-ports=36685
+      - --port=11685
       - --prune.mode=full
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
-      - --torrent.port=28947
+      - --torrent.port=26685
       - --ws
       - --ws.port=8545
     restart: unless-stopped
@@ -74,7 +74,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-pruned-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-holesky`) || Path(`/ethereum-holesky/`))}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-pruned-trace.rule=Path(`/ethereum-holesky`) || Path(`/ethereum-holesky/`)}
-      - traefik.http.routers.ethereum-holesky-erigon3-pruned-trace.middlewares=ethereum-holesky-erigon3-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-holesky-erigon3-pruned-trace.middlewares=ethereum-holesky-erigon3-pruned-trace-stripprefix, ipallowlist
       - traefik.http.routers.ethereum-holesky-erigon3-pruned-trace.service=ethereum-holesky-erigon3-pruned-trace
       - traefik.http.routers.ethereum-holesky-erigon3-pruned-trace-node.service=ethereum-holesky-erigon3-pruned-trace-node
       - traefik.http.services.ethereum-holesky-erigon3-pruned-trace-node.loadbalancer.server.port=5555
@@ -82,7 +82,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-pruned-trace-node.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-pruned-trace-node.rule=PathPrefix(`/ethereum-holesky/eth`)}
-      - traefik.http.routers.ethereum-holesky-erigon3-pruned-trace-node.middlewares=ethereum-holesky-erigon3-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-holesky-erigon3-pruned-trace-node.middlewares=ethereum-holesky-erigon3-pruned-trace-stripprefix, ipallowlist
 
 volumes:
   ethereum-holesky-erigon3-pruned-trace:

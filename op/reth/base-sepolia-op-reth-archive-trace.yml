@@ -63,10 +63,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.base-sepolia-op-reth-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.base-sepolia-op-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/base-sepolia-archive`) || Path(`/base-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.base-sepolia-op-reth-archive-trace.rule=Path(`/base-sepolia-archive`) || Path(`/base-sepolia-archive/`)}
-      - traefik.http.routers.base-sepolia-op-reth-archive-trace.middlewares=base-sepolia-op-reth-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.base-sepolia-op-reth-archive-trace.middlewares=base-sepolia-op-reth-archive-trace-stripprefix, ipallowlist
 
   base-sepolia-archive-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.1}
+    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.2}
     ports:
       - 16390:16390
       - 16390:16390/udp

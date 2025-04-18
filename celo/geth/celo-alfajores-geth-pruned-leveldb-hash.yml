@@ -55,7 +55,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/celo-alfajores`) || Path(`/celo-alfajores/`))}
       - ${NO_SSL:+traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.rule=Path(`/celo-alfajores`) || Path(`/celo-alfajores/`)}
-      - traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.middlewares=celo-alfajores-geth-pruned-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.middlewares=celo-alfajores-geth-pruned-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   celo-alfajores-geth-pruned-leveldb-hash:

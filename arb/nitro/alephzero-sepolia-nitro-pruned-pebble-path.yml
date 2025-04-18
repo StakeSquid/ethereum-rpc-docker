@@ -63,7 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.alephzero-sepolia-nitro-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.alephzero-sepolia-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/alephzero-sepolia`) || Path(`/alephzero-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.alephzero-sepolia-nitro-pruned-pebble-path.rule=Path(`/alephzero-sepolia`) || Path(`/alephzero-sepolia/`)}
-      - traefik.http.routers.alephzero-sepolia-nitro-pruned-pebble-path.middlewares=alephzero-sepolia-nitro-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.alephzero-sepolia-nitro-pruned-pebble-path.middlewares=alephzero-sepolia-nitro-pruned-pebble-path-stripprefix, ipallowlist
 
 volumes:
   alephzero-sepolia-nitro-pruned-pebble-path:

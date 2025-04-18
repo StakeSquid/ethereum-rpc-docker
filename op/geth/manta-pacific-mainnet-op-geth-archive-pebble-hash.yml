@@ -67,7 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/manta-pacific-mainnet-archive`) || Path(`/manta-pacific-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.rule=Path(`/manta-pacific-mainnet-archive`) || Path(`/manta-pacific-mainnet-archive/`)}
-      - traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.middlewares=manta-pacific-mainnet-op-geth-archive-pebble-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash.middlewares=manta-pacific-mainnet-op-geth-archive-pebble-hash-stripprefix, ipallowlist
 
   manta-pacific-mainnet-archive-node:
     image: ${MANTA_PACIFIC_NODE_IMAGE:-public.ecr.aws/i6b2w2n6/op-node}:${MANTA_PACIFIC_MAINNET_NODE_VERSION:-celestia-3.0.0-dencun}

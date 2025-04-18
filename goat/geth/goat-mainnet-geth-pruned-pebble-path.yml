@@ -64,7 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/goat-mainnet`) || Path(`/goat-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.rule=Path(`/goat-mainnet`) || Path(`/goat-mainnet/`)}
-      - traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.middlewares=goat-mainnet-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.middlewares=goat-mainnet-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   goat-mainnet-node:
     image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_MAINNET_NODE_VERSION:-v0.2.3}

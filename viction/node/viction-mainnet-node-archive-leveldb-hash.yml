@@ -18,14 +18,14 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 14670:14670
-      - 14670:14670/udp
+      - 13184:13184
+      - 13184:13184/udp
     expose:
       - 8545
       - 8546
     environment:
       EXTIP: ${IP}
-      P2P_PORT: 14670
+      P2P_PORT: 13184
     command:
       - --gcmode=archive
       - --rpcapi=eth,debug,net,db,admin,web3
@@ -64,7 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/viction-mainnet-archive`) || Path(`/viction-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=Path(`/viction-mainnet-archive`) || Path(`/viction-mainnet-archive/`)}
-      - traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.middlewares=viction-mainnet-node-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.middlewares=viction-mainnet-node-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   viction-mainnet-node-archive-leveldb-hash:

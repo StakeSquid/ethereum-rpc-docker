@@ -63,7 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/alephzero-mainnet`) || Path(`/alephzero-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.rule=Path(`/alephzero-mainnet`) || Path(`/alephzero-mainnet/`)}
-      - traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.middlewares=alephzero-mainnet-nitro-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.alephzero-mainnet-nitro-pruned-pebble-path.middlewares=alephzero-mainnet-nitro-pruned-pebble-path-stripprefix, ipallowlist
 
 volumes:
   alephzero-mainnet-nitro-pruned-pebble-path:

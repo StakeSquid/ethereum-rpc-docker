@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10282:10282
-      - 10282:10282/udp
+      - 13290:13290
+      - 13290:13290/udp
     expose:
       - 8545
       - 8551
@@ -40,7 +40,7 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --networkid=252
-      - --port=10282
+      - --port=13290
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -75,13 +75,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/fraxtal-mainnet-archive`) || Path(`/fraxtal-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.rule=Path(`/fraxtal-mainnet-archive`) || Path(`/fraxtal-mainnet-archive/`)}
-      - traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.middlewares=fraxtal-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.middlewares=fraxtal-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   fraxtal-mainnet-archive-node:
     image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-node}:${FRAXTAL_MAINNET_NODE_VERSION:-v1.12.2-frax-1.1.0}
     ports:
-      - 15282:15282
-      - 15282:15282/udp
+      - 18290:18290
+      - 18290:18290/udp
     environment:
       - OP_NODE_DA_RPC=https://da-rpc.mainnet.frax.com
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
@@ -98,8 +98,8 @@ services:
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_BOOTNODES=enr:-J24QPGxmNmQ6Gsofjwnaaqt-RvC-2te44hHSU_wFGvCBpdnGnAuW0hKBCwzarXEmLN0TfwilwX3xS8xjEd9sQRqKXqGAY1ok0P3gmlkgnY0gmlwhDa-pcmHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQJA0echCE64KVt7m1lHfRF9_QgYxqIOSoPZ1UHcEArDu4N0Y3CCJAaDdWRwgiQG,enr:-J24QHPYu7uUXH4LCJ_pjHMD3fYhluZEgFRlewqOFFcja7ACaTDp4zG4GZBJdTPmLjsqskhTQa5ldKiVu4ypZYMzR_uGAY1ok_ABgmlkgnY0gmlwhCLvv1KHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQOEemNzZL5buGmwlN2naXLtz4nauCqBFeFxdmi4RL4rDIN0Y3CCJAaDdWRwgiQG,enr:-J24QBujtfGNIiE6GJrCgXEKJMs1F11wd4Y8Uvx7ZFn3Z1tyR0erNcpiW5EYIQEKQX0kL9PLJUDHWZFiaHWOTBvFg5aGAY1ok5p8gmlkgnY0gmlwhDbD-tqHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQLunzKLYJLvy6cWWkLgSSdLlILgSohrV8RT3tlKGwHBi4N0Y3CCJAaDdWRwgiQG
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15282
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15282
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18290
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18290
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545

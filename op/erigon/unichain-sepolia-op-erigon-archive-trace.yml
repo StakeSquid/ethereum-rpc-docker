@@ -66,10 +66,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.unichain-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.unichain-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/unichain-sepolia-archive`) || Path(`/unichain-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.unichain-sepolia-op-erigon-archive-trace.rule=Path(`/unichain-sepolia-archive`) || Path(`/unichain-sepolia-archive/`)}
-      - traefik.http.routers.unichain-sepolia-op-erigon-archive-trace.middlewares=unichain-sepolia-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.unichain-sepolia-op-erigon-archive-trace.middlewares=unichain-sepolia-op-erigon-archive-trace-stripprefix, ipallowlist
 
   unichain-sepolia-archive-node:
-    image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_SEPOLIA_NODE_VERSION:-v1.13.1}
+    image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_SEPOLIA_NODE_VERSION:-v1.13.2}
     ports:
       - 18196:18196
       - 18196:18196/udp

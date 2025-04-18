@@ -2,7 +2,7 @@
 
 services:
   snax-mainnet:
-    image: ${SNAX_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SNAX_MAINNET_GETH_VERSION:-v1.101503.3}
+    image: ${SNAX_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SNAX_MAINNET_GETH_VERSION:-v1.101503.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -69,10 +69,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/snax-mainnet`) || Path(`/snax-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.rule=Path(`/snax-mainnet`) || Path(`/snax-mainnet/`)}
-      - traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.middlewares=snax-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.middlewares=snax-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   snax-mainnet-node:
-    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 16332:16332
       - 16332:16332/udp

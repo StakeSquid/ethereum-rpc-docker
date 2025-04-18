@@ -2,7 +2,7 @@
 
 services:
   lisk-sepolia:
-    image: ${LISK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${LISK_SEPOLIA_GETH_VERSION:-v1.101503.3}
+    image: ${LISK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${LISK_SEPOLIA_GETH_VERSION:-v1.101503.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -71,7 +71,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/lisk-sepolia`) || Path(`/lisk-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path.rule=Path(`/lisk-sepolia`) || Path(`/lisk-sepolia/`)}
-      - traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path.middlewares=lisk-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path.middlewares=lisk-sepolia-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   lisk-sepolia-node:
     build:
@@ -79,7 +79,7 @@ services:
       dockerfile: node.Dockerfile
       args:
         OP_REPO: https://github.com/ethereum-optimism/optimism.git
-        OP_VERSION: v1.13.1
+        OP_VERSION: v1.13.2
         OP_PATCH: lisk/sepolia/node.patch
     ports:
       - 18490:18490

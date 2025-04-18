@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 11929:11929
-      - 11929:11929/udp
+      - 12934:12934
+      - 12934:12934/udp
     expose:
       - 9650
       - 9650
@@ -31,7 +31,7 @@ services:
       - --http-host=
       - --network-id=mainnet
       - --public-ip=${IP}
-      - --staking-port=11929
+      - --staking-port=12934
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
@@ -64,7 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-archive-leveldb.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-archive-leveldb.rule=Host(`$DOMAIN`) && (Path(`/avalanche-mainnet-archive`) || Path(`/avalanche-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-archive-leveldb.rule=Path(`/avalanche-mainnet-archive`) || Path(`/avalanche-mainnet-archive/`)}
-      - traefik.http.routers.avalanche-mainnet-go-archive-leveldb.middlewares=avalanche-mainnet-go-archive-leveldb-stripprefix, ipwhitelist
+      - traefik.http.routers.avalanche-mainnet-go-archive-leveldb.middlewares=avalanche-mainnet-go-archive-leveldb-stripprefix, ipallowlist
 
 volumes:
   avalanche-mainnet-go-archive-leveldb:

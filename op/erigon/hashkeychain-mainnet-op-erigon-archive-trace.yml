@@ -66,10 +66,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/hashkeychain-mainnet-archive`) || Path(`/hashkeychain-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.rule=Path(`/hashkeychain-mainnet-archive`) || Path(`/hashkeychain-mainnet-archive/`)}
-      - traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.middlewares=hashkeychain-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.hashkeychain-mainnet-op-erigon-archive-trace.middlewares=hashkeychain-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
 
   hashkeychain-mainnet-archive-node:
-    image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 16378:16378
       - 16378:16378/udp

@@ -63,7 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/scroll-sepolia-archive`) || Path(`/scroll-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.rule=Path(`/scroll-sepolia-archive`) || Path(`/scroll-sepolia-archive/`)}
-      - traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.middlewares=scroll-sepolia-l2geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash.middlewares=scroll-sepolia-l2geth-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   scroll-sepolia-l2geth-archive-leveldb-hash:

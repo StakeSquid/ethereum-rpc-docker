@@ -69,7 +69,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/berachain-bartio-archive`) || Path(`/berachain-bartio-archive/`))}
       - ${NO_SSL:+traefik.http.routers.berachain-bartio-reth-archive-trace.rule=Path(`/berachain-bartio-archive`) || Path(`/berachain-bartio-archive/`)}
-      - traefik.http.routers.berachain-bartio-reth-archive-trace.middlewares=berachain-bartio-reth-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.berachain-bartio-reth-archive-trace.middlewares=berachain-bartio-reth-archive-trace-stripprefix, ipallowlist
 
   berachain-bartio-archive-node:
     build:

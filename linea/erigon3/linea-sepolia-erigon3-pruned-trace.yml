@@ -2,7 +2,7 @@
 
 services:
   linea-sepolia:
-    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_SEPOLIA_ERIGON3_VERSION:-v3.0.1}
+    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_SEPOLIA_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,12 +19,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 12235:12235
-      - 12235:12235/udp
-      - 32235:32235
-      - 32235:32235/udp
-      - 37235:37235
-      - 37235:37235/udp
+      - 10620:10620
+      - 10620:10620/udp
+      - 30620:30620
+      - 30620:30620/udp
+      - 35620:35620
+      - 35620:35620/udp
     expose:
       - 8545
     entrypoint: /bin/sh -c '[ ! -d /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init --datadir /root/.local/share/erigon /config/genesis.json; exec erigon "$@"' --
@@ -40,9 +40,9 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --networkid=59141
-      - --p2p.allowed-ports=32235
-      - --p2p.allowed-ports=37235
-      - --port=12235
+      - --p2p.allowed-ports=30620
+      - --p2p.allowed-ports=35620
+      - --port=10620
       - --prune.mode=full
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
@@ -64,7 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-pruned-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/linea-sepolia`) || Path(`/linea-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.linea-sepolia-erigon3-pruned-trace.rule=Path(`/linea-sepolia`) || Path(`/linea-sepolia/`)}
-      - traefik.http.routers.linea-sepolia-erigon3-pruned-trace.middlewares=linea-sepolia-erigon3-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.linea-sepolia-erigon3-pruned-trace.middlewares=linea-sepolia-erigon3-pruned-trace-stripprefix, ipallowlist
 
 volumes:
   linea-sepolia-erigon3-pruned-trace:

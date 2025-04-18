@@ -75,7 +75,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/fraxtal-mainnet`) || Path(`/fraxtal-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path.rule=Path(`/fraxtal-mainnet`) || Path(`/fraxtal-mainnet/`)}
-      - traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path.middlewares=fraxtal-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path.middlewares=fraxtal-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   fraxtal-mainnet-node:
     image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-node}:${FRAXTAL_MAINNET_NODE_VERSION:-v1.12.2-frax-1.1.0}

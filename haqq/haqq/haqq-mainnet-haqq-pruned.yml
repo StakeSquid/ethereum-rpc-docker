@@ -39,7 +39,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.rule=Host(`$DOMAIN`) && (Path(`/haqq-mainnet`) || Path(`/haqq-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.haqq-mainnet-haqq-pruned.rule=Path(`/haqq-mainnet`) || Path(`/haqq-mainnet/`)}
-      - traefik.http.routers.haqq-mainnet-haqq-pruned.middlewares=haqq-mainnet-haqq-pruned-stripprefix, ipwhitelist
+      - traefik.http.routers.haqq-mainnet-haqq-pruned.middlewares=haqq-mainnet-haqq-pruned-stripprefix, ipallowlist
 
 volumes:
   haqq-mainnet-haqq-pruned:

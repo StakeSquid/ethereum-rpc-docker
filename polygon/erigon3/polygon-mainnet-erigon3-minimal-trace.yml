@@ -2,7 +2,7 @@
 
 services:
   polygon-mainnet-minimal:
-    image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_MAINNET_ERIGON3_VERSION:-v3.0.1}
+    image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_MAINNET_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -19,12 +19,12 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10400:10400
-      - 10400:10400/udp
-      - 30400:30400
-      - 30400:30400/udp
-      - 35400:35400
-      - 35400:35400/udp
+      - 10036:10036
+      - 10036:10036/udp
+      - 30036:30036
+      - 30036:30036/udp
+      - 35036:35036
+      - 35036:35036/udp
     expose:
       - 8545
     entrypoint: [erigon]
@@ -39,13 +39,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=30400
-      - --p2p.allowed-ports=35400
-      - --port=10400
+      - --p2p.allowed-ports=30036
+      - --p2p.allowed-ports=35036
+      - --port=10036
       - --prune.mode=minimal
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
-      - --torrent.port=25400
+      - --torrent.port=25036
       - --ws
       - --ws.port=8545
     restart: unless-stopped
@@ -63,7 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/polygon-mainnet-minimal`) || Path(`/polygon-mainnet-minimal/`))}
       - ${NO_SSL:+traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.rule=Path(`/polygon-mainnet-minimal`) || Path(`/polygon-mainnet-minimal/`)}
-      - traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.middlewares=polygon-mainnet-erigon3-minimal-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.polygon-mainnet-erigon3-minimal-trace.middlewares=polygon-mainnet-erigon3-minimal-trace-stripprefix, ipallowlist
 
 volumes:
   polygon-mainnet-erigon3-minimal-trace:

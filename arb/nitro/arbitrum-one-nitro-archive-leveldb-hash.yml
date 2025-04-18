@@ -57,7 +57,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-one-archive`) || Path(`/arbitrum-one-archive/`))}
       - ${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.rule=Path(`/arbitrum-one-archive`) || Path(`/arbitrum-one-archive/`)}
-      - traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.middlewares=arbitrum-one-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.middlewares=arbitrum-one-nitro-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   arbitrum-one-nitro-archive-leveldb-hash:

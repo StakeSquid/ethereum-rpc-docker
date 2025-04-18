@@ -2,7 +2,7 @@
 
 services:
   gnosis-mainnet-archive:
-    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.1}
+    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -73,7 +73,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-mainnet-archive`) || Path(`/gnosis-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.rule=Path(`/gnosis-mainnet-archive`) || Path(`/gnosis-mainnet-archive/`)}
-      - traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.middlewares=gnosis-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.gnosis-mainnet-erigon3-archive-trace.middlewares=gnosis-mainnet-erigon3-archive-trace-stripprefix, ipallowlist
 
 volumes:
   gnosis-mainnet-erigon3-archive-trace:

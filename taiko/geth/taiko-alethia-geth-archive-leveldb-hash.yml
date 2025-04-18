@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10251:10251
-      - 10251:10251/udp
+      - 14088:14088
+      - 14088:14088/udp
     expose:
       - 8545
       - 8551
@@ -36,7 +36,7 @@ services:
       - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10251
+      - --port=14088
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -70,13 +70,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/taiko-alethia-archive`) || Path(`/taiko-alethia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.rule=Path(`/taiko-alethia-archive`) || Path(`/taiko-alethia-archive/`)}
-      - traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.middlewares=taiko-alethia-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.taiko-alethia-geth-archive-leveldb-hash.middlewares=taiko-alethia-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   taiko-alethia-archive-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v0.43.1}
     ports:
-      - 15251:15251
-      - 15251:15251/udp
+      - 19088:19088
+      - 19088:19088/udp
     env_file:
       - ./taiko/alethia.env
     environment:

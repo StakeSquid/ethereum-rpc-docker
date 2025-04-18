@@ -65,10 +65,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-reth-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/lisk-mainnet-archive`) || Path(`/lisk-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-reth-archive-trace.rule=Path(`/lisk-mainnet-archive`) || Path(`/lisk-mainnet-archive/`)}
-      - traefik.http.routers.lisk-mainnet-op-reth-archive-trace.middlewares=lisk-mainnet-op-reth-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.lisk-mainnet-op-reth-archive-trace.middlewares=lisk-mainnet-op-reth-archive-trace-stripprefix, ipallowlist
 
   lisk-mainnet-archive-node:
-    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 15598:15598
       - 15598:15598/udp

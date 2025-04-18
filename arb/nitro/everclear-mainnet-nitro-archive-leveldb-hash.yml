@@ -63,7 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.everclear-mainnet-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.everclear-mainnet-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/everclear-mainnet-archive`) || Path(`/everclear-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.everclear-mainnet-nitro-archive-leveldb-hash.rule=Path(`/everclear-mainnet-archive`) || Path(`/everclear-mainnet-archive/`)}
-      - traefik.http.routers.everclear-mainnet-nitro-archive-leveldb-hash.middlewares=everclear-mainnet-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.everclear-mainnet-nitro-archive-leveldb-hash.middlewares=everclear-mainnet-nitro-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   everclear-mainnet-nitro-archive-leveldb-hash:

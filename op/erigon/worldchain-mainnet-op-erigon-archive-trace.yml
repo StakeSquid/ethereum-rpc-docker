@@ -66,10 +66,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/worldchain-mainnet-archive`) || Path(`/worldchain-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.rule=Path(`/worldchain-mainnet-archive`) || Path(`/worldchain-mainnet-archive/`)}
-      - traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.middlewares=worldchain-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.middlewares=worldchain-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
 
   worldchain-mainnet-archive-node:
-    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 16629:16629
       - 16629:16629/udp

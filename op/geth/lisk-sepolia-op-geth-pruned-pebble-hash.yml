@@ -2,7 +2,7 @@
 
 services:
   lisk-sepolia:
-    image: ${LISK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${LISK_SEPOLIA_GETH_VERSION:-v1.101503.3}
+    image: ${LISK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${LISK_SEPOLIA_GETH_VERSION:-v1.101503.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 13490:13490
-      - 13490:13490/udp
+      - 10897:10897
+      - 10897:10897/udp
     expose:
       - 8545
       - 8551
@@ -36,7 +36,7 @@ services:
       - --maxpeers=50
       - --nat=extip:${IP}
       - --networkid=4202
-      - --port=13490
+      - --port=10897
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -71,7 +71,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/lisk-sepolia`) || Path(`/lisk-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.rule=Path(`/lisk-sepolia`) || Path(`/lisk-sepolia/`)}
-      - traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.middlewares=lisk-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash.middlewares=lisk-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipallowlist
 
   lisk-sepolia-node:
     build:
@@ -79,11 +79,11 @@ services:
       dockerfile: node.Dockerfile
       args:
         OP_REPO: https://github.com/ethereum-optimism/optimism.git
-        OP_VERSION: v1.13.1
+        OP_VERSION: v1.13.2
         OP_PATCH: lisk/sepolia/node.patch
     ports:
-      - 18490:18490
-      - 18490:18490/udp
+      - 15897:15897
+      - 15897:15897/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
@@ -101,8 +101,8 @@ services:
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_BOOTNODES=enr:-Iu4QI5BdaTmfMhNKXd-vSniNRSCXk-a3m3nQbe9TCV3puGtCr6FvX6-Vr0Uvx4tYVilGCIYdQNf6fK8O2MKxVqjYJ8BgmlkgnY0gmlwhCKN6PiJc2VjcDI1NmsxoQLBQIaRwlvNxrRKcGtxKmh4JS_orkawS44D4KIORICoi4N0Y3CCIyuDdWRwgiMr
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=18490
-      - OP_NODE_P2P_LISTEN_UDP_PORT=18490
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15897
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15897
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log

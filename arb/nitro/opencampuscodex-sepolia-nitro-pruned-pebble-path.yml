@@ -62,7 +62,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.opencampuscodex-sepolia-nitro-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/opencampuscodex-sepolia`) || Path(`/opencampuscodex-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.opencampuscodex-sepolia-nitro-pruned-pebble-path.rule=Path(`/opencampuscodex-sepolia`) || Path(`/opencampuscodex-sepolia/`)}
-      - traefik.http.routers.opencampuscodex-sepolia-nitro-pruned-pebble-path.middlewares=opencampuscodex-sepolia-nitro-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.opencampuscodex-sepolia-nitro-pruned-pebble-path.middlewares=opencampuscodex-sepolia-nitro-pruned-pebble-path-stripprefix, ipallowlist
 
 volumes:
   opencampuscodex-sepolia-nitro-pruned-pebble-path:

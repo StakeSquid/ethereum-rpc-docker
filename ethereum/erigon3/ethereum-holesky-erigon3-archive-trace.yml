@@ -2,7 +2,7 @@
 
 services:
   ethereum-holesky-archive:
-    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOLESKY_ERIGON3_VERSION:-v3.0.1}
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOLESKY_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -74,7 +74,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-holesky-archive`) || Path(`/ethereum-holesky-archive/`))}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-archive-trace.rule=Path(`/ethereum-holesky-archive`) || Path(`/ethereum-holesky-archive/`)}
-      - traefik.http.routers.ethereum-holesky-erigon3-archive-trace.middlewares=ethereum-holesky-erigon3-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-holesky-erigon3-archive-trace.middlewares=ethereum-holesky-erigon3-archive-trace-stripprefix, ipallowlist
       - traefik.http.routers.ethereum-holesky-erigon3-archive-trace.service=ethereum-holesky-erigon3-archive-trace
       - traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.service=ethereum-holesky-erigon3-archive-trace-node
       - traefik.http.services.ethereum-holesky-erigon3-archive-trace-node.loadbalancer.server.port=5555
@@ -82,7 +82,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky-archive/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.rule=PathPrefix(`/ethereum-holesky-archive/eth`)}
-      - traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.middlewares=ethereum-holesky-erigon3-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.middlewares=ethereum-holesky-erigon3-archive-trace-stripprefix, ipallowlist
 
 volumes:
   ethereum-holesky-erigon3-archive-trace:

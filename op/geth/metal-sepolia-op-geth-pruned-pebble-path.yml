@@ -2,7 +2,7 @@
 
 services:
   metal-sepolia:
-    image: ${METAL_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${METAL_SEPOLIA_GETH_VERSION:-v1.101503.3}
+    image: ${METAL_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${METAL_SEPOLIA_GETH_VERSION:-v1.101503.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -66,10 +66,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/metal-sepolia`) || Path(`/metal-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.rule=Path(`/metal-sepolia`) || Path(`/metal-sepolia/`)}
-      - traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.middlewares=metal-sepolia-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.middlewares=metal-sepolia-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   metal-sepolia-node:
-    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_SEPOLIA_NODE_VERSION:-v1.13.1}
+    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_SEPOLIA_NODE_VERSION:-v1.13.2}
     ports:
       - 19701:19701
       - 19701:19701/udp

@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 13967:13967
-      - 13967:13967/udp
+      - 10276:10276
+      - 10276:10276/udp
     expose:
       - 8545
     environment:
@@ -27,7 +27,7 @@ services:
       - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
       - MINE=false
       - NETWORK_ID=2020
-      - NETWORK_PORT=13967
+      - NETWORK_PORT=10276
       - PASSWORD=stupidpassword
       - STATE_SCHEME=hash
       - SYNC_MODE=full
@@ -38,7 +38,7 @@ services:
       - --gcmode=full
       - --http.api=admin,eth,net,web3,consortium,txpool,debug
       - --nat=extip:${IP}
-      - --port=13967
+      - --port=10276
       - --txpool.nolocals
       - --txpool.pricelimit=20000000000
     restart: unless-stopped
@@ -56,7 +56,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/ronin-mainnet`) || Path(`/ronin-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.rule=Path(`/ronin-mainnet`) || Path(`/ronin-mainnet/`)}
-      - traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.middlewares=ronin-mainnet-ronin-pruned-pebble-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.ronin-mainnet-ronin-pruned-pebble-hash.middlewares=ronin-mainnet-ronin-pruned-pebble-hash-stripprefix, ipallowlist
 
 volumes:
   ronin-mainnet-ronin-pruned-pebble-hash:

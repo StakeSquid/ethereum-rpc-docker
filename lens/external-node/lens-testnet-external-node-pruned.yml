@@ -84,7 +84,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.lens-testnet-external-node-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.lens-testnet-external-node-pruned.rule=Host(`$DOMAIN`) && (Path(`/lens-testnet`) || Path(`/lens-testnet/`))}
       - ${NO_SSL:+traefik.http.routers.lens-testnet-external-node-pruned.rule=Path(`/lens-testnet`) || Path(`/lens-testnet/`)}
-      - traefik.http.routers.lens-testnet-external-node-pruned.middlewares=lens-testnet-external-node-pruned-stripprefix, ipwhitelist
+      - traefik.http.routers.lens-testnet-external-node-pruned.middlewares=lens-testnet-external-node-pruned-stripprefix, ipallowlist
 
   lens-testnet-db:
     image: postgres:14

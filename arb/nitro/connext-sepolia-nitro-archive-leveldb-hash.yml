@@ -63,7 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/connext-sepolia-archive`) || Path(`/connext-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.rule=Path(`/connext-sepolia-archive`) || Path(`/connext-sepolia-archive/`)}
-      - traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.middlewares=connext-sepolia-nitro-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.connext-sepolia-nitro-archive-leveldb-hash.middlewares=connext-sepolia-nitro-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   connext-sepolia-nitro-archive-leveldb-hash:

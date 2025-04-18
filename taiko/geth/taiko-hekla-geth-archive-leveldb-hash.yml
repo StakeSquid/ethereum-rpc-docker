@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 13396:13396
-      - 13396:13396/udp
+      - 13063:13063
+      - 13063:13063/udp
     expose:
       - 8545
       - 8551
@@ -36,7 +36,7 @@ services:
       - --gcmode=archive
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=13396
+      - --port=13063
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -70,13 +70,13 @@ services:
       - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/taiko-hekla-archive`) || Path(`/taiko-hekla-archive/`))}
       - ${NO_SSL:+traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.rule=Path(`/taiko-hekla-archive`) || Path(`/taiko-hekla-archive/`)}
-      - traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.middlewares=taiko-hekla-geth-archive-leveldb-hash-stripprefix, ipwhitelist
+      - traefik.http.routers.taiko-hekla-geth-archive-leveldb-hash.middlewares=taiko-hekla-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   taiko-hekla-archive-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.5.0}
     ports:
-      - 18396:18396
-      - 18396:18396/udp
+      - 18063:18063
+      - 18063:18063/udp
     env_file:
       - ./taiko/hekla.env
     environment:

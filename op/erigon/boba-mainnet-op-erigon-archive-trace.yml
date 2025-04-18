@@ -67,7 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/boba-mainnet-archive`) || Path(`/boba-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.boba-mainnet-op-erigon-archive-trace.rule=Path(`/boba-mainnet-archive`) || Path(`/boba-mainnet-archive/`)}
-      - traefik.http.routers.boba-mainnet-op-erigon-archive-trace.middlewares=boba-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.boba-mainnet-op-erigon-archive-trace.middlewares=boba-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
 
   boba-mainnet-archive-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-v1.6.18}

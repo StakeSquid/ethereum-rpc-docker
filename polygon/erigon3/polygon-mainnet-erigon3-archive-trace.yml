@@ -2,7 +2,7 @@
 
 services:
   polygon-mainnet-archive:
-    image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_MAINNET_ERIGON3_VERSION:-v3.0.1}
+    image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_MAINNET_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -63,7 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.polygon-mainnet-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/polygon-mainnet-archive`) || Path(`/polygon-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.polygon-mainnet-erigon3-archive-trace.rule=Path(`/polygon-mainnet-archive`) || Path(`/polygon-mainnet-archive/`)}
-      - traefik.http.routers.polygon-mainnet-erigon3-archive-trace.middlewares=polygon-mainnet-erigon3-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.polygon-mainnet-erigon3-archive-trace.middlewares=polygon-mainnet-erigon3-archive-trace-stripprefix, ipallowlist
 
 volumes:
   polygon-mainnet-erigon3-archive-trace:

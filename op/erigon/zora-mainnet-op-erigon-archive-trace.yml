@@ -67,10 +67,10 @@ services:
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/zora-mainnet-archive`) || Path(`/zora-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-erigon-archive-trace.rule=Path(`/zora-mainnet-archive`) || Path(`/zora-mainnet-archive/`)}
-      - traefik.http.routers.zora-mainnet-op-erigon-archive-trace.middlewares=zora-mainnet-op-erigon-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.zora-mainnet-op-erigon-archive-trace.middlewares=zora-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
 
   zora-mainnet-archive-node:
-    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.1}
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 19360:19360
       - 19360:19360/udp

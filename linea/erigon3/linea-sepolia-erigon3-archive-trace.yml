@@ -2,7 +2,7 @@
 
 services:
   linea-sepolia-archive:
-    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_SEPOLIA_ERIGON3_VERSION:-v3.0.1}
+    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_SEPOLIA_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -64,7 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-archive-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/linea-sepolia-archive`) || Path(`/linea-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.linea-sepolia-erigon3-archive-trace.rule=Path(`/linea-sepolia-archive`) || Path(`/linea-sepolia-archive/`)}
-      - traefik.http.routers.linea-sepolia-erigon3-archive-trace.middlewares=linea-sepolia-erigon3-archive-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.linea-sepolia-erigon3-archive-trace.middlewares=linea-sepolia-erigon3-archive-trace-stripprefix, ipallowlist
 
 volumes:
   linea-sepolia-erigon3-archive-trace:

@@ -71,7 +71,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/blast-mainnet`) || Path(`/blast-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.rule=Path(`/blast-mainnet`) || Path(`/blast-mainnet/`)}
-      - traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.middlewares=blast-mainnet-op-geth-pruned-pebble-path-stripprefix, ipwhitelist
+      - traefik.http.routers.blast-mainnet-op-geth-pruned-pebble-path.middlewares=blast-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   blast-mainnet-node:
     image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_MAINNET_NODE_VERSION:-v1.1.0-mainnet}

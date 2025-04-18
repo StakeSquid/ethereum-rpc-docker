@@ -80,7 +80,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.rule=Host(`$DOMAIN`) && (Path(`/cronos-zkevm-testnet`) || Path(`/cronos-zkevm-testnet/`))}
       - ${NO_SSL:+traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.rule=Path(`/cronos-zkevm-testnet`) || Path(`/cronos-zkevm-testnet/`)}
-      - traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.middlewares=cronos-zkevm-testnet-external-node-pruned-stripprefix, ipwhitelist
+      - traefik.http.routers.cronos-zkevm-testnet-external-node-pruned.middlewares=cronos-zkevm-testnet-external-node-pruned-stripprefix, ipallowlist
 
   cronos-zkevm-testnet-db:
     image: postgres:14

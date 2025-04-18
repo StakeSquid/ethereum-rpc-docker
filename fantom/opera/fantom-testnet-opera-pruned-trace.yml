@@ -23,8 +23,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10196:10196
-      - 10196:10196/udp
+      - 14037:14037
+      - 14037:14037/udp
     expose:
       - 8545
     environment:
@@ -42,7 +42,7 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=10196
+      - --port=14037
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --syncmode=snap
@@ -67,7 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-opera-pruned-trace.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.fantom-testnet-opera-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/fantom-testnet`) || Path(`/fantom-testnet/`))}
       - ${NO_SSL:+traefik.http.routers.fantom-testnet-opera-pruned-trace.rule=Path(`/fantom-testnet`) || Path(`/fantom-testnet/`)}
-      - traefik.http.routers.fantom-testnet-opera-pruned-trace.middlewares=fantom-testnet-opera-pruned-trace-stripprefix, ipwhitelist
+      - traefik.http.routers.fantom-testnet-opera-pruned-trace.middlewares=fantom-testnet-opera-pruned-trace-stripprefix, ipallowlist
 
 volumes:
   fantom-testnet-opera-pruned-trace:
