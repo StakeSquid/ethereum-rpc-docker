@@ -2,7 +2,7 @@
 
 services:
   base-mainnet-archive:
-    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_MAINNET_RETH_VERSION:-v1.3.10}
+    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_MAINNET_RETH_VERSION:-v1.3.12}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

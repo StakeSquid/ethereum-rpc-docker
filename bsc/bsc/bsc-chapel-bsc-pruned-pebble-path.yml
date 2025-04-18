@@ -2,7 +2,7 @@
 
 services:
   bsc-chapel:
-    image: ${BSC_BSC_IMAGE:-ghcr.io/bnb-chain/bsc}:${BSC_CHAPEL_BSC_VERSION:-1.5.10}
+    image: ${BSC_BSC_IMAGE:-ghcr.io/bnb-chain/bsc}:${BSC_CHAPEL_BSC_VERSION:-1.5.11}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

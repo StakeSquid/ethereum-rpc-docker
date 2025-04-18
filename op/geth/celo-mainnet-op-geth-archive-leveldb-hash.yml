@@ -125,9 +125,6 @@ services:
 
   celo-mainnet-archive-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_MAINNET_EIGENDA_PROXY_VERSION:-v1.6.4}
-    ports:
-      - 24087:24087
-      - 24087:24087/udp
     environment:
       - EIGENDA_PROXY_ADDR=0.0.0.0
       - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
