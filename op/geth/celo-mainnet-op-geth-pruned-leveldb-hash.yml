@@ -120,6 +120,7 @@ services:
     restart: unless-stopped
     depends_on:
       - celo-mainnet
+      - celo-mainnet-relay
     networks:
       - chains
     volumes:

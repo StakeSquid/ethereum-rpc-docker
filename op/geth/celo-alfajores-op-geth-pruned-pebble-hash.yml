@@ -116,6 +116,7 @@ services:
     restart: unless-stopped
     depends_on:
       - celo-alfajores
+      - celo-alfajores-relay
     networks:
       - chains
     volumes:
