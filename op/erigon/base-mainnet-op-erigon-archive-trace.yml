@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=33092
       - --p2p.allowed-ports=38092
       - --port=13092
+      - --rollup.sequencerhttp=https://mainnet-sequencer.base.org
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

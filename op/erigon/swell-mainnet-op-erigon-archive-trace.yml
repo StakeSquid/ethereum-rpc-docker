@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=30810
       - --p2p.allowed-ports=35810
       - --port=10810
+      - --rollup.sequencerhttp=https://swell-mainnet.alt.technology
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

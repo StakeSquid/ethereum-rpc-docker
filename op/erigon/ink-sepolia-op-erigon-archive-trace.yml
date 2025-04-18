@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=34826
       - --p2p.allowed-ports=39826
       - --port=14826
+      - --rollup.sequencerhttp=https://rpc-gel-sepolia.inkonchain.com
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

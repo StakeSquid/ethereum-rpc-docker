@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=30543
       - --p2p.allowed-ports=35543
       - --port=10543
+      - --rollup.sequencerhttp=https://rpc.metall2.com
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

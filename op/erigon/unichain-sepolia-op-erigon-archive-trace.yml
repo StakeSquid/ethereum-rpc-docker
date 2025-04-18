@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=33196
       - --p2p.allowed-ports=38196
       - --port=13196
+      - --rollup.sequencerhttp=https://sepolia.unichain.org
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

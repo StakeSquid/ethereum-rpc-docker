@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=31046
       - --p2p.allowed-ports=36046
       - --port=11046
+      - --rollup.sequencerhttp=https://worldchain-sepolia.g.alchemy.com/public
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

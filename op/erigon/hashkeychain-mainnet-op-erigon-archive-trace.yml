@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=31378
       - --p2p.allowed-ports=36378
       - --port=11378
+      - --rollup.sequencerhttp=https://mainnet.hsk.xyz
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

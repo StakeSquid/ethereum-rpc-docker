@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=33487
       - --p2p.allowed-ports=38487
       - --port=13487
+      - --rollup.sequencerhttp=https://sepolia-sequencer.base.org
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

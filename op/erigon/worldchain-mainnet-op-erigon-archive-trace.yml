@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=31629
       - --p2p.allowed-ports=36629
       - --port=11629
+      - --rollup.sequencerhttp=https://worldchain-mainnet.g.alchemy.com/public
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

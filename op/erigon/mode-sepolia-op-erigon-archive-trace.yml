@@ -37,6 +37,7 @@ services:
       - --p2p.allowed-ports=33212
       - --p2p.allowed-ports=38212
       - --port=13212
+      - --rollup.sequencerhttp=https://sepolia.mode.network
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http
