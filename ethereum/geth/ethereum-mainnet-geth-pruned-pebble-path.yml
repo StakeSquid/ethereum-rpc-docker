@@ -67,7 +67,7 @@ services:
       - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.middlewares=ethereum-mainnet-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   ethereum-mainnet-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.1}
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v5.3.2}
     ports:
       - 17023:17023
       - 17023:17023/udp

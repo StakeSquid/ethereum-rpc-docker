@@ -65,7 +65,7 @@ services:
       - traefik.http.routers.ethereum-holesky-reth-archive-trace.middlewares=ethereum-holesky-reth-archive-trace-stripprefix, ipallowlist
 
   ethereum-holesky-archive-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v5.3.1}
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v5.3.2}
     ports:
       - 18752:18752
       - 18752:18752/udp
