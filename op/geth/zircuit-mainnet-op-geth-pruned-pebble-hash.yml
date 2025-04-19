@@ -34,10 +34,9 @@ services:
       - --db.engine=pebble
       - --gcmode=full
       - --maxpeers=50
-      - --nat=extip:${IP}
       - --network=mainnet
       - --nodiscover
-      - --port=13688
+      - --nodiscover
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash

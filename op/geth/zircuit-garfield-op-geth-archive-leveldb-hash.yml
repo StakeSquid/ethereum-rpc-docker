@@ -33,9 +33,8 @@ services:
       - --db.engine=leveldb
       - --gcmode=archive
       - --maxpeers=50
-      - --nat=extip:${IP}
       - --nodiscover
-      - --port=12296
+      - --nodiscover
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash

@@ -34,10 +34,9 @@ services:
       - --datadir=/db
       - --db.size.limit=8TB
       - --maxpeers=50
-      - --nat=extip:${IP}
+      - --nodiscover
       - --p2p.allowed-ports=31732
       - --p2p.allowed-ports=36732
-      - --port=11732
       - --rollup.sequencerhttp=https://mainnet.boba.network
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000

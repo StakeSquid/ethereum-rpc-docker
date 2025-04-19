@@ -33,10 +33,9 @@ services:
       - --chain=boba-sepolia
       - --datadir=/db
       - --maxpeers=50
-      - --nat=extip:${IP}
+      - --nodiscover
       - --p2p.allowed-ports=31249
       - --p2p.allowed-ports=36249
-      - --port=11249
       - --rollup.sequencerhttp=https://sepolia.boba.network
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
