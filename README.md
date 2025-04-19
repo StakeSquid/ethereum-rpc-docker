@@ -177,6 +177,10 @@ This directory includes several useful scripts to help you manage and monitor yo
 - `list-backups.sh` - List available backup files
 - `op-wheel.sh` - Tool for Optimism rollup maintenance, including rewinding to a specific block
 
+
+Note: `<config-name>` refers to the compose file name without the .yml extension (e.g., `ethereum-mainnet` for ethereum-mainnet.yml)
+
+
 #### Nuclear option to recreate a node
 
 ```bash
@@ -192,7 +196,9 @@ Note: some configurations use staged sync which means that there is no measurabl
 
 You can chain `./success-if-almost-synced.sh <config-name> <age-of-last-block-in-seconds-to-be-considered-almost-synced>` with other scripts to create more complex automation, e.g. notify you once a node synced up to chainhead or adding the node to the dshackle configuration or taking a backup to clone the node to a different server.
 
-#### OP Wheel Usage Example
+#### OP Wheel Usage Example 
+
+Be aware that this is dangerous because you skip every check for your rollups op-geth execution client database to be consistent.
 
 ```bash
 # Rewind an Optimism rollup to a specific block
@@ -201,7 +207,13 @@ You can chain `./success-if-almost-synced.sh <config-name> <age-of-last-block-in
   --engine.jwt-secret-path=/jwtsecret
 ```
 
-Note: `<config-name>` refers to the compose file name without the .yml extension (e.g., `ethereum-mainnet` for ethereum-mainnet.yml)
+Nuclear option:
+```bash
+# Finalize the latest locally available block of an Optimism rollup
+./op-wheel-finalize-latest-block.sh <client_service_name> (<node_service_name>)
+```
+
+Where `<client_service_name>` is the name of the client service in the compose file and `<node_service_name>` is the name of the node service in the compose file which defaults to `<client_service_name>-node`.
 
 ## SSL Certificates and IP Configuration
 
