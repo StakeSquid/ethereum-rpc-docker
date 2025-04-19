@@ -30,6 +30,7 @@ services:
       - --http.corsdomain=*
       - --http.port=8545
       - --http.vhosts=*
+      - --init.latest=pruned
       - --node.batch-poster.enable=false
       - --node.sequencer=false
       - --node.staker.enable=false

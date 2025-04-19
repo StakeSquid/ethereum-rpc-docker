@@ -5,7 +5,7 @@
 
 RPC_URL="http://$1:8545"
 
-latest=$(curl -L -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq -r '.result.number')
+latest=$(docker run -it --network=rpc_chains --rm docker.io/curlimages/curl -L -s -X POST $RPC_URL      -H "Content-Type: application/json"      --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false],"id":1}' | jq -r '.result.number')
 
 if [ $? -ne 0 ]; then
     echo "Failed to get latest block number"
