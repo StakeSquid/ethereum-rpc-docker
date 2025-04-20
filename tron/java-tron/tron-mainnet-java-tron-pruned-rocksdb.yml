@@ -53,7 +53,7 @@ x-upstreams:
       generic:
         rpc:
           url: $${RPC_URL}
-    chain: $${CHAIN}
+    chain: tron
     method-groups:
       enabled:
         - debug

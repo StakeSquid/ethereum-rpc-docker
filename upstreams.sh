@@ -70,37 +70,39 @@ for part in "${parts[@]}"; do
 		
 		export PROVIDER=${ORGANIZATION}-${ID}
 
-		response_file=$(mktemp)
-		
-		http_status_code=$(curl -L --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL)
-
-		curl_status=$?
-		
-		if [ $? -eq 0 ] && [[ $http_status_code -ne 200 ]]; then
-		    echo "have error response from $TEST_URL: $(cat $response_file)" >&2
-		    rm "$response_file"
-		    continue  # Skip to the next iteration of the loop
-		fi
-		
-		chain_id=$(cat "$response_file" | jq -r '.result')
-		#echo "$http_status_code: $(cat $response_file)"
-		rm "$response_file"
-		
-		#echo "$TEST_URL $chain_id" >&2
-		chain_id_decimal=$((16#${chain_id#0x}))
-		export CHAIN=$($BASEPATH/get-shortname.sh $chain_id_decimal)
-		
-		# Define the path to the input YAML file
-		input_file="$BASEPATH/${part%.yml}.cfg"
-
-		[ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
-
 		# Run envsubst to replace environment variables in the input file and save the result to the output file
 		if yaml2json < "$BASEPATH/$part" | jq -e '.["x-upstreams"]' >/dev/null 2>&1; then
 		    #echo "upstreams key exists in $part"
+			# the upstream config contains a chain name for dshackle so we can 
+			# add it to the upstreams list and forget about querying the chainid
 		    upstreams+=("$(yaml2json < "$BASEPATH/$part" | jq '.["x-upstreams"]' | json2yaml | sed 's/^/  /'| sed 's/\$\${/${/g' | envsubst)")
 		else
-		    #echo "upstreams config $input_file for $part"
+
+       		response_file=$(mktemp)
+		
+			http_status_code=$(curl -L --ipv4 -m 5 -s -o "$response_file" -w "%{http_code}" -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $TEST_URL)
+
+			curl_status=$?
+		
+			if [ $? -eq 0 ] && [[ $http_status_code -ne 200 ]]; then
+		    	echo "have error response from $TEST_URL: $(cat $response_file)" >&2
+		    	rm "$response_file"
+		    	continue  # Skip to the next iteration of the loop
+			fi
+		
+			chain_id=$(cat "$response_file" | jq -r '.result')
+			#echo "$http_status_code: $(cat $response_file)"
+			rm "$response_file"
+		
+			#echo "$TEST_URL $chain_id" >&2
+			chain_id_decimal=$((16#${chain_id#0x}))
+			export CHAIN=$($BASEPATH/get-shortname.sh $chain_id_decimal)
+		
+			# Define the path to the input YAML file
+			input_file="$BASEPATH/${part%.yml}.cfg"
+
+			[ -f "$input_file" ] || input_file="$BASEPATH/default.cfg"
+
 		    upstreams+=("$(envsubst < "$input_file")")		    
 		fi
 		
