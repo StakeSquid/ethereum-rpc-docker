@@ -34,6 +34,7 @@ services:
       - --bootnodes=enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.22.104.177:30303
       - --chain=/config/eth-genesis.json
       - --datadir=/root/.local/share/reth
+      - --discovery.port=12881
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}

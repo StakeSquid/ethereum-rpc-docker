@@ -28,6 +28,7 @@ services:
     command:
       - --chain=sepolia
       - --datadir=/root/.local/share/reth
+      - --discovery.port=14330
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
