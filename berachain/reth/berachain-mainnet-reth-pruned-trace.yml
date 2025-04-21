@@ -98,7 +98,7 @@ services:
     volumes:
       - ${BERACHAIN_MAINNET_RETH_PRUNED_TRACE__NODE_DATA:-berachain-mainnet-reth-pruned-trace_node}:/root/.beacond/data
       - ./berachain/scripts/init.sh:/init.sh
-      - .jwtsecret:/root/.beacond/config/jwt.hex:ro
+      - .jwtsecret:/jwtsecret:ro
       - berachain-mainnet-reth-pruned-trace_config:/root/.beacond/config
 
 volumes:

@@ -20,14 +20,16 @@ CONFIG_DIR="/root/.beacond/config"
 # Create config directory
 mkdir -p "$CONFIG_DIR"
 
-#JWTSECRET="0x$(cat /jwtsecret)" # reth and bepolia don't speak the same language
+JWTSECRET="$(cat /jwtsecret)" # needs to go to the config dir (default path)
 P2P_STRING="tcp:\\/\\/0\\.0\\.0\\.0\\:${P2P_PORT:-55696}"
 NAT_STRING="${IP}:${P2P_PORT:-55696}"
 
-#echo "$JWTSECRET" > "$CONFIG_DIR/jwt.hex"
+echo "$JWTSECRET" > "$CONFIG_DIR/jwt.hex"
 
 #SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
 
+
+env
 
 # this goes first because it won't overwrite shit
 apk add curl
