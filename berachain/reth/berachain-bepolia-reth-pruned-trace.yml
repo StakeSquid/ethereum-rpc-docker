@@ -1,94 +1,129 @@
-# this is what you should know:
-# the execution client can not start before the node part initialized and generated a genesis block for the execution client
-# those config files are stored in ./berachain//config
-# once the execution client is started it needs a push from the node to start syncing but then syncs p2p
-# if you restart the beacon node while the execution client is syncing the beacon node will crash loop until sync is done
-
-# delete and resync:
-
-# rm -rf berachain/mainnet/config/* && rm -rf /var/lib/docker/volumes/rpc_berachain-mainnet-reth-archive-trace*/_data/* && ./force-recreate.sh berachain-mainnet-archive
-
-# I also suspect that the peers will blacklist you frequently if you try more than once
+---
 
 services:
   berachain-bepolia:
-    image: ghcr.io/paradigmxyz/reth:${RETH_VERSION:-v1.3.4}
+    image: ${BERACHAIN_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${BERACHAIN_BEPOLIA_RETH_VERSION:-v1.3.12}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
-    volumes:
-      - "berachain-bepolia-reth-pruned-trace:/root/.local/share/reth"
-      - "/slowdisk:/slowdisk"
-      - ".jwtsecret:/jwtsecret:ro"
-      - "./berachain/bepolia/config:/config"      
+    ports:
+      - 12274:12274
+      - 12274:12274/udp
     expose:
       - 8545
-      - 9001
-    ports:
-      - "10274:10274"
-      - "10274:10274/udp"
-    restart: unless-stopped
+      - 8551
     environment:
-      - "IP=${IP}"
-    entrypoint: ["/bin/sh", "-c", "while [ ! -f /config/eth-genesis.json ]; do sleep 1; done; exec reth node \"$@\"", "--"]
+      - BOOTNODES=enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303,enode://5b037f66099d5ded86eb7e1619f6d06ceb15609e8cc345ced22a4772b06178004e1490a3cd32fd1222789de4c6e4021c2d648a3d750f6d5323e64b771bbd8de7@34.87.142.180:30303,enode://bb7e44178543431feac8f0ee3827056b7b84d8235b802a8bdbbcd4939dab7f7dd2579ff577a38b002bb0139792af67abd2dd5c9f4f85b8da6e914fa76dca82bc@35.198.150.35:30303,enode://d071fa740e063ce1bb9cdc2b7937baeff6dc4000f91588d730a731c38a6ff0d4015814812c160fab8695e46f74b9b618735368ea2f16db4d785f16d29b3fb7b0@35.203.2.210:30303,enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303
+      - CHAINID=80069
+      - CHAINNAME=bepolia
+      - CHAIN_SPEC=testnet
+    entrypoint: [/bin/bash, -c, "trap 'exit 0' SIGTERM; while [ ! -f /config/eth-genesis.json ] && [ ! -f /tmp/stop ]; do sleep 1 & wait $!; done; exec reth node \"$@\"", --]
     command:
+      - --bootnodes=enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303,enode://5b037f66099d5ded86eb7e1619f6d06ceb15609e8cc345ced22a4772b06178004e1490a3cd32fd1222789de4c6e4021c2d648a3d750f6d5323e64b771bbd8de7@34.87.142.180:30303,enode://bb7e44178543431feac8f0ee3827056b7b84d8235b802a8bdbbcd4939dab7f7dd2579ff577a38b002bb0139792af67abd2dd5c9f4f85b8da6e914fa76dca82bc@35.198.150.35:30303,enode://d071fa740e063ce1bb9cdc2b7937baeff6dc4000f91588d730a731c38a6ff0d4015814812c160fab8695e46f74b9b618735368ea2f16db4d785f16d29b3fb7b0@35.203.2.210:30303,enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303
       - --chain=/config/eth-genesis.json
+      - --datadir=/root/.local/share/reth
+      - --full
+      - --max-inbound-peers=50
+      - --max-outbound-peers=50
       - --nat=extip:${IP}
-      - --metrics=0.0.0.0:9001
+      - --port=12274
+      - --rpc.gascap=600000000
+      - --rpc.max-logs-per-response=1100000
       - --http
       - --http.addr=0.0.0.0
+      - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --http.corsdomain=*
       - --http.port=8545
       - --ws
       - --ws.addr=0.0.0.0
-      - --ws.port=8545
+      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
       - --ws.origins=*
-      - --port=10274
-      - --discovery.port=10274
+      - --ws.port=8545
       - --authrpc.addr=0.0.0.0
       - --authrpc.jwtsecret=/jwtsecret
-      - --http.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
-      - --ws.api=debug,eth,net,trace,txpool,web3,rpc,reth,admin
-      - --http.corsdomain=*
-      - --rpc.max-logs-per-response=1100000
-      - --rpc.gascap=600000000
-      - --bootnodes=enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303,enode://5b037f66099d5ded86eb7e1619f6d06ceb15609e8cc345ced22a4772b06178004e1490a3cd32fd1222789de4c6e4021c2d648a3d750f6d5323e64b771bbd8de7@34.87.142.180:30303,enode://bb7e44178543431feac8f0ee3827056b7b84d8235b802a8bdbbcd4939dab7f7dd2579ff577a38b002bb0139792af67abd2dd5c9f4f85b8da6e914fa76dca82bc@35.198.150.35:30303,enode://d071fa740e063ce1bb9cdc2b7937baeff6dc4000f91588d730a731c38a6ff0d4015814812c160fab8695e46f74b9b618735368ea2f16db4d785f16d29b3fb7b0@35.203.2.210:30303,enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303      
-      - --full
-    stop_grace_period: 1m
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.berachain-bepolia-reth-pruned-trace-stripprefix.stripprefix.prefixes=/berachain-bepolia"
-      - "traefik.http.services.berachain-bepolia-reth-pruned-trace.loadbalancer.server.port=8545"
-      - "traefik.http.routers.berachain-bepolia-reth-pruned-trace.entrypoints=websecure"
-      - "traefik.http.routers.berachain-bepolia-reth-pruned-trace.tls.certresolver=myresolver"
-      - "traefik.http.routers.berachain-bepolia-reth-pruned-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/berachain-bepolia`)"
-      - "traefik.http.routers.berachain-bepolia-reth-pruned-trace.middlewares=berachain-bepolia-reth-pruned-trace-stripprefix, ipwhitelist"
-    networks:
-      - chains
-
-  berachain-bepolia-node:
-    image: ghcr.io/berachain/beacon-kit:v1.1.3
-    expose:
-      - 26657 #rpc
-    ports:
-      - "15274:15274"
-      - "15274:15274/udp"
-    environment:
-      - "IP=${IP}"
-      - "MONIKER=d${DOMAIN:-local}"
-      - "P2P_PORT=15274"
-      - "CHAINNAME=bepolia"
-      - "CHAINID=80069"
-      - "AUTH_RPC=http://berachain-bepolia:8551"
-      - "CHAIN_SPEC=testnet"
-    entrypoint: [ "sh", "/init.sh" ]
+    restart: unless-stopped
+    stop_grace_period: 5m
     networks:
       - chains
     volumes:
-      - "./berachain/scripts/init.sh:/init.sh"
-      - "berachain-bepolia-reth-pruned-trace_node:/root/.beacond/data"
-      - "./berachain/bepolia/config:/root/.beacond/config"
-      - ".jwtsecret:/root/.beacond/config/jwt.hex:ro"
+      - ${BERACHAIN_BEPOLIA_RETH_PRUNED_TRACE_DATA:-berachain-bepolia-reth-pruned-trace}:/root/.local/share/reth
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+      - berachain-bepolia-reth-pruned-trace_config:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.berachain-bepolia-reth-pruned-trace-stripprefix.stripprefix.prefixes=/berachain-bepolia
+      - traefik.http.services.berachain-bepolia-reth-pruned-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-pruned-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-pruned-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/berachain-bepolia`) || Path(`/berachain-bepolia/`))}
+      - ${NO_SSL:+traefik.http.routers.berachain-bepolia-reth-pruned-trace.rule=Path(`/berachain-bepolia`) || Path(`/berachain-bepolia/`)}
+      - traefik.http.routers.berachain-bepolia-reth-pruned-trace.middlewares=berachain-bepolia-reth-pruned-trace-stripprefix, ipallowlist
+
+  berachain-bepolia-node:
+    build:
+      context: ./berachain
+      dockerfile: beacon-kit.Dockerfile
+      args:
+        BEACONKIT_VERSION: ${BERACHAIN_BEPOLIA_BEACON_KIT_VERSION:-v1.1.4}
+        BEACONKIT_IMAGE: ${BERACHAIN_BEPOLIA_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}
+    ports:
+      - 17274:17274
+      - 17274:17274/udp
+    environment:
+      - AUTH_RPC=http://berachain-bepolia:8551
+      - CHAINID=80069
+      - CHAINNAME=bepolia
+      - CHAIN_SPEC=testnet
+      - IP=${IP}
+      - MONIKER=d${DOMAIN:-local}
+      - P2P_PORT=17274
     restart: unless-stopped
-    stop_grace_period: 1m
+    networks:
+      - chains
+    volumes:
+      - ${BERACHAIN_BEPOLIA_RETH_PRUNED_TRACE__NODE_DATA:-berachain-bepolia-reth-pruned-trace_node}:/root/.beacond/data
+      - ./berachain/scripts/init.sh:/init.sh
+      - .jwtsecret:/root/.beacond/config/jwt.hex:ro
+      - berachain-bepolia-reth-pruned-trace_config:/root/.beacond/config
 
 volumes:
-    berachain-bepolia-reth-pruned-trace:
-    berachain-bepolia-reth-pruned-trace_node:
+  berachain-bepolia-reth-pruned-trace:
+  berachain-bepolia-reth-pruned-trace_config:
+  berachain-bepolia-reth-pruned-trace_node:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: berachain-bepolia
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
