@@ -96,7 +96,6 @@ services:
       - chains
     volumes:
       - ${BERACHAIN_BARTIO_RETH_PRUNED_TRACE__NODE_DATA:-berachain-bartio-reth-pruned-trace_node}:/root/.beacond/data
-      - ./berachain/scripts/init.sh:/init.sh
       - .jwtsecret:/jwtsecret:ro
       - berachain-bartio-reth-pruned-trace_config:/root/.beacond/config
 
