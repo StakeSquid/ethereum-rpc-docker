@@ -26,7 +26,7 @@ NAT_STRING="${IP}:${P2P_PORT:-55696}"
 
 #echo "$JWTSECRET" > "$CONFIG_DIR/jwt.hex"
 
-SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
+#SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
 
 
 # this goes first because it won't overwrite shit
@@ -64,13 +64,13 @@ sed -i "/^\[p2p\]/,/^\[/{s|^external_address = .*|external_address = \"$NAT_STRI
 
 
 # Fetch and format SEEDS
-SEEDS=$(curl -s "$SEEDS_URL" | tail -n +2 | tr '\n' ',' | sed 's/,$//')
+#SEEDS=$(curl -s "$SEEDS_URL" | tail -n +2 | tr '\n' ',' | sed 's/,$//')
     
 # Update seeds and persistent_peers
-if [ -n "$SEEDS" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
-    sed -i "s/^seeds = \".*\"/seeds = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
-    sed -i "s/^persistent_peers = \".*\"/persistent_peers = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
-fi
+#if [ -n "$SEEDS" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
+#    sed -i "s/^seeds = \".*\"/seeds = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
+#    sed -i "s/^persistent_peers = \".*\"/persistent_peers = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
+#fi
 
 # Update RPC dial URL in app.toml
 if [ -f "$CONFIG_DIR/app.toml" ]; then
