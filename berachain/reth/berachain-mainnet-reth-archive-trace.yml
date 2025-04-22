@@ -1,4 +1,14 @@
 ---
+# you should backup the peers of your beacond node frequently.
+# docker exec -it rpc-berachain-mainnet-archive-node-1 curl http://localhost:26657/net_info | jq -r '
+#  .result.peers[]
+#  | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr | split(":") | last)"
+#' | paste -sd,
+# and then set the PERSISTENT_PEERS environment variable for the beacon node which will be inserted into the config toml by the init script...
+# SEEDS are published in the official repository https://github.com/berachain/beacon-kit/tree/main/testing/networks/80094/cl-seeds.txt
+# if that file is found then the init script will merge them into any configured seeds from the environment variable.
+# If the environment variable is empty and the file is found then the init script will use the seeds from the config.toml file that was
+# downloaded in initialization from the repo above.
 
 services:
   berachain-mainnet-archive:

@@ -26,7 +26,7 @@ NAT_STRING="${IP}:${P2P_PORT:-55696}"
 
 echo "$JWTSECRET" > "$CONFIG_DIR/jwt.hex"
 
-#SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
+SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
 
 
 env
@@ -66,13 +66,27 @@ sed -i "/^\[p2p\]/,/^\[/{s|^external_address = .*|external_address = \"$NAT_STRI
 
 
 # Fetch and format SEEDS
-#SEEDS=$(curl -s "$SEEDS_URL" | tail -n +2 | tr '\n' ',' | sed 's/,$//')
-    
-# Update seeds and persistent_peers
-#if [ -n "$SEEDS" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
-#    sed -i "s/^seeds = \".*\"/seeds = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
-#    sed -i "s/^persistent_peers = \".*\"/persistent_peers = \"$SEEDS\"/" "$CONFIG_DIR/config.toml"
-#fi
+# Add fresh seeds to the config from the official repository
+# curl will fail with error status if the file is not found due to the -f flag
+
+OFFICIAL_SEEDS=$(curl -f -s "$SEEDS_URL" | tail -n +2 | tr '\n' ',' | sed 's/,$//')
+CURL_EXIT_CODE=$?
+
+if [ $CURL_EXIT_CODE -ne 0 ]; then
+    echo "Failed to fetch seeds from the official repository: $SEEDS_URL" >&2
+else
+    echo "Fetched seeds from the official repository, merging with configured seeds"
+    SEEDS=$(echo "${SEEDS},${OFFICIAL_SEEDS}" | tr ',' '\n' | sed '/^$/d' | sort -u | paste -sd,)
+fi
+
+# Update the config.toml file
+if [ -n "$SEEDS" ]; then
+    sed -i "s/^seeds = \".*\"/seeds = \"${SEEDS}\"/" "$CONFIG_DIR/config.toml"
+fi
+
+if [ -n "$PERSISTENT_PEERS" ]; then
+    sed -i "s/^persistent_peers = \".*\"/persistent_peers = \"${PERSISTENT_PEERS}\"/" "$CONFIG_DIR/config.toml"
+fi
 
 # Update RPC dial URL in app.toml
 if [ -f "$CONFIG_DIR/app.toml" ]; then
