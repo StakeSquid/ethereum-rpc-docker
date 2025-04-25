@@ -37,7 +37,7 @@ services:
       - --p2p.allowed-ports=30373
       - --p2p.allowed-ports=35373
       - --port=10373
-      - --rollup.sequencerhttp=https://sepolia-sequencer.optimism.org
+      - --rollup.sequencerhttp=https://sepolia-sequencer.optimism.io
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --http

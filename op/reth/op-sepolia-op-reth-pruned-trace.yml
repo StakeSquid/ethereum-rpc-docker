@@ -33,7 +33,7 @@ services:
       - --max-outbound-peers=50
       - --nat=extip:${IP}
       - --port=14442
-      - --rollup.sequencer-http=https://sepolia-sequencer.optimism.org
+      - --rollup.sequencer-http=https://sepolia-sequencer.optimism.io
       - --rpc.gascap=600000000
       - --rpc.max-logs-per-response=1100000
       - --http

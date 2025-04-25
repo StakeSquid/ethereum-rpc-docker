@@ -33,7 +33,7 @@ services:
       - --max-outbound-peers=50
       - --nat=extip:${IP}
       - --port=13985
-      - --rollup.sequencer-http=https://mainnet-sequencer.optimism.org
+      - --rollup.sequencer-http=https://mainnet-sequencer.optimism.io
       - --rpc.gascap=600000000
       - --rpc.max-logs-per-response=1100000
       - --http
