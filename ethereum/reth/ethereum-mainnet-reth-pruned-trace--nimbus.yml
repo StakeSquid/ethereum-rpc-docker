@@ -83,7 +83,7 @@ services:
       - --nat=extip:${IP}
       - --network=mainnet
       - --rest
-      - --rest-host=0.0.0.0
+      - --rest-address=0.0.0.0
       - --rest-port=3500
       - --tcp-port=15150
       - --udp-port=15150
