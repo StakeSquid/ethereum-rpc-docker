@@ -33,8 +33,12 @@ services:
       - --max-outbound-peers=50
       - --nat=extip:${IP}
       - --port=14330
+      - --rpc-cache.max-blocks=10000
+      - --rpc-cache.max-concurrent-db-requests=2048
       - --rpc.gascap=600000000
-      - --rpc.max-logs-per-response=1100000
+      - --rpc.max-blocks-per-filter=0
+      - --rpc.max-connections=50000
+      - --rpc.max-logs-per-response=0
       - --http
       - --http.addr=0.0.0.0
       - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
