@@ -70,6 +70,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/lisk-mainnet-archive`) || Path(`/lisk-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.rule=Path(`/lisk-mainnet-archive`) || Path(`/lisk-mainnet-archive/`)}
       - traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.middlewares=lisk-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   lisk-mainnet-archive-node:
     image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.13.2}

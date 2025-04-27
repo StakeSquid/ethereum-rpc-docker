@@ -64,6 +64,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/polygon-amoy-minimal`) || Path(`/polygon-amoy-minimal/`))}
       - ${NO_SSL:+traefik.http.routers.polygon-amoy-erigon3-minimal-trace.rule=Path(`/polygon-amoy-minimal`) || Path(`/polygon-amoy-minimal/`)}
       - traefik.http.routers.polygon-amoy-erigon3-minimal-trace.middlewares=polygon-amoy-erigon3-minimal-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   polygon-amoy-erigon3-minimal-trace:

@@ -63,6 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-chapel`) || Path(`/bsc-chapel/`))}
       - ${NO_SSL:+traefik.http.routers.bsc-chapel-erigon3-pruned-trace.rule=Path(`/bsc-chapel`) || Path(`/bsc-chapel/`)}
       - traefik.http.routers.bsc-chapel-erigon3-pruned-trace.middlewares=bsc-chapel-erigon3-pruned-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   bsc-chapel-erigon3-pruned-trace:

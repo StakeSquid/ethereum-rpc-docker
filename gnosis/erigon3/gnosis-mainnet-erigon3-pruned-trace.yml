@@ -74,6 +74,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-mainnet`) || Path(`/gnosis-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Path(`/gnosis-mainnet`) || Path(`/gnosis-mainnet/`)}
       - traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.middlewares=gnosis-mainnet-erigon3-pruned-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   gnosis-mainnet-erigon3-pruned-trace:

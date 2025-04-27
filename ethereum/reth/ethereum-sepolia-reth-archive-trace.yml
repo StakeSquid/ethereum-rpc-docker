@@ -29,6 +29,7 @@ services:
       - --chain=sepolia
       - --datadir=/root/.local/share/reth
       - --discovery.port=14330
+      - --engine.cross-block-cache-size=${ETHEREUM_SEPOLIA_RETH_STATE_CACHE:-4096}
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
@@ -68,6 +69,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia-archive`) || Path(`/ethereum-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Path(`/ethereum-sepolia-archive`) || Path(`/ethereum-sepolia-archive/`)}
       - traefik.http.routers.ethereum-sepolia-reth-archive-trace.middlewares=ethereum-sepolia-reth-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   ethereum-sepolia-archive-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v6.0.0-rc.3}

@@ -65,6 +65,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/linea-mainnet`) || Path(`/linea-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-pruned-trace.rule=Path(`/linea-mainnet`) || Path(`/linea-mainnet/`)}
       - traefik.http.routers.linea-mainnet-erigon3-pruned-trace.middlewares=linea-mainnet-erigon3-pruned-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   linea-mainnet-erigon3-pruned-trace:

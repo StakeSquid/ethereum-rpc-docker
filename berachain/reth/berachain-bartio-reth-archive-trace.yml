@@ -45,6 +45,7 @@ services:
       - --chain=/config/eth-genesis.json
       - --datadir=/root/.local/share/reth
       - --discovery.port=10527
+      - --engine.cross-block-cache-size=${BERACHAIN_BARTIO_RETH_STATE_CACHE:-4096}
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
@@ -85,6 +86,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/berachain-bartio-archive`) || Path(`/berachain-bartio-archive/`))}
       - ${NO_SSL:+traefik.http.routers.berachain-bartio-reth-archive-trace.rule=Path(`/berachain-bartio-archive`) || Path(`/berachain-bartio-archive/`)}
       - traefik.http.routers.berachain-bartio-reth-archive-trace.middlewares=berachain-bartio-reth-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   berachain-bartio-archive-node:
     build:

@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.op-mainnet-op-erigon-archive-trace.rule=Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`)}
       - traefik.http.routers.op-mainnet-op-erigon-archive-trace.middlewares=op-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   op-mainnet-archive-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.2}

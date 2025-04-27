@@ -28,6 +28,7 @@ services:
     command:
       - --chain=base
       - --datadir=/root/.local/share/reth
+      - --engine.cross-block-cache-size=${BASE_MAINNET_RETH_STATE_CACHE:-4096}
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
@@ -68,6 +69,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/base-mainnet-archive`) || Path(`/base-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.base-mainnet-op-reth-archive-trace.rule=Path(`/base-mainnet-archive`) || Path(`/base-mainnet-archive/`)}
       - traefik.http.routers.base-mainnet-op-reth-archive-trace.middlewares=base-mainnet-op-reth-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   base-mainnet-archive-node:
     image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.13.2}

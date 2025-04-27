@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/worldchain-mainnet-archive`) || Path(`/worldchain-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.rule=Path(`/worldchain-mainnet-archive`) || Path(`/worldchain-mainnet-archive/`)}
       - traefik.http.routers.worldchain-mainnet-op-erigon-archive-trace.middlewares=worldchain-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   worldchain-mainnet-archive-node:
     image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_MAINNET_NODE_VERSION:-v1.13.2}

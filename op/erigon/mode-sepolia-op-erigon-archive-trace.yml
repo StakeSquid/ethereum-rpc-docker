@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/mode-sepolia-archive`) || Path(`/mode-sepolia-archive/`))}
       - ${NO_SSL:+traefik.http.routers.mode-sepolia-op-erigon-archive-trace.rule=Path(`/mode-sepolia-archive`) || Path(`/mode-sepolia-archive/`)}
       - traefik.http.routers.mode-sepolia-op-erigon-archive-trace.middlewares=mode-sepolia-op-erigon-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   mode-sepolia-archive-node:
     image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_SEPOLIA_NODE_VERSION:-v1.13.2}

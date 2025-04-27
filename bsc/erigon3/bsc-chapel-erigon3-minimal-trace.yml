@@ -63,6 +63,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-chapel-minimal`) || Path(`/bsc-chapel-minimal/`))}
       - ${NO_SSL:+traefik.http.routers.bsc-chapel-erigon3-minimal-trace.rule=Path(`/bsc-chapel-minimal`) || Path(`/bsc-chapel-minimal/`)}
       - traefik.http.routers.bsc-chapel-erigon3-minimal-trace.middlewares=bsc-chapel-erigon3-minimal-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   bsc-chapel-erigon3-minimal-trace:

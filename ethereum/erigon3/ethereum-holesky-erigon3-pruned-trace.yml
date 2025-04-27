@@ -83,6 +83,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-pruned-trace-node.rule=PathPrefix(`/ethereum-holesky/eth`)}
       - traefik.http.routers.ethereum-holesky-erigon3-pruned-trace-node.middlewares=ethereum-holesky-erigon3-pruned-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   ethereum-holesky-erigon3-pruned-trace:

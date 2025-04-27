@@ -83,6 +83,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-minimal/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace-node.rule=PathPrefix(`/ethereum-mainnet-minimal/eth`)}
       - traefik.http.routers.ethereum-mainnet-erigon3-minimal-trace-node.middlewares=ethereum-mainnet-erigon3-minimal-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   ethereum-mainnet-erigon3-minimal-trace:

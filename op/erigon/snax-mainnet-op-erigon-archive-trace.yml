@@ -68,6 +68,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/snax-mainnet-archive`) || Path(`/snax-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-erigon-archive-trace.rule=Path(`/snax-mainnet-archive`) || Path(`/snax-mainnet-archive/`)}
       - traefik.http.routers.snax-mainnet-op-erigon-archive-trace.middlewares=snax-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   snax-mainnet-archive-node:
     image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.2}

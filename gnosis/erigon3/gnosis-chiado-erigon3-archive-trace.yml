@@ -74,6 +74,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-chiado-archive`) || Path(`/gnosis-chiado-archive/`))}
       - ${NO_SSL:+traefik.http.routers.gnosis-chiado-erigon3-archive-trace.rule=Path(`/gnosis-chiado-archive`) || Path(`/gnosis-chiado-archive/`)}
       - traefik.http.routers.gnosis-chiado-erigon3-archive-trace.middlewares=gnosis-chiado-erigon3-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   gnosis-chiado-erigon3-archive-trace:

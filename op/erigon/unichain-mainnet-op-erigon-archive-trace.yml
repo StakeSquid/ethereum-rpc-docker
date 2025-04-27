@@ -67,6 +67,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/unichain-mainnet-archive`) || Path(`/unichain-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.rule=Path(`/unichain-mainnet-archive`) || Path(`/unichain-mainnet-archive/`)}
       - traefik.http.routers.unichain-mainnet-op-erigon-archive-trace.middlewares=unichain-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   unichain-mainnet-archive-node:
     image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_MAINNET_NODE_VERSION:-v1.13.2}

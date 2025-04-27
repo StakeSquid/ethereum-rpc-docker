@@ -45,6 +45,7 @@ services:
       - --chain=/config/eth-genesis.json
       - --datadir=/root/.local/share/reth
       - --discovery.port=12274
+      - --engine.cross-block-cache-size=${BERACHAIN_BEPOLIA_RETH_STATE_CACHE:-4096}
       - --full
       - --max-inbound-peers=50
       - --max-outbound-peers=50
@@ -87,6 +88,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/berachain-bepolia`) || Path(`/berachain-bepolia/`))}
       - ${NO_SSL:+traefik.http.routers.berachain-bepolia-reth-pruned-trace.rule=Path(`/berachain-bepolia`) || Path(`/berachain-bepolia/`)}
       - traefik.http.routers.berachain-bepolia-reth-pruned-trace.middlewares=berachain-bepolia-reth-pruned-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
   berachain-bepolia-node:
     build:
