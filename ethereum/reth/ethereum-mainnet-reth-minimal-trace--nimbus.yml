@@ -111,53 +111,10 @@ services:
 
   ethereum-mainnet-minimal-pruner:
     image: debian:latest
-    entrypoint: [/bin/bash, -c]
-    command:
-      - |
-        mkdir -p "/data/static_files/delete_me"
-        # Step 1: List base filenames (without .conf/.off) and sort by starting block number
-        base_files=$$(find "/data/static_files" -maxdepth 1 -type f | sed -E "s/\.(conf|off)$$" | sort -u | awk -F_ '{print $$NF-0, $$0}' | sort -n | cut -d" " -f2-)
-        # Convert base_files to an array for easier manipulation
-        base_files_array=($$base_files)
-        # Step 3: Group files by prefix and block range, keeping only the last two block ranges
-        declare -A file_groups
-        # Group files by prefix
-        for base in "$${base_files_array[@]}"; do
-          prefix=$$(echo "$$base" | sed -E "s/_([0-9]+)$$"//")  # Get everything before the block range
-          block_range=$$(echo "$$base" | sed -E "s/.*_([0-9]+)$$"//")  # Get the block range
-          file_groups["$$prefix"]+="$$block_range:$$base "
-        done
-        # Step 4: Process each group
-        for prefix in "$${!file_groups[@]}"; do
-          block_ranges=($${file_groups[$$prefix]})
-          num_files=$${#block_ranges[@]}
-          # Keep the last 2 block ranges
-          files_to_move=("$${block_ranges[@]:0:num_files-2}")
-          # Move files for the current group
-          for file_range in "$${files_to_move[@]}"; do
-            base="$${file_range#*:}"  # Remove block range part, keeping the full filename
-            # Handle base file (no extension) first
-            if [[ -f "$$base" ]]; then
-              size=$$(stat --printf="%s" "$$base")
-              mv "$$base" "/data/static_files/delete_me"
-              echo "Moved $$base to backup."
-            fi
-            # Handle files with extensions .conf and .off
-            for ext in .conf .off; do # Removed quotes and empty string from loop list
-              file="$${base}$${ext}"
-              if [[ -f "$$file" ]]; then
-                size=$$(stat --printf="%s" "$$file")
-                mv "$$file" "/data/static_files/delete_me"
-                echo "Moved $$file to backup."
-              fi
-            done
-          done
-        done
-        freed_bytes=$$(du -cb "/data/static_files/delete_me"/* | tail -1 | awk '{print $$1}')
-        echo "Moved files to backup. Total freed: $$freed_bytes bytes."
-        echo "Done."
+    entrypoint: [/scripts/prune-reth.sh]
     restart: no
     volumes:
+      - ./scripts/prune-reth.sh:/scripts/prune-reth.sh
       - /root/.local/share/reth:/data
 
 volumes:
