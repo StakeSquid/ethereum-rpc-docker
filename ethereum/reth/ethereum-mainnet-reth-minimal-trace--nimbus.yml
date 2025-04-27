@@ -1,0 +1,233 @@
+---
+# this is a minimal node, it will not have a full state. you achieve this by removing files form the static_files directory
+# it's important to disable certain methods on the rpc server which would otherwise cause issues with the drpc gateway.
+# this is why we have a minimal profile that doesn't actually exist in reth.
+
+services:
+  ethereum-mainnet-minimal:
+    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.3.12}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    user: root
+    ports:
+      - 14286:14286
+      - 14286:14286/udp
+    expose:
+      - 8545
+      - 8551
+    entrypoint: [reth, node]
+    command:
+      - --chain=mainnet
+      - --datadir=/root/.local/share/reth
+      - --discovery.port=14286
+      - --full
+      - --max-inbound-peers=50
+      - --max-outbound-peers=50
+      - --nat=extip:${IP}
+      - --port=14286
+      - --rpc-cache.max-blocks=10000
+      - --rpc-cache.max-concurrent-db-requests=2048
+      - --rpc.gascap=600000000
+      - --rpc.max-blocks-per-filter=0
+      - --rpc.max-connections=50000
+      - --rpc.max-logs-per-response=0
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --http.corsdomain=*
+      - --http.port=8545
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_MAINNET_RETH_MINIMAL_TRACE_DATA:-ethereum-mainnet-reth-minimal-trace}:/root/.local/share/reth
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal
+      - traefik.http.services.ethereum-mainnet-reth-minimal-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-minimal`) || Path(`/ethereum-mainnet-minimal/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-minimal-trace.rule=Path(`/ethereum-mainnet-minimal`) || Path(`/ethereum-mainnet-minimal/`)}
+      - traefik.http.routers.ethereum-mainnet-reth-minimal-trace.middlewares=ethereum-mainnet-reth-minimal-trace-stripprefix, ipallowlist
+
+  ethereum-mainnet-minimal-node:
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-amd64-v25.4.1}
+    user: root
+    ports:
+      - 19286:19286
+      - 19286:19286/udp
+    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=mainnet --trusted-node-url=https://mainnet.beaconstate.info --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
+    command:
+      - --history=prune
+      - --jwt-secret=/jwtsecret
+      - --nat=extip:${IP}
+      - --network=mainnet
+      - --rest
+      - --rest-address=0.0.0.0
+      - --rest-port=3500
+      - --tcp-port=19286
+      - --udp-port=19286
+      - --web3-url=http://ethereum-mainnet-minimal:8551
+    restart: unless-stopped
+    depends_on:
+      - ethereum-mainnet-minimal
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_MAINNET_RETH_MINIMAL_TRACE__NIMBUS_DATA:-ethereum-mainnet-reth-minimal-trace_nimbus}:/root/.cache/nimbus/BeaconNode
+      - .jwtsecret:/jwtsecret:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal
+      - traefik.http.services.ethereum-mainnet-reth-minimal-trace-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-minimal/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.rule=PathPrefix(`/ethereum-mainnet-minimal/eth`)}
+      - traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.middlewares=ethereum-mainnet-reth-minimal-trace-node-stripprefix, ipallowlist
+
+  ethereum-mainnet-minimal-pruner:
+    build:
+      context: .
+      dockerfile: |
+        FROM alpine:latest
+        # Install necessary packages
+        RUN apk add --no-cache bash coreutils sed findutils
+        # Set working directory
+        WORKDIR /app
+        # Create the prune script inline
+        RUN echo '#!/bin/bash\n\
+        set -euo pipefail\n\
+        \n\
+        # Settings\n\
+        source_dir="/data"      # Data directory (mount)\n\
+        backup_dir="/backup"    # Backup directory (mount)\n\
+        target_free_percent=10  # Percentage of space to free\n\
+        \n\
+        # Make sure backup dir exists\n\
+        mkdir -p "$backup_dir"\n\
+        \n\
+        # Step 1: List base filenames (without .conf/.off) and sort by starting block number\n\
+        base_files=$(find "$source_dir" -maxdepth 1 -type f \\\n\
+          | sed -E "s/\\.(conf|off)\$//" \\\n\
+          | sort -u \\\n\
+          | awk -F_ "{print \$NF-0, \$0}" | sort -n | cut -d" " -f2-)\n\
+        \n\
+        # Step 2: Calculate total size\n\
+        total_size_bytes=$(du -cb "$source_dir"/* | tail -1 | awk "{print \$1}")\n\
+        target_free_bytes=$(( total_size_bytes * target_free_percent / 100 ))\n\
+        \n\
+        echo "Total size: \$total_size_bytes bytes"\n\
+        echo "Target to free: \$target_free_bytes bytes"\n\
+        \n\
+        # Convert base_files to an array for easier manipulation\n\
+        base_files_array=($base_files)\n\
+        \n\
+        # Step 3: Group files by prefix and block range, keeping only the last two block ranges\n\
+        declare -A file_groups\n\
+        \n\
+        # Group files by prefix\n\
+        for base in "${base_files_array[@]}"; do\n\
+          prefix=$(echo "$base" | sed -E "s/_([0-9]+)\$//")  # Get everything before the block range\n\
+          block_range=$(echo "$base" | sed -E "s/.*_([0-9]+)\$//")  # Get the block range\n\
+          file_groups["\$prefix"]+="$block_range:\$base "\n\
+        done\n\
+        \n\
+        # Step 4: Process each group\n\
+        for prefix in "${!file_groups[@]}"; do\n\
+          block_ranges=(${file_groups[\$prefix]})\n\
+          num_files=${#block_ranges[@]}\n\
+          \n\
+          # Keep the last 2 block ranges\n\
+          files_to_move=("${block_ranges[@]:0:num_files-2}")\n\
+          \n\
+          # Move files for the current group\n\
+          for file_range in "${files_to_move[@]}"; do\n\
+            base="\${file_range#*:}"  # Remove block range part, keeping the full filename\n\
+            for ext in "" ".conf" ".off"; do\n\
+              file="\${base}\${ext}"\n\
+              if [[ -f "\$file" ]]; then\n\
+                size=$(stat --printf="%s" "\$file")\n\
+                mv "\$file" "$backup_dir/"\n\
+                echo "Moved \$file to backup."\n\
+              fi\n\
+            done\n\
+          done\n\
+        done\n\
+        \n\
+        # Step 5: Calculate the space freed\n\
+        freed_bytes=$(du -cb "$backup_dir"/* | tail -1 | awk "{print \$1}")\n\
+        \n\
+        echo "Moved files to backup. Total freed: \$freed_bytes bytes."\n\
+        echo "Done."' \
+        RUN chmod +x /app/prune.sh
+    environment:
+      - BACKUP_DIR=/data/static_files/delete_me
+      - DATA_DIR=/data/static_files
+    entrypoint: [/app/prune.sh]       # Run the prune script manually
+    restart: no
+    working_dir: /app
+    volumes:
+      - /root/.local/share/reth:/data
+
+volumes:
+  ethereum-mainnet-reth-minimal-trace:
+  ethereum-mainnet-reth-minimal-trace_nimbus:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: ethereum
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+        - name: eth_getTransactionByBlockNumberAndIndex
+        - name: eth_getBlockByNumber
+        - name: eth_getLogs
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+...
