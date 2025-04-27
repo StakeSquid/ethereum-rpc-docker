@@ -68,14 +68,14 @@ def proxy():
         
     return jsonify(outgoing)
 
-# New WebSocket handler
-@sockets.route('/')
+# WebSocket handler moved to '/ws'
+@sockets.route('/ws') # <--- Changed path from '/' to '/ws'
 def proxy_socket(ws):
     """Handles incoming WebSocket connections and relays messages."""
-    print("==> WebSocket connection received", file=sys.stdout, flush=True)
+    print("==> WebSocket connection received on /ws", file=sys.stdout, flush=True) # <--- Updated log message
     target_ws = None
     try:
-        # Connect to the target WebSocket server
+        # Connect to the target WebSocket server (TARGET_URL_WS usually doesn't need a path)
         target_ws = websocket.create_connection(TARGET_URL_WS)
         print(f"==> WebSocket connection established to {TARGET_URL_WS}", file=sys.stdout, flush=True)
 
