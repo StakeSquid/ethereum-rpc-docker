@@ -71,16 +71,19 @@ def proxy():
     response = requests.post(TARGET_URL_HTTP, json=incoming)
     outgoing = response.json()
 
-    log_lines = [request_log]
+    # Initialize log_lines here, decide what to include based on error status
+    log_lines = []
 
     if 'error' in outgoing:
+        # For errors, log both request and response
+        log_lines.append(request_log)
         response_log = f"<== Response (Error):\n{json.dumps(outgoing, indent=2)}"
         log_lines.append(response_log)
         # Track the method name if an error occurred and method exists in request
         if isinstance(incoming, dict) and 'method' in incoming:
             error_methods.add(incoming['method'])
     else:
-        # Log only the method name for successful responses
+        # For success, log only the success message with the method name
         method_name = "unknown_method" # Default if not found
         if isinstance(incoming, dict) and 'method' in incoming:
             method_name = incoming['method']
