@@ -7,3 +7,4 @@ services:
       - 8545
     environment:
       TARGET_URL: "${LOGGING_PROXY_TARGET_URL}"
+      IGNORE_ERROR_METHODS: "${LOGGING_PROXY_IGNORE_ERROR_METHODS}"

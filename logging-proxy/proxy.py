@@ -21,6 +21,12 @@ TARGET_URL_WS = TARGET_URL_HTTP.replace('http://', 'ws://').replace('https://', 
 MAX_PARAMS_LOG_LENGTH = 5 # Max number of params to log before truncating
 MAX_DATA_LOG_LENGTH = 100 # Max length for 'data' field in params before truncating
 error_methods = set() # Set to store method names that resulted in errors
+# --- Start: Read ignored error methods from environment variable ---
+ignore_error_methods_str = os.getenv('IGNORE_ERROR_METHODS', '') # Default to empty string
+ignored_error_methods = set(m.strip() for m in ignore_error_methods_str.split(',') if m.strip())
+if ignored_error_methods:
+    print(f"Ignoring errors for methods: {', '.join(sorted(list(ignored_error_methods)))}", file=sys.stdout)
+# --- End: Read ignored error methods ---
 # --- End new global variables ---
 
 # --- New function to print error summary ---
@@ -79,9 +85,15 @@ def proxy():
         log_lines.append(request_log)
         response_log = f"<== Response (Error):\n{json.dumps(outgoing, indent=2)}"
         log_lines.append(response_log)
-        # Track the method name if an error occurred and method exists in request
+        # Track the method name if an error occurred and method exists in request,
+        # unless the method is in the ignored set.
         if isinstance(incoming, dict) and 'method' in incoming:
-            error_methods.add(incoming['method'])
+            method_name = incoming['method']
+            if method_name not in ignored_error_methods:
+                error_methods.add(method_name)
+            else:
+                # Optional: Log that an error for this method was ignored
+                print(f"INFO: Ignored error for method '{method_name}' as per IGNORE_ERROR_METHODS.", file=sys.stdout, flush=True)
     else:
         # For success, log only the success message with the method name
         method_name = "unknown_method" # Default if not found
