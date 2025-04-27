@@ -6,6 +6,7 @@ import json
 from flask_sockets import Sockets
 import websocket
 import gevent
+import atexit # Import atexit
 
 app = Flask(__name__)
 sockets = Sockets(app)
@@ -15,12 +16,43 @@ TARGET_URL_HTTP = os.getenv('TARGET_URL', 'http://host.docker.internal:8545')
 # Derive WebSocket URL from HTTP URL
 TARGET_URL_WS = TARGET_URL_HTTP.replace('http://', 'ws://').replace('https://', 'wss://')
 
+# --- New global variables ---
+MAX_PARAMS_LOG_LENGTH = 5 # Max number of params to log before truncating
+error_methods = set() # Set to store method names that resulted in errors
+# --- End new global variables ---
+
+# --- New function to print error summary ---
+def print_error_summary():
+    """Prints the set of methods that encountered errors."""
+    if error_methods:
+        print("\n--- Methods with Errors ---", file=sys.stdout)
+        for method in sorted(list(error_methods)):
+            print(f"- {method}", file=sys.stdout)
+        print("--------------------------", file=sys.stdout, flush=True)
+    else:
+        print("\n--- No methods encountered errors during execution. ---", file=sys.stdout, flush=True)
+
+# Register the summary function to run on exit
+atexit.register(print_error_summary)
+# --- End new function ---
+
 @app.route('/', methods=['POST'])
 def proxy():
     incoming = request.get_json()
-    request_log = f"==> Request:\n{json.dumps(incoming, indent=2)}"
+    
+    # Create a copy for logging to allow modification without affecting the actual request
+    log_incoming = incoming.copy() if isinstance(incoming, dict) else incoming
 
-    response = requests.post(TARGET_URL_HTTP, json=incoming)
+    # Truncate params for logging if it's a long list
+    if isinstance(log_incoming, dict) and 'params' in log_incoming and isinstance(log_incoming['params'], list):
+        if len(log_incoming['params']) > MAX_PARAMS_LOG_LENGTH:
+            log_incoming['params'] = log_incoming['params'][:MAX_PARAMS_LOG_LENGTH] + [f"... (truncated {len(incoming['params']) - MAX_PARAMS_LOG_LENGTH} more)"]
+
+    # Use the potentially modified log_incoming for the request log string
+    request_log = f"==> Request:\n{json.dumps(log_incoming, indent=2)}"
+
+    # Send the original 'incoming' data to the target
+    response = requests.post(TARGET_URL_HTTP, json=incoming) 
     outgoing = response.json()
 
     log_lines = [request_log]
@@ -28,6 +60,9 @@ def proxy():
     if 'error' in outgoing:
         response_log = f"<== Response (Error):\n{json.dumps(outgoing, indent=2)}"
         log_lines.append(response_log)
+        # Track the method name if an error occurred and method exists in request
+        if isinstance(incoming, dict) and 'method' in incoming:
+            error_methods.add(incoming['method'])
 
     print('\n---\n'.join(log_lines), file=sys.stdout, flush=True)
         
@@ -53,6 +88,13 @@ def proxy_socket(ws):
                 while not ws.closed and target_ws.connected:
                     message = ws.receive()
                     if message is not None:
+                        # --- Log WS message from client (optional, can be verbose) ---
+                        # try:
+                        #     msg_data = json.loads(message)
+                        #     print(f"==> WS Client Message:\n{json.dumps(msg_data, indent=2)}", file=sys.stdout, flush=True)
+                        # except json.JSONDecodeError:
+                        #     print(f"==> WS Client Message (non-JSON): {message}", file=sys.stdout, flush=True)
+                        # --- End log ---
                         target_ws.send(message)
                     else: # Client closed
                         break
@@ -70,6 +112,18 @@ def proxy_socket(ws):
                 while target_ws.connected and not ws.closed:
                     message = target_ws.recv()
                     if message:
+                         # --- Log WS message from target (optional, can be verbose) ---
+                        # try:
+                        #     msg_data = json.loads(message)
+                        #     print(f"<== WS Target Message:\n{json.dumps(msg_data, indent=2)}", file=sys.stdout, flush=True)
+                        #     # Check for errors in WS messages if they follow JSON-RPC format
+                        #     if isinstance(msg_data, dict) and 'error' in msg_data and 'id' in msg_data:
+                        #          # Note: Correlating WS errors back to specific request methods is harder
+                        #          #       as requests/responses are asynchronous. We won't add to error_methods here.
+                        #          pass 
+                        # except json.JSONDecodeError:
+                        #     print(f"<== WS Target Message (non-JSON): {message}", file=sys.stdout, flush=True)
+                        # --- End log ---
                         ws.send(message)
                     else: # Target closed
                         break
@@ -108,4 +162,13 @@ if __name__ == '__main__':
     print(f"HTTP proxying to: {TARGET_URL_HTTP}")
     print(f"WebSocket proxying to: {TARGET_URL_WS}")
     server = pywsgi.WSGIServer(('0.0.0.0', 8545), app, handler_class=WebSocketHandler)
-    server.serve_forever()
+    # Add graceful shutdown handling if possible with gevent (optional but good practice)
+    # gevent.signal_handler(signal.SIGTERM, server.stop) 
+    # gevent.signal_handler(signal.SIGINT, server.stop) # Handle Ctrl+C
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt: # Catch Ctrl+C if signal handlers aren't used/working
+        print("\nCtrl+C detected, shutting down.", file=sys.stdout)
+    finally:
+        # The atexit handler will run automatically on normal exit.
+        pass 
