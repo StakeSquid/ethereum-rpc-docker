@@ -80,6 +80,7 @@ services:
     ports:
       - 19286:19286
       - 19286:19286/udp
+    entrypoint: [blsync]
     command:
       - --beacon.api=https://mainnet.beaconstate.info
       - --beacon.checkpoint=${ETHEREUM_MAINNET_BEACON_CHECKPOINT}
@@ -93,15 +94,6 @@ services:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
-    labels:
-      - traefik.enable=true
-      - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal
-      - traefik.http.services.ethereum-mainnet-reth-minimal-trace-node.loadbalancer.server.port=3500
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-minimal/eth`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.rule=PathPrefix(`/ethereum-mainnet-minimal/eth`)}
-      - traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.middlewares=ethereum-mainnet-reth-minimal-trace-node-stripprefix, ipallowlist
 
   ethereum-mainnet-minimal-pruner:
     image: debian:latest
@@ -140,12 +132,4 @@ x-upstreams:
         - name: eth_getLogs
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
-  - id: $${ID}-beacon-chain
-    chain: eth-beacon-chain
-    labels:
-      provider: $${PROVIDER}-beacon-chain
-    connection:
-      generic:
-        rpc:
-          url: $${RPC_URL}
 ...
