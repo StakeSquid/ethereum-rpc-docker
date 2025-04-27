@@ -7,6 +7,7 @@ from flask_sockets import Sockets
 import websocket
 import gevent
 import atexit # Import atexit
+import copy # Import copy
 
 app = Flask(__name__)
 sockets = Sockets(app)
@@ -18,6 +19,7 @@ TARGET_URL_WS = TARGET_URL_HTTP.replace('http://', 'ws://').replace('https://', 
 
 # --- New global variables ---
 MAX_PARAMS_LOG_LENGTH = 5 # Max number of params to log before truncating
+MAX_DATA_LOG_LENGTH = 100 # Max length for 'data' field in params before truncating
 error_methods = set() # Set to store method names that resulted in errors
 # --- End new global variables ---
 
@@ -40,13 +42,27 @@ atexit.register(print_error_summary)
 def proxy():
     incoming = request.get_json()
     
-    # Create a copy for logging to allow modification without affecting the actual request
-    log_incoming = incoming.copy() if isinstance(incoming, dict) else incoming
+    # Create a deep copy for logging to allow modification without affecting the actual request
+    # Use deepcopy to handle nested structures like params containing dictionaries
+    log_incoming = copy.deepcopy(incoming) if isinstance(incoming, dict) else incoming
 
-    # Truncate params for logging if it's a long list
+    # Truncate params and data within params for logging
     if isinstance(log_incoming, dict) and 'params' in log_incoming and isinstance(log_incoming['params'], list):
-        if len(log_incoming['params']) > MAX_PARAMS_LOG_LENGTH:
-            log_incoming['params'] = log_incoming['params'][:MAX_PARAMS_LOG_LENGTH] + [f"... (truncated {len(incoming['params']) - MAX_PARAMS_LOG_LENGTH} more)"]
+        original_params_len = len(incoming['params']) # Use original length for truncation message
+
+        # --- Start: Truncate 'data' field within params ---
+        for i, param in enumerate(log_incoming['params']):
+            if isinstance(param, dict) and 'data' in param and isinstance(param['data'], str):
+                if len(param['data']) > MAX_DATA_LOG_LENGTH:
+                    param['data'] = param['data'][:MAX_DATA_LOG_LENGTH] + f"... (truncated {len(param['data']) - MAX_DATA_LOG_LENGTH} chars)"
+            # Stop processing params if we are already at the truncation limit for the list itself
+            if i >= MAX_PARAMS_LOG_LENGTH -1:
+                 break
+        # --- End: Truncate 'data' field within params ---
+
+        # Truncate the params list itself if it's too long
+        if original_params_len > MAX_PARAMS_LOG_LENGTH:
+            log_incoming['params'] = log_incoming['params'][:MAX_PARAMS_LOG_LENGTH] + [f"... (truncated {original_params_len - MAX_PARAMS_LOG_LENGTH} more params)"]
 
     # Use the potentially modified log_incoming for the request log string
     request_log = f"==> Request:\n{json.dumps(log_incoming, indent=2)}"
