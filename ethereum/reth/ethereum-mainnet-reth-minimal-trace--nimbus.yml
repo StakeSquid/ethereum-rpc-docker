@@ -112,13 +112,12 @@ services:
   ethereum-mainnet-minimal-pruner:
     image: debian:latest
     command:
+      - -c
+      - bash
       - |
-        # Settings
-        source_dir="/data/static_files"
-        backup_dir="/data/static_files/delete_me"
-        mkdir -p "$$backup_dir"
+        mkdir -p "/data/static_files/delete_me"
         # Step 1: List base filenames (without .conf/.off) and sort by starting block number
-        base_files=$$(find "$$source_dir" -maxdepth 1 -type f \
+        base_files=$$(find "/data/static_files" -maxdepth 1 -type f \
           | sed -E "s/\.(conf|off)$$" \
           | sort -u \
           | awk -F_ '{print $$NF-0, $$0}' | sort -n | cut -d" " -f2-)
@@ -145,17 +144,15 @@ services:
               file="$${base}$${ext}"
               if [[ -f "$$file" ]]; then
                 size=$$(stat --printf="%s" "$$file")
-                mv "$$file" "$$backup_dir/"
+                mv "$$file" "/data/static_files/delete_me"
                 echo "Moved $$file to backup."
               fi
             done
           done
         done
-        freed_bytes=$$(du -cb "$$backup_dir"/* | tail -1 | awk '{print $$1}')
+        freed_bytes=$$(du -cb "/data/static_files/delete_me"/* | tail -1 | awk '{print $$1}')
         echo "Moved files to backup. Total freed: $$freed_bytes bytes."
         echo "Done."
-      - -c
-      - bash
     restart: no
     volumes:
       - /root/.local/share/reth:/data
