@@ -82,7 +82,7 @@ services:
       - 19286:19286/udp
     command:
       - --beacon.api=https://mainnet.beaconstate.info
-      - --beacon.checkpoint=${ETHEREUM_MAINNET_BEACHON_CHECKPOINT}
+      - --beacon.checkpoint=${ETHEREUM_MAINNET_BEACON_CHECKPOINT}
       - --blsync.engine.api=http://ethereum-mainnet-minimal:8551
       - --blsync.jwtsecret=/jwtsecret
       - --network=mainnet
