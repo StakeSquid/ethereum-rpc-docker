@@ -37,7 +37,7 @@ for base in "${unique_base_files_array[@]}"; do
     group_name=$(echo "$filename" | cut -d_ -f3)
 
     # Store the full path base name, grouped by the extracted group name
-    if [[ "$group_name" == "receipts" || "$group_name" == "transactions" ]]; then
+    if [[ "$group_name" == "headers" || "$group_name" == "receipts" || "$group_name" == "transactions" ]]; then
         groups["$group_name"]+="$base " # Append base path with a space separator
     else
         echo "Warning: Skipping file with unexpected group name: $base"
