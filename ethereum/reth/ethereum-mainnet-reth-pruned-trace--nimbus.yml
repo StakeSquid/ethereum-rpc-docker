@@ -78,7 +78,7 @@ services:
     ports:
       - 15150:15150
       - 15150:15150/udp
-    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=mainnet --trusted-node-url=https://lodestar-mainnet.chainsafe.io --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
+    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=mainnet --trusted-node-url=https://mainnet.beaconstate.info --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
     command:
       - --history=prune
       - --jwt-secret=/jwtsecret

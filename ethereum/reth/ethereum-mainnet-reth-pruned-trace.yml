@@ -80,7 +80,7 @@ services:
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
-      - --checkpoint-sync-url=https://lodestar-mainnet.chainsafe.io
+      - --checkpoint-sync-url=https://mainnet.beaconstate.info
       - --datadir=/data
       - --enable-historical-state-representation=false
       - --execution-endpoint=http://ethereum-mainnet:8551
