@@ -76,7 +76,7 @@ services:
     shm_size: 2gb
 
   ethereum-mainnet-minimal-node:
-    image: ${ETHEREUM_BLSYNC_IMAGE:-ethereum/client-go:alltools-latest}:${ETHEREUM_MAINNET_BLSYNC_VERSION:-v1.15.7}
+    image: ${ETHEREUM_BLSYNC_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_BLSYNC_VERSION:-alltools-v1.15.7}
     ports:
       - 19286:19286
       - 19286:19286/udp
