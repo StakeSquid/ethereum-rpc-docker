@@ -116,8 +116,6 @@ services:
         FROM alpine:latest
         # Install necessary packages
         RUN apk add --no-cache bash coreutils sed findutils
-        # Set working directory
-        WORKDIR /app
         # Create the prune script inline
         RUN echo '#!/bin/bash\n\
         set -euo pipefail\n\
@@ -189,7 +187,6 @@ services:
       - DATA_DIR=/data/static_files
     entrypoint: [/app/prune.sh]       # Run the prune script manually
     restart: no
-    working_dir: /app
     volumes:
       - /root/.local/share/reth:/data
 
