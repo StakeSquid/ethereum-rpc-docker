@@ -117,7 +117,7 @@ services:
         # Install necessary packages
         RUN apk add --no-cache bash coreutils sed findutils
         # Create the prune script inline
-        RUN <<EOF > /app/prune.sh
+        RUN <<EOF > /prune.sh
         #!/bin/bash
         set -euo pipefail
         # Settings
@@ -170,11 +170,11 @@ services:
         echo "Moved files to backup. Total freed: $$freed_bytes bytes."
         echo "Done."
         EOF
-        RUN chmod +x /app/prune.sh
+        RUN chmod +x /prune.sh
     environment:
       - BACKUP_DIR=/data/static_files/delete_me
       - DATA_DIR=/data/static_files
-    entrypoint: [/app/prune.sh]       # Run the prune script manually
+    entrypoint: [/prune.sh]       # Run the prune script manually
     restart: no
     volumes:
       - /root/.local/share/reth:/data
