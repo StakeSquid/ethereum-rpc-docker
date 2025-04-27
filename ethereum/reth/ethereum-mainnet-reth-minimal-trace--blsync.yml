@@ -82,7 +82,7 @@ services:
       - 19286:19286/udp
     entrypoint: [blsync]
     command:
-      - --beacon.api=https://mainnet.beaconstate.info
+      - --beacon.api=https://lodestar-mainnet.chainsafe.io
       - --beacon.checkpoint=${ETHEREUM_MAINNET_BEACON_CHECKPOINT}
       - --blsync.engine.api=http://ethereum-mainnet-minimal:8551
       - --blsync.jwtsecret=/jwtsecret
