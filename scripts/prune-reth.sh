@@ -137,8 +137,21 @@ for group_name in "${group_names[@]}"; do
     # Iterate through all sorted base paths for the group
     for base in "${sorted_bases[@]}"; do
         filename=$(basename "$base") # Get the basename
+
+        # --- Add Debugging ---
+        echo "--- DEBUG ---"
+        echo "Current base: '$base'"
+        echo "Current filename (key): '$filename'"
+        echo "Keys currently in files_to_keep_basenames:"
+        printf " > '%s'\n" "${!files_to_keep_basenames[@]}" # Print keys one per line for clarity
+        echo "Array structure:"
+        declare -p files_to_keep_basenames
+        echo "Attempting check: [[ -z \"\${files_to_keep_basenames['$filename']+x}\" ]]"
+        echo "--- END DEBUG ---"
+        # --- End Debugging ---
+
         # If the basename is NOT marked to be kept (key doesn't exist in files_to_keep_basenames), move it
-        if [[ -z "${files_to_keep_basenames[$filename]+x}" ]]; then # <-- Check using basename (This corresponds to the line that previously failed)
+        if [[ -z "${files_to_keep_basenames[$filename]+x}" ]]; then # <-- Line 141 (approx)
             files_to_move+=("$base") # Add the full base path to the list of files to move
         fi
     done
