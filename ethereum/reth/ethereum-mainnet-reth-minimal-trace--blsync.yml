@@ -1,0 +1,149 @@
+---
+# this is a minimal node, it will not have a full state. you achieve this by removing files form the static_files directory
+# it's important to disable certain methods on the rpc server which would otherwise cause issues with the drpc gateway.
+# this is why we have a minimal profile that doesn't actually exist in reth.
+
+services:
+  ethereum-mainnet-minimal:
+    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.3.12}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    user: root
+    ports:
+      - 14286:14286
+      - 14286:14286/udp
+    expose:
+      - 8545
+      - 8551
+    entrypoint: [reth, node]
+    command:
+      - --chain=mainnet
+      - --datadir=/root/.local/share/reth
+      - --discovery.port=14286
+      - --full
+      - --max-inbound-peers=50
+      - --max-outbound-peers=50
+      - --nat=extip:${IP}
+      - --port=14286
+      - --rpc-cache.max-blocks=10000
+      - --rpc-cache.max-concurrent-db-requests=2048
+      - --rpc.gascap=600000000
+      - --rpc.max-blocks-per-filter=0
+      - --rpc.max-connections=50000
+      - --rpc.max-logs-per-response=0
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --http.corsdomain=*
+      - --http.port=8545
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_MAINNET_RETH_MINIMAL_TRACE_DATA:-ethereum-mainnet-reth-minimal-trace}:/root/.local/share/reth
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal
+      - traefik.http.services.ethereum-mainnet-reth-minimal-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-minimal`) || Path(`/ethereum-mainnet-minimal/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-minimal-trace.rule=Path(`/ethereum-mainnet-minimal`) || Path(`/ethereum-mainnet-minimal/`)}
+      - traefik.http.routers.ethereum-mainnet-reth-minimal-trace.middlewares=ethereum-mainnet-reth-minimal-trace-stripprefix, ipallowlist
+
+  ethereum-mainnet-minimal-node:
+    image: ${ETHEREUM_BLSYNC_IMAGE:-ethereum/client-go:alltools-latest}:${ETHEREUM_MAINNET_BLSYNC_VERSION:-v1.15.7}
+    ports:
+      - 19286:19286
+      - 19286:19286/udp
+    command:
+      - --beacon.api=https://mainnet.beaconstate.info
+      - --beacon.checkpoint=${ETHEREUM_MAINNET_BEACHON_CHECKPOINT}
+      - --blsync.engine.api=http://ethereum-mainnet-minimal:8551
+      - --blsync.jwtsecret=/jwtsecret
+      - --network=mainnet
+    restart: unless-stopped
+    depends_on:
+      - ethereum-mainnet-minimal
+    networks:
+      - chains
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal
+      - traefik.http.services.ethereum-mainnet-reth-minimal-trace-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-minimal/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.rule=PathPrefix(`/ethereum-mainnet-minimal/eth`)}
+      - traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.middlewares=ethereum-mainnet-reth-minimal-trace-node-stripprefix, ipallowlist
+
+  ethereum-mainnet-minimal-pruner:
+    image: debian:latest
+    entrypoint: [/scripts/prune-reth.sh]
+    restart: no
+    volumes:
+      - ./scripts/prune-reth.sh:/scripts/prune-reth.sh
+      - ethereum-mainnet-reth-minimal-trace:/data
+
+volumes:
+  ethereum-mainnet-reth-minimal-trace:
+  ethereum-mainnet-reth-minimal-trace_blsync:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: ethereum
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+        - name: eth_getTransactionByBlockNumberAndIndex
+        - name: eth_getBlockByNumber
+        - name: eth_getLogs
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+...
