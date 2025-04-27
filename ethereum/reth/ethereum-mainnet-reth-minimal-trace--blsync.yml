@@ -129,7 +129,26 @@ x-upstreams:
       disabled:
         - name: eth_getTransactionByBlockNumberAndIndex
         - name: eth_getBlockByNumber
+        #- name: eth_getLogs
+        - name: eth_getTransactionByBlockNumberAndIndex
+        - name: eth_getTransactionByBlockHashAndIndex
+        - name: eth_getBlockByNumber
         - name: eth_getLogs
+        - name: debug_traceBlockByNumber
+        - name: debug_traceBlockByHash
+        #- name: eth_getTransactionByHash
+        #- name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: eth_getBlockReceipts
+        - name: eth_getFilterLogs
+        - name: eth_getTransactionReceipt
+        - name: trace_get
+        - name: trace_replayTransaction
+        - name: trace_transaction
+        #- name: debug_getRawHeader
+        - name: eth_getBlockByHash
+        - name: eth_getBlockTransactionCountByHash
+        - name: eth_getBlockTransactionCountByNumber
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
 ...
