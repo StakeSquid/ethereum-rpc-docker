@@ -123,42 +123,51 @@ services:
         # Settings
         source_dir="/data"      # Data directory (mount)
         backup_dir="/backup"    # Backup directory (mount)
+        target_free_percent=10  # Percentage of space to free
         # Make sure backup dir exists
-        mkdir -p "$backup_dir"
+        mkdir -p "$$backup_dir"
         # Step 1: List base filenames (without .conf/.off) and sort by starting block number
-        base_files=$(find "$source_dir" -maxdepth 1 -type f \
-          | sed -E "s/\.(conf|off)$//" \
+        base_files=$$(find "$$source_dir" -maxdepth 1 -type f \
+          | sed -E "s/\.(conf|off)$$" \
           | sort -u \
-          | awk -F_ '{print $NF-0, $0}' | sort -n | cut -d" " -f2-)
+          | awk -F_ '{print $$NF-0, $$0}' | sort -n | cut -d" " -f2-)
+        # Step 2: Calculate total size
+        total_size_bytes=$$(du -cb "$$source_dir"/* | tail -1 | awk '{print $$1}')
+        target_free_bytes=$$(( total_size_bytes * target_free_percent / 100 ))
+        echo "Total size: $$total_size_bytes bytes"
+        echo "Target to free: $$target_free_bytes bytes"
         # Convert base_files to an array for easier manipulation
-        base_files_array=($base_files)
+        base_files_array=($$base_files)
         # Step 3: Group files by prefix and block range, keeping only the last two block ranges
         declare -A file_groups
         # Group files by prefix
-        for base in "${base_files_array[@]}"; do
-          prefix=$(echo "$base" | sed -E "s/_([0-9]+)$//")  # Get everything before the block range
-          block_range=$(echo "$base" | sed -E "s/.*_([0-9]+)$//")  # Get the block range
-          file_groups["$prefix"]+="$block_range:$base "
+        for base in "$${base_files_array[@]}"; do
+          prefix=$$(echo "$$base" | sed -E "s/_([0-9]+)$$"//")  # Get everything before the block range
+          block_range=$$(echo "$$base" | sed -E "s/.*_([0-9]+)$$"//")  # Get the block range
+          file_groups["$$prefix"]+="$$block_range:$$base "
         done
         # Step 4: Process each group
-        for prefix in "${!file_groups[@]}"; do
-          block_ranges=(${file_groups[$prefix]})
-          num_files=${#block_ranges[@]}
+        for prefix in "$${!file_groups[@]}"; do
+          block_ranges=($${file_groups[$$prefix]})
+          num_files=$${#block_ranges[@]}
           # Keep the last 2 block ranges
-          files_to_move=("${block_ranges[@]:0:num_files-2}")
+          files_to_move=("$${block_ranges[@]:0:num_files-2}")
           # Move files for the current group
-          for file_range in "${files_to_move[@]}"; do
-            base="${file_range#*:}"  # Remove block range part, keeping the full filename
+          for file_range in "$${files_to_move[@]}"; do
+            base="$${file_range#*:}"  # Remove block range part, keeping the full filename
             for ext in "" ".conf" ".off"; do
-              file="${base}${ext}"
-              if [[ -f "$file" ]]; then
-                size=$(stat --printf="%s" "$file")
-                mv "$file" "$backup_dir/"
-                echo "Moved $file to backup."
+              file="$${base}$${ext}"
+              if [[ -f "$$file" ]]; then
+                size=$$(stat --printf="%s" "$$file")
+                mv "$$file" "$$backup_dir/"
+                echo "Moved $$file to backup."
               fi
             done
           done
         done
+        # Step 5: Calculate the space freed
+        freed_bytes=$$(du -cb "$$backup_dir"/* | tail -1 | awk '{print $$1}')
+        echo "Moved files to backup. Total freed: $$freed_bytes bytes."
         echo "Done."
         EOF
         RUN chmod +x /app/prune.sh
