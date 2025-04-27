@@ -1,6 +1,8 @@
 services:
   logging-proxy:
     build: ./logging-proxy
+    networks:
+      - chains
     expose:
       - 8545
     environment:
