@@ -82,7 +82,8 @@ for group_name in "${group_names[@]}"; do
     echo "Processing group '$group_name' with $num_files ranges."
 
     # Use an associative array to track which base paths to keep (for efficient lookup)
-    declare -A files_to_keep
+    # We will use the basename as the key to avoid potential issues with '/' in the full path key
+    declare -A files_to_keep_basenames
     # Use a standard array to store base paths to move
     files_to_move=()
 
@@ -90,13 +91,12 @@ for group_name in "${group_names[@]}"; do
     # Rule 1: Always keep the _0_499999 range if it exists
     first_range_kept=false
     for base in "${sorted_bases[@]}"; do
-        filename=$(basename "$base")
+        filename=$(basename "$base") # Get basename
         if [[ "$filename" == *"_0_499999" ]]; then
-            # Check if the key for this base path is already set in files_to_keep
-            # Use parameter expansion ${key+x} for safe check with set -u (Bash 4.0+)
-            if [[ -z "${files_to_keep[$base]+x}" ]]; then
+            # Check if the basename key is already set in files_to_keep_basenames
+            if [[ -z "${files_to_keep_basenames[$filename]+x}" ]]; then # <-- Check using basename
                  echo "Marking first range '$filename' to keep for group '$group_name'."
-                 files_to_keep["$base"]=1 # Mark this base path for keeping
+                 files_to_keep_basenames["$filename"]=1 # <-- Store using basename as key
                  first_range_kept=true
             fi
              # Don't break here; let it potentially be kept by Rule 2 as well if it's one of the last two
@@ -118,13 +118,12 @@ for group_name in "${group_names[@]}"; do
         start_index=$((num_files - num_to_keep_last))
         # Loop through the indices of the ranges to keep
         for (( i=start_index; i<num_files; i++ )); do
-            base="${sorted_bases[$i]}" # Get the base path from the sorted array
-            filename=$(basename "$base")
+            base="${sorted_bases[$i]}" # Get the full base path
+            filename=$(basename "$base") # Get the basename
             # Mark for keeping only if it hasn't been marked already (e.g., by Rule 1)
-            # Use parameter expansion ${key+x} for safe check with set -u (Bash 4.0+)
-            if [[ -z "${files_to_keep[$base]+x}" ]]; then
+            if [[ -z "${files_to_keep_basenames[$filename]+x}" ]]; then # <-- Check using basename
                 echo " - $filename"
-                files_to_keep["$base"]=1 # Mark this base path for keeping
+                files_to_keep_basenames["$filename"]=1 # <-- Store using basename as key
             else
                 # Already marked (likely the first range was also one of the last two)
                 echo " - $filename (already marked to keep)"
@@ -132,15 +131,15 @@ for group_name in "${group_names[@]}"; do
         done
     fi
 
-    echo "Total unique ranges marked to keep for group '$group_name': ${#files_to_keep[@]}"
+    echo "Total unique ranges marked to keep for group '$group_name': ${#files_to_keep_basenames[@]}" # <-- Use new array name
 
     # --- Identify and Move Files ---
     # Iterate through all sorted base paths for the group
     for base in "${sorted_bases[@]}"; do
-        # If a base path is NOT marked to be kept (key doesn't exist in files_to_keep), move it
-        # Use parameter expansion ${key+x} for safe check with set -u (Bash 4.0+)
-        if [[ -z "${files_to_keep[$base]+x}" ]]; then
-            files_to_move+=("$base") # Add base path to the list of files to move
+        filename=$(basename "$base") # Get the basename
+        # If the basename is NOT marked to be kept (key doesn't exist in files_to_keep_basenames), move it
+        if [[ -z "${files_to_keep_basenames[$filename]+x}" ]]; then # <-- Check using basename (This corresponds to the line that previously failed)
+            files_to_move+=("$base") # Add the full base path to the list of files to move
         fi
     done
 
