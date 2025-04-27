@@ -110,32 +110,18 @@ services:
       - traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.middlewares=ethereum-mainnet-reth-minimal-trace-node-stripprefix, ipallowlist
 
   ethereum-mainnet-minimal-pruner:
-    build:
-      context: .
-      dockerfile: |
-        FROM alpine:latest
-        # Install necessary packages
-        RUN apk add --no-cache bash coreutils sed findutils
-        # Create the prune script inline
-        RUN <<EOF > /prune.sh
-        #!/bin/bash
-        set -euo pipefail
+    image: debian:latest
+    command:
+      - |
         # Settings
-        source_dir="/data"      # Data directory (mount)
-        backup_dir="/backup"    # Backup directory (mount)
-        target_free_percent=10  # Percentage of space to free
-        # Make sure backup dir exists
+        source_dir="/data/static_files"
+        backup_dir="/data/static_files/delete_me"
         mkdir -p "$$backup_dir"
         # Step 1: List base filenames (without .conf/.off) and sort by starting block number
         base_files=$$(find "$$source_dir" -maxdepth 1 -type f \
           | sed -E "s/\.(conf|off)$$" \
           | sort -u \
           | awk -F_ '{print $$NF-0, $$0}' | sort -n | cut -d" " -f2-)
-        # Step 2: Calculate total size
-        total_size_bytes=$$(du -cb "$$source_dir"/* | tail -1 | awk '{print $$1}')
-        target_free_bytes=$$(( total_size_bytes * target_free_percent / 100 ))
-        echo "Total size: $$total_size_bytes bytes"
-        echo "Target to free: $$target_free_bytes bytes"
         # Convert base_files to an array for easier manipulation
         base_files_array=($$base_files)
         # Step 3: Group files by prefix and block range, keeping only the last two block ranges
@@ -165,16 +151,11 @@ services:
             done
           done
         done
-        # Step 5: Calculate the space freed
         freed_bytes=$$(du -cb "$$backup_dir"/* | tail -1 | awk '{print $$1}')
         echo "Moved files to backup. Total freed: $$freed_bytes bytes."
         echo "Done."
-        EOF
-        RUN chmod +x /prune.sh
-    environment:
-      - BACKUP_DIR=/data/static_files/delete_me
-      - DATA_DIR=/data/static_files
-    entrypoint: [/prune.sh]       # Run the prune script manually
+      - -c
+      - bash
     restart: no
     volumes:
       - /root/.local/share/reth:/data
