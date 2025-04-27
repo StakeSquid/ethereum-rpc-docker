@@ -92,8 +92,9 @@ for group_name in "${group_names[@]}"; do
     for base in "${sorted_bases[@]}"; do
         filename=$(basename "$base")
         if [[ "$filename" == *"_0_499999" ]]; then
-            # Check if already marked to avoid duplicate messages (though harmless)
-            if [[ -z "${files_to_keep[$base]}" ]]; then
+            # Check if the key for this base path is already set in files_to_keep
+            # Use -v for safe check with set -u
+            if ! [[ -v files_to_keep[$base] ]]; then
                  echo "Marking first range '$filename' to keep for group '$group_name'."
                  files_to_keep["$base"]=1 # Mark this base path for keeping
                  first_range_kept=true
@@ -120,7 +121,8 @@ for group_name in "${group_names[@]}"; do
             base="${sorted_bases[$i]}" # Get the base path from the sorted array
             filename=$(basename "$base")
             # Mark for keeping only if it hasn't been marked already (e.g., by Rule 1)
-            if [[ -z "${files_to_keep[$base]}" ]]; then
+            # Use -v for safe check with set -u
+            if ! [[ -v files_to_keep[$base] ]]; then
                 echo " - $filename"
                 files_to_keep["$base"]=1 # Mark this base path for keeping
             else
@@ -135,8 +137,9 @@ for group_name in "${group_names[@]}"; do
     # --- Identify and Move Files ---
     # Iterate through all sorted base paths for the group
     for base in "${sorted_bases[@]}"; do
-        # If a base path is NOT in the 'files_to_keep' map, it needs to be moved
-        if [[ -z "${files_to_keep[$base]}" ]]; then
+        # If a base path is NOT marked to be kept (key doesn't exist in files_to_keep), move it
+        # Use -v for safe check with set -u
+        if ! [[ -v files_to_keep[$base] ]]; then
             files_to_move+=("$base") # Add base path to the list of files to move
         fi
     done
