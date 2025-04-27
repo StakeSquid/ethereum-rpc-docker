@@ -1,6 +1,6 @@
 services:
   logging-proxy:
-    build: .
+    build: ./logging-proxy
     ports:
       - "8545:8545"
     environment:
