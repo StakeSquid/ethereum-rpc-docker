@@ -4,8 +4,8 @@ set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error when substituting.
 
 DATA_DIR="${DATA_DIR:-/data}"
-STATIC_FILES_DIR="${STATIC_FILES_DIR:-/data/static_files}"
-DELETE_DIR="${DELETE_DIR:-/data/static_files/delete_me}"
+STATIC_FILES_DIR="${STATIC_FILES_DIR:-$DATA_DIR/static_files}"
+DELETE_DIR="${DELETE_DIR:-$DATA_DIR/static_files/delete_me}"
 
 echo "Starting Reth pruning process for static files in $STATIC_FILES_DIR..."
 
