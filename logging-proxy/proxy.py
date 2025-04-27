@@ -68,7 +68,7 @@ def proxy():
     request_log = f"==> Request:\n{json.dumps(log_incoming, indent=2)}"
 
     # Send the original 'incoming' data to the target
-    response = requests.post(TARGET_URL_HTTP, json=incoming) 
+    response = requests.post(TARGET_URL_HTTP, json=incoming)
     outgoing = response.json()
 
     log_lines = [request_log]
@@ -79,6 +79,13 @@ def proxy():
         # Track the method name if an error occurred and method exists in request
         if isinstance(incoming, dict) and 'method' in incoming:
             error_methods.add(incoming['method'])
+    else:
+        # Log only the method name for successful responses
+        method_name = "unknown_method" # Default if not found
+        if isinstance(incoming, dict) and 'method' in incoming:
+            method_name = incoming['method']
+        response_log = f"<== Response (Success): Method '{method_name}' completed."
+        log_lines.append(response_log)
 
     print('\n---\n'.join(log_lines), file=sys.stdout, flush=True)
         
