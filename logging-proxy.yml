@@ -1,0 +1,7 @@
+services:
+  logging-proxy:
+    build: .
+    ports:
+      - "8545:8545"
+    environment:
+      TARGET_URL: "${LOGGING_PROXY_TARGET_URL}"
