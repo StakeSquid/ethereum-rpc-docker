@@ -83,13 +83,19 @@ def proxy():
 
     if 'error' in outgoing:
         method_name = None
+        # First, check if the method itself dictates ignoring the error
         if isinstance(incoming, dict) and 'method' in incoming:
             method_name = incoming['method']
-            # Check if the method causing the error should be ignored
             if method_name in ignored_error_methods:
                 log_this_error = False
-                # Optional: Log that an error for this method was ignored without details
                 print(f"INFO: Ignored error for method '{method_name}' (logging suppressed).", file=sys.stdout, flush=True)
+
+        # Second, if we haven't decided to ignore it yet, check the error code
+        if log_this_error and isinstance(outgoing['error'], dict) and outgoing['error'].get('code') == 3:
+            log_this_error = False
+            # Optional: Log that an error was ignored due to its code
+            method_str = f" for method '{method_name}'" if method_name else ""
+            print(f"INFO: Ignored error{method_str} due to error code 3 (logging suppressed).", file=sys.stdout, flush=True)
 
         # Only log the request/error response if log_this_error is True
         if log_this_error:
