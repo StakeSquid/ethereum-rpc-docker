@@ -116,10 +116,7 @@ services:
       - |
         mkdir -p "/data/static_files/delete_me"
         # Step 1: List base filenames (without .conf/.off) and sort by starting block number
-        base_files=$$(find "/data/static_files" -maxdepth 1 -type f
-          | sed -E "s/\.(conf|off)$$"
-          | sort -u
-          | awk -F_ '{print $$NF-0, $$0}' | sort -n | cut -d" " -f2-)
+        base_files=$$(find "/data/static_files" -maxdepth 1 -type f | sed -E "s/\.(conf|off)$$" | sort -u | awk -F_ '{print $$NF-0, $$0}' | sort -n | cut -d" " -f2-)
         # Convert base_files to an array for easier manipulation
         base_files_array=($$base_files)
         # Step 3: Group files by prefix and block range, keeping only the last two block ranges
