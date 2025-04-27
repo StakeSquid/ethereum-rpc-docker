@@ -77,23 +77,31 @@ def proxy():
     response = requests.post(TARGET_URL_HTTP, json=incoming)
     outgoing = response.json()
 
-    # Initialize log_lines here, decide what to include based on error status
+    # Initialize log_lines here, decide what to include based on error status and ignored methods
     log_lines = []
+    log_this_error = True # Flag to control logging of the current error
 
     if 'error' in outgoing:
-        # For errors, log both request and response
-        log_lines.append(request_log)
-        response_log = f"<== Response (Error):\n{json.dumps(outgoing, indent=2)}"
-        log_lines.append(response_log)
-        # Track the method name if an error occurred and method exists in request,
-        # unless the method is in the ignored set.
+        method_name = None
         if isinstance(incoming, dict) and 'method' in incoming:
             method_name = incoming['method']
-            if method_name not in ignored_error_methods:
+            # Check if the method causing the error should be ignored
+            if method_name in ignored_error_methods:
+                log_this_error = False
+                # Optional: Log that an error for this method was ignored without details
+                print(f"INFO: Ignored error for method '{method_name}' (logging suppressed).", file=sys.stdout, flush=True)
+
+        # Only log the request/error response if log_this_error is True
+        if log_this_error:
+            log_lines.append(request_log)
+            response_log = f"<== Response (Error):\n{json.dumps(outgoing, indent=2)}"
+            log_lines.append(response_log)
+            # Track the method name only if we logged the error
+            if method_name:
                 error_methods.add(method_name)
-            else:
-                # Optional: Log that an error for this method was ignored
-                print(f"INFO: Ignored error for method '{method_name}' as per IGNORE_ERROR_METHODS.", file=sys.stdout, flush=True)
+            # If method_name was None but we are logging, maybe track as 'unknown' or similar?
+            # else: error_methods.add("unknown_method_with_error")
+
     else:
         # For success, log only the success message with the method name
         method_name = "unknown_method" # Default if not found
@@ -102,8 +110,10 @@ def proxy():
         response_log = f"<== Response (Success): Method '{method_name}' completed."
         log_lines.append(response_log)
 
-    print('\n---\n'.join(log_lines), file=sys.stdout, flush=True)
-        
+    # Only print if there are lines to print (avoids empty separators for ignored errors)
+    if log_lines:
+        print('\n---\n'.join(log_lines), file=sys.stdout, flush=True)
+
     return jsonify(outgoing)
 
 # WebSocket handler moved to '/ws'
