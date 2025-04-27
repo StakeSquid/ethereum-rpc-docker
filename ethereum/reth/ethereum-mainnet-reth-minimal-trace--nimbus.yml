@@ -139,7 +139,14 @@ services:
           # Move files for the current group
           for file_range in "$${files_to_move[@]}"; do
             base="$${file_range#*:}"  # Remove block range part, keeping the full filename
-            for ext in "" ".conf" ".off"; do
+            # Handle base file (no extension) first
+            if [[ -f "$$base" ]]; then
+              size=$$(stat --printf="%s" "$$base")
+              mv "$$base" "/data/static_files/delete_me"
+              echo "Moved $$base to backup."
+            fi
+            # Handle files with extensions .conf and .off
+            for ext in .conf .off; do # Removed quotes and empty string from loop list
               file="$${base}$${ext}"
               if [[ -f "$$file" ]]; then
                 size=$$(stat --printf="%s" "$$file")
