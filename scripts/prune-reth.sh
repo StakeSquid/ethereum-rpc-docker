@@ -30,14 +30,14 @@ echo "Found ${#unique_base_files_array[@]} unique base file ranges across all gr
 
 # Step 2: Group files by group_name (headers, receipts, transactions)
 declare -A groups
-echo "Grouping files by type (receipts, transactions)..."
+echo "Grouping files by type (headers, receipts, transactions)..."
 for base in "${unique_base_files_array[@]}"; do
     filename=$(basename "$base") # Get just the filename part
     # Extract group name assuming format static_file_{group_name}_{startblock}_{endblock}
     group_name=$(echo "$filename" | cut -d_ -f3)
 
     # Store the full path base name, grouped by the extracted group name
-    if [[ "$group_name" == "headers" || "$group_name" == "receipts" || "$group_name" == "transactions" ]]; then
+    if [[ "$group_name" == "receipts" || "$group_name" == "transactions" ]]; then
         groups["$group_name"]+="$base " # Append base path with a space separator
     else
         echo "Warning: Skipping file with unexpected group name: $base"
@@ -47,7 +47,7 @@ done
 # Step 3: Process each group according to retention rules
 moved_count=0
 # Define the expected groups
-declare -a group_names=("headers" "receipts" "transactions")
+declare -a group_names=("receipts" "transactions")
 
 echo "Processing file groups..."
 for group_name in "${group_names[@]}"; do
