@@ -94,7 +94,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${ETHEREUM_MAINNET_RETH_PRUNED_TRACE__NIMBUS_DATA:-ethereum-mainnet-reth-pruned-trace_nimbus}:/root/nimbus-eth2/build/data
+      - ${ETHEREUM_MAINNET_RETH_PRUNED_TRACE__NIMBUS_DATA:-ethereum-mainnet-reth-pruned-trace_nimbus}:/root/.cache/nimbus/BeaconNode
       - .jwtsecret:/jwtsecret:ro
     labels:
       - traefik.enable=true
