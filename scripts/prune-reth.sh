@@ -30,7 +30,7 @@ echo "Found ${#unique_base_files_array[@]} unique base file ranges across all gr
 
 # Step 2: Group files by group_name (headers, receipts, transactions)
 declare -A groups
-echo "Grouping files by type (headers, receipts, transactions)..."
+echo "Grouping files by type (receipts, transactions)..."
 for base in "${unique_base_files_array[@]}"; do
     filename=$(basename "$base") # Get just the filename part
     # Extract group name assuming format static_file_{group_name}_{startblock}_{endblock}
