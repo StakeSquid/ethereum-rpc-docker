@@ -111,9 +111,8 @@ services:
 
   ethereum-mainnet-minimal-pruner:
     image: debian:latest
+    entrypoint: [/bin/bash, -c]
     command:
-      - -c
-      - bash
       - |
         mkdir -p "/data/static_files/delete_me"
         # Step 1: List base filenames (without .conf/.off) and sort by starting block number
