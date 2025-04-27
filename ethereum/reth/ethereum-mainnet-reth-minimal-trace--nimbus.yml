@@ -128,60 +128,60 @@ services:
         target_free_percent=10  # Percentage of space to free\n\
         \n\
         # Make sure backup dir exists\n\
-        mkdir -p "$backup_dir"\n\
+        mkdir -p "$$backup_dir"\n\
         \n\
         # Step 1: List base filenames (without .conf/.off) and sort by starting block number\n\
-        base_files=$(find "$source_dir" -maxdepth 1 -type f \\\n\
-          | sed -E "s/\\.(conf|off)\$//" \\\n\
+        base_files=$$(find "$$source_dir" -maxdepth 1 -type f \\\n\
+          | sed -E "s/\\.(conf|off)\$$//" \\\n\
           | sort -u \\\n\
-          | awk -F_ '\''{print $NF-0, $0}'\'' | sort -n | cut -d" " -f2-)\n\
+          | awk -F_ '\''{print $$NF-0, $$0}'\'' | sort -n | cut -d" " -f2-)\n\
         \n\
         # Step 2: Calculate total size\n\
-        total_size_bytes=$(du -cb "$source_dir"/* | tail -1 | awk '\''{print $1}'\'')\n\
-        target_free_bytes=$(( total_size_bytes * target_free_percent / 100 ))\n\
+        total_size_bytes=$$(du -cb "$$source_dir"/* | tail -1 | awk '\''{print $$1}'\'')\n\
+        target_free_bytes=$$(( total_size_bytes * target_free_percent / 100 ))\n\
         \n\
-        echo "Total size: $total_size_bytes bytes"\n\
-        echo "Target to free: $target_free_bytes bytes"\n\
+        echo "Total size: $$total_size_bytes bytes"\n\
+        echo "Target to free: $$target_free_bytes bytes"\n\
         \n\
         # Convert base_files to an array for easier manipulation\n\
-        base_files_array=($base_files)\n\
+        base_files_array=($$base_files)\n\
         \n\
         # Step 3: Group files by prefix and block range, keeping only the last two block ranges\n\
         declare -A file_groups\n\
         \n\
         # Group files by prefix\n\
-        for base in "${base_files_array[@]}"; do\n\
-          prefix=$(echo "$base" | sed -E "s/_([0-9]+)\$//")  # Get everything before the block range\n\
-          block_range=$(echo "$base" | sed -E "s/.*_([0-9]+)\$//")  # Get the block range\n\
-          file_groups["$prefix"]+="$block_range:$base "\n\
+        for base in "$${base_files_array[@]}"; do\n\
+          prefix=$$(echo "$$base" | sed -E "s/_([0-9]+)\$$//")  # Get everything before the block range\n\
+          block_range=$$(echo "$$base" | sed -E "s/.*_([0-9]+)\$$//")  # Get the block range\n\
+          file_groups["$$prefix"]+="$$block_range:$$base "\n\
         done\n\
         \n\
         # Step 4: Process each group\n\
-        for prefix in "${!file_groups[@]}"; do\n\
-          block_ranges=(${file_groups[$prefix]})\n\
-          num_files=${#block_ranges[@]}\n\
+        for prefix in "$${!file_groups[@]}"; do\n\
+          block_ranges=($${file_groups[$$prefix]})\n\
+          num_files=$${#block_ranges[@]}\n\
           \n\
           # Keep the last 2 block ranges\n\
-          files_to_move=("${block_ranges[@]:0:num_files-2}")\n\
+          files_to_move=("$${block_ranges[@]:0:num_files-2}")\n\
           \n\
           # Move files for the current group\n\
-          for file_range in "${files_to_move[@]}"; do\n\
-            base="${file_range#*:}"  # Remove block range part, keeping the full filename\n\
+          for file_range in "$${files_to_move[@]}"; do\n\
+            base="$${file_range#*:}"  # Remove block range part, keeping the full filename\n\
             for ext in "" ".conf" ".off"; do\n\
-              file="${base}${ext}"\n\
-              if [[ -f "$file" ]]; then\n\
-                size=$(stat --printf="%s" "$file")\n\
-                mv "$file" "$backup_dir/"\n\
-                echo "Moved $file to backup."\n\
+              file="$${base}$${ext}"\n\
+              if [[ -f "$$file" ]]; then\n\
+                size=$$(stat --printf="%s" "$$file")\n\
+                mv "$$file" "$$backup_dir/"\n\
+                echo "Moved $$file to backup."\n\
               fi\n\
             done\n\
           done\n\
         done\n\
         \n\
         # Step 5: Calculate the space freed\n\
-        freed_bytes=$(du -cb "$backup_dir"/* | tail -1 | awk '\''{print $1}'\'')\n\
+        freed_bytes=$$(du -cb "$$backup_dir"/* | tail -1 | awk '\''{print $$1}'\'')\n\
         \n\
-        echo "Moved files to backup. Total freed: $freed_bytes bytes."\n\
+        echo "Moved files to backup. Total freed: $$freed_bytes bytes."\n\
         echo "Done."' > /app/prune.sh \
         RUN chmod +x /app/prune.sh
     environment:
