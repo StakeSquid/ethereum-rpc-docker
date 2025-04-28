@@ -2,7 +2,7 @@
 
 services:
   bsc-mainnet-archive:
-    image: ${BSC_ERIGON3_IMAGE:-ghcr.io/node-real/bsc-erigon}:${BSC_MAINNET_ERIGON3_VERSION:-v1.3.5}
+    image: ${BSC_ERIGON3_IMAGE:-ghcr.io/node-real/bsc-erigon}:${BSC_MAINNET_ERIGON3_VERSION:-v1.3.6}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
