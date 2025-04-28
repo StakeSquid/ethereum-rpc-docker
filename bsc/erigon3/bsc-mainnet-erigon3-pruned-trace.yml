@@ -27,7 +27,7 @@ services:
       - 35265:35265/udp
     expose:
       - 8545
-    entrypoint: /bin/sh -c '[ ! -d /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init --datadir /root/.local/share/erigon /config/genesis.json; exec erigon "$@"' --
+    entrypoint: [erigon]
     command:
       - --chain=bsc
       - --datadir=/root/.local/share/erigon
