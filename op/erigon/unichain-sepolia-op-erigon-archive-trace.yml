@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/erigon/unichain-sepolia-op-erigon-archive-trace.yml
+#
+# docker compose up -d
+
 services:
   unichain-sepolia-archive:
     image: ${UNICHAIN_ERIGON_IMAGE:-testinprod/op-erigon}:${UNICHAIN_SEPOLIA_ERIGON_VERSION:-v2.61.1-0.8.3}

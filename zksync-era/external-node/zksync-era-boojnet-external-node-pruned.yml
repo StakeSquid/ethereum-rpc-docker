@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:zksync-era/external-node/zksync-era-boojnet-external-node-pruned.yml
+#
+# docker compose up -d
+
 services:
   zksync-era-boojnet-client:
     image: ${ZKSYNC_ERA_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ZKSYNC_ERA_BOOJNET_EXTERNAL_NODE_VERSION:-v26.2.1}

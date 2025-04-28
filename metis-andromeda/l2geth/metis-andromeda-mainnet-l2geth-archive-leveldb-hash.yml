@@ -1,6 +1,14 @@
 ---
 # Find archive snapshots on publicnode.com
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:metis-andromeda/l2geth/metis-andromeda-mainnet-l2geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   metis-andromeda-mainnet-archive-client:
     image: ${METIS_ANDROMEDA_L2GETH_IMAGE:-metisdao/l2geth}:${METIS_ANDROMEDA_MAINNET_L2GETH_VERSION:-v0.3.5}

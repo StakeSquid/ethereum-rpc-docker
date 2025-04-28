@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/reth/ethereum-sepolia-reth-archive-trace.yml
+#
+# docker compose up -d
+
 services:
   ethereum-sepolia-archive:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_SEPOLIA_RETH_VERSION:-v1.3.12}

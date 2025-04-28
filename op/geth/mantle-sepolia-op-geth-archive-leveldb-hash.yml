@@ -3,6 +3,14 @@
 # in fact sepolia doesn't have a genesis.json anywhere to init the datadir from but here you get a datadir
 #  https://github.com/mantlenetworkio/networks/blob/main/run-node-sepolia.md
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/mantle-sepolia-op-geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   mantle-sepolia-archive:
     image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-op-geth}:${MANTLE_SEPOLIA_GETH_VERSION:-v1.1.1}

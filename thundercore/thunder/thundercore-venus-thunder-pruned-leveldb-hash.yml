@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:thundercore/thunder/thundercore-venus-thunder-pruned-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   thundercore-venus:
     image: ${THUNDERCORE_THUNDER_IMAGE:-thundercore/thunder}:${THUNDERCORE_VENUS_THUNDER_VERSION:-r4.1.3}

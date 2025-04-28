@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/lisk-mainnet-op-geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   lisk-mainnet-archive:
     image: ${LISK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${LISK_MAINNET_GETH_VERSION:-v1.101503.4}

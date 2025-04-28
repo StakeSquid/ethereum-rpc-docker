@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/zircuit-mainnet-op-geth-pruned-pebble-hash.yml
+#
+# docker compose up -d
+
 services:
   zircuit-mainnet:
     image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_MAINNET_GETH_VERSION:-19a5d3f21a701dac6a8215ed51c17173c9b91c59}

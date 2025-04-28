@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:tron/java-tron/tron-mainnet-java-tron-pruned-rocksdb.yml
+#
+# docker compose up -d
+
 services:
   tron-mainnet:
     image: ${TRON_JAVA_TRON_IMAGE:-tronprotocol/java-tron}:${TRON_MAINNET_JAVA_TRON_VERSION:-GreatVoyage-v4.7.7}

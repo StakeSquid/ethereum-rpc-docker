@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:bsc/erigon3/bsc-mainnet-erigon3-minimal-trace.yml
+#
+# docker compose up -d
+
 services:
   bsc-mainnet-minimal:
     image: ${BSC_ERIGON3_IMAGE:-ghcr.io/node-real/bsc-erigon}:${BSC_MAINNET_ERIGON3_VERSION:-v1.3.6}

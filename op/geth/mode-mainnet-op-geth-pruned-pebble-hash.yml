@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/mode-mainnet-op-geth-pruned-pebble-hash.yml
+#
+# docker compose up -d
+
 services:
   mode-mainnet:
     image: ${MODE_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${MODE_MAINNET_GETH_VERSION:-v1.101503.4}

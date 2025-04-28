@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:polygon/erigon3/polygon-amoy-erigon3-archive-trace.yml
+#
+# docker compose up -d
+
 services:
   polygon-amoy-archive:
     image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_AMOY_ERIGON3_VERSION:-v3.0.2}

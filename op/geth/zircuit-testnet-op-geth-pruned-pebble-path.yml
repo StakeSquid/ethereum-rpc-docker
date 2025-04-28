@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/zircuit-testnet-op-geth-pruned-pebble-path.yml
+#
+# docker compose up -d
+
 services:
   zircuit-testnet:
     image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_TESTNET_GETH_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}

@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:fantom/opera/fantom-mainnet-opera-archive-trace.yml
+#
+# docker compose up -d
+
 services:
   fantom-mainnet-archive:
     build:

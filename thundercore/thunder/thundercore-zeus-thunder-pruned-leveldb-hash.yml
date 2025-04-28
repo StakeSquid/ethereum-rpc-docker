@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:thundercore/thunder/thundercore-zeus-thunder-pruned-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   thundercore-zeus:
     image: ${THUNDERCORE_THUNDER_IMAGE:-thundercore/thunder}:${THUNDERCORE_ZEUS_THUNDER_VERSION:-r4.1.3}

@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:core/core/core-mainnet-core-pruned-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   core-mainnet:
     image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_MAINNET_CORE_VERSION:-1.0.15}

@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:rootstock/rskj/rootstock-mainnet-rskj-archive.yml
+#
+# docker compose up -d
+
 services:
   rootstock-mainnet-archive-client:
     image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_MAINNET_RSKJ_VERSION:-ARROWHEAD-6.1.0}

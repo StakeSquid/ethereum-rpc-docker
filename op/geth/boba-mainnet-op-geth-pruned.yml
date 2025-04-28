@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/boba-mainnet-op-geth-pruned.yml
+#
+# docker compose up -d
+
 services:
   boba-mainnet:
     image: ${BOBA_GETH_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-geth}:${BOBA_MAINNET_GETH_VERSION:-v1.101503.1}

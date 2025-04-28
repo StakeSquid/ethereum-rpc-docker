@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/erigon3/ethereum-holesky-erigon3-pruned-trace.yml
+#
+# docker compose up -d
+
 services:
   ethereum-holesky:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOLESKY_ERIGON3_VERSION:-v3.0.2}

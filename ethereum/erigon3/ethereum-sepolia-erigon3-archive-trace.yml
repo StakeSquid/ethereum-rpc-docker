@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/erigon3/ethereum-sepolia-erigon3-archive-trace.yml
+#
+# docker compose up -d
+
 services:
   ethereum-sepolia-archive:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_SEPOLIA_ERIGON3_VERSION:-v3.0.2}

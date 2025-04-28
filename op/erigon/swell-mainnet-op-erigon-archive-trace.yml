@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/erigon/swell-mainnet-op-erigon-archive-trace.yml
+#
+# docker compose up -d
+
 services:
   swell-mainnet-archive:
     image: ${SWELL_ERIGON_IMAGE:-testinprod/op-erigon}:${SWELL_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}

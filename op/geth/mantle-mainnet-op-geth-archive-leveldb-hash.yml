@@ -2,6 +2,14 @@
 # You should use a snapshot for Mantle
 # https://github.com/mantlenetworkio/networks/blob/main/run-node-mainnetv2.md
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/mantle-mainnet-op-geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   mantle-mainnet-archive:
     image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-op-geth}:${MANTLE_MAINNET_GETH_VERSION:-v1.1.1}

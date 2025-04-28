@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:ronin/ronin/ronin-mainnet-ronin-pruned-pebble-hash.yml
+#
+# docker compose up -d
+
 services:
   ronin-mainnet:
     image: ${RONIN_RONIN_IMAGE:-ghcr.io/ronin-chain/ronin}:${RONIN_MAINNET_RONIN_VERSION:-v1.0.2-eaef5a2}

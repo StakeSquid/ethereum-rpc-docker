@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:polygon/bor/polygon-amoy-bor-pruned-pebble-path.yml
+#
+# docker compose up -d
+
 services:
   polygon-amoy:
     image: ${POLYGON_BOR_IMAGE:-0xpolygon/bor}:${POLYGON_AMOY_BOR_VERSION:-2.0.1}

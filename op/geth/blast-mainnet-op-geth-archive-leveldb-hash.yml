@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/blast-mainnet-op-geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   blast-mainnet-archive:
     image: ${BLAST_GETH_IMAGE:-blastio/blast-geth}:${BLAST_MAINNET_GETH_VERSION:-v1.1.0-mainnet}

@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:arb/nitro/arbitrum-sepolia-nitro-pruned-pebble-hash.yml
+#
+# docker compose up -d
+
 services:
   arbitrum-sepolia:
     image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_SEPOLIA_NITRO_VERSION:-v3.5.5-90ee45c}

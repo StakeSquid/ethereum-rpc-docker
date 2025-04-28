@@ -3,6 +3,14 @@
 # here https://docs-zkevm.cronos.org/for-node-hosts/running-nodes/cronos-zkevm-mainnet
 # and change this yaml file temporarily to run pg_restore
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:cronos-zkevm/external-node/cronos-zkevm-mainnet-external-node-pruned.yml
+#
+# docker compose up -d
+
 services:
   cronos-zkevm-mainnet-client:
     image: ${CRONOS_ZKEVM_EXTERNAL_NODE_IMAGE:-ghcr.io/cronos-labs/external-node}:${CRONOS_ZKEVM_MAINNET_EXTERNAL_NODE_VERSION:-v27.1.1}

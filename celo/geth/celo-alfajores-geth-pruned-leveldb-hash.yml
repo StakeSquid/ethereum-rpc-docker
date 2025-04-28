@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:celo/geth/celo-alfajores-geth-pruned-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   celo-alfajores:
     image: ${CELO_GETH_IMAGE:-us.gcr.io/celo-org/geth}:${CELO_ALFAJORES_GETH_VERSION:-1.8.9}

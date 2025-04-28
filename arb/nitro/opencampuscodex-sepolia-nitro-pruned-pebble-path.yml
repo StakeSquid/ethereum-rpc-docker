@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:arb/nitro/opencampuscodex-sepolia-nitro-pruned-pebble-path.yml
+#
+# docker compose up -d
+
 services:
   opencampuscodex-sepolia:
     image: ${OPENCAMPUSCODEX_NITRO_IMAGE:-offchainlabs/nitro-node}:${OPENCAMPUSCODEX_SEPOLIA_NITRO_VERSION:-v3.5.5-90ee45c}

@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:scroll/l2geth/scroll-sepolia-l2geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   scroll-sepolia-archive:
     image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_SEPOLIA_L2GETH_VERSION:-scroll-v5.8.38}

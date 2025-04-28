@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:bsc/bsc/bsc-mainnet-bsc-pruned-pebble-path.yml
+#
+# docker compose up -d
+
 services:
   bsc-mainnet:
     image: ${BSC_BSC_IMAGE:-ghcr.io/bnb-chain/bsc}:${BSC_MAINNET_BSC_VERSION:-1.5.11}

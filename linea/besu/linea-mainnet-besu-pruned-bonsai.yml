@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:linea/besu/linea-mainnet-besu-pruned-bonsai.yml
+#
+# docker compose up -d
+
 services:
   linea-mainnet-client:
     image: ${LINEA_BESU_IMAGE:-consensys/linea-besu-package}:${LINEA_MAINNET_BESU_VERSION:-sepolia-v0.1.15}

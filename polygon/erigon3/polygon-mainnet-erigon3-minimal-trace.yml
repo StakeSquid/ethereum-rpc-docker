@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:polygon/erigon3/polygon-mainnet-erigon3-minimal-trace.yml
+#
+# docker compose up -d
+
 services:
   polygon-mainnet-minimal:
     image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_MAINNET_ERIGON3_VERSION:-v3.0.2}

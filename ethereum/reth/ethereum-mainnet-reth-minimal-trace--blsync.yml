@@ -3,6 +3,14 @@
 # it's important to disable certain methods on the rpc server which would otherwise cause issues with the drpc gateway.
 # this is why we have a minimal profile that doesn't actually exist in reth.
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/reth/ethereum-mainnet-reth-minimal-trace--blsync.yml
+#
+# docker compose up -d
+
 services:
   ethereum-mainnet-minimal:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.3.12}

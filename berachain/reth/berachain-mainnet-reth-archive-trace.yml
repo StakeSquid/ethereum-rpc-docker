@@ -10,6 +10,14 @@
 # If the environment variable is empty and the file is found then the init script will use the seeds from the config.toml file that was
 # downloaded in initialization from the repo above.
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:berachain/reth/berachain-mainnet-reth-archive-trace.yml
+#
+# docker compose up -d
+
 services:
   berachain-mainnet-archive:
     image: ${BERACHAIN_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${BERACHAIN_MAINNET_RETH_VERSION:-v1.3.12}

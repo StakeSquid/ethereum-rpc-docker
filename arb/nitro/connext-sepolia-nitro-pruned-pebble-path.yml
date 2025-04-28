@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:arb/nitro/connext-sepolia-nitro-pruned-pebble-path.yml
+#
+# docker compose up -d
+
 services:
   connext-sepolia:
     image: ${CONNEXT_NITRO_IMAGE:-offchainlabs/nitro-node}:${CONNEXT_SEPOLIA_NITRO_VERSION:-v3.5.5-90ee45c}

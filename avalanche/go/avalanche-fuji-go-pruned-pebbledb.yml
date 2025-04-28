@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:avalanche/go/avalanche-fuji-go-pruned-pebbledb.yml
+#
+# docker compose up -d
+
 services:
   avalanche-fuji-client:
     image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_FUJI_GO_VERSION:-v1.13.0-fuji}

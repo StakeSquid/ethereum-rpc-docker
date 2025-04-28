@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:rootstock/rskj/rootstock-bamboo-rskj-archive.yml
+#
+# docker compose up -d
+
 services:
   rootstock-bamboo-archive-client:
     image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_BAMBOO_RSKJ_VERSION:-LOVELL-7.0.0}

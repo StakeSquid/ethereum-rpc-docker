@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/blast-sepolia-op-geth-pruned-pebble-hash.yml
+#
+# docker compose up -d
+
 services:
   blast-sepolia:
     image: ${BLAST_GETH_IMAGE:-blastio/blast-geth}:${BLAST_SEPOLIA_GETH_VERSION:-sepolia-v1.3.0}

@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:linea/erigon3/linea-sepolia-erigon3-minimal-trace.yml
+#
+# docker compose up -d
+
 services:
   linea-sepolia-minimal:
     image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_SEPOLIA_ERIGON3_VERSION:-v3.0.2}

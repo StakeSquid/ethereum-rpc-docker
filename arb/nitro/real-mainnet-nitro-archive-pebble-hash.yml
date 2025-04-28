@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:arb/nitro/real-mainnet-nitro-archive-pebble-hash.yml
+#
+# docker compose up -d
+
 services:
   real-mainnet-archive:
     image: ${REAL_NITRO_IMAGE:-offchainlabs/nitro-node}:${REAL_MAINNET_NITRO_VERSION:-v3.5.5-90ee45c}

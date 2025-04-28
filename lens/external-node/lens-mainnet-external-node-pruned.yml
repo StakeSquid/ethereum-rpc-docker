@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:lens/external-node/lens-mainnet-external-node-pruned.yml
+#
+# docker compose up -d
+
 services:
   lens-mainnet-client:
     image: ${LENS_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${LENS_MAINNET_EXTERNAL_NODE_VERSION:-2.0-v26.7.1_lens_custom_genesis-alpha}

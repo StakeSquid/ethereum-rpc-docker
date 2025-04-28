@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:goat/geth/goat-mainnet-geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   goat-mainnet-archive:
     image: ${GOAT_GETH_IMAGE:-ghcr.io/goatnetwork/goat-geth}:${GOAT_MAINNET_GETH_VERSION:-v0.3.0}

@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:haqq/haqq/haqq-mainnet-haqq-pruned.yml
+#
+# docker compose up -d
+
 services:
   haqq-mainnet:
     image: ${HAQQ_HAQQ_IMAGE:-alhaqq/haqq}:${HAQQ_MAINNET_HAQQ_VERSION:-v1.8.2}

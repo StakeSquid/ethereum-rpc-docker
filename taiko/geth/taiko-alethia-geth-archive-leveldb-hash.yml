@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:taiko/geth/taiko-alethia-geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+
 services:
   taiko-alethia-archive:
     image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_ALETHIA_GETH_VERSION:-v1.12.0}

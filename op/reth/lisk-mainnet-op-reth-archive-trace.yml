@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/reth/lisk-mainnet-op-reth-archive-trace.yml
+#
+# docker compose up -d
+
 services:
   lisk-mainnet-archive:
     image: ${LISK_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${LISK_MAINNET_RETH_VERSION:-v1.3.12}

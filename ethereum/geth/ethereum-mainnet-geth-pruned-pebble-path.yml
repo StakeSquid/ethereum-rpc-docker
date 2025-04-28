@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/geth/ethereum-mainnet-geth-pruned-pebble-path.yml
+#
+# docker compose up -d
+
 services:
   ethereum-mainnet:
     image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_GETH_VERSION:-v1.15.7}

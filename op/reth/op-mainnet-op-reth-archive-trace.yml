@@ -1,5 +1,13 @@
 ---
 
+# Usage:
+#
+# .env
+# IP=$(curl ipinfo.io/ip)
+# COMPOSE_FILE=base.yml:rpc.yml:op/reth/op-mainnet-op-reth-archive-trace.yml
+#
+# docker compose up -d
+
 services:
   op-mainnet-archive:
     image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_MAINNET_RETH_VERSION:-v1.3.12}
