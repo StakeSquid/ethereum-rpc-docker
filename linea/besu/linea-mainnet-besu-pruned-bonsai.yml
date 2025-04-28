@@ -34,7 +34,7 @@ services:
       - --p2p-host=${IP}
       - --p2p-port=14816
       - --plugin-linea-l1-rpc-endpoint=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - --profile=advanced-linea
+      - --profile=advanced-mainnet
       - --rpc-http-api=ETH,NET,WEB3,DEBUG,TRACE,TXPOOL,LINEA
       - --rpc-http-enabled=true
       - --rpc-http-host=0.0.0.0
