@@ -39,7 +39,7 @@ services:
       - --rpc-ws-enabled=true
       - --rpc-ws-host=0.0.0.0
       - --rpc-ws-port=8545
-      - --sync-mode=X_SNAP
+      - --sync-mode=SNAP
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
