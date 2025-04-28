@@ -1,0 +1,85 @@
+---
+
+services:
+  ethereum-classic-mainnet:
+    image: ${ETHEREUM_CLASSIC_BESU_IMAGE:-hyperledger/besu}:${ETHEREUM_CLASSIC_MAINNET_BESU_VERSION:-25.4.1}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 14038:14038
+      - 14038:14038/udp
+    expose:
+      - 8545
+    command:
+      - --Xbonsai-full-flat-db-enabled=true
+      - --bootnodes=
+      - --data-path=/opt/besu/database
+      - --data-storage-format=BONSAI
+      - --fast-sync-min-peers=1
+      - --host-allowlist=*
+      - --network=mainnet
+      - --p2p-port=14038
+      - --rpc-http-api=eth,net,web3,debug,admin,txpool
+      - --rpc-http-enabled=true
+      - --rpc-http-host=0.0.0.0
+      - --rpc-http-max-active-connections=20000
+      - --rpc-http-port=8545
+      - --rpc-ws-api=eth,net,web3,debug,admin,txpool
+      - --rpc-ws-enabled=true
+      - --rpc-ws-host=0.0.0.0
+      - --rpc-ws-port=8545
+      - --sync-mode=X_SNAP
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_CLASSIC_MAINNET_BESU_PRUNED_BONSAI_DATA:-ethereum-classic-mainnet-besu-pruned-bonsai}:/opt/besu/database
+      - /slowdisk:/slowdisk
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-classic-mainnet-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/ethereum-classic-mainnet
+      - traefik.http.services.ethereum-classic-mainnet-besu-pruned-bonsai.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.rule=Host(`$DOMAIN`) && (Path(`/ethereum-classic-mainnet`) || Path(`/ethereum-classic-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.rule=Path(`/ethereum-classic-mainnet`) || Path(`/ethereum-classic-mainnet/`)}
+      - traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.middlewares=ethereum-classic-mainnet-besu-pruned-bonsai-stripprefix, ipallowlist
+
+volumes:
+  ethereum-classic-mainnet-besu-pruned-bonsai:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: ethereum-classic
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
