@@ -100,7 +100,7 @@ services:
     entrypoint: [/scripts/prune-reth.sh]
     restart: no
     volumes:
-      - ./scripts/prune-reth.sh:/scripts/prune-reth.sh
+      - ./scripts/castrate-reth.sh:/scripts/prune-reth.sh
       - ethereum-mainnet-reth-minimal-trace:/data
 
 volumes:
