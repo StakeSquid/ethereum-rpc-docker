@@ -1,7 +1,7 @@
 ---
 
 services:
-  linea-sepolia:
+  linea-sepolia-client:
     image: ${LINEA_BESU_IMAGE:-consensys/linea-besu-package}:${LINEA_SEPOLIA_BESU_VERSION:-mainnet-v0.1.15}
     sysctls:
       # TCP Performance
@@ -22,6 +22,7 @@ services:
       - 14691:14691/udp
     expose:
       - 8545
+      - 8546
     command:
       - --Xbonsai-full-flat-db-enabled=true
       - --Xeth-capability-max=67
@@ -42,7 +43,7 @@ services:
       - --rpc-ws-api=ETH,NET,WEB3,DEBUG,TRACE,TXPOOL,LINEA
       - --rpc-ws-enabled=true
       - --rpc-ws-host=0.0.0.0
-      - --rpc-ws-port=8545
+      - --rpc-ws-port=8546
       - --sync-mode=SNAP
     restart: unless-stopped
     stop_grace_period: 5m
@@ -52,10 +53,26 @@ services:
       - ${LINEA_SEPOLIA_BESU_PRUNED_BONSAI_DATA:-linea-sepolia-besu-pruned-bonsai}:/opt/besu/database
       - ./linea/sepolia:/config
       - /slowdisk:/slowdisk
+
+  linea-sepolia:
+    image: nginx
+    environment:
+      PROXY_HOST: linea-sepolia-client
+      RPC_PATH: ''
+      RPC_PORT: 8545
+      WS_PATH: ''
+      WS_PORT: 8546
+    restart: unless-stopped
+    depends_on:
+      - linea-sepolia-client
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.linea-sepolia-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/linea-sepolia
-      - traefik.http.services.linea-sepolia-besu-pruned-bonsai.loadbalancer.server.port=8545
+      - traefik.http.services.linea-sepolia-besu-pruned-bonsai.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-besu-pruned-bonsai.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-besu-pruned-bonsai.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-besu-pruned-bonsai.rule=Host(`$DOMAIN`) && (Path(`/linea-sepolia`) || Path(`/linea-sepolia/`))}
