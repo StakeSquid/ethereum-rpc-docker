@@ -24,7 +24,6 @@ services:
       - 8545
     command:
       - --Xbonsai-full-flat-db-enabled=true
-      - --bootnodes=
       - --data-path=/opt/besu/database
       - --data-storage-format=BONSAI
       - --fast-sync-min-peers=1
