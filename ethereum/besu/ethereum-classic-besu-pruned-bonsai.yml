@@ -1,8 +1,8 @@
 ---
 
 services:
-  ethereum-classic-mainnet-client:
-    image: ${ETHEREUM_CLASSIC_BESU_IMAGE:-hyperledger/besu}:${ETHEREUM_CLASSIC_MAINNET_BESU_VERSION:-25.4.1}
+  ethereum-classic-client:
+    image: ${ETHEREUM_BESU_IMAGE:-hyperledger/besu}:${ETHEREUM_CLASSIC_BESU_VERSION:-25.4.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -18,8 +18,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 14038:14038
-      - 14038:14038/udp
+      - 12880:12880
+      - 12880:12880/udp
     expose:
       - 8545
       - 8546
@@ -29,9 +29,9 @@ services:
       - --data-storage-format=BONSAI
       - --fast-sync-min-peers=1
       - --host-allowlist=*
-      - --network=mainnet
+      - --network=classic
       - --p2p-host=${IP}
-      - --p2p-port=14038
+      - --p2p-port=12880
       - --rpc-http-api=ETH,NET,WEB3,DEBUG,ADMIN,TXPOOL
       - --rpc-http-enabled=true
       - --rpc-http-host=0.0.0.0
@@ -47,36 +47,36 @@ services:
     networks:
       - chains
     volumes:
-      - ${ETHEREUM_CLASSIC_MAINNET_BESU_PRUNED_BONSAI_DATA:-ethereum-classic-mainnet-besu-pruned-bonsai}:/opt/besu/database
+      - ${ETHEREUM_CLASSIC_BESU_PRUNED_BONSAI_DATA:-ethereum-classic-besu-pruned-bonsai}:/opt/besu/database
       - /slowdisk:/slowdisk
 
-  ethereum-classic-mainnet:
+  ethereum-classic:
     image: nginx
     environment:
-      PROXY_HOST: ethereum-classic-mainnet-client
+      PROXY_HOST: ethereum-classic-client
       RPC_PATH: ''
       RPC_PORT: 8545
       WS_PATH: ''
       WS_PORT: 8546
     restart: unless-stopped
     depends_on:
-      - ethereum-classic-mainnet-client
+      - ethereum-classic-client
     networks:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-classic-mainnet-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/ethereum-classic-mainnet
-      - traefik.http.services.ethereum-classic-mainnet-besu-pruned-bonsai.loadbalancer.server.port=80
-      - ${NO_SSL:-traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.rule=Host(`$DOMAIN`) && (Path(`/ethereum-classic-mainnet`) || Path(`/ethereum-classic-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.rule=Path(`/ethereum-classic-mainnet`) || Path(`/ethereum-classic-mainnet/`)}
-      - traefik.http.routers.ethereum-classic-mainnet-besu-pruned-bonsai.middlewares=ethereum-classic-mainnet-besu-pruned-bonsai-stripprefix, ipallowlist
+      - traefik.http.middlewares.ethereum-classic-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/ethereum-classic
+      - traefik.http.services.ethereum-classic-besu-pruned-bonsai.loadbalancer.server.port=80
+      - ${NO_SSL:-traefik.http.routers.ethereum-classic-besu-pruned-bonsai.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-classic-besu-pruned-bonsai.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-classic-besu-pruned-bonsai.rule=Host(`$DOMAIN`) && (Path(`/ethereum-classic`) || Path(`/ethereum-classic/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-classic-besu-pruned-bonsai.rule=Path(`/ethereum-classic`) || Path(`/ethereum-classic/`)}
+      - traefik.http.routers.ethereum-classic-besu-pruned-bonsai.middlewares=ethereum-classic-besu-pruned-bonsai-stripprefix, ipallowlist
 
 volumes:
-  ethereum-classic-mainnet-besu-pruned-bonsai:
+  ethereum-classic-besu-pruned-bonsai:
 
 x-upstreams:
   - id: $${ID}
@@ -90,7 +90,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: ethereum-classic
+    chain: ethereum
     method-groups:
       enabled:
         - debug
