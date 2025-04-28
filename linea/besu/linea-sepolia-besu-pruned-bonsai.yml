@@ -33,7 +33,7 @@ services:
       - --genesis-file=/config/genesis.json
       - --host-allowlist=*
       - --p2p-port=14691
-      - --plugin-linea-l1-rpc-endpoint=${ETHEREUM__EXECUTION_RPC}
+      - --plugin-linea-l1-rpc-endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - --rpc-http-api=eth,net,web3,debug,trace,txpool,linea
       - --rpc-http-enabled=true
       - --rpc-http-host=0.0.0.0
