@@ -14,12 +14,17 @@
 #
 # docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
 #
-# cat .env
+# env
 # ...
 # IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
 # COMPOSE_FILE=base.yml:rpc.yml:cronos-zkevm/external-node/cronos-zkevm-testnet-external-node-pruned.yml
 #
 # docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/cronos-zkevm-testnet \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
   cronos-zkevm-testnet-client:
