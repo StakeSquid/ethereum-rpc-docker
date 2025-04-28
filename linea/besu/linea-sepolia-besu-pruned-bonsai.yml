@@ -33,6 +33,7 @@ services:
       - --fast-sync-min-peers=1
       - --genesis-file=/config/genesis.json
       - --host-allowlist=*
+      - --p2p-host=${IP}
       - --p2p-port=14691
       - --plugin-linea-l1-rpc-endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - --rpc-http-api=ETH,NET,WEB3,DEBUG,TRACE,TXPOOL,LINEA

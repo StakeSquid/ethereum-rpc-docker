@@ -30,6 +30,7 @@ services:
       - --fast-sync-min-peers=1
       - --host-allowlist=*
       - --network=mainnet
+      - --p2p-host=${IP}
       - --p2p-port=14038
       - --rpc-http-api=ETH,NET,WEB3,DEBUG,ADMIN,TXPOOL
       - --rpc-http-enabled=true
