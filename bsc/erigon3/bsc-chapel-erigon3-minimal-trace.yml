@@ -2,7 +2,10 @@
 
 # Usage:
 #
-# .env
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# cat .env
+# ...
 # IP=$(curl ipinfo.io/ip)
 # COMPOSE_FILE=base.yml:rpc.yml:bsc/erigon3/bsc-chapel-erigon3-minimal-trace.yml
 #
