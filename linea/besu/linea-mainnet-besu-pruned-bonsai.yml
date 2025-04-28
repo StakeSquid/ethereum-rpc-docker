@@ -34,12 +34,12 @@ services:
       - --host-allowlist=*
       - --p2p-port=14816
       - --plugin-linea-l1-rpc-endpoint=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - --rpc-http-api=[eth,net,web3,debug,trace,txpool,linea]
+      - --rpc-http-api=ETH,NET,WEB3,DEBUG,TRACE,TXPOOL,LINEA
       - --rpc-http-enabled=true
       - --rpc-http-host=0.0.0.0
       - --rpc-http-max-active-connections=20000
       - --rpc-http-port=8545
-      - --rpc-ws-api=[eth,net,web3,debug,trace,txpool,linea]
+      - --rpc-ws-api=ETH,NET,WEB3,DEBUG,TRACE,TXPOOL,LINEA
       - --rpc-ws-enabled=true
       - --rpc-ws-host=0.0.0.0
       - --rpc-ws-port=8545

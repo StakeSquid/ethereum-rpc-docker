@@ -30,12 +30,12 @@ services:
       - --host-allowlist=*
       - --network=mainnet
       - --p2p-port=14038
-      - --rpc-http-api=[eth,net,web3,debug,admin,txpool]
+      - --rpc-http-api=ETH,NET,WEB3,DEBUG,ADMIN,TXPOOL
       - --rpc-http-enabled=true
       - --rpc-http-host=0.0.0.0
       - --rpc-http-max-active-connections=20000
       - --rpc-http-port=8545
-      - --rpc-ws-api=[eth,net,web3,debug,admin,txpool]
+      - --rpc-ws-api=ETH,NET,WEB3,DEBUG,ADMIN,TXPOOL
       - --rpc-ws-enabled=true
       - --rpc-ws-host=0.0.0.0
       - --rpc-ws-port=8545
