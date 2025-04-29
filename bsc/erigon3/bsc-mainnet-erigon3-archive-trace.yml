@@ -56,7 +56,7 @@ services:
       - --datadir=/root/.local/share/erigon
       - --http
       - --http.addr=0.0.0.0
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,ots
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
@@ -135,4 +135,15 @@ x-upstreams:
         - name: erigon_getBlockByTimestamp
         - name: erigon_BlockNumber
         - name: erigon_getLatestLogs
+        - name: ots_getInternalOperations
+        - name: ots_hasCode
+        - name: ots_getTransactionError
+        - name: ots_traceTransaction
+        - name: ots_getBlockDetails
+        - name: ots_getBlockDetailsByHash
+        - name: ots_getBlockTransactions
+        - name: ots_searchTransactionsBefore
+        - name: ots_searchTransactionsAfter
+        - name: ots_getTransactionBySenderAndNonce
+        - name: ots_getContractCreator
 ...

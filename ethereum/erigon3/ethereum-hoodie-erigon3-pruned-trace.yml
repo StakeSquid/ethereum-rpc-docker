@@ -15,17 +15,17 @@
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:bsc/erigon3/bsc-chapel-erigon3-minimal-trace.yml
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/erigon3/ethereum-hoodie-erigon3-pruned-trace.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/bsc-chapel-minimal \
+# curl -X POST https://${IP}.traefik.me/ethereum-hoodie \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  bsc-chapel-minimal:
-    image: ${BSC_ERIGON3_IMAGE:-ghcr.io/node-real/bsc-erigon}:${BSC_CHAPEL_ERIGON3_VERSION:-v1.3.6}
+  ethereum-hoodie:
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOODIE_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -42,17 +42,29 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 11017:11017
-      - 11017:11017/udp
-      - 31017:31017
-      - 31017:31017/udp
-      - 36017:36017
-      - 36017:36017/udp
+      - 14681:14681
+      - 14681:14681/udp
+      - 19681:19681
+      - 19681:19681/udp
+      - 29681:29681
+      - 29681:29681/udp
+      - 34681:34681
+      - 34681:34681/udp
+      - 39681:39681
+      - 39681:39681/udp
     expose:
       - 8545
+      - 5555
     entrypoint: [erigon]
     command:
-      - --chain=chapel
+      - --beacon.api.addr=0.0.0.0
+      - --beacon.api.cors.allow-origins=*
+      - --beacon.api.port=5555
+      - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
+      - --caplin.discovery.addr=0.0.0.0
+      - --caplin.discovery.port=19681
+      - --caplin.discovery.tcpport=19681
+      - --chain=hoodie
       - --datadir=/root/.local/share/erigon
       - --http
       - --http.addr=0.0.0.0
@@ -61,12 +73,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=31017
-      - --p2p.allowed-ports=36017
-      - --port=11017
-      - --prune.mode=minimal
+      - --p2p.allowed-ports=34681
+      - --p2p.allowed-ports=39681
+      - --port=14681
+      - --prune.mode=full
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
+      - --torrent.port=29681
       - --ws
       - --ws.port=8545
     restart: unless-stopped
@@ -74,22 +87,29 @@ services:
     networks:
       - chains
     volumes:
-      - ${BSC_CHAPEL_ERIGON3_MINIMAL_TRACE_DATA:-bsc-chapel-erigon3-minimal-trace}:/root/.local/share/erigon
-      - ./bsc/chapel:/config
+      - ${ETHEREUM_HOODIE_ERIGON3_PRUNED_TRACE_DATA:-ethereum-hoodie-erigon3-pruned-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.bsc-chapel-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/bsc-chapel-minimal
-      - traefik.http.services.bsc-chapel-erigon3-minimal-trace.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-minimal-trace.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-chapel-minimal`) || Path(`/bsc-chapel-minimal/`))}
-      - ${NO_SSL:+traefik.http.routers.bsc-chapel-erigon3-minimal-trace.rule=Path(`/bsc-chapel-minimal`) || Path(`/bsc-chapel-minimal/`)}
-      - traefik.http.routers.bsc-chapel-erigon3-minimal-trace.middlewares=bsc-chapel-erigon3-minimal-trace-stripprefix, ipallowlist
+      - traefik.http.middlewares.ethereum-hoodie-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-hoodie
+      - traefik.http.services.ethereum-hoodie-erigon3-pruned-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-hoodie`) || Path(`/ethereum-hoodie/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace.rule=Path(`/ethereum-hoodie`) || Path(`/ethereum-hoodie/`)}
+      - traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace.middlewares=ethereum-hoodie-erigon3-pruned-trace-stripprefix, ipallowlist
+      - traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace.service=ethereum-hoodie-erigon3-pruned-trace
+      - traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace-node.service=ethereum-hoodie-erigon3-pruned-trace-node
+      - traefik.http.services.ethereum-hoodie-erigon3-pruned-trace-node.loadbalancer.server.port=5555
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-hoodie/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace-node.rule=PathPrefix(`/ethereum-hoodie/eth`)}
+      - traefik.http.routers.ethereum-hoodie-erigon3-pruned-trace-node.middlewares=ethereum-hoodie-erigon3-pruned-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
 volumes:
-  bsc-chapel-erigon3-minimal-trace:
+  ethereum-hoodie-erigon3-pruned-trace:
 
 x-upstreams:
   - id: $${ID}
@@ -103,7 +123,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: bsc-testnet
+    chain: ethereum
     method-groups:
       enabled:
         - debug
@@ -146,4 +166,12 @@ x-upstreams:
         - name: ots_searchTransactionsAfter
         - name: ots_getTransactionBySenderAndNonce
         - name: ots_getContractCreator
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain-hoodie
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
 ...
