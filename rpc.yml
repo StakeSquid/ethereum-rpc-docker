@@ -19,7 +19,8 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.filename=/dynamic_config.yml"
       - "--entrypoints.websecure.address=:443"
-      # disable read timeout to not timeout webdav uploads
+      # disable read timeout to not timeout webdav uploads. 
+      # TODO:can this be local to the webdav container
       - "--entrypoints.websecure.transport.respondingTimeouts.readTimeout=0"
       - "--entrypoints.metrics.address=:8082"
       - "--entrypoints.grpc.address=:3042"
