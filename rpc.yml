@@ -19,8 +19,10 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.filename=/dynamic_config.yml"
       - "--entrypoints.websecure.address=:443"
-      - "--entryPoints.metrics.address=:8082"
-      - "--entryPoints.grpc.address=:3042"
+      # disable read timeout to not timeout webdav uploads
+      - "--entrypoints.websecure.transport.respondingTimeouts.readTimeout=0"
+      - "--entrypoints.metrics.address=:8082"
+      - "--entrypoints.grpc.address=:3042"
       - "--entrypoints.web.address=:80"
       - "--metrics.prometheus.entryPoint=metrics"
       - "${NO_SSL:---entrypoints.web.http.redirections.entryPoint.to=websecure}"

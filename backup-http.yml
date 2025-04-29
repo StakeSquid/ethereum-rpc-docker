@@ -29,7 +29,7 @@ services:
       - "traefik.http.routers.backup-storage.entrypoints=websecure"                                              
       - "traefik.http.routers.backup-storage.tls.certresolver=myresolver"                                        
       - "traefik.http.routers.backup-storage.rule=Host(`$DOMAIN`) && PathPrefix(`/dav`)"                     
-      - "traefik.http.routers.backup-storage.middlewares=backup-storage-stripprefix"                           
+      - "traefik.http.routers.backup-storage.middlewares=backup-storage-stripprefix"
     networks:                                                                                         
       - chains
 
