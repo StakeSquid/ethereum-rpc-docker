@@ -15,17 +15,17 @@
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:ethereum/erigon3/ethereum-hoodie-erigon3-minimal-trace.yml
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/erigon3/ethereum-hoodi-erigon3-minimal-trace.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-hoodie-minimal \
+# curl -X POST https://${IP}.traefik.me/ethereum-hoodi-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  ethereum-hoodie-minimal:
-    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOODIE_ERIGON3_VERSION:-v3.0.2}
+  ethereum-hoodi-minimal:
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOODI_ERIGON3_VERSION:-v3.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -42,16 +42,16 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 12055:12055
-      - 12055:12055/udp
-      - 17055:17055
-      - 17055:17055/udp
-      - 27055:27055
-      - 27055:27055/udp
-      - 32055:32055
-      - 32055:32055/udp
-      - 37055:37055
-      - 37055:37055/udp
+      - 12832:12832
+      - 12832:12832/udp
+      - 17832:17832
+      - 17832:17832/udp
+      - 27832:27832
+      - 27832:27832/udp
+      - 32832:32832
+      - 32832:32832/udp
+      - 37832:37832
+      - 37832:37832/udp
     expose:
       - 8545
       - 5555
@@ -62,9 +62,9 @@ services:
       - --beacon.api.port=5555
       - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=17055
-      - --caplin.discovery.tcpport=17055
-      - --chain=hoodie
+      - --caplin.discovery.port=17832
+      - --caplin.discovery.tcpport=17832
+      - --chain=hoodi
       - --datadir=/root/.local/share/erigon
       - --http
       - --http.addr=0.0.0.0
@@ -73,13 +73,13 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=32055
-      - --p2p.allowed-ports=37055
-      - --port=12055
+      - --p2p.allowed-ports=32832
+      - --p2p.allowed-ports=37832
+      - --port=12832
       - --prune.mode=minimal
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
-      - --torrent.port=27055
+      - --torrent.port=27832
       - --ws
       - --ws.port=8545
     restart: unless-stopped
@@ -87,29 +87,29 @@ services:
     networks:
       - chains
     volumes:
-      - ${ETHEREUM_HOODIE_ERIGON3_MINIMAL_TRACE_DATA:-ethereum-hoodie-erigon3-minimal-trace}:/root/.local/share/erigon
+      - ${ETHEREUM_HOODI_ERIGON3_MINIMAL_TRACE_DATA:-ethereum-hoodi-erigon3-minimal-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-hoodie-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-hoodie-minimal
-      - traefik.http.services.ethereum-hoodie-erigon3-minimal-trace.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-hoodie-minimal`) || Path(`/ethereum-hoodie-minimal/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace.rule=Path(`/ethereum-hoodie-minimal`) || Path(`/ethereum-hoodie-minimal/`)}
-      - traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace.middlewares=ethereum-hoodie-erigon3-minimal-trace-stripprefix, ipallowlist
-      - traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace.service=ethereum-hoodie-erigon3-minimal-trace
-      - traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace-node.service=ethereum-hoodie-erigon3-minimal-trace-node
-      - traefik.http.services.ethereum-hoodie-erigon3-minimal-trace-node.loadbalancer.server.port=5555
-      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace-node.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-hoodie-minimal/eth`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace-node.rule=PathPrefix(`/ethereum-hoodie-minimal/eth`)}
-      - traefik.http.routers.ethereum-hoodie-erigon3-minimal-trace-node.middlewares=ethereum-hoodie-erigon3-minimal-trace-stripprefix, ipallowlist
+      - traefik.http.middlewares.ethereum-hoodi-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-hoodi-minimal
+      - traefik.http.services.ethereum-hoodi-erigon3-minimal-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-hoodi-minimal`) || Path(`/ethereum-hoodi-minimal/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace.rule=Path(`/ethereum-hoodi-minimal`) || Path(`/ethereum-hoodi-minimal/`)}
+      - traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace.middlewares=ethereum-hoodi-erigon3-minimal-trace-stripprefix, ipallowlist
+      - traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace.service=ethereum-hoodi-erigon3-minimal-trace
+      - traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace-node.service=ethereum-hoodi-erigon3-minimal-trace-node
+      - traefik.http.services.ethereum-hoodi-erigon3-minimal-trace-node.loadbalancer.server.port=5555
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-hoodi-minimal/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace-node.rule=PathPrefix(`/ethereum-hoodi-minimal/eth`)}
+      - traefik.http.routers.ethereum-hoodi-erigon3-minimal-trace-node.middlewares=ethereum-hoodi-erigon3-minimal-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
 volumes:
-  ethereum-hoodie-erigon3-minimal-trace:
+  ethereum-hoodi-erigon3-minimal-trace:
 
 x-upstreams:
   - id: $${ID}
@@ -167,7 +167,7 @@ x-upstreams:
         - name: ots_getTransactionBySenderAndNonce
         - name: ots_getContractCreator
   - id: $${ID}-beacon-chain
-    chain: eth-beacon-chain-hoodie
+    chain: eth-beacon-chain-hoodi
     labels:
       provider: $${PROVIDER}-beacon-chain
     connection:
