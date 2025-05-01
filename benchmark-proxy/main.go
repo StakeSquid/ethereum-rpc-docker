@@ -293,10 +293,16 @@ func main() {
 		},
 	}
 
-	// Configure websocket upgrader
+	// Configure websocket upgrader with larger buffer sizes
+	// 20MB frame size and 50MB message size
+	const (
+		maxFrameSize   = 20 * 1024 * 1024 // 20MB
+		maxMessageSize = 50 * 1024 * 1024 // 50MB
+	)
+
 	upgrader := websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
+		ReadBufferSize:  maxFrameSize,
+		WriteBufferSize: maxFrameSize,
 		// Allow all origins
 		CheckOrigin: func(r *http.Request) bool { return true },
 	}
@@ -481,6 +487,9 @@ func handleWebSocketRequest(w http.ResponseWriter, r *http.Request, backends []B
 	}
 	defer clientConn.Close()
 
+	// Set max message size for client connection
+	clientConn.SetReadLimit(50 * 1024 * 1024) // 50MB message size limit
+
 	// Connect to all backends
 	var wg sync.WaitGroup
 	for _, backend := range backends {
@@ -493,37 +502,22 @@ func handleWebSocketRequest(w http.ResponseWriter, r *http.Request, backends []B
 			backendURL = strings.Replace(backendURL, "https://", "wss://", 1)
 
 			// Create a clean header map for the dialer
-			// Instead of copying all headers which can cause duplicates
 			header := http.Header{}
 
-			// Only copy specific headers needed for the WebSocket connection
-			// and avoid the problematic ones like "Connection" and "Upgrade"
-			if host := r.Header.Get("Host"); host != "" {
-				header.Set("Host", host)
-			}
+			// Only copy non-WebSocket headers
 			if origin := r.Header.Get("Origin"); origin != "" {
 				header.Set("Origin", origin)
 			}
-			if secWebSocketKey := r.Header.Get("Sec-WebSocket-Key"); secWebSocketKey != "" {
-				header.Set("Sec-WebSocket-Key", secWebSocketKey)
-			}
-			if secWebSocketVersion := r.Header.Get("Sec-WebSocket-Version"); secWebSocketVersion != "" {
-				header.Set("Sec-WebSocket-Version", secWebSocketVersion)
-			}
-			if secWebSocketProtocol := r.Header.Get("Sec-WebSocket-Protocol"); secWebSocketProtocol != "" {
-				header.Set("Sec-WebSocket-Protocol", secWebSocketProtocol)
-			}
-			if secWebSocketExtensions := r.Header.Get("Sec-WebSocket-Extensions"); secWebSocketExtensions != "" {
-				header.Set("Sec-WebSocket-Extensions", secWebSocketExtensions)
-			}
-			// Add user-agent if present
 			if userAgent := r.Header.Get("User-Agent"); userAgent != "" {
 				header.Set("User-Agent", userAgent)
 			}
 
 			startTime := time.Now()
-			// Connect to backend WebSocket
-			dialer := websocket.DefaultDialer
+			// Connect to backend WebSocket with larger buffer sizes
+			dialer := &websocket.Dialer{
+				ReadBufferSize:  20 * 1024 * 1024, // 20MB
+				WriteBufferSize: 20 * 1024 * 1024, // 20MB
+			}
 			backendConn, resp, err := dialer.Dial(backendURL, header)
 			connectDuration := time.Since(startTime)
 
@@ -544,6 +538,9 @@ func handleWebSocketRequest(w http.ResponseWriter, r *http.Request, backends []B
 				return
 			}
 			defer backendConn.Close()
+
+			// Set max message size for backend connection
+			backendConn.SetReadLimit(50 * 1024 * 1024) // 50MB message size limit
 
 			stats.IsActive = true
 			statsCollector.AddWebSocketStats(stats)
