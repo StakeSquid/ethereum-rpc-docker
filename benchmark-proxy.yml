@@ -1,0 +1,15 @@
+services:
+  benchmark-proxy:
+    build:
+      context: ./benchmark-proxy
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - LISTEN_ADDR=:8080
+      - SUMMARY_INTERVAL=60
+      - PRIMARY_BACKEND=${BENCHMARK_PROXY_PRIMARY_BACKEND}
+      - SECONDARY_BACKENDS=${BENCHMARK_PROXY_SECONDARY_BACKENDS}
+    restart: unless-stopped
+    networks:
+      - chains
