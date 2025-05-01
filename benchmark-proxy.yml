@@ -3,8 +3,8 @@ services:
     build:
       context: ./benchmark-proxy
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
       - LISTEN_ADDR=:8080
       - SUMMARY_INTERVAL=60
@@ -13,3 +13,12 @@ services:
     restart: unless-stopped
     networks:
       - chains
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.benchmark-proxy-stripprefix.stripprefix.prefixes=/benchmark"
+      - "traefik.http.services.benchmark-proxy.loadbalancer.server.port=8080"
+      - "${NO_SSL:-traefik.http.routers.benchmark-proxy.entrypoints=websecure}"
+      - "${NO_SSL:-traefik.http.routers.benchmark-proxy.tls.certresolver=myresolver}"
+      - "${NO_SSL:-traefik.http.routers.benchmark-proxy.rule=Host(`$DOMAIN`) && PathPrefix(`/benchmark`)}"
+      - "${NO_SSL:+traefik.http.routers.benchmark-proxy.rule=PathPrefix(`/benchmark`)}"      
+      - "traefik.http.routers.benchmark-proxy.middlewares=benchmark-proxy-stripprefix, ipwhitelist"
