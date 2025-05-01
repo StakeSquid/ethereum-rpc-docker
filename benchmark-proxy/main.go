@@ -59,6 +59,9 @@ type StatsCollector struct {
 	totalWsConnections int
 	startTime          time.Time
 	summaryInterval    time.Duration
+	methodCUPrices     map[string]int // Map of method names to CU prices
+	totalCU            int            // Total CU earned
+	methodCU           map[string]int // Track CU earned per method
 }
 
 func NewStatsCollector(summaryInterval time.Duration) *StatsCollector {
@@ -67,12 +70,91 @@ func NewStatsCollector(summaryInterval time.Duration) *StatsCollector {
 		methodStats:     make(map[string][]time.Duration),
 		startTime:       time.Now(),
 		summaryInterval: summaryInterval,
+		methodCUPrices:  initCUPrices(), // Initialize CU prices
+		methodCU:        make(map[string]int),
 	}
 
 	// Start the periodic summary goroutine
 	go sc.periodicSummary()
 
 	return sc
+}
+
+// initCUPrices initializes the map of method names to their CU prices
+func initCUPrices() map[string]int {
+	return map[string]int{
+		"debug_traceBlockByHash":                  90,
+		"debug_traceBlockByNumber":                90,
+		"debug_traceCall":                         90,
+		"debug_traceTransaction":                  90,
+		"eth_accounts":                            0,
+		"eth_blockNumber":                         10,
+		"eth_call":                                21,
+		"eth_chainId":                             0,
+		"eth_coinbase":                            0,
+		"eth_createAccessList":                    30,
+		"eth_estimateGas":                         60,
+		"eth_feeHistory":                          15,
+		"eth_gasPrice":                            15,
+		"eth_getBalance":                          11,
+		"eth_getBlockByHash":                      21,
+		"eth_getBlockByHash#full":                 60,
+		"eth_getBlockByNumber":                    24,
+		"eth_getBlockByNumber#full":               60,
+		"eth_getBlockReceipts":                    80,
+		"eth_getBlockTransactionCountByHash":      15,
+		"eth_getBlockTransactionCountByNumber":    11,
+		"eth_getCode":                             24,
+		"eth_getFilterChanges":                    20,
+		"eth_getFilterLogs":                       60,
+		"eth_getLogs":                             60,
+		"eth_getProof":                            11,
+		"eth_getStorageAt":                        14,
+		"eth_getTransactionByBlockHashAndIndex":   19,
+		"eth_getTransactionByBlockNumberAndIndex": 13,
+		"eth_getTransactionByHash":                11,
+		"eth_getTransactionCount":                 11,
+		"eth_getTransactionReceipt":               30,
+		"eth_getUncleByBlockHashAndIndex":         15,
+		"eth_getUncleByBlockNumberAndIndex":       15,
+		"eth_getUncleCountByBlockHash":            15,
+		"eth_getUncleCountByBlockNumber":          15,
+		"eth_hashrate":                            0,
+		"eth_maxPriorityFeePerGas":                16,
+		"eth_mining":                              0,
+		"eth_newBlockFilter":                      20,
+		"eth_newFilter":                           20,
+		"eth_newPendingTransactionFilter":         20,
+		"eth_protocolVersion":                     0,
+		"eth_sendRawTransaction":                  90,
+		"eth_syncing":                             0,
+		"eth_subscribe":                           10,
+		"eth_subscription":                        25, // For "Notifications from the events you've subscribed to"
+		"eth_uninstallFilter":                     10,
+		"eth_unsubscribe":                         10,
+		"net_listening":                           0,
+		"net_peerCount":                           0,
+		"net_version":                             0,
+		"trace_block":                             90,
+		"trace_call":                              60,
+		"trace_callMany":                          90,
+		"trace_filter":                            75,
+		"trace_get":                               20,
+		"trace_rawTransaction":                    75,
+		"trace_replayBlockTransactions":           90,
+		"trace_replayBlockTransactions#vmTrace":   300,
+		"trace_replayTransaction":                 90,
+		"trace_replayTransaction#vmTrace":         300,
+		"trace_transaction":                       90,
+		"txpool_content":                          1000,
+		"web3_clientVersion":                      0,
+		"web3_sha3":                               10,
+		"bor_getAuthor":                           10,
+		"bor_getCurrentProposer":                  10,
+		"bor_getCurrentValidators":                10,
+		"bor_getRootHash":                         10,
+		"bor_getSignersAtHash":                    10,
+	}
 }
 
 func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Duration) {
@@ -92,6 +174,11 @@ func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Dur
 				sc.methodStats[stat.Method] = make([]time.Duration, 0, 100)
 			}
 			sc.methodStats[stat.Method] = append(sc.methodStats[stat.Method], stat.Duration)
+
+			// Add CU for this method
+			cuValue := sc.methodCUPrices[stat.Method]
+			sc.totalCU += cuValue
+			sc.methodCU[stat.Method] += cuValue
 		}
 	}
 
@@ -129,6 +216,7 @@ func (sc *StatsCollector) printSummary() {
 	fmt.Printf("Total HTTP Requests: %d\n", sc.totalRequests)
 	fmt.Printf("Total WebSocket Connections: %d\n", sc.totalWsConnections)
 	fmt.Printf("Error Rate: %.2f%%\n", float64(sc.errorCount)/float64(sc.totalRequests+sc.totalWsConnections)*100)
+	fmt.Printf("Total Compute Units Earned: %d CU\n", sc.totalCU)
 
 	// Calculate response time statistics for primary backend
 	var primaryDurations []time.Duration
@@ -210,8 +298,13 @@ func (sc *StatsCollector) printSummary() {
 				p99 = durations[p99idx]
 			}
 
-			fmt.Printf("  %-20s Count: %-5d Avg: %-10s Min: %-10s Max: %-10s p50: %-10s p90: %-10s p99: %-10s\n",
-				method, len(durations), avg, minDuration, max, p50, p90, p99)
+			// Add CU information to the output
+			cuPrice := sc.methodCUPrices[method]
+			cuEarned := sc.methodCU[method]
+
+			fmt.Printf("  %-20s Count: %-5d Avg: %-10s Min: %-10s Max: %-10s p50: %-10s p90: %-10s p99: %-10s CU: %d x %d = %d\n",
+				method, len(durations), avg, minDuration, max, p50, p90, p99,
+				cuPrice, len(durations), cuEarned)
 		}
 	}
 
