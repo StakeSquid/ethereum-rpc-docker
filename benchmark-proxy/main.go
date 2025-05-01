@@ -341,7 +341,8 @@ func main() {
 	listenAddr := getEnv("LISTEN_ADDR", ":8080")
 	primaryBackend := getEnv("PRIMARY_BACKEND", "http://localhost:8545")
 	secondaryBackendsStr := getEnv("SECONDARY_BACKENDS", "")
-	summaryIntervalStr := getEnv("SUMMARY_INTERVAL", "60") // Default 60 seconds
+	summaryIntervalStr := getEnv("SUMMARY_INTERVAL", "60")        // Default 60 seconds
+	enableDetailedLogs := getEnv("ENABLE_DETAILED_LOGS", "false") // Default to disabled
 
 	summaryInterval, err := strconv.Atoi(summaryIntervalStr)
 	if err != nil {
@@ -406,7 +407,7 @@ func main() {
 			handleWebSocketRequest(w, r, backends, client, &upgrader, statsCollector)
 		} else {
 			// Handle regular HTTP request
-			stats := handleRequest(w, r, backends, client)
+			stats := handleRequest(w, r, backends, client, enableDetailedLogs == "true")
 			statsCollector.AddStats(stats, 0) // The 0 is a placeholder, we're not using totalDuration in the collector
 		}
 	})
@@ -414,7 +415,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(listenAddr, nil))
 }
 
-func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, client *http.Client) []ResponseStats {
+func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, client *http.Client, enableDetailedLogs bool) []ResponseStats {
 	startTime := time.Now()
 
 	// Read the entire request body
@@ -535,9 +536,11 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 		stats = append(stats, stat)
 	}
 
-	// Log response times
+	// Log response times if enabled
 	totalDuration := time.Since(startTime)
-	logResponseStats(totalDuration, stats)
+	if enableDetailedLogs {
+		logResponseStats(totalDuration, stats)
+	}
 	return stats
 }
 
