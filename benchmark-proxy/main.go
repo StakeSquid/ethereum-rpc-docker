@@ -298,11 +298,11 @@ func (sc *StatsCollector) printSummary() {
 				p99 = durations[p99idx]
 			}
 
-			// Add CU information to the output
+			// Add CU information to the output - increase method width from 20 to 30
 			cuPrice := sc.methodCUPrices[method]
 			cuEarned := sc.methodCU[method]
 
-			fmt.Printf("  %-20s Count: %-5d Avg: %-10s Min: %-10s Max: %-10s p50: %-10s p90: %-10s p99: %-10s CU: %d x %d = %d\n",
+			fmt.Printf("  %-30s Count: %-5d Avg: %-10s Min: %-10s Max: %-10s p50: %-10s p90: %-10s p99: %-10s CU: %d x %d = %d\n",
 				method, len(durations), avg, minDuration, max, p50, p90, p99,
 				cuPrice, len(durations), cuEarned)
 		}
