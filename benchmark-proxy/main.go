@@ -310,22 +310,28 @@ func (sc *StatsCollector) printSummary() {
 
 	fmt.Printf("================================\n\n")
 
+	// Reset statistics for the next interval
 	// Keep only the last 1000 requests to prevent unlimited memory growth
 	if len(sc.requestStats) > 1000 {
 		sc.requestStats = sc.requestStats[len(sc.requestStats)-1000:]
 	}
 
-	// Trim method stats to prevent unlimited growth
-	for method, durations := range sc.methodStats {
-		if len(durations) > 1000 {
-			sc.methodStats[method] = durations[len(durations)-1000:]
-		}
+	// Reset method-specific statistics
+	for method := range sc.methodStats {
+		sc.methodStats[method] = sc.methodStats[method][:0]
 	}
 
-	// Keep only the last 1000 websocket connections to prevent unlimited memory growth
-	if len(sc.wsConnections) > 1000 {
-		sc.wsConnections = sc.wsConnections[len(sc.wsConnections)-1000:]
-	}
+	// Reset CU counters for the next interval
+	sc.totalCU = 0
+	sc.methodCU = make(map[string]int)
+
+	// Reset error count for the next interval
+	sc.errorCount = 0
+	sc.totalRequests = 0
+	sc.totalWsConnections = 0
+
+	// Reset the start time for the next interval
+	sc.startTime = time.Now()
 }
 
 // Helper function to avoid potential index out of bounds
