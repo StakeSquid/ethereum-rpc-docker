@@ -206,6 +206,56 @@ func (sc *StatsCollector) periodicSummary() {
 	}
 }
 
+// formatDuration formats a duration with at most 6 significant digits total
+func formatDuration(d time.Duration) string {
+	// Convert to string with standard formatting
+	str := d.String()
+
+	// Find the decimal point if it exists
+	decimalIdx := strings.Index(str, ".")
+	if decimalIdx == -1 {
+		// No decimal point, return as is (already ≤ 6 digits or no need to truncate)
+		return str
+	}
+
+	// Find the unit suffix (ms, µs, etc.)
+	unitIdx := -1
+	for i := decimalIdx; i < len(str); i++ {
+		if !(str[i] >= '0' && str[i] <= '9') && str[i] != '.' {
+			unitIdx = i
+			break
+		}
+	}
+
+	if unitIdx == -1 {
+		unitIdx = len(str) // No unit suffix found
+	}
+
+	// Count digits before decimal (not including sign)
+	digitsBeforeDecimal := 0
+	for i := 0; i < decimalIdx; i++ {
+		if str[i] >= '0' && str[i] <= '9' {
+			digitsBeforeDecimal++
+		}
+	}
+
+	// Calculate how many decimal places we can keep (allowing for 6 total digits)
+	maxDecimalPlaces := 6 - digitsBeforeDecimal
+	if maxDecimalPlaces <= 0 {
+		// No room for decimal places
+		return str[:decimalIdx] + str[unitIdx:]
+	}
+
+	// Calculate end position for truncation
+	endPos := decimalIdx + 1 + maxDecimalPlaces
+	if endPos > unitIdx {
+		endPos = unitIdx
+	}
+
+	// Return truncated string
+	return str[:endPos] + str[unitIdx:]
+}
+
 func (sc *StatsCollector) printSummary() {
 	sc.mu.Lock()
 	defer sc.mu.Unlock()
@@ -242,15 +292,19 @@ func (sc *StatsCollector) printSummary() {
 
 		p50idx := len(primaryDurations) * 50 / 100
 		p90idx := len(primaryDurations) * 90 / 100
-		p99idx := len(primaryDurations) * 99 / 100
+		p99idx := minInt(len(primaryDurations)-1, len(primaryDurations)*99/100)
+
+		p50 := primaryDurations[p50idx]
+		p90 := primaryDurations[p90idx]
+		p99 := primaryDurations[p99idx]
 
 		fmt.Printf("\nPrimary Backend Response Times:\n")
-		fmt.Printf("  Min: %s\n", min)
-		fmt.Printf("  Avg: %s\n", avg)
-		fmt.Printf("  Max: %s\n", max)
-		fmt.Printf("  p50: %s\n", primaryDurations[p50idx])
-		fmt.Printf("  p90: %s\n", primaryDurations[p90idx])
-		fmt.Printf("  p99: %s\n", primaryDurations[p99idx])
+		fmt.Printf("  Min: %s\n", formatDuration(min))
+		fmt.Printf("  Avg: %s\n", formatDuration(avg))
+		fmt.Printf("  Max: %s\n", formatDuration(max))
+		fmt.Printf("  p50: %s\n", formatDuration(p50))
+		fmt.Printf("  p90: %s\n", formatDuration(p90))
+		fmt.Printf("  p99: %s\n", formatDuration(p99))
 	}
 
 	// Print per-method statistics
@@ -298,12 +352,14 @@ func (sc *StatsCollector) printSummary() {
 				p99 = durations[p99idx]
 			}
 
-			// Add CU information to the output - increase method width from 20 to 30
+			// Add CU information to the output
 			cuPrice := sc.methodCUPrices[method]
 			cuEarned := sc.methodCU[method]
 
 			fmt.Printf("  %-30s Count: %-5d Avg: %-10s Min: %-10s Max: %-10s p50: %-10s p90: %-10s p99: %-10s CU: %d x %d = %d\n",
-				method, len(durations), avg, minDuration, max, p50, p90, p99,
+				method, len(durations),
+				formatDuration(avg), formatDuration(minDuration), formatDuration(max),
+				formatDuration(p50), formatDuration(p90), formatDuration(p99),
 				cuPrice, len(durations), cuEarned)
 		}
 	}
