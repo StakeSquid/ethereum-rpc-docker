@@ -15,7 +15,7 @@
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:arb/nitro/arbitrum-one-nitro-archive-leveldb-hash-benchmark.yml
+# COMPOSE_FILE=base.yml:rpc.yml:arb/nitro/arbitrum-one-nitro-archive-leveldb-hash--benchmark.yml
 #
 # docker compose up -d
 #
