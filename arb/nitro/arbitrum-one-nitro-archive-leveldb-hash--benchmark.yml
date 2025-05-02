@@ -80,6 +80,7 @@ services:
     expose:
       - '8545'
     environment:
+      - ENABLE_DETAILED_LOGS=${BENCHMARK_PROXY_VERBOSE:-false}
       - LISTEN_ADDR=:8545
       - PRIMARY_BACKEND=http://arbitrum-one-archive:8545
       - SUMMARY_INTERVAL=60

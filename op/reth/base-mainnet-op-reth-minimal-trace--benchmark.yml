@@ -15,16 +15,16 @@
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:op/reth/base-mainnet-op-reth-pruned-trace--benchmark.yml
+# COMPOSE_FILE=base.yml:rpc.yml:op/reth/base-mainnet-op-reth-minimal-trace--benchmark.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/base-mainnet \
+# curl -X POST https://${IP}.traefik.me/base-mainnet-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  base-mainnet:
+  base-mainnet-minimal:
     image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_MAINNET_RETH_VERSION:-v1.3.12}
     sysctls:
       # TCP Performance
@@ -42,8 +42,8 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 14759:14759
-      - 14759:14759/udp
+      - 11240:11240
+      - 11240:11240/udp
     expose:
       - 8545
       - 8551
@@ -52,11 +52,10 @@ services:
       - --chain=base
       - --datadir=/root/.local/share/reth
       - --engine.cross-block-cache-size=${BASE_MAINNET_RETH_STATE_CACHE:-4096}
-      - --full
       - --max-inbound-peers=50
       - --max-outbound-peers=50
       - --nat=extip:${IP}
-      - --port=14759
+      - --port=11240
       - --rollup.sequencer-http=https://mainnet-sequencer.base.org
       - --rpc-cache.max-blocks=10000
       - --rpc-cache.max-concurrent-db-requests=2048
@@ -81,12 +80,12 @@ services:
     networks:
       - chains
     volumes:
-      - ${BASE_MAINNET_OP_RETH_PRUNED_TRACE_DATA:-base-mainnet-op-reth-pruned-trace}:/root/.local/share/reth
+      - ${BASE_MAINNET_OP_RETH_MINIMAL_TRACE_DATA:-base-mainnet-op-reth-minimal-trace}:/root/.local/share/reth
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     shm_size: 2gb
 
-  base-mainnet-benchmark:
+  base-mainnet-minimal-benchmark:
     build:
       context: ./benchmark-proxy
       dockerfile: Dockerfile
@@ -95,28 +94,28 @@ services:
     environment:
       - ENABLE_DETAILED_LOGS=${BENCHMARK_PROXY_VERBOSE:-false}
       - LISTEN_ADDR=:8545
-      - PRIMARY_BACKEND=http://base-mainnet:8545
+      - PRIMARY_BACKEND=http://base-mainnet-minimal:8545
       - SUMMARY_INTERVAL=60
     restart: unless-stopped
     depends_on:
-      - base-mainnet
+      - base-mainnet-minimal
     networks:
       - chains
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.base-mainnet-op-reth-pruned-trace-stripprefix.stripprefix.prefixes=/base-mainnet
-      - traefik.http.services.base-mainnet-op-reth-pruned-trace.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-pruned-trace.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/base-mainnet`) || Path(`/base-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.base-mainnet-op-reth-pruned-trace.rule=Path(`/base-mainnet`) || Path(`/base-mainnet/`)}
-      - traefik.http.routers.base-mainnet-op-reth-pruned-trace.middlewares=base-mainnet-op-reth-pruned-trace-stripprefix, ipallowlist
+      - traefik.http.middlewares.base-mainnet-op-reth-minimal-trace-stripprefix.stripprefix.prefixes=/base-mainnet-minimal
+      - traefik.http.services.base-mainnet-op-reth-minimal-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-minimal-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-minimal-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-reth-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/base-mainnet-minimal`) || Path(`/base-mainnet-minimal/`))}
+      - ${NO_SSL:+traefik.http.routers.base-mainnet-op-reth-minimal-trace.rule=Path(`/base-mainnet-minimal`) || Path(`/base-mainnet-minimal/`)}
+      - traefik.http.routers.base-mainnet-op-reth-minimal-trace.middlewares=base-mainnet-op-reth-minimal-trace-stripprefix, ipallowlist
 
-  base-mainnet-node:
+  base-mainnet-minimal-node:
     image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
-      - 19759:19759
-      - 19759:19759/udp
+      - 16240:16240
+      - 16240:16240/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -124,7 +123,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://base-mainnet:8551
+      - OP_NODE_L2_ENGINE_RPC=http://base-mainnet-minimal:8551
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
@@ -132,8 +131,8 @@ services:
       - OP_NODE_NETWORK=base-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=19759
-      - OP_NODE_P2P_LISTEN_UDP_PORT=19759
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16240
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16240
       - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
@@ -143,14 +142,14 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - base-mainnet
+      - base-mainnet-minimal
     networks:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
 
 volumes:
-  base-mainnet-op-reth-pruned-trace:
+  base-mainnet-op-reth-minimal-trace:
 
 x-upstreams:
   - id: $${ID}
