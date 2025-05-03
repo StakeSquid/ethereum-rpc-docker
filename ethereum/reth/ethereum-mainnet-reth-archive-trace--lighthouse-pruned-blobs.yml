@@ -125,7 +125,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${ETHEREUM_MAINNET_RETH_ARCHIVE_TRACE__LIGHTHOUSE__PRUNED_BLOBS_DATA:-ethereum-mainnet-reth-archive-trace_lighthouse--pruned-blobs}:/data
+      - ${ETHEREUM_MAINNET_RETH_ARCHIVE_TRACE__LIGHTHOUSE_PRUNED_BLOBS_DATA:-ethereum-mainnet-reth-archive-trace_lighthouse-pruned-blobs}:/data
       - .jwtsecret:/jwtsecret:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -141,7 +141,7 @@ services:
 
 volumes:
   ethereum-mainnet-reth-archive-trace:
-  ethereum-mainnet-reth-archive-trace_lighthouse--pruned-blobs:
+  ethereum-mainnet-reth-archive-trace_lighthouse-pruned-blobs:
 
 x-upstreams:
   - id: $${ID}
