@@ -81,6 +81,7 @@ services:
       - chains
     volumes:
       - ${OP_MAINNET_OP_RETH_MINIMAL_TRACE_DATA:-op-mainnet-op-reth-minimal-trace}:/root/.local/share/reth
+      - ./op/op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -129,6 +130,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
 volumes:

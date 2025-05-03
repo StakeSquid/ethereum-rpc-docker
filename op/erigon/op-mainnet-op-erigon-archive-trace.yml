@@ -60,6 +60,7 @@ services:
       - --p2p.allowed-ports=32509
       - --p2p.allowed-ports=37509
       - --port=12509
+      - --rollup.historicalrpc="http://op-mainnet-archive-classic:8545"
       - --rollup.sequencerhttp=https://mainnet-sequencer.optimism.io
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
@@ -75,10 +76,13 @@ services:
       - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
+    depends_on:
+      - op-mainnet-archive-classic
     networks:
       - chains
     volumes:
       - ${OP_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-op-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
+      - ./op/op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     labels:
@@ -127,9 +131,67 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
 
+  op-mainnet-archive-classic:
+    image: ${OP_L2GETH_IMAGE:-ethereumoptimism/l2geth}:${OP_MAINNET_L2GETH_VERSION:-0.5.31}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12952:12952
+      - 12952:12952/udp
+    expose:
+      - 8545
+    env_file:
+      - ./op/op/mainnet/l2geth.env
+    environment:
+      - ROLLUP_BACKEND=l2
+      - SYNC_SOURCE=l2
+    command:
+      - --datadir=/geth
+      - --gcmode=archive
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,admin,debug
+      - --http.port=8545
+      - --http.vhosts=*
+      - --maxpeers=50
+      - --nat=extip:${IP}
+      - --port=12952
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --syncmode=full
+      - --vmodule=eth/*=5,miner=4,rpc=5,rollup=4,consensus/clique=1
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,admin,debug
+      - --ws.origins=*
+      - --ws.port=8545
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${OP_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-op-mainnet-l2geth-archive-leveldb-hash}:/geth
+      - ./op/op/mainnet:/config
+      - /slowdisk:/slowdisk
+    labels: []
+
 volumes:
+  op-mainnet-l2geth-archive-leveldb-hash:
   op-mainnet-op-erigon-archive-trace:
 
 x-upstreams:
