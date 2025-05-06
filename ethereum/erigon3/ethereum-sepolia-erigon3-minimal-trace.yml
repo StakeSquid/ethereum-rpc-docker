@@ -25,7 +25,7 @@
 
 services:
   ethereum-sepolia-minimal:
-    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_SEPOLIA_ERIGON3_VERSION:-v3.0.2}
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_SEPOLIA_ERIGON3_VERSION:-v3.0.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

@@ -96,7 +96,7 @@ services:
       - traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.middlewares=taiko-alethia-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   taiko-alethia-node:
-    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v0.43.1}
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v0.43.2}
     ports:
       - 15251:15251
       - 15251:15251/udp

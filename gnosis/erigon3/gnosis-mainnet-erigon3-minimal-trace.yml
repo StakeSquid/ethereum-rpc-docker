@@ -25,7 +25,7 @@
 
 services:
   gnosis-mainnet-minimal:
-    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.2}
+    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

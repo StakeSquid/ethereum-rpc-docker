@@ -25,7 +25,7 @@
 
 services:
   real-mainnet:
-    image: ${REAL_NITRO_IMAGE:-offchainlabs/nitro-node}:${REAL_MAINNET_NITRO_VERSION:-v3.5.5-90ee45c}
+    image: ${REAL_NITRO_IMAGE:-offchainlabs/nitro-node}:${REAL_MAINNET_NITRO_VERSION:-v3.6.0-fc07dd2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

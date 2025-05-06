@@ -105,6 +105,7 @@ services:
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
       - OP_NODE_L2_ENGINE_RPC=http://swell-mainnet-archive:8551
+      - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
