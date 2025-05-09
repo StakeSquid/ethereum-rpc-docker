@@ -35,7 +35,7 @@ env
 apk add curl
 if [ $? -ne 0 ]; then exit 1; fi
 
-if $BEACOND init ${MONIKER} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /root/.beacond/; then
+if $BEACOND init ${MONIKER}  --beacon-kit.chain-spec ${CHAIN_SPEC:-mainnet} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /root/.beacond/; then
     # Define variables
     CONFIG_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/config.toml"
     APP_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/app.toml"
