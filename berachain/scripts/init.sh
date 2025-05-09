@@ -35,7 +35,7 @@ env
 apk add curl
 if [ $? -ne 0 ]; then exit 1; fi
 
-if $BEACOND init ${MONIKER}  --beacon-kit.chain-spec ${CHAIN_SPEC:-mainnet} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /root/.beacond/; then
+if $BEACOND init ${MONIKER} --beacon-kit.chain-spec ${CHAIN_SPEC:-mainnet} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /root/.beacond/; then
     # Define variables
     CONFIG_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/config.toml"
     APP_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/app.toml"
@@ -106,6 +106,6 @@ fi
 # Execute beacond
 #exec $BEACOND start --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json --minimum-gas-prices 0atom "$@"
 
-exec $BEACOND start --home /root/.beacond $@
+exec $BEACOND start --beacon-kit.chain-spec ${CHAIN_SPEC:-mainnet} --home /root/.beacond $@
 # --beacon-kit.engine.jwt-secret-path $CONFIG_DIR/jwt.hex --beacon-kit.kzg.trusted-setup-path $CONFIG_DIR/kzg-trusted-setup.json --home /root/.beacond 
 #--minimum-gas-prices 0atom
