@@ -49,6 +49,7 @@ services:
       - 8551
     entrypoint: [op-reth, node]
     command:
+      - ${OP_MAINNET_RETH_DEBUG_TIP:+--debug.tip=$OP_MAINNET_RETH_DEBUG_TIP}
       - --chain=optimism
       - --datadir=/root/.local/share/reth
       - --engine.cross-block-cache-size=${OP_MAINNET_RETH_STATE_CACHE:-4096}

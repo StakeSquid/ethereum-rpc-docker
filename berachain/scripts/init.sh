@@ -106,6 +106,11 @@ fi
 # Execute beacond
 #exec $BEACOND start --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json --minimum-gas-prices 0atom "$@"
 
-exec $BEACOND start --beacon-kit.chain-spec ${CHAIN_SPEC:-mainnet} --home /root/.beacond $@
+
+if [ "$CHAIN_SPEC" = "testnet" ]; then
+    exec $BEACOND start --beacon-kit.chain-spec testnet --home /root/.beacond $@
+else
+    exec $BEACOND start --home /root/.beacond $@
+fi
 # --beacon-kit.engine.jwt-secret-path $CONFIG_DIR/jwt.hex --beacon-kit.kzg.trusted-setup-path $CONFIG_DIR/kzg-trusted-setup.json --home /root/.beacond 
 #--minimum-gas-prices 0atom

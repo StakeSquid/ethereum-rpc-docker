@@ -49,6 +49,7 @@ services:
       - 8551
     entrypoint: [reth, node]
     command:
+      - ${ETHEREUM_MAINNET_RETH_DEBUG_TIP:+--debug.tip=$ETHEREUM_MAINNET_RETH_DEBUG_TIP}
       - --chain=mainnet
       - --datadir=/root/.local/share/reth
       - --discovery.port=14563
