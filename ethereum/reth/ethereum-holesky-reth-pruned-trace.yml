@@ -47,9 +47,10 @@ services:
     expose:
       - 8545
       - 8551
+    environment:
+      - TIP=$ETHEREUM_HOLESKY_RETH_DEBUG_TIP
     entrypoint: [reth, node]
     command:
-      - ${ETHEREUM_HOLESKY_RETH_DEBUG_TIP:+--debug.tip=$ETHEREUM_HOLESKY_RETH_DEBUG_TIP}
       - --chain=holesky
       - --datadir=/root/.local/share/reth
       - --discovery.port=11849

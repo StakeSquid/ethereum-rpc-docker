@@ -47,9 +47,10 @@ services:
     expose:
       - 8545
       - 8551
+    environment:
+      - TIP=$BASE_MAINNET_RETH_DEBUG_TIP
     entrypoint: [op-reth, node]
     command:
-      - ${BASE_MAINNET_RETH_DEBUG_TIP:+--debug.tip=$BASE_MAINNET_RETH_DEBUG_TIP}
       - --chain=base
       - --datadir=/root/.local/share/reth
       - --engine.cross-block-cache-size=${BASE_MAINNET_RETH_STATE_CACHE:-4096}

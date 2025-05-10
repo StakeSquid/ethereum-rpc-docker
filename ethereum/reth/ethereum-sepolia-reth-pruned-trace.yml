@@ -47,9 +47,10 @@ services:
     expose:
       - 8545
       - 8551
+    environment:
+      - TIP=$ETHEREUM_SEPOLIA_RETH_DEBUG_TIP
     entrypoint: [reth, node]
     command:
-      - ${ETHEREUM_SEPOLIA_RETH_DEBUG_TIP:+--debug.tip=$ETHEREUM_SEPOLIA_RETH_DEBUG_TIP}
       - --chain=sepolia
       - --datadir=/root/.local/share/reth
       - --discovery.port=12150
