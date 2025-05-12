@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/linea-sepolia \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   linea-sepolia-client:
@@ -75,6 +80,7 @@ services:
       - ${LINEA_SEPOLIA_BESU_PRUNED_BONSAI_DATA:-linea-sepolia-besu-pruned-bonsai}:/opt/besu/database
       - ./linea/sepolia:/config
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
 
   linea-sepolia:
     image: nginx
@@ -91,6 +97,7 @@ services:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.linea-sepolia-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/linea-sepolia

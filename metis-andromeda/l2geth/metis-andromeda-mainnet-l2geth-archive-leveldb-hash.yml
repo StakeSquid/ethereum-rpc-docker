@@ -23,6 +23,11 @@
 # curl -X POST https://${IP}.traefik.me/metis-andromeda-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   metis-andromeda-mainnet-archive-client:
@@ -98,6 +103,7 @@ services:
     volumes:
       - ${METIS_ANDROMEDA_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-metis-andromeda-mainnet-l2geth-archive-leveldb-hash}:/root/.ethereum
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
 
   metis-andromeda-mainnet-archive:
     image: nginx
@@ -114,6 +120,7 @@ services:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/metis-andromeda-mainnet-archive
@@ -167,6 +174,7 @@ services:
     volumes:
       - ${METIS_ANDROMEDA_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH__DTL_DATA:-metis-andromeda-mainnet-l2geth-archive-leveldb-hash_dtl}:/data
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   metis-andromeda-mainnet-l2geth-archive-leveldb-hash:

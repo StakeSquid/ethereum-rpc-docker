@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/taiko-alethia-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   taiko-alethia-archive:
@@ -85,6 +90,7 @@ services:
       - ${TAIKO_ALETHIA_GETH_ARCHIVE_LEVELDB_HASH_DATA:-taiko-alethia-geth-archive-leveldb-hash}:/root/.ethereum
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.taiko-alethia-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/taiko-alethia-archive
@@ -119,6 +125,7 @@ services:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   taiko-alethia-geth-archive-leveldb-hash:

@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/rootstock-bamboo-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   rootstock-bamboo-archive-client:
@@ -55,6 +60,7 @@ services:
       - ./rootstock/bamboo/node.conf:/etc/rsk/node.conf
       - ./rootstock/bamboo:/config
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
 
   rootstock-bamboo-archive:
     image: nginx
@@ -71,6 +77,7 @@ services:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.rootstock-bamboo-rskj-archive-stripprefix.stripprefix.prefixes=/rootstock-bamboo-archive

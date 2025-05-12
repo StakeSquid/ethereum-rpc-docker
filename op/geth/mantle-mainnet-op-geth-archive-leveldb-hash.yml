@@ -24,6 +24,11 @@
 # curl -X POST https://${IP}.traefik.me/mantle-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   mantle-mainnet-archive:
@@ -83,6 +88,7 @@ services:
       - ./op/mantle/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.mantle-mainnet-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/mantle-mainnet-archive
@@ -136,6 +142,7 @@ services:
     volumes:
       - ./op/mantle/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   mantle-mainnet-op-geth-archive-leveldb-hash:

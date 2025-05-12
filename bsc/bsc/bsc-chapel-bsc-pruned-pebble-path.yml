@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/bsc-chapel \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   bsc-chapel:
@@ -77,6 +82,7 @@ services:
       - ${BSC_CHAPEL_BSC_PRUNED_PEBBLE_PATH_DATA:-bsc-chapel-bsc-pruned-pebble-path}:/bsc/.ethereum
       - ./bsc/chapel:/config
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.bsc-chapel-bsc-pruned-pebble-path-stripprefix.stripprefix.prefixes=/bsc-chapel

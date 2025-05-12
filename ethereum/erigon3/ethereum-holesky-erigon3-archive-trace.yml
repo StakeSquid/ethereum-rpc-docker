@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-holesky-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   ethereum-holesky-archive:
@@ -89,6 +94,7 @@ services:
     volumes:
       - ${ETHEREUM_HOLESKY_ERIGON3_ARCHIVE_TRACE_DATA:-ethereum-holesky-erigon3-archive-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-holesky-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-holesky-archive

@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-holesky \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   ethereum-holesky:
@@ -79,6 +84,7 @@ services:
       - ${ETHEREUM_HOLESKY_GETH_PRUNED_PEBBLE_PATH_DATA:-ethereum-holesky-geth-pruned-pebble-path}:/root/.ethereum
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-holesky-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-holesky
@@ -116,6 +122,7 @@ services:
     volumes:
       - ${ETHEREUM_HOLESKY_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-holesky-geth-pruned-pebble-path_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-holesky-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-holesky

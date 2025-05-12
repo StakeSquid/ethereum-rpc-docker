@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/linea-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   linea-mainnet-archive:
@@ -79,6 +84,7 @@ services:
       - ${LINEA_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-linea-mainnet-erigon3-archive-trace}:/root/.local/share/erigon
       - ./linea/mainnet:/config
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.linea-mainnet-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/linea-mainnet-archive

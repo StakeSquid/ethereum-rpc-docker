@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/polygon-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   polygon-mainnet:
@@ -78,6 +83,7 @@ services:
     volumes:
       - ${POLYGON_MAINNET_BOR_PRUNED_PEBBLE_PATH_DATA:-polygon-mainnet-bor-pruned-pebble-path}:/root.bor/
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.polygon-mainnet-bor-pruned-pebble-path-stripprefix.stripprefix.prefixes=/polygon-mainnet

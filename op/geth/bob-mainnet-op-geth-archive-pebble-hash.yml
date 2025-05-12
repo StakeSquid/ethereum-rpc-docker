@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/bob-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   bob-mainnet-archive:
@@ -84,6 +89,7 @@ services:
       - ./op/bob/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.bob-mainnet-op-geth-archive-pebble-hash-stripprefix.stripprefix.prefixes=/bob-mainnet-archive
@@ -132,6 +138,7 @@ services:
     volumes:
       - ./op/bob/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   bob-mainnet-op-geth-archive-pebble-hash:

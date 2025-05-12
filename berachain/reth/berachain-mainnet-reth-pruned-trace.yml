@@ -32,6 +32,11 @@
 # curl -X POST https://${IP}.traefik.me/berachain-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   berachain-mainnet:
@@ -102,6 +107,7 @@ services:
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
       - berachain-mainnet-reth-pruned-trace_config:/config
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.berachain-mainnet-reth-pruned-trace-stripprefix.stripprefix.prefixes=/berachain-mainnet
@@ -138,6 +144,7 @@ services:
       - ${BERACHAIN_MAINNET_RETH_PRUNED_TRACE__NODE_DATA:-berachain-mainnet-reth-pruned-trace_node}:/root/.beacond/data
       - .jwtsecret:/jwtsecret:ro
       - berachain-mainnet-reth-pruned-trace_config:/root/.beacond/config
+    logging: *logging-defaults
 
 volumes:
   berachain-mainnet-reth-pruned-trace:

@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/bsc-chapel-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   bsc-chapel-archive:
@@ -77,6 +82,7 @@ services:
       - ${BSC_CHAPEL_ERIGON3_ARCHIVE_TRACE_DATA:-bsc-chapel-erigon3-archive-trace}:/root/.local/share/erigon
       - ./bsc/chapel:/config
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.bsc-chapel-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/bsc-chapel-archive

@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/blast-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   blast-mainnet:
@@ -87,6 +92,7 @@ services:
       - ./op/blast/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.blast-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/blast-mainnet
@@ -137,6 +143,7 @@ services:
     volumes:
       - ./op/blast/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   blast-mainnet-op-geth-pruned-pebble-path:

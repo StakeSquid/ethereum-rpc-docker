@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/fantom-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   fantom-mainnet-archive:
@@ -80,6 +85,7 @@ services:
     volumes:
       - ${FANTOM_MAINNET_SONIC_ARCHIVE_DATA:-fantom-mainnet-sonic-archive}:/var/sonic
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.fantom-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/fantom-mainnet-archive

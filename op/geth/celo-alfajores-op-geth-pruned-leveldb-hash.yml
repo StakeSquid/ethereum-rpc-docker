@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/celo-alfajores \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   celo-alfajores:
@@ -91,6 +96,7 @@ services:
       - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.celo-alfajores-op-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-alfajores
@@ -149,6 +155,7 @@ services:
     volumes:
       - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
   celo-alfajores-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
@@ -167,6 +174,7 @@ services:
       - chains
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_PRUNED_LEVELDB_HASH__EIGENDA_DATA:-celo-alfajores-op-geth-pruned-leveldb-hash_eigenda}:/data
+    logging: *logging-defaults
 
   celo-alfajores-classic:
     image: ${CELO_GETH_IMAGE:-us.gcr.io/celo-org/geth}:${CELO_ALFAJORES_GETH_VERSION:-1.8.9}
@@ -214,6 +222,11 @@ services:
     volumes:
       - ${CELO_ALFAJORES_GETH_PRUNED_LEVELDB_HASH_DATA:-celo-alfajores-geth-pruned-leveldb-hash}:/root/.celo
       - /slowdisk:/slowdisk
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
     labels: []
 
 volumes:

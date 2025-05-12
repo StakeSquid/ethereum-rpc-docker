@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/celo-alfajores \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   celo-alfajores:
@@ -88,6 +93,7 @@ services:
       - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.celo-alfajores-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/celo-alfajores
@@ -146,6 +152,7 @@ services:
     volumes:
       - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
   celo-alfajores-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
@@ -164,6 +171,7 @@ services:
       - chains
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH__EIGENDA_DATA:-celo-alfajores-op-geth-pruned-pebble-path_eigenda}:/data
+    logging: *logging-defaults
 
 volumes:
   celo-alfajores-op-geth-pruned-pebble-path:

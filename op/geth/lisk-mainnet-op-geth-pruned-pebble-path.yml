@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/lisk-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   lisk-mainnet:
@@ -86,6 +91,7 @@ services:
       - ./op/lisk/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.lisk-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/lisk-mainnet
@@ -135,6 +141,7 @@ services:
     volumes:
       - ./op/lisk/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   lisk-mainnet-op-geth-pruned-pebble-path:

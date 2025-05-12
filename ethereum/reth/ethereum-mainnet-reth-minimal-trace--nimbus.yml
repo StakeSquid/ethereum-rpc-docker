@@ -25,6 +25,11 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-mainnet-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   ethereum-mainnet-minimal:
@@ -87,6 +92,7 @@ services:
       - ${ETHEREUM_MAINNET_RETH_MINIMAL_TRACE_DATA:-ethereum-mainnet-reth-minimal-trace}:/root/.local/share/reth
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal
@@ -124,6 +130,7 @@ services:
     volumes:
       - ${ETHEREUM_MAINNET_RETH_MINIMAL_TRACE__NIMBUS_DATA:-ethereum-mainnet-reth-minimal-trace_nimbus}:/root/.cache/nimbus/BeaconNode
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal

@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/polygon-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   polygon-mainnet-archive:
@@ -78,6 +83,7 @@ services:
     volumes:
       - ${POLYGON_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-polygon-mainnet-erigon3-archive-trace}:/root/.local/share/erigon
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.polygon-mainnet-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/polygon-mainnet-archive

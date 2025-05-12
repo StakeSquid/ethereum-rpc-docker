@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/base-mainnet-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   base-mainnet-minimal:
@@ -83,6 +88,7 @@ services:
       - ${BASE_MAINNET_OP_RETH_MINIMAL_TRACE_DATA:-base-mainnet-op-reth-minimal-trace}:/root/.local/share/reth
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     shm_size: 2gb
 
   base-mainnet-minimal-benchmark:
@@ -101,6 +107,7 @@ services:
       - base-mainnet-minimal
     networks:
       - chains
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.base-mainnet-op-reth-minimal-trace-stripprefix.stripprefix.prefixes=/base-mainnet-minimal
@@ -148,6 +155,7 @@ services:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   base-mainnet-op-reth-minimal-trace:

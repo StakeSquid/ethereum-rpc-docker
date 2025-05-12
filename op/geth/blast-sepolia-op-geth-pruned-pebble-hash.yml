@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/blast-sepolia \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   blast-sepolia:
@@ -86,6 +91,7 @@ services:
       - ./op/blast/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.blast-sepolia-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/blast-sepolia
@@ -137,6 +143,7 @@ services:
     volumes:
       - ./op/blast/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   blast-sepolia-op-geth-pruned-pebble-hash:

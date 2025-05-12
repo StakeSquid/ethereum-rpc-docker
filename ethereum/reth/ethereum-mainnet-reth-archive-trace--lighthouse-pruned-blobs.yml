@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   ethereum-mainnet-archive:
@@ -83,6 +88,7 @@ services:
       - ${ETHEREUM_MAINNET_RETH_ARCHIVE_TRACE_DATA:-ethereum-mainnet-reth-archive-trace}:/root/.local/share/reth
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-reth-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-archive
@@ -129,6 +135,7 @@ services:
       - .jwtsecret:/jwtsecret:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-reth-archive-trace-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-archive

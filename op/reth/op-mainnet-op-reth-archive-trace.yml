@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/op-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   op-mainnet-archive:
@@ -84,6 +89,7 @@ services:
       - ./op/op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.op-mainnet-op-reth-archive-trace-stripprefix.stripprefix.prefixes=/op-mainnet-archive
@@ -133,6 +139,7 @@ services:
     volumes:
       - ./op/op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   op-mainnet-op-reth-archive-trace:

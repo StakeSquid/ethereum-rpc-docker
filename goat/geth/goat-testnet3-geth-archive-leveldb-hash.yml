@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/goat-testnet3-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   goat-testnet3-archive:
@@ -79,6 +84,7 @@ services:
       - ./goat/testnet3:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.goat-testnet3-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/goat-testnet3-archive
@@ -110,6 +116,7 @@ services:
       - .jwtsecret:/jwtsecret:ro
       - goat-testnet3-geth-archive-leveldb-hash:/geth
       - goat-testnet3-geth-archive-leveldb-hash_node:/root/.goat
+    logging: *logging-defaults
 
 volumes:
   goat-testnet3-geth-archive-leveldb-hash:

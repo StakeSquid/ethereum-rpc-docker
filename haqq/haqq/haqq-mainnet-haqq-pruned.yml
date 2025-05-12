@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/haqq-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   haqq-mainnet:
@@ -54,6 +59,7 @@ services:
     volumes:
       - ${HAQQ_MAINNET_HAQQ_PRUNED_DATA:-haqq-mainnet-haqq-pruned}:/root/.haqqd
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.haqq-mainnet-haqq-pruned-stripprefix.stripprefix.prefixes=/haqq-mainnet

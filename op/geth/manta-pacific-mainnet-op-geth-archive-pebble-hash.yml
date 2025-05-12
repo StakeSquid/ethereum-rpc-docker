@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/manta-pacific-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   manta-pacific-mainnet-archive:
@@ -80,6 +85,7 @@ services:
       - ./op/manta-pacific/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.manta-pacific-mainnet-op-geth-archive-pebble-hash-stripprefix.stripprefix.prefixes=/manta-pacific-mainnet-archive
@@ -137,6 +143,7 @@ services:
     volumes:
       - ./op/manta-pacific/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   manta-pacific-mainnet-op-geth-archive-pebble-hash:

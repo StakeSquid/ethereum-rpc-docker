@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/alephzero-sepolia \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   alephzero-sepolia:
@@ -54,6 +59,7 @@ services:
       - --http.corsdomain=*
       - --http.port=8545
       - --http.vhosts=*
+      - --init.download-path=/tmp
       - --node.batch-poster.enable=false
       - --node.data-availability.enable=true
       - --node.data-availability.parent-chain-node-url=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
@@ -78,6 +84,7 @@ services:
       - ${ALEPHZERO_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_DATA:-alephzero-sepolia-nitro-pruned-pebble-path}:/root/.arbitrum
       - ./arb/alephzero/sepolia:/config
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.alephzero-sepolia-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/alephzero-sepolia

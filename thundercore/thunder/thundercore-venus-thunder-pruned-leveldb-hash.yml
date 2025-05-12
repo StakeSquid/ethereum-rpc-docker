@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/thundercore-venus \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   thundercore-venus:
@@ -57,6 +62,7 @@ services:
       - ${THUNDERCORE_VENUS_THUNDER_PRUNED_LEVELDB_HASH_DATA:-thundercore-venus-thunder-pruned-leveldb-hash}:/datadir
       - ./thundercore/venus:/config
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.thundercore-venus-thunder-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/thundercore-venus

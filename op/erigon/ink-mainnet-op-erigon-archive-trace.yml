@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/ink-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   ink-mainnet-archive:
@@ -81,6 +86,7 @@ services:
       - ${INK_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-ink-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ink-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/ink-mainnet-archive
@@ -129,6 +135,7 @@ services:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   ink-mainnet-op-erigon-archive-trace:

@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/arbitrum-nova \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   arbitrum-nova:
@@ -53,6 +58,7 @@ services:
       - --http.corsdomain=*
       - --http.port=8545
       - --http.vhosts=*
+      - --init.download-path=/tmp
       - --init.latest=pruned
       - --node.batch-poster.enable=false
       - --node.sequencer=false
@@ -72,6 +78,7 @@ services:
       - ${ARBITRUM_NOVA_NITRO_PRUNED_PEBBLE_HASH_DATA:-arbitrum-nova-nitro-pruned-pebble-hash}:/root/.arbitrum
       - ./tmp/arbitrum-nova:/tmp
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.arbitrum-nova-nitro-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/arbitrum-nova

@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/ronin-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   ronin-mainnet:
@@ -71,6 +76,7 @@ services:
     volumes:
       - ${RONIN_MAINNET_RONIN_PRUNED_PEBBLE_PATH_DATA:-ronin-mainnet-ronin-pruned-pebble-path}:/ronin
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ronin-mainnet-ronin-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ronin-mainnet

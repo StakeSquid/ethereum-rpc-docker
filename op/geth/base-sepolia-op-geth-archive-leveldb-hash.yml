@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/base-sepolia-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   base-sepolia-archive:
@@ -83,6 +88,7 @@ services:
       - ${BASE_SEPOLIA_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-base-sepolia-op-geth-archive-leveldb-hash}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.base-sepolia-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/base-sepolia-archive
@@ -131,6 +137,7 @@ services:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   base-sepolia-op-geth-archive-leveldb-hash:

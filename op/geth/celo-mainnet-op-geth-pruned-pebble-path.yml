@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/celo-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   celo-mainnet:
@@ -88,6 +93,7 @@ services:
       - ./op/celo/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.celo-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/celo-mainnet
@@ -147,6 +153,7 @@ services:
     volumes:
       - ./op/celo/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
   celo-mainnet-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_MAINNET_EIGENDA_PROXY_VERSION:-v1.6.4}
@@ -165,6 +172,7 @@ services:
       - chains
     volumes:
       - ${CELO_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH__EIGENDA_DATA:-celo-mainnet-op-geth-pruned-pebble-path_eigenda}:/data
+    logging: *logging-defaults
 
 volumes:
   celo-mainnet-op-geth-pruned-pebble-path:

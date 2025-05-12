@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/op-sepolia-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   op-sepolia-minimal:
@@ -83,6 +88,7 @@ services:
       - ${OP_SEPOLIA_OP_RETH_MINIMAL_TRACE_DATA:-op-sepolia-op-reth-minimal-trace}:/root/.local/share/reth
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.op-sepolia-op-reth-minimal-trace-stripprefix.stripprefix.prefixes=/op-sepolia-minimal
@@ -132,6 +138,7 @@ services:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   op-sepolia-op-reth-minimal-trace:

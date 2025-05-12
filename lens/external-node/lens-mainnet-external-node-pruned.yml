@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/lens-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   lens-mainnet-client:
@@ -84,6 +89,7 @@ services:
     volumes:
       - ${LENS_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-lens-mainnet-external-node-pruned}:/db
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
 
   lens-mainnet:
     image: nginx
@@ -100,6 +106,7 @@ services:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.lens-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/lens-mainnet

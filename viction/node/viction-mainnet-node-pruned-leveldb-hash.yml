@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/viction-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   viction-mainnet-client:
@@ -63,6 +68,7 @@ services:
       - ${VICTION_MAINNET_NODE_PRUNED_LEVELDB_HASH_DATA:-viction-mainnet-node-pruned-leveldb-hash}:/tomochain/data
       - ./viction/mainnet:/config
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
 
   viction-mainnet:
     image: nginx
@@ -79,6 +85,7 @@ services:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.viction-mainnet-node-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet

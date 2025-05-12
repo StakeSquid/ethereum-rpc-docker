@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/fantom-testnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   fantom-testnet-archive:
@@ -82,6 +87,7 @@ services:
     volumes:
       - ${FANTOM_TESTNET_OPERA_ARCHIVE_TRACE_DATA:-fantom-testnet-opera-archive-trace}:/datadir
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.fantom-testnet-opera-archive-trace-stripprefix.stripprefix.prefixes=/fantom-testnet-archive

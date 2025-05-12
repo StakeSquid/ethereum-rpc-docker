@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/celo-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   celo-mainnet:
@@ -70,6 +75,7 @@ services:
     volumes:
       - ${CELO_MAINNET_GETH_PRUNED_LEVELDB_HASH_DATA:-celo-mainnet-geth-pruned-leveldb-hash}:/root/.celo
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.celo-mainnet-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-mainnet

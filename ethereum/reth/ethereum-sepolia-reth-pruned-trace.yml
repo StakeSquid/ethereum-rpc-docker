@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-sepolia \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   ethereum-sepolia:
@@ -84,6 +89,7 @@ services:
       - ${ETHEREUM_SEPOLIA_RETH_PRUNED_TRACE_DATA:-ethereum-sepolia-reth-pruned-trace}:/root/.local/share/reth
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-sepolia-reth-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia
@@ -122,6 +128,7 @@ services:
     volumes:
       - ${ETHEREUM_SEPOLIA_RETH_PRUNED_TRACE__PRYSM_DATA:-ethereum-sepolia-reth-pruned-trace_prysm}:/data
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-sepolia-reth-pruned-trace-node-stripprefix.stripprefix.prefixes=/ethereum-sepolia

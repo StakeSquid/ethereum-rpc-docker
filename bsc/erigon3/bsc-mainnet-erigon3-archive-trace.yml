@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/bsc-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   bsc-mainnet-archive:
@@ -77,6 +82,7 @@ services:
       - ${BSC_MAINNET_ERIGON3_ARCHIVE_TRACE_DATA:-bsc-mainnet-erigon3-archive-trace}:/root/.local/share/erigon
       - ./bsc/mainnet:/config
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.bsc-mainnet-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/bsc-mainnet-archive

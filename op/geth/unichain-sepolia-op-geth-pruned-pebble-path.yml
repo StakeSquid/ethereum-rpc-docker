@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/unichain-sepolia \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   unichain-sepolia:
@@ -83,6 +88,7 @@ services:
       - ${UNICHAIN_SEPOLIA_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-unichain-sepolia-op-geth-pruned-pebble-path}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.unichain-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/unichain-sepolia
@@ -131,6 +137,7 @@ services:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   unichain-sepolia-op-geth-pruned-pebble-path:

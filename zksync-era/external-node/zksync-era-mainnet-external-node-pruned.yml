@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/zksync-era-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   zksync-era-mainnet-client:
@@ -75,6 +80,7 @@ services:
     volumes:
       - ${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-zksync-era-mainnet-external-node-pruned}:/db
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
 
   zksync-era-mainnet:
     image: nginx
@@ -91,6 +97,7 @@ services:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.zksync-era-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/zksync-era-mainnet

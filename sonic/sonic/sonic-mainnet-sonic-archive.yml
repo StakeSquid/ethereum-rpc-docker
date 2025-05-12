@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/sonic-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   sonic-mainnet-archive:
@@ -79,6 +84,7 @@ services:
     volumes:
       - ${SONIC_MAINNET_SONIC_ARCHIVE_DATA:-sonic-mainnet-sonic-archive}:/var/sonic
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.sonic-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/sonic-mainnet-archive

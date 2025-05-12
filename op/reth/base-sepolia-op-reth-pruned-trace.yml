@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/base-sepolia \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   base-sepolia:
@@ -84,6 +89,7 @@ services:
       - ${BASE_SEPOLIA_OP_RETH_PRUNED_TRACE_DATA:-base-sepolia-op-reth-pruned-trace}:/root/.local/share/reth
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.base-sepolia-op-reth-pruned-trace-stripprefix.stripprefix.prefixes=/base-sepolia
@@ -133,6 +139,7 @@ services:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   base-sepolia-op-reth-pruned-trace:

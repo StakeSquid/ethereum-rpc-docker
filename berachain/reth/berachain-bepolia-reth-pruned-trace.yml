@@ -32,6 +32,11 @@
 # curl -X POST https://${IP}.traefik.me/berachain-bepolia \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   berachain-bepolia:
@@ -102,6 +107,7 @@ services:
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
       - berachain-bepolia-reth-pruned-trace_config:/config
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.berachain-bepolia-reth-pruned-trace-stripprefix.stripprefix.prefixes=/berachain-bepolia
@@ -140,6 +146,7 @@ services:
       - ${BERACHAIN_BEPOLIA_RETH_PRUNED_TRACE__NODE_DATA:-berachain-bepolia-reth-pruned-trace_node}:/root/.beacond/data
       - .jwtsecret:/jwtsecret:ro
       - berachain-bepolia-reth-pruned-trace_config:/root/.beacond/config
+    logging: *logging-defaults
 
 volumes:
   berachain-bepolia-reth-pruned-trace:

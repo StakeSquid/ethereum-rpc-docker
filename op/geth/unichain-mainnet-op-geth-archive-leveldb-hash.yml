@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/unichain-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   unichain-mainnet-archive:
@@ -83,6 +88,7 @@ services:
       - ${UNICHAIN_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-unichain-mainnet-op-geth-archive-leveldb-hash}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.unichain-mainnet-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/unichain-mainnet-archive
@@ -130,6 +136,7 @@ services:
       - chains
     volumes:
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   unichain-mainnet-op-geth-archive-leveldb-hash:

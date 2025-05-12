@@ -25,6 +25,11 @@
 # curl -X POST https://${IP}.traefik.me/cronos-zkevm-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   cronos-zkevm-mainnet-client:
@@ -79,6 +84,7 @@ services:
     volumes:
       - ${CRONOS_ZKEVM_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-cronos-zkevm-mainnet-external-node-pruned}:/db
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
 
   cronos-zkevm-mainnet:
     image: nginx
@@ -95,6 +101,7 @@ services:
       - chains
     volumes:
       - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.cronos-zkevm-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/cronos-zkevm-mainnet

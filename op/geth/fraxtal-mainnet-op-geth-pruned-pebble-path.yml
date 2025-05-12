@@ -22,6 +22,11 @@
 # curl -X POST https://${IP}.traefik.me/fraxtal-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
 
 services:
   fraxtal-mainnet:
@@ -90,6 +95,7 @@ services:
       - ./op/fraxtal/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
+    logging: *logging-defaults
     labels:
       - traefik.enable=true
       - traefik.http.middlewares.fraxtal-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/fraxtal-mainnet
@@ -140,6 +146,7 @@ services:
     volumes:
       - ./op/fraxtal/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
 
 volumes:
   fraxtal-mainnet-op-geth-pruned-pebble-path:
