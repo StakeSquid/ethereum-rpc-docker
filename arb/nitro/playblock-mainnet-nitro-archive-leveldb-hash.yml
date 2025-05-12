@@ -25,7 +25,7 @@
 
 services:
   playblock-mainnet-archive:
-    image: ${PLAYBLOCK_NITRO_IMAGE:-offchainlabs/nitro-node}:${PLAYBLOCK_MAINNET_NITRO_VERSION:-v3.6.0-fc07dd2}
+    image: ${PLAYBLOCK_NITRO_IMAGE:-offchainlabs/nitro-node}:${PLAYBLOCK_MAINNET_NITRO_VERSION:-v3.6.2-5b41a2d}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

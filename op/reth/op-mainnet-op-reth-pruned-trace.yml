@@ -47,8 +47,6 @@ services:
     expose:
       - 8545
       - 8551
-    environment:
-      - TIP=$OP_MAINNET_RETH_DEBUG_TIP
     entrypoint: [op-reth, node]
     command:
       - --chain=optimism

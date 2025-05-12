@@ -47,8 +47,6 @@ services:
     expose:
       - 8545
       - 8551
-    environment:
-      - TIP=$ETHEREUM_HOLESKY_RETH_DEBUG_TIP
     entrypoint: [reth, node]
     command:
       - --chain=holesky
