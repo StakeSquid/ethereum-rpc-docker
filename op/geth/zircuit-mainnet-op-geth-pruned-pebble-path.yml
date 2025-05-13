@@ -64,11 +64,11 @@ services:
       - --maxpeers=50
       - --network=mainnet
       - --nodiscover
-      - --nodiscover
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
       - --syncmode=full
+      - --zktrie-block=4
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,debug,admin,txpool,engine
@@ -129,6 +129,10 @@ services:
       - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SEQUENCER_ENABLED=false
+      - OP_NODE_SEQUENCER_L1_CONFS=0
+      - OP_NODE_SEQUENCER_MAX_SAFE_LAG=0
+      - OP_NODE_SEQUENCER_STOPPED=false
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
       - OP_NODE_SYNCMODE=consensus-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
