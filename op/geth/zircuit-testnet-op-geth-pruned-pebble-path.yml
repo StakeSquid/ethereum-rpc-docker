@@ -87,6 +87,7 @@ services:
       - chains
     volumes:
       - ${ZIRCUIT_TESTNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-zircuit-testnet-op-geth-pruned-pebble-path}:/data
+      - ./op/zircuit/testnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -142,6 +143,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/zircuit/testnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
 

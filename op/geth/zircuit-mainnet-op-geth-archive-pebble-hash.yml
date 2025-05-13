@@ -88,6 +88,7 @@ services:
       - chains
     volumes:
       - ${ZIRCUIT_MAINNET_OP_GETH_ARCHIVE_PEBBLE_HASH_DATA:-zircuit-mainnet-op-geth-archive-pebble-hash}:/data
+      - ./op/zircuit/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -142,6 +143,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/zircuit/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
 

@@ -87,6 +87,7 @@ services:
       - chains
     volumes:
       - ${ZIRCUIT_GARFIELD_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-zircuit-garfield-op-geth-pruned-pebble-path}:/data
+      - ./op/zircuit/garfield:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -141,6 +142,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/zircuit/garfield:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
 
