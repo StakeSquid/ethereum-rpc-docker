@@ -54,18 +54,20 @@ services:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://proxyd-ingress-us.testnet.zircuit.com/?token=Drpc6dqvgakKRmtx4EVJxA89AxCk7wxB4dZAdDrgk
       - GETH_TXPOOL_GLOBALQUEUE=1024
-    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --circuit-capacity-check=false
       - --datadir=/data
       - --db.engine=pebble
       - --gcmode=archive
       - --maxpeers=50
+      - --network=testnet
       - --nodiscover
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
       - --syncmode=full
+      - --zktrie-block=4
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,debug,admin,txpool,engine
