@@ -48,13 +48,13 @@ services:
     ports:
       - 12990:12990
       - 12990:12990/udp
-      - 72990-73010:72990-73010
+      - 62990-63010:62990-63010
     expose:
       - 8899:8899
     entrypoint: [sh, -c, exec firesol start reader-node --reader-node-arguments "poller 0 $@", _]
     command:
       - --block-verification-method=unified-scheduler
-      - --dynamic-port-range=72990-73010
+      - --dynamic-port-range=62990-63010
       - --entrypoint=entrypoint.mainnet-beta.solana.com:8001
       - --entrypoint=entrypoint2.mainnet-beta.solana.com:8001
       - --entrypoint=entrypoint3.mainnet-beta.solana.com:8001

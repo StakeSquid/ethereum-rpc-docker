@@ -48,13 +48,13 @@ services:
     ports:
       - 10369:10369
       - 10369:10369/udp
-      - 70369-70389:70369-70389
+      - 60369-60389:60369-60389
     expose:
       - 8899:8899
     entrypoint: [sh, -c, exec firesol start reader-node --reader-node-arguments "poller 0 $@", _]
     command:
       - --block-verification-method=unified-scheduler
-      - --dynamic-port-range=70369-70389
+      - --dynamic-port-range=60369-60389
       - --entrypoint=entrypoint.testnet.solana.com:8001
       - --entrypoint=entrypoint2.testnet.solana.com:8001
       - --entrypoint=entrypoint3.testnet.solana.com:8001
