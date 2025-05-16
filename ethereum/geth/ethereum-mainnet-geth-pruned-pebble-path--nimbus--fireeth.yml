@@ -1,0 +1,242 @@
+---
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/geth/ethereum-mainnet-geth-pruned-pebble-path--nimbus--fireeth.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/ethereum-mainnet \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  ethereum-mainnet:
+    image: ${ETHEREUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ETHEREUM_MAINNET_FIREETH_VERSION:-}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12023:12023
+      - 12023:12023/udp
+    expose:
+      - 8545
+      - 8551
+      - 10010
+    entrypoint: [sh, -c, exec fireeth start reader-node --reader-node-arguments "$*", _]
+    command:
+      - --datadir=/root/.ethereum
+      - --db.engine=pebble
+      - --gcmode=full
+      - --mainnet
+      - --maxpeers=50
+      - --nat=extip:${IP}
+      - --port=12023
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=path
+      - --syncmode=full
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_MAINNET_GETH_PRUNED_PEBBLE_PATH_DATA:-ethereum-mainnet-geth-pruned-pebble-path}:/root/.ethereum
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-mainnet-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-mainnet
+      - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet`) || Path(`/ethereum-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.rule=Path(`/ethereum-mainnet`) || Path(`/ethereum-mainnet/`)}
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.middlewares=ethereum-mainnet-geth-pruned-pebble-path-stripprefix, ipallowlist
+
+  ethereum-mainnet-firehose:
+    image: ${ETHEREUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ETHEREUM_MAINNET_FIREETH_VERSION:-}
+    expose:
+      - 10015
+      - 10014
+    environment:
+      - ${ETHEREUM_MAINNET_FIREETH_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
+    entrypoint: [sh, -c, exec fireeth start firehose index-builder relayer merger $@, _]
+    command:
+      - --relayer-source=http://ethereum-mainnet:10010
+    restart: unless-stopped
+    depends_on:
+      - ethereum-mainnet
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_MAINNET_FIREETH_DATA:-ethereum-mainnet-fireeth}:/firehose-data
+    logging: *logging-defaults
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path-firehose.loadbalancer.server.scheme=h2c
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-firehose.service=ethereum-mainnet-geth-pruned-pebble-path-firehose
+      - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path-firehose.loadbalancer.server.port=10015
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-firehose.entrypoints=grpc
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-firehose.tls.certresolver=myresolver}
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-firehose.rule=Host(`ethereum-mainnet-firehose.${DOMAIN}`)
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-firehose.middlewares=ipallowlist
+
+  ethereum-mainnet-events:
+    image: ${ETHEREUM_FIREETH_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_FIREETH_VERSION:-v1.15.7}
+    expose:
+      - 10016
+    entrypoint: [sh, -c, exec fireeth start substreams-tier-1 substreams-tier-2 $@, _]
+    command:
+      - --common-live-blocks-addr=http://ethereum-mainnet-firehose:10014
+      - --substreams-rpc-endpoints=${ETHEREUM_MAINNET_FIREETH_ARCHIVE_RPC}
+    restart: unless-stopped
+    depends_on:
+      - ethereum-mainnet
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_MAINNET_FIREETH_DATA:-ethereum-mainnet-fireeth}:/firehose-data
+    logging: *logging-defaults
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path-events.loadbalancer.server.scheme=h2c
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-events.service=ethereum-mainnet-geth-pruned-pebble-path-events
+      - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path-events.loadbalancer.server.port=10016
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-events.entrypoints=grpc
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-events.tls.certresolver=myresolver}
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-events.rule=Host(`ethereum-mainnet-events.${DOMAIN}`)
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-events.middlewares=ipallowlist
+
+  ethereum-mainnet-node:
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-amd64-v25.4.1}
+    user: root
+    ports:
+      - 17023:17023
+      - 17023:17023/udp
+    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=mainnet --trusted-node-url=https://mainnet.beaconstate.info --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
+    command:
+      - --history=prune
+      - --jwt-secret=/jwtsecret
+      - --nat=extip:${IP}
+      - --network=mainnet
+      - --rest
+      - --rest-address=0.0.0.0
+      - --rest-port=3500
+      - --tcp-port=17023
+      - --udp-port=17023
+      - --web3-url=http://ethereum-mainnet:8551
+    restart: unless-stopped
+    depends_on:
+      - ethereum-mainnet
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_MAINNET_GETH_PRUNED_PEBBLE_PATH__NIMBUS_DATA:-ethereum-mainnet-geth-pruned-pebble-path_nimbus}:/root/.cache/nimbus/BeaconNode
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-mainnet-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet
+      - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.rule=PathPrefix(`/ethereum-mainnet/eth`)}
+      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.middlewares=ethereum-mainnet-geth-pruned-pebble-path-node-stripprefix, ipallowlist
+
+volumes:
+  ethereum-mainnet-geth-pruned-pebble-path:
+  ethereum-mainnet-geth-pruned-pebble-path_nimbus:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: ethereum
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+        # not compatible with path state scheme
+        - name: debug_traceBlockByHash
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+...
