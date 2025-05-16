@@ -100,7 +100,7 @@ services:
     entrypoint: [sh, -c, exec fireeth start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
-      - --relayer-source=http://arbitrum-one:10010
+      - --relayer-source=http://arbitrum-one:14317
     restart: unless-stopped
     depends_on:
       - arbitrum-one

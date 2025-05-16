@@ -15,11 +15,11 @@
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:op/geth/base-mainnet-op-geth-pruned-pebble-path--fireeth.yml
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/unichain-mainnet-op-geth-pruned-pebble-path--fireeth.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/base-mainnet \
+# curl -X POST https://${IP}.traefik.me/unichain-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,8 +29,8 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  base-mainnet:
-    image: ${BASE_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BASE_MAINNET_FIREETH_VERSION:-v2.11.9-optimism-v1.101503.4-op-node.v1.13.2}
+  unichain-mainnet:
+    image: ${UNICHAIN_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${UNICHAIN_MAINNET_FIREETH_VERSION:-v2.11.9-optimism-v1.101503.4-op-node.v1.13.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -46,16 +46,16 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 11422:11422
-      - 11422:11422/udp
+      - 10954:10954
+      - 10954:10954/udp
     expose:
       - 8545
       - 8551
       - 10010
     environment:
-      - GETH_OP_NETWORK=base-mainnet
+      - GETH_OP_NETWORK=unichain-mainnet
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
-      - GETH_ROLLUP_SEQUENCERHTTP=https://mainnet-sequencer.base.org
+      - GETH_ROLLUP_SEQUENCERHTTP=https://mainnet.unichain.org
     entrypoint: [sh, -c, exec fireeth start reader-node --reader-node-arguments "$*", _]
     command:
       - --datadir=/data
@@ -63,7 +63,7 @@ services:
       - --gcmode=full
       - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=11422
+      - --port=10954
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
@@ -86,81 +86,81 @@ services:
     networks:
       - chains
     volumes:
-      - ${BASE_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-base-mainnet-op-geth-pruned-pebble-path}:/data
+      - ${UNICHAIN_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-unichain-mainnet-op-geth-pruned-pebble-path}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.base-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/base-mainnet
-      - traefik.http.services.base-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/base-mainnet`) || Path(`/base-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path.rule=Path(`/base-mainnet`) || Path(`/base-mainnet/`)}
-      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path.middlewares=base-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
+      - traefik.http.middlewares.unichain-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/unichain-mainnet
+      - traefik.http.services.unichain-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/unichain-mainnet`) || Path(`/unichain-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.rule=Path(`/unichain-mainnet`) || Path(`/unichain-mainnet/`)}
+      - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.middlewares=unichain-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
-  base-mainnet-firehose:
-    image: ${BASE_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BASE_MAINNET_FIREETH_VERSION:-v2.11.9-optimism-v1.101503.4-op-node.v1.13.2}
+  unichain-mainnet-firehose:
+    image: ${UNICHAIN_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${UNICHAIN_MAINNET_FIREETH_VERSION:-v2.11.9-optimism-v1.101503.4-op-node.v1.13.2}
     expose:
       - 10015
       - 10014
     environment:
-      - ${BASE_MAINNET_FIREETH_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
+      - ${UNICHAIN_MAINNET_FIREETH_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
     entrypoint: [sh, -c, exec fireeth start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
-      - --relayer-source=http://base-mainnet:11422
+      - --relayer-source=http://unichain-mainnet:10954
     restart: unless-stopped
     depends_on:
-      - base-mainnet
+      - unichain-mainnet
     networks:
       - chains
     volumes:
-      - ${BASE_MAINNET_FIREETH_DATA:-base-mainnet-fireeth}:/firehose-data
+      - ${UNICHAIN_MAINNET_FIREETH_DATA:-unichain-mainnet-fireeth}:/firehose-data
     logging: *logging-defaults
     labels:
       - traefik.enable=true
-      - traefik.http.services.base-mainnet-op-geth-pruned-pebble-path-firehose.loadbalancer.server.scheme=h2c
-      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-firehose.service=base-mainnet-op-geth-pruned-pebble-path-firehose
-      - traefik.http.services.base-mainnet-op-geth-pruned-pebble-path-firehose.loadbalancer.server.port=10015
-      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-firehose.entrypoints=grpc
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-firehose.tls.certresolver=myresolver}
-      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-firehose.rule=Host(`base-mainnet-firehose.${DOMAIN}`)
-      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-firehose.middlewares=ipallowlist
+      - traefik.http.services.unichain-mainnet-op-geth-pruned-pebble-path-firehose.loadbalancer.server.scheme=h2c
+      - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-firehose.service=unichain-mainnet-op-geth-pruned-pebble-path-firehose
+      - traefik.http.services.unichain-mainnet-op-geth-pruned-pebble-path-firehose.loadbalancer.server.port=10015
+      - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-firehose.entrypoints=grpc
+      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-firehose.tls.certresolver=myresolver}
+      - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-firehose.rule=Host(`unichain-mainnet-firehose.${DOMAIN}`)
+      - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-firehose.middlewares=ipallowlist
 
-  base-mainnet-events:
-    image: ${BASE_FIREETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${BASE_MAINNET_FIREETH_VERSION:-v1.101503.4}
+  unichain-mainnet-events:
+    image: ${UNICHAIN_FIREETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${UNICHAIN_MAINNET_FIREETH_VERSION:-v1.101503.4}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth start substreams-tier-1 substreams-tier-2 $@, _]
     command:
-      - --common-live-blocks-addr=http://base-mainnet-firehose:10014
+      - --common-live-blocks-addr=http://unichain-mainnet-firehose:10014
       - --log-to-file=false
-      - --substreams-rpc-endpoints=${BASE_MAINNET_FIREETH_ARCHIVE_RPC}
+      - --substreams-rpc-endpoints=${UNICHAIN_MAINNET_FIREETH_ARCHIVE_RPC}
     restart: unless-stopped
     depends_on:
-      - base-mainnet
+      - unichain-mainnet
     networks:
       - chains
     volumes:
-      - ${BASE_MAINNET_FIREETH_DATA:-base-mainnet-fireeth}:/firehose-data
+      - ${UNICHAIN_MAINNET_FIREETH_DATA:-unichain-mainnet-fireeth}:/firehose-data
     logging: *logging-defaults
     labels:
       - traefik.enable=true
-      - traefik.http.services.base-mainnet-op-geth-pruned-pebble-path-events.loadbalancer.server.scheme=h2c
-      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-events.service=base-mainnet-op-geth-pruned-pebble-path-events
-      - traefik.http.services.base-mainnet-op-geth-pruned-pebble-path-events.loadbalancer.server.port=10016
-      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-events.entrypoints=grpc
-      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-events.tls.certresolver=myresolver}
-      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-events.rule=Host(`base-mainnet-events.${DOMAIN}`)
-      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-events.middlewares=ipallowlist
+      - traefik.http.services.unichain-mainnet-op-geth-pruned-pebble-path-events.loadbalancer.server.scheme=h2c
+      - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-events.service=unichain-mainnet-op-geth-pruned-pebble-path-events
+      - traefik.http.services.unichain-mainnet-op-geth-pruned-pebble-path-events.loadbalancer.server.port=10016
+      - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-events.entrypoints=grpc
+      - ${NO_SSL:-traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-events.tls.certresolver=myresolver}
+      - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-events.rule=Host(`unichain-mainnet-events.${DOMAIN}`)
+      - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-events.middlewares=ipallowlist
 
-  base-mainnet-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.13.2}
+  unichain-mainnet-node:
+    image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
-      - 16422:16422
-      - 16422:16422/udp
+      - 15954:15954
+      - 15954:15954/udp
     environment:
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
@@ -168,17 +168,17 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://base-mainnet:8551
+      - OP_NODE_L2_ENGINE_RPC=http://unichain-mainnet:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
-      - OP_NODE_NETWORK=base-mainnet
+      - OP_NODE_NETWORK=unichain-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=16422
-      - OP_NODE_P2P_LISTEN_UDP_PORT=16422
+      - OP_NODE_P2P_LISTEN_TCP_PORT=15954
+      - OP_NODE_P2P_LISTEN_UDP_PORT=15954
       - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
@@ -188,7 +188,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - base-mainnet
+      - unichain-mainnet
     networks:
       - chains
     volumes:
@@ -196,8 +196,8 @@ services:
     logging: *logging-defaults
 
 volumes:
-  base-mainnet-op-geth-pruned-pebble-path:
-  base-mainnet-op-geth-pruned-pebble-path_fireeth:
+  unichain-mainnet-op-geth-pruned-pebble-path:
+  unichain-mainnet-op-geth-pruned-pebble-path_fireeth:
 
 x-upstreams:
   - id: $${ID}
@@ -211,7 +211,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: base
+    chain: unichain
     method-groups:
       enabled:
         - debug

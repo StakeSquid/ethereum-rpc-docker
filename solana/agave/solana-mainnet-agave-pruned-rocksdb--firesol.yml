@@ -1,0 +1,198 @@
+---
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:solana/agave/solana-mainnet-agave-pruned-rocksdb--firesol.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/solana-mainnet \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  solana-mainnet-client:
+    image: ${SOLANA_FIRESOL_IMAGE:-ghcr.io/streamingfast/firehose-solana}:${SOLANA_MAINNET_FIRESOL_VERSION:-v1.1.3}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12990:12990
+      - 12990:12990/udp
+      - 72990-73010:72990-73010
+    expose:
+      - 8899:8899
+    entrypoint: [sh, -c, exec firesol start reader-node --reader-node-arguments "poller 0 $@", _]
+    command:
+      - --block-verification-method=unified-scheduler
+      - --dynamic-port-range=72990-73010
+      - --entrypoint=entrypoint.mainnet-beta.solana.com:8001
+      - --entrypoint=entrypoint2.mainnet-beta.solana.com:8001
+      - --entrypoint=entrypoint3.mainnet-beta.solana.com:8001
+      - --entrypoint=entrypoint4.mainnet-beta.solana.com:8001
+      - --entrypoint=entrypoint5.mainnet-beta.solana.com:8001
+      - --expected-genesis-hash=5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d
+      - --full-rpc-api
+      - --gossip-port=12990
+      - --known-validator=7Np41oeYqPefeNQEHSv1UDhYrehxin3NStELsSKCT4K2
+      - --known-validator=CakcnaRDHka2gXyfbEd2d3xsvkJkqsLw2akB3zsN1D2S
+      - --known-validator=DE1bawNcRJB9rVm3buyMVfr8mBEoyyu73NBovf2oXJsJ
+      - --known-validator=GdnSyH3YtwcxFvQrVVJMm1JhTS4QVX7MFsX56uJLUfiZ
+      - --limit-ledger-size=50000000
+      - --log=-
+      - --no-poh-speed-test
+      - --no-voting
+      - --private-rpc
+      - --rpc-bind-address=0.0.0.0
+      - --rpc-port=8899
+      - --skip-poh-verify
+      - --skip-startup-ledger-verification
+      - --unified-scheduler-handler-threads=12
+      - --use-snapshot-archives-at-startup=when-newest
+      - --wal-recovery-mode=skip_any_corrupted_record
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${SOLANA_MAINNET_AGAVE_PRUNED_ROCKSDB_DATA:-solana-mainnet-agave-pruned-rocksdb}:/ledger
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+
+  solana-mainnet:
+    image: nginx
+    environment:
+      PROXY_HOST: solana-mainnet-client
+      RPC_PATH: ''
+      RPC_PORT: 8899
+      WS_PATH: ''
+      WS_PORT: 8899
+    restart: unless-stopped
+    depends_on:
+      - solana-mainnet-client
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.solana-mainnet-agave-pruned-rocksdb-stripprefix.stripprefix.prefixes=/solana-mainnet
+      - traefik.http.services.solana-mainnet-agave-pruned-rocksdb.loadbalancer.server.port=80
+      - ${NO_SSL:-traefik.http.routers.solana-mainnet-agave-pruned-rocksdb.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.solana-mainnet-agave-pruned-rocksdb.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.solana-mainnet-agave-pruned-rocksdb.rule=Host(`$DOMAIN`) && (Path(`/solana-mainnet`) || Path(`/solana-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.solana-mainnet-agave-pruned-rocksdb.rule=Path(`/solana-mainnet`) || Path(`/solana-mainnet/`)}
+      - traefik.http.routers.solana-mainnet-agave-pruned-rocksdb.middlewares=solana-mainnet-agave-pruned-rocksdb-stripprefix, ipallowlist
+
+  solana-mainnet-firehose:
+    image: ${SOLANA_FIRESOL_IMAGE:-ghcr.io/streamingfast/firehose-solana}:${SOLANA_MAINNET_FIRESOL_VERSION:-v1.1.3}
+    expose:
+      - 10015
+      - 10014
+    environment:
+      - ${SOLANA_MAINNET_FIRESOL_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
+    entrypoint: [sh, -c, exec firesol start firehose index-builder relayer merger $@, _]
+    command:
+      - --log-to-file=false
+      - --relayer-source=http://solana-mainnet-client:10010
+    restart: unless-stopped
+    depends_on:
+      - solana-mainnet
+    networks:
+      - chains
+    volumes:
+      - ${SOLANA_MAINNET_FIRESOL_DATA:-solana-mainnet-firesol}:/firehose-data
+    logging: *logging-defaults
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.solana-mainnet-agave-pruned-rocksdb-firehose.loadbalancer.server.scheme=h2c
+      - traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-firehose.service=solana-mainnet-agave-pruned-rocksdb-firehose
+      - traefik.http.services.solana-mainnet-agave-pruned-rocksdb-firehose.loadbalancer.server.port=10015
+      - traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-firehose.entrypoints=grpc
+      - ${NO_SSL:-traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-firehose.tls.certresolver=myresolver}
+      - traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-firehose.rule=Host(`solana-mainnet-firehose.${DOMAIN}`)
+      - traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-firehose.middlewares=ipallowlist
+
+  solana-mainnet-events:
+    image: ${SOLANA_FIRESOL_IMAGE:-anzaxyz/agave}:${SOLANA_MAINNET_FIRESOL_VERSION:-v2.2.14}
+    expose:
+      - 10016
+    entrypoint: [sh, -c, exec firesol start substreams-tier-1 substreams-tier-2 $@, _]
+    command:
+      - --common-live-blocks-addr=http://solana-mainnet-firehose:10014
+      - --log-to-file=false
+      - --substreams-rpc-endpoints=${SOLANA_MAINNET_FIRESOL_ARCHIVE_RPC}
+    restart: unless-stopped
+    depends_on:
+      - solana-mainnet
+    networks:
+      - chains
+    volumes:
+      - ${SOLANA_MAINNET_FIRESOL_DATA:-solana-mainnet-firesol}:/firehose-data
+    logging: *logging-defaults
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.solana-mainnet-agave-pruned-rocksdb-events.loadbalancer.server.scheme=h2c
+      - traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-events.service=solana-mainnet-agave-pruned-rocksdb-events
+      - traefik.http.services.solana-mainnet-agave-pruned-rocksdb-events.loadbalancer.server.port=10016
+      - traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-events.entrypoints=grpc
+      - ${NO_SSL:-traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-events.tls.certresolver=myresolver}
+      - traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-events.rule=Host(`solana-mainnet-events.${DOMAIN}`)
+      - traefik.http.routers.solana-mainnet-agave-pruned-rocksdb-events.middlewares=ipallowlist
+
+volumes:
+  solana-mainnet-agave-pruned-rocksdb:
+  solana-mainnet-agave-pruned-rocksdb_firesol:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain:
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
