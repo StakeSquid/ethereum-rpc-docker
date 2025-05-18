@@ -119,9 +119,9 @@ services:
       - --execution-endpoint=http://ethereum-sepolia-archive:8551
       - --grpc-gateway-host=0.0.0.0
       - --jwt-secret=/jwtsecret
-      - --metrics-host=0.0.0.0
-      - --metrics-port=8080
       - --monitoring-host=0.0.0.0
+      - --monitoring-host=0.0.0.0
+      - --monitoring-port=8080
       - --p2p-tcp-port=19330
       - --p2p-udp-port=19330
       - --rpc-host=0.0.0.0

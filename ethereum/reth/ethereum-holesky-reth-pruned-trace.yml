@@ -121,9 +121,9 @@ services:
       - --grpc-gateway-host=0.0.0.0
       - --holesky
       - --jwt-secret=/jwtsecret
-      - --metrics-host=0.0.0.0
-      - --metrics-port=8080
       - --monitoring-host=0.0.0.0
+      - --monitoring-host=0.0.0.0
+      - --monitoring-port=8080
       - --p2p-tcp-port=16849
       - --p2p-udp-port=16849
       - --rpc-host=0.0.0.0

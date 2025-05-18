@@ -120,9 +120,9 @@ services:
       - --execution-endpoint=http://ethereum-sepolia:8551
       - --grpc-gateway-host=0.0.0.0
       - --jwt-secret=/jwtsecret
-      - --metrics-host=0.0.0.0
-      - --metrics-port=8080
       - --monitoring-host=0.0.0.0
+      - --monitoring-host=0.0.0.0
+      - --monitoring-port=8080
       - --p2p-tcp-port=17150
       - --p2p-udp-port=17150
       - --rpc-host=0.0.0.0

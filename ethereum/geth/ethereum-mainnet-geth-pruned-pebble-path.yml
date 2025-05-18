@@ -117,9 +117,9 @@ services:
       - --grpc-gateway-host=0.0.0.0
       - --jwt-secret=/jwtsecret
       - --mainnet
-      - --metrics-host=0.0.0.0
-      - --metrics-port=8080
       - --monitoring-host=0.0.0.0
+      - --monitoring-host=0.0.0.0
+      - --monitoring-port=8080
       - --p2p-tcp-port=17023
       - --p2p-udp-port=17023
       - --rpc-host=0.0.0.0
