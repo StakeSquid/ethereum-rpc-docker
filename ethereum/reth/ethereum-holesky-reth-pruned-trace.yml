@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ethereum-holesky:
-    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_HOLESKY_RETH_VERSION:-v1.3.12}
+    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_HOLESKY_RETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -51,6 +51,7 @@ services:
       - 11849:11849/udp
     expose:
       - 8545
+      - 9001
       - 8551
     entrypoint: [reth, node]
     command:
@@ -61,6 +62,9 @@ services:
       - --full
       - --max-inbound-peers=50
       - --max-outbound-peers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=9001
       - --nat=extip:${IP}
       - --port=11849
       - --rpc-cache.max-blocks=10000
@@ -91,6 +95,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9001
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-holesky-reth-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-holesky
       - traefik.http.services.ethereum-holesky-reth-pruned-trace.loadbalancer.server.port=8545
@@ -116,6 +123,8 @@ services:
       - --grpc-gateway-host=0.0.0.0
       - --holesky
       - --jwt-secret=/jwtsecret
+      - --metrics-host=0.0.0.0
+      - --metrics-port=8080
       - --monitoring-host=0.0.0.0
       - --p2p-tcp-port=16849
       - --p2p-udp-port=16849
@@ -130,6 +139,9 @@ services:
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=8080
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-holesky-reth-pruned-trace-node-stripprefix.stripprefix.prefixes=/ethereum-holesky
       - traefik.http.services.ethereum-holesky-reth-pruned-trace-node.loadbalancer.server.port=3500

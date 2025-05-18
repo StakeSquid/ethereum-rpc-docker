@@ -55,6 +55,7 @@ services:
       - 14897:14897/udp
     expose:
       - 8545
+      - 6060
     environment:
       - FANTOM_HOME=/datadir
       - GENESIS=https://download.fantom.network/opera/mainnet/mainnet-5577-full-mpt.g
@@ -69,6 +70,9 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=14897
       - --rpc.gascap=600000000
@@ -89,6 +93,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.fantom-mainnet-opera-archive-trace-stripprefix.stripprefix.prefixes=/fantom-mainnet-archive
       - traefik.http.services.fantom-mainnet-opera-archive-trace.loadbalancer.server.port=8545

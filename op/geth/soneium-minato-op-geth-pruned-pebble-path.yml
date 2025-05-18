@@ -50,6 +50,7 @@ services:
       - 10702:10702/udp
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - GETH_OP_NETWORK=soneium-minato
@@ -61,6 +62,9 @@ services:
       - --db.engine=pebble
       - --gcmode=full
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=10702
       - --rpc.gascap=600000000
@@ -90,6 +94,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.soneium-minato-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/soneium-minato
       - traefik.http.services.soneium-minato-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
@@ -117,6 +124,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NETWORK=soneium-minato
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
@@ -138,6 +146,10 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   soneium-minato-op-geth-pruned-pebble-path:

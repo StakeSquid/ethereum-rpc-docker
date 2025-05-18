@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   base-mainnet-archive:
-    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_MAINNET_RETH_VERSION:-v1.3.12}
+    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_MAINNET_RETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -51,6 +51,7 @@ services:
       - 14221:14221/udp
     expose:
       - 8545
+      - 9001
       - 8551
     entrypoint: [op-reth, node]
     command:
@@ -59,6 +60,9 @@ services:
       - --engine.cross-block-cache-size=${BASE_MAINNET_RETH_STATE_CACHE:-4096}
       - --max-inbound-peers=50
       - --max-outbound-peers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=9001
       - --nat=extip:${IP}
       - --port=14221
       - --rollup.sequencer-http=https://mainnet-sequencer.base.org
@@ -90,6 +94,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9001
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.base-mainnet-op-reth-archive-trace-stripprefix.stripprefix.prefixes=/base-mainnet-archive
       - traefik.http.services.base-mainnet-op-reth-archive-trace.loadbalancer.server.port=8545
@@ -118,6 +125,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NETWORK=base-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
@@ -138,6 +146,10 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   base-mainnet-op-reth-archive-trace:

@@ -50,6 +50,7 @@ services:
       - 10683:10683/udp
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - GETH_OVERRIDE_CANYON=0
@@ -63,6 +64,9 @@ services:
       - --db.engine=leveldb
       - --gcmode=archive
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --networkid=81457
       - --port=10683
@@ -94,6 +98,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.blast-mainnet-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/blast-mainnet-archive
       - traefik.http.services.blast-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
@@ -121,6 +128,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_OVERRIDE_TAIGA=1746612311
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_BOOTNODES=enr:-J64QGwHl9uYLfC_cnmxSA6wQH811nkOWJDWjzxqkEUlJoZHWvI66u-BXgVcPCeMUmg0dBpFQAPotFchG67FHJMZ9OSGAY3d6wevgmlkgnY0gmlwhANizeSHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaECg4pk0cskPAyJ7pOmo9E6RqGBwV-Lex4VS9a3MQvu7PWDdGNwgnZhg3VkcIJ2YQ,enr:-J64QDge2jYBQtcNEpRqmKfci5E5BHAhNBjgv4WSdwH1_wPqbueq2bDj38-TSW8asjy5lJj1Xftui6Or8lnaYFCqCI-GAY3d6wf3gmlkgnY0gmlwhCO2D9yHb3BzdGFja4Sx_AQAiXNlY3AyNTZrMaEDo4aCTq7pCEN8om9U5n_VyWdambGnQhwHNwKc8o-OicaDdGNwgnZhg3VkcIJ2YQ
@@ -144,6 +152,10 @@ services:
       - ./op/blast/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   blast-mainnet-op-geth-archive-leveldb-hash:

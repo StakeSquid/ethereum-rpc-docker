@@ -90,9 +90,13 @@ services:
       - ${LENS_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-lens-mainnet-external-node-pruned}:/db
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
   lens-mainnet:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: lens-mainnet-client
       RPC_PATH: ''
@@ -108,6 +112,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.lens-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/lens-mainnet
       - traefik.http.services.lens-mainnet-external-node-pruned.loadbalancer.server.port=80

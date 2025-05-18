@@ -80,6 +80,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.arbitrum-sepolia-nitro-archive-pebble-hash-stripprefix.stripprefix.prefixes=/arbitrum-sepolia-archive
       - traefik.http.services.arbitrum-sepolia-nitro-archive-pebble-hash.loadbalancer.server.port=8545

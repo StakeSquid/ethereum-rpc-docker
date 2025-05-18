@@ -50,6 +50,7 @@ services:
       - 13490:13490/udp
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - GETH_BOOTNODES=enode://548f715f3fc388a7c917ba644a2f16270f1ede48a5d88a4d14ea287cc916068363f3092e39936f1a3e7885198bef0e5af951f1d7b1041ce8ba4010917777e71f@18.210.176.114:30301,enode://6f10052847a966a725c9f4adf6716f9141155b99a0fb487fea3f51498f4c2a2cb8d534e680ee678f9447db85b93ff7c74562762c3714783a7233ac448603b25f@107.21.251.55:30301
@@ -62,6 +63,9 @@ services:
       - --db.engine=pebble
       - --gcmode=full
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --networkid=4202
       - --port=13490
@@ -93,6 +97,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.lisk-sepolia-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/lisk-sepolia
       - traefik.http.services.lisk-sepolia-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
@@ -126,6 +133,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NETWORK=lisk-sepolia
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
@@ -147,6 +155,10 @@ services:
       - ./op/lisk/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   lisk-sepolia-op-geth-pruned-pebble-path:

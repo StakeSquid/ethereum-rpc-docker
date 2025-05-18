@@ -85,9 +85,13 @@ services:
       - ${CRONOS_ZKEVM_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-cronos-zkevm-mainnet-external-node-pruned}:/db
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
   cronos-zkevm-mainnet:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: cronos-zkevm-mainnet-client
       RPC_PATH: ''
@@ -103,6 +107,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.cronos-zkevm-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/cronos-zkevm-mainnet
       - traefik.http.services.cronos-zkevm-mainnet-external-node-pruned.loadbalancer.server.port=80

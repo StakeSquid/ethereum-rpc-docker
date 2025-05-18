@@ -50,6 +50,7 @@ services:
       - 10895:10895/udp
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
@@ -64,6 +65,9 @@ services:
       - --db.engine=leveldb
       - --gcmode=archive
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --networkid=44787
       - --port=10895
@@ -98,6 +102,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.celo-alfajores-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-alfajores-archive
       - traefik.http.services.celo-alfajores-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
@@ -131,6 +138,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
       - OP_NODE_P2P_LISTEN_TCP_PORT=15895
@@ -156,6 +164,10 @@ services:
       - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
   celo-alfajores-archive-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
@@ -175,6 +187,8 @@ services:
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_DATA:-celo-alfajores-op-geth-archive-leveldb-hash_eigenda}:/data
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
   celo-alfajores-archive-classic:
     image: ${CELO_GETH_IMAGE:-us.gcr.io/celo-org/geth}:${CELO_ALFAJORES_GETH_VERSION:-1.8.9}
@@ -197,6 +211,7 @@ services:
       - 12386:12386/udp
     expose:
       - 8545
+      - 6060
     command:
       - --datadir=/root/.celo
       - --gcmode=archive
@@ -206,6 +221,9 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=12386
       - --rpc.gascap=600000000
@@ -227,7 +245,10 @@ services:
       options:
         max-size: 10m
         max-file: '3'
-    labels: []
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
 
 volumes:
   celo-alfajores-geth-archive-leveldb-hash:

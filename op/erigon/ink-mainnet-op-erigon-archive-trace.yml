@@ -55,12 +55,16 @@ services:
       - 36990:36990/udp
     expose:
       - 8545
+      - 6060
       - 8551
     entrypoint: [erigon]
     command:
       - --chain=ink-mainnet
       - --datadir=/root/.local/share/erigon
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --p2p.allowed-ports=31990
       - --p2p.allowed-ports=36990
@@ -88,6 +92,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.ink-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/ink-mainnet-archive
       - traefik.http.services.ink-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
@@ -116,6 +123,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NETWORK=ink-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
@@ -136,6 +144,10 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   ink-mainnet-op-erigon-archive-trace:

@@ -69,9 +69,13 @@ services:
       - ./viction/mainnet:/config
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
   viction-mainnet:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: viction-mainnet-client
       RPC_PATH: ''
@@ -87,6 +91,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.viction-mainnet-node-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet
       - traefik.http.services.viction-mainnet-node-pruned-leveldb-hash.loadbalancer.server.port=80

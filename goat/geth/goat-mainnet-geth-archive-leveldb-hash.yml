@@ -56,6 +56,9 @@ services:
       - --gcmode=archive
       - --goat=mainnet
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=12891
       - --rpc.gascap=600000000
@@ -86,6 +89,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.goat-mainnet-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/goat-mainnet-archive
       - traefik.http.services.goat-mainnet-geth-archive-leveldb-hash.loadbalancer.server.port=8545
@@ -117,6 +123,8 @@ services:
       - goat-mainnet-geth-archive-leveldb-hash:/geth
       - goat-mainnet-geth-archive-leveldb-hash_node:/root/.goat
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
 volumes:
   goat-mainnet-geth-archive-leveldb-hash:

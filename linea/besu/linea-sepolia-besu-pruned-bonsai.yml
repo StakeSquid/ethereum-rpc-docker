@@ -51,6 +51,7 @@ services:
     expose:
       - 8545
       - 8546
+      - 9545
     command:
       - --Xbonsai-full-flat-db-enabled=true
       - --Xeth-capability-max=67
@@ -58,6 +59,9 @@ services:
       - --data-storage-format=BONSAI
       - --fast-sync-min-peers=1
       - --host-allowlist=*
+      - --metrics-enabled=true
+      - --metrics-interface=0.0.0.0
+      - --metrics-port=9545
       - --p2p-host=${IP}
       - --p2p-port=14691
       - --plugin-linea-l1-rpc-endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
@@ -81,9 +85,15 @@ services:
       - ./linea/sepolia:/config
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9545
+      - prometheus-scrape.path=/metrics
 
   linea-sepolia:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: linea-sepolia-client
       RPC_PATH: ''
@@ -99,6 +109,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.linea-sepolia-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/linea-sepolia
       - traefik.http.services.linea-sepolia-besu-pruned-bonsai.loadbalancer.server.port=80

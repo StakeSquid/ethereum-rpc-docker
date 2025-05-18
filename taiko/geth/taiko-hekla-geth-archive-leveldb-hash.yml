@@ -50,6 +50,7 @@ services:
       - 13063:13063/udp
     expose:
       - 8545
+      - 6060
       - 8551
     env_file:
       - ./taiko/hekla.env
@@ -63,6 +64,9 @@ services:
       - --db.engine=leveldb
       - --gcmode=archive
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=13063
       - --rpc.gascap=600000000
@@ -92,6 +96,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.taiko-hekla-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/taiko-hekla-archive
       - traefik.http.services.taiko-hekla-geth-archive-leveldb-hash.loadbalancer.server.port=8545
@@ -126,6 +133,8 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
 volumes:
   taiko-hekla-geth-archive-leveldb-hash:

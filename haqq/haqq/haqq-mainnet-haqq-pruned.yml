@@ -61,6 +61,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.haqq-mainnet-haqq-pruned-stripprefix.stripprefix.prefixes=/haqq-mainnet
       - traefik.http.services.haqq-mainnet-haqq-pruned.loadbalancer.server.port=8545

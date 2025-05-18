@@ -50,6 +50,7 @@ services:
       - 14961:14961/udp
     expose:
       - 8545
+      - 6060
       - 10010
     entrypoint: [sh, -c, exec fireeth start reader-node --log-to-file=false --reader-node-arguments "server $*", _]
     command:
@@ -65,6 +66,9 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=14961
       - --rpc.gascap=600000000
@@ -86,6 +90,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.polygon-mainnet-bor-pruned-pebble-path-stripprefix.stripprefix.prefixes=/polygon-mainnet
       - traefik.http.services.polygon-mainnet-bor-pruned-pebble-path.loadbalancer.server.port=8545
@@ -115,6 +122,7 @@ services:
       - ${POLYGON_MAINNET_FIREETH_DATA:-polygon-mainnet-fireeth}:/firehose-data
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.services.polygon-mainnet-bor-pruned-pebble-path-firehose.loadbalancer.server.scheme=h2c
       - traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path-firehose.service=polygon-mainnet-bor-pruned-pebble-path-firehose

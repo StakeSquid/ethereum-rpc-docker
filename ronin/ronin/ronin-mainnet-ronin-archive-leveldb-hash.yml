@@ -50,6 +50,7 @@ services:
       - 12931:12931/udp
     expose:
       - 8545
+      - 6060
     environment:
       - DB_ENGINE=leveldb
       - ETHSTATS_ENDPOINT=d${DOMAIN}:WSyDMrhRBe111@ronin-stats-ws.roninchain.com:443
@@ -65,6 +66,9 @@ services:
       - --discovery.dns=enrtree://AIGOFYDZH6BGVVALVJLRPHSOYJ434MPFVVQFXJDXHW5ZYORPTGKUI@nodes.roninchain.com
       - --gcmode=archive
       - --http.api=admin,eth,net,web3,consortium,txpool,debug
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=12931
       - --txpool.nolocals
@@ -78,6 +82,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.ronin-mainnet-ronin-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/ronin-mainnet-archive
       - traefik.http.services.ronin-mainnet-ronin-archive-leveldb-hash.loadbalancer.server.port=8545

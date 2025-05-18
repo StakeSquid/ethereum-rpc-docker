@@ -63,6 +63,9 @@ services:
       - --http.vhosts=*
       - --mainnet
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=
       - --nat=extip:${IP}
       - --port=14234
       - --rpc.gascap=600000000
@@ -84,6 +87,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.core-mainnet-core-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/core-mainnet-archive
       - traefik.http.services.core-mainnet-core-archive-leveldb-hash.loadbalancer.server.port=8545

@@ -50,6 +50,7 @@ services:
       - 13559:13559/udp
     expose:
       - 8545
+      - 6060
     environment:
       - DB_ENGINE=pebble
       - DEPLOYMENT=test
@@ -66,6 +67,9 @@ services:
       - --discovery.dns=enrtree://AJCNIAXQIPO55NW3QE2NUBBDMPYZDOQUCAEUS65NHQFMUUFES5KOW@saigon.nodes.roninchain.com
       - --gcmode=full
       - --http.api=admin,eth,net,web3,consortium,txpool,debug
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=13559
       - --txpool.nolocals
@@ -79,6 +83,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.ronin-saigon-ronin-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ronin-saigon
       - traefik.http.services.ronin-saigon-ronin-pruned-pebble-path.loadbalancer.server.port=8545

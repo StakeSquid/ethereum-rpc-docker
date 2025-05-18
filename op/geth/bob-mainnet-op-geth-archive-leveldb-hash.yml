@@ -50,6 +50,7 @@ services:
       - 14046:14046/udp
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
@@ -60,6 +61,9 @@ services:
       - --db.engine=leveldb
       - --gcmode=archive
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --networkid=60808
       - --port=14046
@@ -91,6 +95,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.bob-mainnet-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/bob-mainnet-archive
       - traefik.http.services.bob-mainnet-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
@@ -118,6 +125,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NETWORK=bob-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
@@ -139,6 +147,10 @@ services:
       - ./op/bob/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   bob-mainnet-op-geth-archive-leveldb-hash:

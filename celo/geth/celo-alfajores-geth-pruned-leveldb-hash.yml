@@ -50,6 +50,7 @@ services:
       - 13307:13307/udp
     expose:
       - 8545
+      - 6060
     command:
       - --datadir=/root/.celo
       - --gcmode=full
@@ -59,6 +60,9 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=13307
       - --rpc.gascap=600000000
@@ -77,6 +81,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.celo-alfajores-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-alfajores
       - traefik.http.services.celo-alfajores-geth-pruned-leveldb-hash.loadbalancer.server.port=8545

@@ -50,6 +50,7 @@ services:
       - 10308:10308/udp
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
@@ -60,6 +61,9 @@ services:
       - --db.engine=leveldb
       - --gcmode=archive
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --networkid=999999999
       - --port=10308
@@ -91,6 +95,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.zora-sepolia-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/zora-sepolia-archive
       - traefik.http.services.zora-sepolia-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
@@ -118,6 +125,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NETWORK=zora-sepolia
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
@@ -140,6 +148,10 @@ services:
       - ./op/zora/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   zora-sepolia-op-geth-archive-leveldb-hash:

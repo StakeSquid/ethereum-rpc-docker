@@ -50,6 +50,7 @@ services:
       - 13457:13457/udp
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
@@ -64,6 +65,9 @@ services:
       - --db.engine=pebble
       - --gcmode=full
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --networkid=44787
       - --port=13457
@@ -95,6 +99,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.celo-alfajores-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/celo-alfajores
       - traefik.http.services.celo-alfajores-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
@@ -128,6 +135,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
       - OP_NODE_P2P_LISTEN_TCP_PORT=18457
@@ -153,6 +161,10 @@ services:
       - ./op/celo/alfajores:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
   celo-alfajores-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.6.4}
@@ -172,6 +184,8 @@ services:
     volumes:
       - ${CELO_ALFAJORES_OP_GETH_PRUNED_PEBBLE_PATH__EIGENDA_DATA:-celo-alfajores-op-geth-pruned-pebble-path_eigenda}:/data
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
 volumes:
   celo-alfajores-op-geth-pruned-pebble-path:

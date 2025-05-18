@@ -49,6 +49,7 @@ services:
     user: root
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - BLOCK_SIGNER_ADDRESS=0x000000b36A00872bAF079426e012Cf5Cd2A74E8b
@@ -61,6 +62,9 @@ services:
       - --db.engine=leveldb
       - --gcmode=full
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --networkid=5000
       - --nodiscover
       - --rpc.gascap=600000000
@@ -90,6 +94,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.mantle-mainnet-op-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/mantle-mainnet
       - traefik.http.services.mantle-mainnet-op-geth-pruned-leveldb-hash.loadbalancer.server.port=8545
@@ -120,6 +127,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_AGENT=mantle
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
@@ -143,6 +151,10 @@ services:
       - ./op/mantle/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   mantle-mainnet-op-geth-pruned-leveldb-hash:

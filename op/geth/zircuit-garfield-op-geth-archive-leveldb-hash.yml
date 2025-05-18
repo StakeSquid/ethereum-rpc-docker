@@ -47,6 +47,7 @@ services:
     user: root
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - GETH_CONFIG=/config/gethconfig.toml
@@ -61,6 +62,9 @@ services:
       - --db.engine=leveldb
       - --gcmode=archive
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --network=garfield
       - --nodiscover
       - --rpc.gascap=600000000
@@ -91,6 +95,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.zircuit-garfield-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/zircuit-garfield-archive
       - traefik.http.services.zircuit-garfield-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
@@ -118,6 +125,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NETWORK=garfield
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
@@ -144,6 +152,10 @@ services:
       - ./op/zircuit/garfield:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   zircuit-garfield-op-geth-archive-leveldb-hash:

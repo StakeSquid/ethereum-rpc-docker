@@ -52,6 +52,7 @@ services:
     expose:
       - 8545
       - 8546
+      - 6060
     environment:
       - BLOCK_SIGNER_ADDRESS=0x00000398232E2064F896018496b4b44b3D62751F
       - BLOCK_SIGNER_KEY=6587ae678cf4fc9a33000cdbf9f35226b71dcc6a4684a31203241f9bcfd55d27
@@ -104,9 +105,15 @@ services:
       - ${METIS_ANDROMEDA_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-metis-andromeda-mainnet-l2geth-archive-leveldb-hash}:/root/.ethereum
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
 
   metis-andromeda-mainnet-archive:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: metis-andromeda-mainnet-archive-client
       RPC_PATH: ''
@@ -122,6 +129,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/metis-andromeda-mainnet-archive
       - traefik.http.services.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=80
@@ -175,6 +183,8 @@ services:
       - ${METIS_ANDROMEDA_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH__DTL_DATA:-metis-andromeda-mainnet-l2geth-archive-leveldb-hash_dtl}:/data
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
 volumes:
   metis-andromeda-mainnet-l2geth-archive-leveldb-hash:

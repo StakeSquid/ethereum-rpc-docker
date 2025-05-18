@@ -50,6 +50,7 @@ services:
       - 10282:10282/udp
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - GETH_BOOTNODES=enr:-J24QI8QR7VIgvQFuvLl09b9ocugoQ1WkS_AOMWKFgNX48-4P1hjgDKGeMFXZmKtfjYA2aEehxKT066riaktnxhh92OGAY5Sw_QsgmlkgnY0gmlwhCztZu2Hb3BzdGFja4P8AQCJc2VjcDI1NmsxoQM2KM0mkdH97Ze8AqwxLeqc934PKj8-xoKsyP6mAptWwIN0Y3CCdl2DdWRwgnZd,enr:-J24QGD1J-g2EPY9b7XiuwLhIoGocVp2qx2gWSfDI_CdftiPSHlgi7G6LtzkQlDskuSvRj4OXTg3vXLISubphXNNhqyGAY5Sw8GxgmlkgnY0gmlwhCzW_iGHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQPvMYlJHJUsEyciuJCTkKHLE2ogZ6cs2xuPI28CGq0CTIN0Y3CCdl2DdWRwgnZd,enr:-J24QCA5I3xroUXt7Ge_Kf04VCRBnI-GbZeyBxOkkpIDGGLrVsonrbngQG1hAEnufRb1TgS6sNFCGtaZ2ZpRx7AgciGGAY5SxEy0gmlkgnY0gmlwhCLzRQyHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQOaHzrtPQWYcwAcFJWFrbGlbNUsBC0VEhCcH02RbgEIwIN0Y3CCdl2DdWRwgnZd
@@ -66,6 +67,9 @@ services:
       - --db.engine=pebble
       - --gcmode=full
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --networkid=252
       - --port=10282
@@ -97,6 +101,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.fraxtal-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/fraxtal-mainnet
       - traefik.http.services.fraxtal-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
@@ -125,6 +132,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_BOOTNODES=enr:-J24QPGxmNmQ6Gsofjwnaaqt-RvC-2te44hHSU_wFGvCBpdnGnAuW0hKBCwzarXEmLN0TfwilwX3xS8xjEd9sQRqKXqGAY1ok0P3gmlkgnY0gmlwhDa-pcmHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQJA0echCE64KVt7m1lHfRF9_QgYxqIOSoPZ1UHcEArDu4N0Y3CCJAaDdWRwgiQG,enr:-J24QHPYu7uUXH4LCJ_pjHMD3fYhluZEgFRlewqOFFcja7ACaTDp4zG4GZBJdTPmLjsqskhTQa5ldKiVu4ypZYMzR_uGAY1ok_ABgmlkgnY0gmlwhCLvv1KHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQOEemNzZL5buGmwlN2naXLtz4nauCqBFeFxdmi4RL4rDIN0Y3CCJAaDdWRwgiQG,enr:-J24QBujtfGNIiE6GJrCgXEKJMs1F11wd4Y8Uvx7ZFn3Z1tyR0erNcpiW5EYIQEKQX0kL9PLJUDHWZFiaHWOTBvFg5aGAY1ok5p8gmlkgnY0gmlwhDbD-tqHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQLunzKLYJLvy6cWWkLgSSdLlILgSohrV8RT3tlKGwHBi4N0Y3CCJAaDdWRwgiQG
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
@@ -147,6 +155,10 @@ services:
       - ./op/fraxtal/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   fraxtal-mainnet-op-geth-pruned-pebble-path:

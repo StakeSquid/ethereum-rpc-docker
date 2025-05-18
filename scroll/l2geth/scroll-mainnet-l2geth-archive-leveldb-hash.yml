@@ -50,6 +50,7 @@ services:
       - 11083:11083/udp
     expose:
       - 8545
+      - 6060
     command:
       - --cache=8192
       - --datadir=/root/.ethereum
@@ -62,6 +63,9 @@ services:
       - --http.vhosts=*
       - --l1.endpoint=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=11083
       - --rollup.verify
@@ -83,6 +87,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.scroll-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/scroll-mainnet-archive
       - traefik.http.services.scroll-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545

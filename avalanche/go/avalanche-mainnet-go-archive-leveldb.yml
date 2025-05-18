@@ -69,9 +69,13 @@ services:
       - ./avalanche/mainnet:/config
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
   avalanche-mainnet-archive:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: avalanche-mainnet-archive-client
       RPC_PATH: /ext/bc/C/rpc
@@ -87,6 +91,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.avalanche-mainnet-go-archive-leveldb-stripprefix.stripprefix.prefixes=/avalanche-mainnet-archive
       - traefik.http.services.avalanche-mainnet-go-archive-leveldb.loadbalancer.server.port=80

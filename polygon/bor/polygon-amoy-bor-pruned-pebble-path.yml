@@ -50,6 +50,7 @@ services:
       - 12188:12188/udp
     expose:
       - 8545
+      - 6060
     entrypoint: [bor, server]
     command:
       - --bor.heimdall=https://polygon-amoy-heimdall-rest.publicnode.com
@@ -64,6 +65,9 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=12188
       - --rpc.gascap=600000000
@@ -85,6 +89,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.polygon-amoy-bor-pruned-pebble-path-stripprefix.stripprefix.prefixes=/polygon-amoy
       - traefik.http.services.polygon-amoy-bor-pruned-pebble-path.loadbalancer.server.port=8545

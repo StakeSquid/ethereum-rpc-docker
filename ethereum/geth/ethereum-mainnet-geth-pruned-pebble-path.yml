@@ -50,6 +50,7 @@ services:
       - 12023:12023/udp
     expose:
       - 8545
+      - 6060
       - 8551
     command:
       - --datadir=/root/.ethereum
@@ -57,6 +58,9 @@ services:
       - --gcmode=full
       - --mainnet
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=12023
       - --rpc.gascap=600000000
@@ -86,6 +90,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-mainnet
       - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path.loadbalancer.server.port=8545
@@ -110,6 +117,8 @@ services:
       - --grpc-gateway-host=0.0.0.0
       - --jwt-secret=/jwtsecret
       - --mainnet
+      - --metrics-host=0.0.0.0
+      - --metrics-port=8080
       - --monitoring-host=0.0.0.0
       - --p2p-tcp-port=17023
       - --p2p-udp-port=17023
@@ -124,6 +133,9 @@ services:
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=8080
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet
       - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path-node.loadbalancer.server.port=3500

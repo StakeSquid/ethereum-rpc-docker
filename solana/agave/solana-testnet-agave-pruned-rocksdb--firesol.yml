@@ -85,9 +85,15 @@ services:
       - ${SOLANA_TESTNET_AGAVE_PRUNED_ROCKSDB_DATA:-solana-testnet-agave-pruned-rocksdb}:/ledger
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=12344
+      - prometheus-scrape.path=/metrics
 
   solana-testnet:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: solana-testnet-client
       RPC_PATH: ''
@@ -103,6 +109,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.solana-testnet-agave-pruned-rocksdb-stripprefix.stripprefix.prefixes=/solana-testnet
       - traefik.http.services.solana-testnet-agave-pruned-rocksdb.loadbalancer.server.port=80
@@ -132,6 +139,7 @@ services:
       - ${SOLANA_TESTNET_FIRESOL_DATA:-solana-testnet-firesol}:/firehose-data
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.services.solana-testnet-agave-pruned-rocksdb-firehose.loadbalancer.server.scheme=h2c
       - traefik.http.routers.solana-testnet-agave-pruned-rocksdb-firehose.service=solana-testnet-agave-pruned-rocksdb-firehose

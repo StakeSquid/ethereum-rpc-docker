@@ -69,6 +69,9 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=
       - --nat=extip:${IP}
       - --port=10652
       - --rpc.gascap=600000000
@@ -87,6 +90,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.fantom-testnet-sonic-archive-stripprefix.stripprefix.prefixes=/fantom-testnet-archive
       - traefik.http.services.fantom-testnet-sonic-archive.loadbalancer.server.port=8545

@@ -86,6 +86,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.everclear-mainnet-nitro-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/everclear-mainnet-archive
       - traefik.http.services.everclear-mainnet-nitro-archive-leveldb-hash.loadbalancer.server.port=8545

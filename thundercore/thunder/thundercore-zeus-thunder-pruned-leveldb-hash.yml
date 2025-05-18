@@ -64,6 +64,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.thundercore-zeus-thunder-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/thundercore-zeus
       - traefik.http.services.thundercore-zeus-thunder-pruned-leveldb-hash.loadbalancer.server.port=8545

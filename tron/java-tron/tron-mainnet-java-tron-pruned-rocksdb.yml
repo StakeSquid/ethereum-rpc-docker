@@ -61,6 +61,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.tron-mainnet-java-tron-pruned-rocksdb-set-path.replacepath.path=/jsonrpc
       - traefik.http.middlewares.tron-mainnet-java-tron-pruned-rocksdb-stripprefix.stripprefix.prefixes=/tron-mainnet

@@ -89,9 +89,13 @@ services:
       - ${LENS_TESTNET_EXTERNAL_NODE_PRUNED_DATA:-lens-testnet-external-node-pruned}:/db
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
   lens-testnet:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: lens-testnet-client
       RPC_PATH: ''
@@ -107,6 +111,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.lens-testnet-external-node-pruned-stripprefix.stripprefix.prefixes=/lens-testnet
       - traefik.http.services.lens-testnet-external-node-pruned.loadbalancer.server.port=80

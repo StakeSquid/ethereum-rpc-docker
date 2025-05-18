@@ -51,12 +51,16 @@ services:
     expose:
       - 8545
       - 8546
+      - 9545
     command:
       - --Xbonsai-full-flat-db-enabled=true
       - --data-path=/opt/besu/database
       - --data-storage-format=BONSAI
       - --fast-sync-min-peers=1
       - --host-allowlist=*
+      - --metrics-enabled=true
+      - --metrics-interface=0.0.0.0
+      - --metrics-port=9545
       - --network=classic
       - --p2p-host=${IP}
       - --p2p-port=12880
@@ -78,9 +82,15 @@ services:
       - ${ETHEREUM_CLASSIC_BESU_PRUNED_BONSAI_DATA:-ethereum-classic-besu-pruned-bonsai}:/opt/besu/database
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9545
+      - prometheus-scrape.path=/metrics
 
   ethereum-classic:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: ethereum-classic-client
       RPC_PATH: ''
@@ -96,6 +106,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-classic-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/ethereum-classic
       - traefik.http.services.ethereum-classic-besu-pruned-bonsai.loadbalancer.server.port=80

@@ -85,6 +85,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.playblock-mainnet-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/playblock-mainnet
       - traefik.http.services.playblock-mainnet-nitro-pruned-pebble-path.loadbalancer.server.port=8545

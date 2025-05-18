@@ -61,9 +61,13 @@ services:
       - ./rootstock/mainnet:/config
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
   rootstock-mainnet-archive:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: rootstock-mainnet-archive-client
       RPC_PATH: /
@@ -79,6 +83,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.rootstock-mainnet-rskj-archive-stripprefix.stripprefix.prefixes=/rootstock-mainnet-archive
       - traefik.http.services.rootstock-mainnet-rskj-archive.loadbalancer.server.port=80

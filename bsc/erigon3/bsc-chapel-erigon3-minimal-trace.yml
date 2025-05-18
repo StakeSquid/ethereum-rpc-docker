@@ -65,6 +65,9 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --p2p.allowed-ports=31017
       - --p2p.allowed-ports=36017
@@ -84,6 +87,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.bsc-chapel-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/bsc-chapel-minimal
       - traefik.http.services.bsc-chapel-erigon3-minimal-trace.loadbalancer.server.port=8545

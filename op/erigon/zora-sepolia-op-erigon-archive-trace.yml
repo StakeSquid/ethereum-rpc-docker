@@ -55,11 +55,15 @@ services:
       - 38839:38839/udp
     expose:
       - 8545
+      - 6060
       - 8551
     entrypoint: /bin/sh -c '[ ! -d /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init --datadir /root/.local/share/erigon /config/genesis.json; exec erigon "$@"' --
     command:
       - --datadir=/root/.local/share/erigon
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --networkid=999999999
       - --p2p.allowed-ports=33839
@@ -89,6 +93,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.zora-sepolia-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/zora-sepolia-archive
       - traefik.http.services.zora-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545
@@ -117,6 +124,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NETWORK=zora-sepolia
       - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
@@ -139,6 +147,10 @@ services:
       - ./op/zora/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   zora-sepolia-op-erigon-archive-trace:

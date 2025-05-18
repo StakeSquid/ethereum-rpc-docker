@@ -79,9 +79,13 @@ services:
       - ${ZKSYNC_ERA_BOOJNET_EXTERNAL_NODE_PRUNED_DATA:-zksync-era-boojnet-external-node-pruned}:/db
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
   zksync-era-boojnet:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: zksync-era-boojnet-client
       RPC_PATH: ''
@@ -97,6 +101,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.zksync-era-boojnet-external-node-pruned-stripprefix.stripprefix.prefixes=/zksync-era-boojnet
       - traefik.http.services.zksync-era-boojnet-external-node-pruned.loadbalancer.server.port=80

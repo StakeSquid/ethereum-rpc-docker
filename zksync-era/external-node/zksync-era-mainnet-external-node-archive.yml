@@ -81,9 +81,13 @@ services:
       - ${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_ARCHIVE_DATA:-zksync-era-mainnet-external-node-archive}:/db
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
   zksync-era-mainnet-archive:
     image: nginx
+    expose:
+      - '80'
     environment:
       PROXY_HOST: zksync-era-mainnet-archive-client
       RPC_PATH: ''
@@ -99,6 +103,7 @@ services:
       - ./nginx-proxy:/etc/nginx/templates
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.zksync-era-mainnet-external-node-archive-stripprefix.stripprefix.prefixes=/zksync-era-mainnet-archive
       - traefik.http.services.zksync-era-mainnet-external-node-archive.loadbalancer.server.port=80

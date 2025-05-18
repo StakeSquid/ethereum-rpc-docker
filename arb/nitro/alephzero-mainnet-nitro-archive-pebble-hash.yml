@@ -86,6 +86,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.alephzero-mainnet-nitro-archive-pebble-hash-stripprefix.stripprefix.prefixes=/alephzero-mainnet-archive
       - traefik.http.services.alephzero-mainnet-nitro-archive-pebble-hash.loadbalancer.server.port=8545

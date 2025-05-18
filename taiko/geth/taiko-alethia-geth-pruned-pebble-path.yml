@@ -50,6 +50,7 @@ services:
       - 10251:10251/udp
     expose:
       - 8545
+      - 6060
       - 8551
     env_file:
       - ./taiko/alethia.env
@@ -63,6 +64,9 @@ services:
       - --db.engine=pebble
       - --gcmode=full
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=10251
       - --rpc.gascap=600000000
@@ -92,6 +96,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.taiko-alethia-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/taiko-alethia
       - traefik.http.services.taiko-alethia-geth-pruned-pebble-path.loadbalancer.server.port=8545
@@ -126,6 +133,8 @@ services:
     volumes:
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
 
 volumes:
   taiko-alethia-geth-pruned-pebble-path:

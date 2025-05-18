@@ -62,6 +62,9 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=
       - --nat=extip:${IP}
       - --pigeon
       - --port=14478
@@ -84,6 +87,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.core-pigeon-core-pruned-pebble-path-stripprefix.stripprefix.prefixes=/core-pigeon
       - traefik.http.services.core-pigeon-core-pruned-pebble-path.loadbalancer.server.port=8545

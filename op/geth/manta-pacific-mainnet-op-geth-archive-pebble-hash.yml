@@ -47,6 +47,7 @@ services:
     user: root
     expose:
       - 8545
+      - 6060
       - 8551
     environment:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
@@ -57,6 +58,9 @@ services:
       - --db.engine=pebble
       - --gcmode=archive
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --networkid=169
       - --nodiscover
       - --rpc.gascap=600000000
@@ -87,6 +91,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.manta-pacific-mainnet-op-geth-archive-pebble-hash-stripprefix.stripprefix.prefixes=/manta-pacific-mainnet-archive
       - traefik.http.services.manta-pacific-mainnet-op-geth-archive-pebble-hash.loadbalancer.server.port=8545
@@ -116,6 +123,7 @@ services:
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NAMESPACE_ID=866269ddf77dbc40ed9d
       - OP_NODE_OVERRIDE_CANYON=1726783200
       - OP_NODE_OVERRIDE_DELTA=1726783200
@@ -144,6 +152,10 @@ services:
       - ./op/manta-pacific/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
 
 volumes:
   manta-pacific-mainnet-op-geth-archive-pebble-hash:

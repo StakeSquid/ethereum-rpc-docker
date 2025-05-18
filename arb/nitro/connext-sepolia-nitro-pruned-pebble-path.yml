@@ -86,6 +86,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.connext-sepolia-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/connext-sepolia
       - traefik.http.services.connext-sepolia-nitro-pruned-pebble-path.loadbalancer.server.port=8545

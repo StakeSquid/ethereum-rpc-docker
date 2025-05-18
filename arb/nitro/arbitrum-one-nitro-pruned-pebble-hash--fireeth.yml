@@ -81,6 +81,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.arbitrum-one-nitro-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/arbitrum-one
       - traefik.http.services.arbitrum-one-nitro-pruned-pebble-hash.loadbalancer.server.port=8545
@@ -110,6 +111,7 @@ services:
       - ${ARBITRUM_ONE_FIREETH_DATA:-arbitrum-one-fireeth}:/firehose-data
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.services.arbitrum-one-nitro-pruned-pebble-hash-firehose.loadbalancer.server.scheme=h2c
       - traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash-firehose.service=arbitrum-one-nitro-pruned-pebble-hash-firehose

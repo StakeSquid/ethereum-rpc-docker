@@ -50,6 +50,7 @@ services:
       - 12037:12037/udp
     expose:
       - 8545
+      - 6060
       - 10010
     entrypoint: [sh, -c, exec fireeth start reader-node --log-to-file=false --reader-node-arguments "$*", _]
     command:
@@ -64,6 +65,9 @@ services:
       - --http.vhosts=*
       - --mainnet
       - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=12037
       - --rpc.gascap=600000000
@@ -85,6 +89,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.bsc-mainnet-bsc-pruned-pebble-path-stripprefix.stripprefix.prefixes=/bsc-mainnet
       - traefik.http.services.bsc-mainnet-bsc-pruned-pebble-path.loadbalancer.server.port=8545
@@ -114,6 +121,7 @@ services:
       - ${BSC_MAINNET_FIREETH_DATA:-bsc-mainnet-fireeth}:/firehose-data
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.services.bsc-mainnet-bsc-pruned-pebble-path-firehose.loadbalancer.server.scheme=h2c
       - traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path-firehose.service=bsc-mainnet-bsc-pruned-pebble-path-firehose

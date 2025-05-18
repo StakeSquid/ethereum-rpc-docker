@@ -33,7 +33,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ethereum-mainnet-minimal:
-    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.3.12}
+    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -54,6 +54,7 @@ services:
       - 14286:14286/udp
     expose:
       - 8545
+      - 9001
       - 8551
     entrypoint: [reth, node]
     command:
@@ -64,6 +65,9 @@ services:
       - --full
       - --max-inbound-peers=50
       - --max-outbound-peers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=9001
       - --nat=extip:${IP}
       - --port=14286
       - --rpc-cache.max-blocks=10000
@@ -94,6 +98,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9001
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal
       - traefik.http.services.ethereum-mainnet-reth-minimal-trace.loadbalancer.server.port=8545
@@ -114,6 +121,8 @@ services:
     command:
       - --history=prune
       - --jwt-secret=/jwtsecret
+      - --metrics-host=0.0.0.0
+      - --metrics-port=8008
       - --nat=extip:${IP}
       - --network=mainnet
       - --rest
@@ -132,6 +141,9 @@ services:
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=8008
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal
       - traefik.http.services.ethereum-mainnet-reth-minimal-trace-node.loadbalancer.server.port=3500
