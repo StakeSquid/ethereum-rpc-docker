@@ -85,7 +85,7 @@ services:
     labels:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=6070
-      - prometheus-scrape.path=/metrics
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.arbitrum-one-nitro-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/arbitrum-one
       - traefik.http.services.arbitrum-one-nitro-pruned-pebble-hash.loadbalancer.server.port=8545

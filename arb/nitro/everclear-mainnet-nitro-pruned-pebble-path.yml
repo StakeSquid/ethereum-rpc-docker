@@ -91,7 +91,7 @@ services:
     labels:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=6070
-      - prometheus-scrape.path=/metrics
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.everclear-mainnet-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/everclear-mainnet
       - traefik.http.services.everclear-mainnet-nitro-pruned-pebble-path.loadbalancer.server.port=8545

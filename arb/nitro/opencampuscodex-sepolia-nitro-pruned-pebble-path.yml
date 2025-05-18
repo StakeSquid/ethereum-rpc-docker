@@ -90,7 +90,7 @@ services:
     labels:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=6070
-      - prometheus-scrape.path=/metrics
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.opencampuscodex-sepolia-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/opencampuscodex-sepolia
       - traefik.http.services.opencampuscodex-sepolia-nitro-pruned-pebble-path.loadbalancer.server.port=8545

@@ -91,7 +91,7 @@ services:
     labels:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=6070
-      - prometheus-scrape.path=/metrics
+      - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
       - traefik.http.middlewares.connext-sepolia-nitro-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/connext-sepolia-archive
       - traefik.http.services.connext-sepolia-nitro-archive-leveldb-hash.loadbalancer.server.port=8545
