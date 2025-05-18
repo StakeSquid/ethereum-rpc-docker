@@ -60,9 +60,7 @@ services:
       - --engine.cross-block-cache-size=${BASE_MAINNET_RETH_STATE_CACHE:-4096}
       - --max-inbound-peers=50
       - --max-outbound-peers=50
-      - --metrics
-      - --metrics.addr=0.0.0.0
-      - --metrics.port=9001
+      - --metrics=0.0.0.0:9001
       - --nat=extip:${IP}
       - --port=14221
       - --rollup.sequencer-http=https://mainnet-sequencer.base.org
