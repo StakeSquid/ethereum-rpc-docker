@@ -61,6 +61,9 @@ services:
       - --http.vhosts=*
       - --init.download-path=/tmp
       - --init.latest=archive
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=6070
       - --node.batch-poster.enable=false
       - --node.sequencer=false
       - --node.staker.enable=false
@@ -81,7 +84,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
-      - prometheus-scrape.enabled=false
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6070
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.arbitrum-one-nitro-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/arbitrum-one-archive
       - traefik.http.services.arbitrum-one-nitro-archive-leveldb-hash.loadbalancer.server.port=8545

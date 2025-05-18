@@ -60,6 +60,9 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --init.download-path=/tmp
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=6070
       - --node.batch-poster.enable=false
       - --node.data-availability.enable=true
       - --node.data-availability.parent-chain-node-url=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
@@ -86,7 +89,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
-      - prometheus-scrape.enabled=false
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6070
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.alephzero-sepolia-nitro-pruned-pebble-path-stripprefix.stripprefix.prefixes=/alephzero-sepolia
       - traefik.http.services.alephzero-sepolia-nitro-pruned-pebble-path.loadbalancer.server.port=8545
