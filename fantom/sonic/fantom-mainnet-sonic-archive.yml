@@ -55,6 +55,7 @@ services:
       - 13335:13335/udp
     expose:
       - 8545
+      - 6060
     environment:
       - CACHE_GB=${SONIC_CACHE_GB:-28}
       - GENESIS=https://download.fantom.network/opera/testnet/testnet-26650-rpc.g
@@ -71,7 +72,7 @@ services:
       - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
-      - --metrics.port=
+      - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=13335
       - --rpc.gascap=600000000
@@ -90,7 +91,9 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
-      - prometheus-scrape.enabled=false
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.fantom-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/fantom-mainnet-archive
       - traefik.http.services.fantom-mainnet-sonic-archive.loadbalancer.server.port=8545
