@@ -116,7 +116,7 @@ services:
     command:
       - --history=prune
       - --jwt-secret=/jwtsecret
-      - --metrics-host=0.0.0.0
+      - --metrics-address=0.0.0.0
       - --metrics-port=8008
       - --nat=extip:${IP}
       - --network=mainnet
