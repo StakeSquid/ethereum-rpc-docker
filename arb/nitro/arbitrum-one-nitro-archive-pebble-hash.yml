@@ -51,6 +51,7 @@ services:
       - --chain.id=42161
       - --execution.caching.archive=true
       - --execution.caching.state-scheme=hash
+      - --execution.rpc.classic-redirect=http://arbitrum-one-arbnode-archive:8545
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
@@ -95,7 +96,61 @@ services:
       - ${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-archive-pebble-hash.rule=Path(`/arbitrum-one-archive`) || Path(`/arbitrum-one-archive/`)}
       - traefik.http.routers.arbitrum-one-nitro-archive-pebble-hash.middlewares=arbitrum-one-nitro-archive-pebble-hash-stripprefix, ipallowlist
 
+  arbitrum-one-arbnode-archive:
+    image: ${ARBITRUM_ARBNODE_IMAGE:-offchainlabs/arb-node}:${ARBITRUM_ONE_ARBNODE_VERSION:-v1.4.5-e97c1a4}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    expose:
+      - 8545
+      - 8546
+    entrypoint: [/home/user/go/bin/arb-node]
+    command:
+      - --core.checkpoint-gas-frequency=156250000
+      - --l1.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --l2.disable-upstream
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=7070
+      - --node.cache.allow-slow-lookup
+      - --node.chain-id=42161
+      - --node.rpc.addr=0.0.0.0
+      - --node.rpc.enable-l1-calls
+      - --node.rpc.port=8545
+      - --node.rpc.tracing.enable
+      - --node.rpc.tracing.namespace=trace
+      - --node.ws.addr=0.0.0.0
+      - --node.ws.port=8546
+      - --persistent.chain=/data/datadir/
+      - --persistent.global-config=/data/
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ARBITRUM_ONE_ARBNODE_ARCHIVE_LEVELDB_HASH_DATA:-arbitrum-one-arbnode-archive-leveldb-hash}:/data
+      - /slowdisk:/slowdisk
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    labels:
+      - prometheus-scrape.enabled=false
+
 volumes:
+  arbitrum-one-arbnode-archive-leveldb-hash:
   arbitrum-one-nitro-archive-pebble-hash:
 
 x-upstreams:
