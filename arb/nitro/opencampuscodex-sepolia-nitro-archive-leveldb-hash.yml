@@ -50,7 +50,6 @@ services:
     command:
       - --conf.file=/config/baseConfig.json
       - --execution.caching.archive=true
-      - --execution.caching.state-scheme=hash
       - --execution.forwarding-target=https://rpc.open-campus-codex.gelato.digital
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
@@ -74,7 +73,6 @@ services:
       - --node.staker.enable=false
       - --parent-chain.connection.url=${ARBITRUM_SEPOLIA_EXECUTION_RPC}
       - --persistent.chain=/root/.arbitrum/opencampuscodex-sepolia-archive
-      - --persistent.db-engine=leveldb
       - --ws.addr=0.0.0.0
       - --ws.origins=*
       - --ws.port=8545

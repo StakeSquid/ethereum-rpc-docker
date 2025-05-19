@@ -50,7 +50,6 @@ services:
     command:
       - --chain.id=42170
       - --execution.caching.archive=false
-      - --execution.caching.state-scheme=hash
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0

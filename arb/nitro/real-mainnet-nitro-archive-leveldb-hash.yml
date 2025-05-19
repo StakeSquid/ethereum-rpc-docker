@@ -50,7 +50,6 @@ services:
     command:
       - --conf.file=/config/baseConfig.json
       - --execution.caching.archive=true
-      - --execution.caching.state-scheme=hash
       - --execution.forwarding-target=https://rpc.realforreal.gelato.digital
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
@@ -75,7 +74,6 @@ services:
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
       - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --persistent.chain=/root/.arbitrum/real-mainnet-archive
-      - --persistent.db-engine=leveldb
       - --ws.addr=0.0.0.0
       - --ws.origins=*
       - --ws.port=8545

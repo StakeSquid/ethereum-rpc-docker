@@ -50,7 +50,6 @@ services:
     command:
       - --chain.id=42161
       - --execution.caching.archive=true
-      - --execution.caching.state-scheme=hash
       - --execution.rpc.classic-redirect=http://arbitrum-one-arbnode-archive:8545
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
