@@ -71,6 +71,7 @@ services:
       - --nat=extip:${IP}
       - --networkid=44787
       - --port=10895
+      - --rollup.historicalrpc=${CELO_ALFAJORES_CLASSIC_ARCHIVE_RPC}
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash

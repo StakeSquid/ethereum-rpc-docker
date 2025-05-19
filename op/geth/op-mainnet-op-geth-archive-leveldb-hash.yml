@@ -67,6 +67,7 @@ services:
       - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=13399
+      - --rollup.historicalrpc=${OP_MAINNET_CLASSIC_ARCHIVE_RPC}
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash

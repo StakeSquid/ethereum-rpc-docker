@@ -71,6 +71,7 @@ services:
       - --nat=extip:${IP}
       - --networkid=42220
       - --port=12111
+      - --rollup.historicalrpc=${CELO_MAINNET_CLASSIC_ARCHIVE_RPC}
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
