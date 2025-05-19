@@ -37,9 +37,9 @@ services:
       - "traefik.http.services.moonbeam-archive-trace.loadbalancer.server.port=9944"
       - "${NO_SSL:-traefik.http.routers.moonbeam-archive-trace.entrypoints=websecure}"
       - "${NO_SSL:-traefik.http.routers.moonbeam-archive-trace.tls.certresolver=myresolver}"
-      - "${NO_SSL:-traefik.http.routers.moonbeam-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/moonbeam-archive-trace`)}"
-      - "${NO_SSL:+traefik.http.routers.moonbeam-archive-trace.rule=PathPrefix(`/moonbeam-archive-trace`)}"      
-      - "traefik.http.routers.moonbeam-archive-trace.middlewares=moonbeam-archive-trace-stripprefix, ipwhitelist"
+      - "${NO_SSL:-traefik.http.routers.moonbeam-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/moonbeam-archive-trace`) || Path(`/moonbeam-archive-trace/`))}"
+      - "${NO_SSL:+traefik.http.routers.moonbeam-archive-trace.rule=Path(`/moonbeam-archive-trace`) || Path(`/moonbeam-archive-trace/`)}"      
+      - "traefik.http.routers.moonbeam-archive-trace.middlewares=moonbeam-archive-trace-stripprefix, ipallowlist"
     networks:
       - chains
 
