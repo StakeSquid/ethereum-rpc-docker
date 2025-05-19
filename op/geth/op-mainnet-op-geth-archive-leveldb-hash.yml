@@ -155,7 +155,7 @@ services:
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
 
-  op-mainnet-l2geth-archive:
+  op-mainnet-l2geth-archive-client:
     image: ${OP_L2GETH_IMAGE:-ethereumoptimism/l2geth}:${OP_MAINNET_L2GETH_VERSION:-0.5.31}
     sysctls:
       # TCP Performance
@@ -176,6 +176,7 @@ services:
       - 12952:12952/udp
     expose:
       - 8545
+      - 8546
     env_file:
       - ./op/op/mainnet/l2geth.env
     environment:
@@ -206,11 +207,32 @@ services:
       - ${OP_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-op-mainnet-l2geth-archive-leveldb-hash}:/geth
       - ./op/op/mainnet:/config
       - /slowdisk:/slowdisk
-    logging:
+    logging: &logging-defaults
       driver: json-file
       options:
         max-size: 10m
         max-file: '3'
+    labels:
+      - prometheus-scrape.enabled=false
+
+  op-mainnet-l2geth-archive:
+    image: nginx
+    expose:
+      - '80'
+    environment:
+      PROXY_HOST: op-mainnet-l2geth-archive-client
+      RPC_PATH: ''
+      RPC_PORT: 8545
+      WS_PATH: ''
+      WS_PORT: 8546
+    restart: unless-stopped
+    depends_on:
+      - op-mainnet-l2geth-archive-client
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
 

@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  op-mainnet-l2geth-archive:
+  op-mainnet-l2geth-archive-client:
     image: ${OP_L2GETH_IMAGE:-ethereumoptimism/l2geth}:${OP_MAINNET_L2GETH_VERSION:-0.5.31}
     sysctls:
       # TCP Performance
@@ -50,6 +50,7 @@ services:
       - 12952:12952/udp
     expose:
       - 8545
+      - 8546
     env_file:
       - ./op/op/mainnet/l2geth.env
     environment:
@@ -83,9 +84,30 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
+
+  op-mainnet-l2geth-archive:
+    image: nginx
+    expose:
+      - '80'
+    environment:
+      PROXY_HOST: op-mainnet-l2geth-archive-client
+      RPC_PATH: ''
+      RPC_PORT: 8545
+      WS_PATH: ''
+      WS_PORT: 8546
+    restart: unless-stopped
+    depends_on:
+      - op-mainnet-l2geth-archive-client
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.op-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/op-mainnet-l2geth-archive
-      - traefik.http.services.op-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545
+      - traefik.http.services.op-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet-l2geth-archive`) || Path(`/op-mainnet-l2geth-archive/`))}
