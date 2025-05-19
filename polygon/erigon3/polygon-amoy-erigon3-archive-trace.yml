@@ -72,6 +72,7 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=32377
       - --p2p.allowed-ports=37377
+      - --polygon.logindex
       - --port=12377
       - --prune.mode=archive
       - --rpc.gascap=6000000000
