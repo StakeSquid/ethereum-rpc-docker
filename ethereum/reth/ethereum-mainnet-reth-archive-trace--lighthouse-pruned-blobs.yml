@@ -110,7 +110,9 @@ services:
     ports:
       - 19563:19563
       - 19563:19563/udp
+    entrypoint: [lighthouse, beacon_node]
     command:
+      - --allow-insecure-genesis-sync
       - --datadir=/data
       - --debug-level=info
       - --disable-backfill-rate-limiting
