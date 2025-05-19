@@ -1,0 +1,138 @@
+---
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:arb/nitro/arbitrum-one-nitro-archive-pebble-hash.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/arbitrum-one-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  arbitrum-one-archive:
+    image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_ONE_NITRO_VERSION:-v3.6.2-5b41a2d}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    expose:
+      - 8545
+    command:
+      - --chain.id=42161
+      - --execution.caching.archive=true
+      - --execution.caching.state-scheme=hash
+      - --execution.rpc.gas-cap=600000000
+      - --execution.sequencer.enable=false
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,arb,txpool,debug
+      - --http.corsdomain=*
+      - --http.port=8545
+      - --http.vhosts=*
+      - --init.download-path=/tmp
+      - --init.latest=archive
+      - --metrics
+      - --metrics-server.addr=0.0.0.0
+      - --metrics-server.port=6070
+      - --node.batch-poster.enable=false
+      - --node.sequencer=false
+      - --node.staker.enable=false
+      - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
+      - --parent-chain.connection.url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --persistent.chain=/root/.arbitrum/arbitrum-one-archive
+      - --persistent.db-engine=pebble
+      - --ws.addr=0.0.0.0
+      - --ws.origins=*
+      - --ws.port=8545
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ARBITRUM_ONE_NITRO_ARCHIVE_PEBBLE_HASH_DATA:-arbitrum-one-nitro-archive-pebble-hash}:/root/.arbitrum
+      - ./tmp/arbitrum-one-archive:/tmp
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6070
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.arbitrum-one-nitro-archive-pebble-hash-stripprefix.stripprefix.prefixes=/arbitrum-one-archive
+      - traefik.http.services.arbitrum-one-nitro-archive-pebble-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-pebble-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-pebble-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-one-nitro-archive-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-one-archive`) || Path(`/arbitrum-one-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-archive-pebble-hash.rule=Path(`/arbitrum-one-archive`) || Path(`/arbitrum-one-archive/`)}
+      - traefik.http.routers.arbitrum-one-nitro-archive-pebble-hash.middlewares=arbitrum-one-nitro-archive-pebble-hash-stripprefix, ipallowlist
+
+volumes:
+  arbitrum-one-nitro-archive-pebble-hash:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: arbitrum
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
