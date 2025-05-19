@@ -59,9 +59,6 @@ services:
       - --datadir=/geth
       - --gcmode=archive
       - --maxpeers=50
-      - --metrics
-      - --metrics.addr=0.0.0.0
-      - --metrics.port=
       - --nat=extip:${IP}
       - --port=12952
       - --rpc
