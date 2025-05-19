@@ -111,7 +111,6 @@ services:
       - 19563:19563
       - 19563:19563/udp
     command:
-      - --allow-insecure-genesis-sync
       - --datadir=/data
       - --debug-level=info
       - --disable-backfill-rate-limiting
