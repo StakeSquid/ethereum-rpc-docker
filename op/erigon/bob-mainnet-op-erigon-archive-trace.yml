@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   bob-mainnet-op-erigon:
-    image: ${BOB_ERIGON_IMAGE:-testinprod/op-erigon}:${BOB_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
+    image: ${BOB_ERIGON_IMAGE:-testinprod/op-erigon}:${BOB_MAINNET_ERIGON_VERSION:-v2.61.3-0.9.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
