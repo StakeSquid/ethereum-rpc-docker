@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/celo-alfajores \
+# curl -X POST https://${IP}.traefik.me/celo-alfajores-geth \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  celo-alfajores:
+  celo-alfajores-geth:
     image: ${CELO_GETH_IMAGE:-us.gcr.io/celo-org/geth}:${CELO_ALFAJORES_GETH_VERSION:-1.8.9}
     sysctls:
       # TCP Performance
@@ -85,12 +85,12 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.celo-alfajores-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-alfajores
+      - traefik.http.middlewares.celo-alfajores-geth-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-alfajores-geth
       - traefik.http.services.celo-alfajores-geth-pruned-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/celo-alfajores`) || Path(`/celo-alfajores/`))}
-      - ${NO_SSL:+traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.rule=Path(`/celo-alfajores`) || Path(`/celo-alfajores/`)}
+      - ${NO_SSL:-traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/celo-alfajores-geth`) || Path(`/celo-alfajores-geth/`))}
+      - ${NO_SSL:+traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.rule=Path(`/celo-alfajores-geth`) || Path(`/celo-alfajores-geth/`)}
       - traefik.http.routers.celo-alfajores-geth-pruned-leveldb-hash.middlewares=celo-alfajores-geth-pruned-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
