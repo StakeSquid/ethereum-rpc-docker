@@ -72,7 +72,7 @@ services:
       - --ws
       - --wsaddr=0.0.0.0
       - --wsapi=eth,net,web3,admin,debug
-      - --wsport=8545
+      - --wsport=8546
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
