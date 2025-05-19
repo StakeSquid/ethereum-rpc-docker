@@ -77,14 +77,15 @@ services:
     restart: unless-stopped
     stop_grace_period: 1m
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.linea-mainnet-erigon-archive-trace-stripprefix.stripprefix.prefixes=/linea-erigon"
-      - "traefik.http.services.linea-mainnet-erigon-archive-trace.loadbalancer.server.port=8545"
-      - "${NO_SSL:-traefik.http.routers.linea-mainnet-erigon-archive-trace.entrypoints=websecure}"
-      - "${NO_SSL:-traefik.http.routers.linea-mainnet-erigon-archive-trace.tls.certresolver=myresolver}"
-      - "${NO_SSL:-traefik.http.routers.linea-mainnet-erigon-archive-trace.rule=Host(`$DOMAIN`) && PathPrefix(`/linea-erigon`)}"
-      - "${NO_SSL:+traefik.http.routers.linea-mainnet-erigon-archive-trace.rule=PathPrefix(`/linea-erigon`)}"      
-      - "traefik.http.routers.linea-mainnet-erigon-archive-trace.middlewares=linea-mainnet-erigon-archive-trace-stripprefix, ipwhitelist"
-      
+      - traefik.enable=true
+      - traefik.http.middlewares.linea-mainnet-erigon-archive-trace-stripprefix.stripprefix.prefixes=/linea-mainnet-erigon
+      - traefik.http.services.linea-mainnet-erigon-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/linea-mainnet-erigon`) || Path(`/linea-mainnet-erigon/`))}
+      - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon-archive-trace.rule=Path(`/linea-mainnet-erigon`) || Path(`/linea-mainnet-erigon/`)}
+      - traefik.http.routers.linea-mainnet-erigon-archive-trace.middlewares=linea-mainnet-erigon-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
+    
 volumes:
     linea-mainnet-erigon-archive-trace:
