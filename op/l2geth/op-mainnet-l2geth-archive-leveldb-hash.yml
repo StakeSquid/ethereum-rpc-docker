@@ -59,26 +59,23 @@ services:
     command:
       - --datadir=/geth
       - --gcmode=archive
-      - --http
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,admin,debug
-      - --http.port=8545
-      - --http.vhosts=*
       - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=12952
+      - --rpc
       - --rpc.gascap=600000000
-      - --rpc.txfeecap=0
+      - --rpcaddr=0.0.0.0
+      - --rpcapi=eth,net,web3,admin,debug
+      - --rpcport=8545
       - --syncmode=full
       - --vmodule=eth/*=5,miner=4,rpc=5,rollup=4,consensus/clique=1
       - --ws
-      - --ws.addr=0.0.0.0
-      - --ws.api=eth,net,web3,admin,debug
-      - --ws.origins=*
-      - --ws.port=8545
+      - --wsaddr=0.0.0.0
+      - --wsapi=eth,net,web3,admin,debug
+      - --wsport=8545
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
