@@ -53,6 +53,9 @@ services:
       - 6060
     command:
       - --cache=8192
+      - --da.blob.beaconnode=${ETHEREUM_MAINNET_BEACON_REST}
+      - --da.blob.blobscan=https://api.blobscan.com/blobs/
+      - --da.blob.blocknative=https://api.ethernow.xyz/v1/blob/
       - --datadir=/root/.ethereum
       - --gcmode=archive
       - --gpo.ignoreprice=1
