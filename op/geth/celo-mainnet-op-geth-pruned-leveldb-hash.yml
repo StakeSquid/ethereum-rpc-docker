@@ -90,6 +90,8 @@ services:
       - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
+    depends_on:
+      - celo-mainnet-geth-pruned
     networks:
       - chains
     volumes:
@@ -187,66 +189,6 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  celo-mainnet-classic:
-    image: ${CELO_GETH_IMAGE:-us.gcr.io/celo-org/geth}:${CELO_MAINNET_GETH_VERSION:-1.8.9}
-    sysctls:
-      # TCP Performance
-      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
-      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
-      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
-      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
-      net.core.somaxconn: 32768                   # Higher connection queue
-      # Memory/Connection Management
-      # net.core.netdev_max_backlog: 50000          # Increase network buffer
-      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
-      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
-    ulimits:
-      nofile: 1048576    # Max open files (for RPC/WS connections)
-    user: root
-    ports:
-      - 11882:11882
-      - 11882:11882/udp
-    expose:
-      - 8545
-      - 6060
-    command:
-      - --datadir=/root/.celo
-      - --gcmode=full
-      - --http
-      - --http.addr=0.0.0.0
-      - --http.api=admin,debug,web3,eth,istanbul,net
-      - --http.port=8545
-      - --http.vhosts=*
-      - --maxpeers=50
-      - --metrics
-      - --metrics.addr=0.0.0.0
-      - --metrics.port=6060
-      - --nat=extip:${IP}
-      - --port=11882
-      - --rpc.gascap=600000000
-      - --rpc.txfeecap=0
-      - --ws
-      - --ws.addr=0.0.0.0
-      - --ws.api=admin,debug,web3,eth,istanbul,net
-      - --ws.origins=*
-      - --ws.port=8545
-    restart: unless-stopped
-    stop_grace_period: 5m
-    networks:
-      - chains
-    volumes:
-      - ${CELO_MAINNET_GETH_PRUNED_LEVELDB_HASH_DATA:-celo-mainnet-geth-pruned-leveldb-hash}:/root/.celo
-      - /slowdisk:/slowdisk
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-        max-file: '3'
-    labels:
-      - prometheus-scrape.enabled=true
-      - prometheus-scrape.port=6060
-      - prometheus-scrape.path=/debug/metrics/prometheus
 
 volumes:
   celo-mainnet-geth-pruned-leveldb-hash:

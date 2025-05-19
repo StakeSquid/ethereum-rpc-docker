@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/arbitrum-one \
+# curl -X POST https://${IP}.traefik.me/arbitrum-one-arbnode-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  arbitrum-one:
+  arbitrum-one-arbnode-archive:
     image: ${ARBITRUM_ARBNODE_IMAGE:-offchainlabs/arb-node}:${ARBITRUM_ONE_ARBNODE_VERSION:-v1.4.5-e97c1a4}
     sysctls:
       # TCP Performance
@@ -78,12 +78,12 @@ services:
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.arbitrum-one-arbnode-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/arbitrum-one
+      - traefik.http.middlewares.arbitrum-one-arbnode-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/arbitrum-one-arbnode-archive
       - traefik.http.services.arbitrum-one-arbnode-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-arbnode-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.arbitrum-one-arbnode-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.arbitrum-one-arbnode-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-one`) || Path(`/arbitrum-one/`))}
-      - ${NO_SSL:+traefik.http.routers.arbitrum-one-arbnode-archive-leveldb-hash.rule=Path(`/arbitrum-one`) || Path(`/arbitrum-one/`)}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-one-arbnode-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-one-arbnode-archive`) || Path(`/arbitrum-one-arbnode-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.arbitrum-one-arbnode-archive-leveldb-hash.rule=Path(`/arbitrum-one-arbnode-archive`) || Path(`/arbitrum-one-arbnode-archive/`)}
       - traefik.http.routers.arbitrum-one-arbnode-archive-leveldb-hash.middlewares=arbitrum-one-arbnode-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:

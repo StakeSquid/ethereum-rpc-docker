@@ -51,6 +51,7 @@ services:
       - --chain.id=42161
       - --execution.caching.archive=true
       - --execution.caching.state-scheme=hash
+      - --execution.rpc.classic-redirect=http://arbitrum-one-arbnode-archive:8545
       - --execution.rpc.gas-cap=600000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
@@ -95,7 +96,7 @@ services:
       - ${NO_SSL:+traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.rule=Path(`/arbitrum-one-archive`) || Path(`/arbitrum-one-archive/`)}
       - traefik.http.routers.arbitrum-one-nitro-archive-leveldb-hash.middlewares=arbitrum-one-nitro-archive-leveldb-hash-stripprefix, ipallowlist
 
-  arbitrum-one-classic:
+  arbitrum-one-arbnode-archive:
     image: ${ARBITRUM_ARBNODE_IMAGE:-offchainlabs/arb-node}:${ARBITRUM_ONE_ARBNODE_VERSION:-v1.4.5-e97c1a4}
     sysctls:
       # TCP Performance
