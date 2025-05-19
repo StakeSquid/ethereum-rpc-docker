@@ -50,7 +50,6 @@ services:
       - 12952:12952/udp
     expose:
       - 8545
-      - 6060
     env_file:
       - ./op/op/mainnet/l2geth.env
     environment:
@@ -62,7 +61,7 @@ services:
       - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
-      - --metrics.port=6060
+      - --metrics.port=
       - --nat=extip:${IP}
       - --port=12952
       - --rpc
@@ -86,9 +85,7 @@ services:
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
-      - prometheus-scrape.enabled=true
-      - prometheus-scrape.port=6060
-      - prometheus-scrape.path=/debug/metrics/prometheus
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.op-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/op-mainnet-l2geth-archive
       - traefik.http.services.op-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545

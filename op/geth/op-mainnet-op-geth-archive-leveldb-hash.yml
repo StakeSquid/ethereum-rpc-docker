@@ -176,7 +176,6 @@ services:
       - 12952:12952/udp
     expose:
       - 8545
-      - 6060
     env_file:
       - ./op/op/mainnet/l2geth.env
     environment:
@@ -188,7 +187,7 @@ services:
       - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
-      - --metrics.port=6060
+      - --metrics.port=
       - --nat=extip:${IP}
       - --port=12952
       - --rpc
@@ -216,9 +215,7 @@ services:
         max-size: 10m
         max-file: '3'
     labels:
-      - prometheus-scrape.enabled=true
-      - prometheus-scrape.port=6060
-      - prometheus-scrape.path=/debug/metrics/prometheus
+      - prometheus-scrape.enabled=false
 
 volumes:
   op-mainnet-l2geth-archive-leveldb-hash:
