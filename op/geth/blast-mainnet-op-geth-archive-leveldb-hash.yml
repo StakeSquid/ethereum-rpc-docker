@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   blast-mainnet-archive:
-    image: ${BLAST_GETH_IMAGE:-blastio/blast-geth}:${BLAST_MAINNET_GETH_VERSION:-v1.3.0-mainnet}
+    image: ${BLAST_GETH_IMAGE:-blastio/blast-geth}:${BLAST_MAINNET_GETH_VERSION:-mainnet-v1.3.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -111,7 +111,7 @@ services:
       - traefik.http.routers.blast-mainnet-op-geth-archive-leveldb-hash.middlewares=blast-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   blast-mainnet-archive-node:
-    image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_MAINNET_NODE_VERSION:-v1.3.0-mainnet}
+    image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_MAINNET_NODE_VERSION:-mainnet-v1.3.0}
     ports:
       - 15683:15683
       - 15683:15683/udp
