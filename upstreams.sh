@@ -64,7 +64,11 @@ for part in "${parts[@]}"; do
 		    url="$DOMAIN/$path"
 		    export RPC_URL="$PROTO://$url"
 		    export TEST_URL="$RPC_URL"
-		    export WS_URL="wss://$url"		    
+			if [ "$PROTO" = "https" ]; then
+				export WS_URL="wss://$url"
+			else
+				export WS_URL="ws://$url"
+			fi
             export ID=$(echo "$url" | sed -E "$GENERATE_ID_FROM_PATH_EXPRESSION")
 		fi
 		
