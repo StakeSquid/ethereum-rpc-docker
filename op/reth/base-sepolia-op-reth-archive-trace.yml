@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/base-sepolia-archive \
+# curl -X POST https://${IP}.traefik.me/base-sepolia-op-reth \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  base-sepolia-archive:
+  base-sepolia-op-reth:
     image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_SEPOLIA_RETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
@@ -96,16 +96,16 @@ services:
       - prometheus-scrape.port=9001
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.base-sepolia-op-reth-archive-trace-stripprefix.stripprefix.prefixes=/base-sepolia-archive
+      - traefik.http.middlewares.base-sepolia-op-reth-archive-trace-stripprefix.stripprefix.prefixes=/base-sepolia-op-reth
       - traefik.http.services.base-sepolia-op-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.base-sepolia-op-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.base-sepolia-op-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.base-sepolia-op-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/base-sepolia-archive`) || Path(`/base-sepolia-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.base-sepolia-op-reth-archive-trace.rule=Path(`/base-sepolia-archive`) || Path(`/base-sepolia-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.base-sepolia-op-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/base-sepolia-op-reth`) || Path(`/base-sepolia-op-reth/`))}
+      - ${NO_SSL:+traefik.http.routers.base-sepolia-op-reth-archive-trace.rule=Path(`/base-sepolia-op-reth`) || Path(`/base-sepolia-op-reth/`)}
       - traefik.http.routers.base-sepolia-op-reth-archive-trace.middlewares=base-sepolia-op-reth-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  base-sepolia-archive-node:
+  base-sepolia-op-reth-node:
     image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.2}
     ports:
       - 16390:16390
@@ -117,7 +117,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://base-sepolia-archive:8551
+      - OP_NODE_L2_ENGINE_RPC=http://base-sepolia-op-reth:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
@@ -139,7 +139,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - base-sepolia-archive
+      - base-sepolia-op-reth
     networks:
       - chains
     volumes:

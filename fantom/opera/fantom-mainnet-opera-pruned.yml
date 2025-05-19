@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/fantom-mainnet \
+# curl -X POST https://${IP}.traefik.me/fantom-mainnet-opera-pruned \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  fantom-mainnet:
+  fantom-mainnet-opera-pruned:
     build:
       context: ./fantom
       dockerfile: opera.Dockerfile
@@ -96,12 +96,12 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.fantom-mainnet-opera-pruned-stripprefix.stripprefix.prefixes=/fantom-mainnet
+      - traefik.http.middlewares.fantom-mainnet-opera-pruned-stripprefix.stripprefix.prefixes=/fantom-mainnet-opera-pruned
       - traefik.http.services.fantom-mainnet-opera-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned.rule=Host(`$DOMAIN`) && (Path(`/fantom-mainnet`) || Path(`/fantom-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.fantom-mainnet-opera-pruned.rule=Path(`/fantom-mainnet`) || Path(`/fantom-mainnet/`)}
+      - ${NO_SSL:-traefik.http.routers.fantom-mainnet-opera-pruned.rule=Host(`$DOMAIN`) && (Path(`/fantom-mainnet-opera-pruned`) || Path(`/fantom-mainnet-opera-pruned/`))}
+      - ${NO_SSL:+traefik.http.routers.fantom-mainnet-opera-pruned.rule=Path(`/fantom-mainnet-opera-pruned`) || Path(`/fantom-mainnet-opera-pruned/`)}
       - traefik.http.routers.fantom-mainnet-opera-pruned.middlewares=fantom-mainnet-opera-pruned-stripprefix, ipallowlist
 
 volumes:

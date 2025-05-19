@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/zora-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/zora-mainnet-op-erigon \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  zora-mainnet-archive:
+  zora-mainnet-op-erigon:
     image: ${ZORA_ERIGON_IMAGE:-testinprod/op-erigon}:${ZORA_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     sysctls:
       # TCP Performance
@@ -97,16 +97,16 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.zora-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/zora-mainnet-archive
+      - traefik.http.middlewares.zora-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/zora-mainnet-op-erigon
       - traefik.http.services.zora-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/zora-mainnet-archive`) || Path(`/zora-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-erigon-archive-trace.rule=Path(`/zora-mainnet-archive`) || Path(`/zora-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/zora-mainnet-op-erigon`) || Path(`/zora-mainnet-op-erigon/`))}
+      - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-erigon-archive-trace.rule=Path(`/zora-mainnet-op-erigon`) || Path(`/zora-mainnet-op-erigon/`)}
       - traefik.http.routers.zora-mainnet-op-erigon-archive-trace.middlewares=zora-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  zora-mainnet-archive-node:
+  zora-mainnet-op-erigon-node:
     image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 19360:19360
@@ -118,7 +118,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://zora-mainnet-archive:8551
+      - OP_NODE_L2_ENGINE_RPC=http://zora-mainnet-op-erigon:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
@@ -139,7 +139,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - zora-mainnet-archive
+      - zora-mainnet-op-erigon
     networks:
       - chains
     volumes:

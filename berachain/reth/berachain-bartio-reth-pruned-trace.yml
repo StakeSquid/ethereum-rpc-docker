@@ -1,6 +1,6 @@
 ---
 # you should backup the peers of your beacond node frequently.
-# docker exec -it rpc-berachain-bartio-node-1 curl http://localhost:26657/net_info | jq -r '
+# docker exec -it rpc-berachain-bartio-reth-pruned-node-1 curl http://localhost:26657/net_info | jq -r '
 #  .result.peers[]
 #  | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr | split(":") | last)"
 #' | paste -sd,
@@ -29,7 +29,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/berachain-bartio \
+# curl -X POST https://${IP}.traefik.me/berachain-bartio-reth-pruned \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -39,7 +39,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  berachain-bartio:
+  berachain-bartio-reth-pruned:
     image: ${BERACHAIN_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${BERACHAIN_BARTIO_RETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
@@ -114,16 +114,16 @@ services:
       - prometheus-scrape.port=9001
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.berachain-bartio-reth-pruned-trace-stripprefix.stripprefix.prefixes=/berachain-bartio
+      - traefik.http.middlewares.berachain-bartio-reth-pruned-trace-stripprefix.stripprefix.prefixes=/berachain-bartio-reth-pruned
       - traefik.http.services.berachain-bartio-reth-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/berachain-bartio`) || Path(`/berachain-bartio/`))}
-      - ${NO_SSL:+traefik.http.routers.berachain-bartio-reth-pruned-trace.rule=Path(`/berachain-bartio`) || Path(`/berachain-bartio/`)}
+      - ${NO_SSL:-traefik.http.routers.berachain-bartio-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/berachain-bartio-reth-pruned`) || Path(`/berachain-bartio-reth-pruned/`))}
+      - ${NO_SSL:+traefik.http.routers.berachain-bartio-reth-pruned-trace.rule=Path(`/berachain-bartio-reth-pruned`) || Path(`/berachain-bartio-reth-pruned/`)}
       - traefik.http.routers.berachain-bartio-reth-pruned-trace.middlewares=berachain-bartio-reth-pruned-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  berachain-bartio-node:
+  berachain-bartio-reth-pruned-node:
     build:
       context: ./berachain
       dockerfile: beacon-kit.Dockerfile
@@ -134,7 +134,7 @@ services:
       - 19467:19467
       - 19467:19467/udp
     environment:
-      - AUTH_RPC=http://berachain-bartio:8551
+      - AUTH_RPC=http://berachain-bartio-reth-pruned:8551
       - CHAINID=80084
       - CHAINNAME=bartio
       - CHAIN_SPEC=testnet

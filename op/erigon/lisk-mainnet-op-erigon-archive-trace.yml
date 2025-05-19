@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/lisk-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/lisk-mainnet-op-erigon \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  lisk-mainnet-archive:
+  lisk-mainnet-op-erigon:
     image: ${LISK_ERIGON_IMAGE:-testinprod/op-erigon}:${LISK_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     sysctls:
       # TCP Performance
@@ -99,16 +99,16 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.lisk-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/lisk-mainnet-archive
+      - traefik.http.middlewares.lisk-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/lisk-mainnet-op-erigon
       - traefik.http.services.lisk-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/lisk-mainnet-archive`) || Path(`/lisk-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.rule=Path(`/lisk-mainnet-archive`) || Path(`/lisk-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/lisk-mainnet-op-erigon`) || Path(`/lisk-mainnet-op-erigon/`))}
+      - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.rule=Path(`/lisk-mainnet-op-erigon`) || Path(`/lisk-mainnet-op-erigon/`)}
       - traefik.http.routers.lisk-mainnet-op-erigon-archive-trace.middlewares=lisk-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  lisk-mainnet-archive-node:
+  lisk-mainnet-op-erigon-node:
     image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 19831:19831
@@ -120,7 +120,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://lisk-mainnet-archive:8551
+      - OP_NODE_L2_ENGINE_RPC=http://lisk-mainnet-op-erigon:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
@@ -142,7 +142,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - lisk-mainnet-archive
+      - lisk-mainnet-op-erigon
     networks:
       - chains
     volumes:

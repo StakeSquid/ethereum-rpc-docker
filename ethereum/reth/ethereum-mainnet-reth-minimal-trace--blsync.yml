@@ -22,7 +22,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-mainnet-minimal \
+# curl -X POST https://${IP}.traefik.me/ethereum-mainnet-reth-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -32,7 +32,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  ethereum-mainnet-minimal:
+  ethereum-mainnet-reth-minimal:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
@@ -100,16 +100,16 @@ services:
       - prometheus-scrape.port=9001
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-minimal
+      - traefik.http.middlewares.ethereum-mainnet-reth-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-reth-minimal
       - traefik.http.services.ethereum-mainnet-reth-minimal-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-minimal`) || Path(`/ethereum-mainnet-minimal/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-minimal-trace.rule=Path(`/ethereum-mainnet-minimal`) || Path(`/ethereum-mainnet-minimal/`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-reth-minimal`) || Path(`/ethereum-mainnet-reth-minimal/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-minimal-trace.rule=Path(`/ethereum-mainnet-reth-minimal`) || Path(`/ethereum-mainnet-reth-minimal/`)}
       - traefik.http.routers.ethereum-mainnet-reth-minimal-trace.middlewares=ethereum-mainnet-reth-minimal-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  ethereum-mainnet-minimal-node:
+  ethereum-mainnet-reth-minimal-node:
     image: ${ETHEREUM_BLSYNC_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_BLSYNC_VERSION:-alltools-v1.15.7}
     ports:
       - 19286:19286
@@ -118,12 +118,12 @@ services:
     command:
       - --beacon.api=https://lodestar-mainnet.chainsafe.io
       - --beacon.checkpoint=${ETHEREUM_MAINNET_BEACON_CHECKPOINT}
-      - --blsync.engine.api=http://ethereum-mainnet-minimal:8551
+      - --blsync.engine.api=http://ethereum-mainnet-reth-minimal:8551
       - --blsync.jwtsecret=/jwtsecret
       - --mainnet
     restart: unless-stopped
     depends_on:
-      - ethereum-mainnet-minimal
+      - ethereum-mainnet-reth-minimal
     networks:
       - chains
     volumes:
@@ -132,7 +132,7 @@ services:
     labels:
       - prometheus-scrape.enabled=false
 
-  ethereum-mainnet-minimal-pruner:
+  ethereum-mainnet-reth-minimal-pruner:
     image: debian:latest
     entrypoint: [/scripts/prune-reth.sh]
     restart: no

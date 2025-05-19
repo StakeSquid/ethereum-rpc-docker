@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/mode-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/mode-mainnet-op-erigon \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  mode-mainnet-archive:
+  mode-mainnet-op-erigon:
     image: ${MODE_ERIGON_IMAGE:-testinprod/op-erigon}:${MODE_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     sysctls:
       # TCP Performance
@@ -97,16 +97,16 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.mode-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/mode-mainnet-archive
+      - traefik.http.middlewares.mode-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/mode-mainnet-op-erigon
       - traefik.http.services.mode-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/mode-mainnet-archive`) || Path(`/mode-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.mode-mainnet-op-erigon-archive-trace.rule=Path(`/mode-mainnet-archive`) || Path(`/mode-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/mode-mainnet-op-erigon`) || Path(`/mode-mainnet-op-erigon/`))}
+      - ${NO_SSL:+traefik.http.routers.mode-mainnet-op-erigon-archive-trace.rule=Path(`/mode-mainnet-op-erigon`) || Path(`/mode-mainnet-op-erigon/`)}
       - traefik.http.routers.mode-mainnet-op-erigon-archive-trace.middlewares=mode-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  mode-mainnet-archive-node:
+  mode-mainnet-op-erigon-node:
     image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 17509:17509
@@ -118,7 +118,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://mode-mainnet-archive:8551
+      - OP_NODE_L2_ENGINE_RPC=http://mode-mainnet-op-erigon:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
@@ -139,7 +139,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - mode-mainnet-archive
+      - mode-mainnet-op-erigon
     networks:
       - chains
     volumes:

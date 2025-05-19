@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-holesky-archive \
+# curl -X POST https://${IP}.traefik.me/ethereum-holesky-erigon3-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  ethereum-holesky-archive:
+  ethereum-holesky-erigon3-archive:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOLESKY_ERIGON3_VERSION:-v3.0.3}
     sysctls:
       # TCP Performance
@@ -103,20 +103,20 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-holesky-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-holesky-archive
+      - traefik.http.middlewares.ethereum-holesky-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-holesky-erigon3-archive
       - traefik.http.services.ethereum-holesky-erigon3-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-holesky-archive`) || Path(`/ethereum-holesky-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-archive-trace.rule=Path(`/ethereum-holesky-archive`) || Path(`/ethereum-holesky-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-holesky-erigon3-archive`) || Path(`/ethereum-holesky-erigon3-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-archive-trace.rule=Path(`/ethereum-holesky-erigon3-archive`) || Path(`/ethereum-holesky-erigon3-archive/`)}
       - traefik.http.routers.ethereum-holesky-erigon3-archive-trace.middlewares=ethereum-holesky-erigon3-archive-trace-stripprefix, ipallowlist
       - traefik.http.routers.ethereum-holesky-erigon3-archive-trace.service=ethereum-holesky-erigon3-archive-trace
       - traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.service=ethereum-holesky-erigon3-archive-trace-node
       - traefik.http.services.ethereum-holesky-erigon3-archive-trace-node.loadbalancer.server.port=5555
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky-archive/eth`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.rule=PathPrefix(`/ethereum-holesky-archive/eth`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-holesky-erigon3-archive/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.rule=PathPrefix(`/ethereum-holesky-erigon3-archive/eth`)}
       - traefik.http.routers.ethereum-holesky-erigon3-archive-trace-node.middlewares=ethereum-holesky-erigon3-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 

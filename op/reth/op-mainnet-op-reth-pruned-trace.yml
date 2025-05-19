@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/op-mainnet \
+# curl -X POST https://${IP}.traefik.me/op-mainnet-op-reth-pruned \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  op-mainnet:
+  op-mainnet-op-reth-pruned:
     image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_MAINNET_RETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
@@ -98,16 +98,16 @@ services:
       - prometheus-scrape.port=9001
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.op-mainnet-op-reth-pruned-trace-stripprefix.stripprefix.prefixes=/op-mainnet
+      - traefik.http.middlewares.op-mainnet-op-reth-pruned-trace-stripprefix.stripprefix.prefixes=/op-mainnet-op-reth-pruned
       - traefik.http.services.op-mainnet-op-reth-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-reth-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-reth-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet`) || Path(`/op-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-reth-pruned-trace.rule=Path(`/op-mainnet`) || Path(`/op-mainnet/`)}
+      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet-op-reth-pruned`) || Path(`/op-mainnet-op-reth-pruned/`))}
+      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-reth-pruned-trace.rule=Path(`/op-mainnet-op-reth-pruned`) || Path(`/op-mainnet-op-reth-pruned/`)}
       - traefik.http.routers.op-mainnet-op-reth-pruned-trace.middlewares=op-mainnet-op-reth-pruned-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  op-mainnet-node:
+  op-mainnet-op-reth-pruned-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 18985:18985
@@ -119,7 +119,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://op-mainnet:8551
+      - OP_NODE_L2_ENGINE_RPC=http://op-mainnet-op-reth-pruned:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
@@ -140,7 +140,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - op-mainnet
+      - op-mainnet-op-reth-pruned
     networks:
       - chains
     volumes:

@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/solana-testnet \
+# curl -X POST https://${IP}.traefik.me/solana-testnet-agave \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  solana-testnet-client:
+  solana-testnet-agave-client:
     image: ${SOLANA_FIRESOL_IMAGE:-ghcr.io/streamingfast/firehose-solana}:${SOLANA_TESTNET_FIRESOL_VERSION:-v1.1.3}
     sysctls:
       # TCP Performance
@@ -90,19 +90,19 @@ services:
       - prometheus-scrape.port=12344
       - prometheus-scrape.path=/metrics
 
-  solana-testnet:
+  solana-testnet-agave:
     image: nginx
     expose:
       - '80'
     environment:
-      PROXY_HOST: solana-testnet-client
+      PROXY_HOST: solana-testnet-agave-client
       RPC_PATH: ''
       RPC_PORT: 8899
       WS_PATH: ''
       WS_PORT: 8899
     restart: unless-stopped
     depends_on:
-      - solana-testnet-client
+      - solana-testnet-agave-client
     networks:
       - chains
     volumes:
@@ -111,15 +111,15 @@ services:
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.solana-testnet-agave-pruned-rocksdb-stripprefix.stripprefix.prefixes=/solana-testnet
+      - traefik.http.middlewares.solana-testnet-agave-pruned-rocksdb-stripprefix.stripprefix.prefixes=/solana-testnet-agave
       - traefik.http.services.solana-testnet-agave-pruned-rocksdb.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.solana-testnet-agave-pruned-rocksdb.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.solana-testnet-agave-pruned-rocksdb.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.solana-testnet-agave-pruned-rocksdb.rule=Host(`$DOMAIN`) && (Path(`/solana-testnet`) || Path(`/solana-testnet/`))}
-      - ${NO_SSL:+traefik.http.routers.solana-testnet-agave-pruned-rocksdb.rule=Path(`/solana-testnet`) || Path(`/solana-testnet/`)}
+      - ${NO_SSL:-traefik.http.routers.solana-testnet-agave-pruned-rocksdb.rule=Host(`$DOMAIN`) && (Path(`/solana-testnet-agave`) || Path(`/solana-testnet-agave/`))}
+      - ${NO_SSL:+traefik.http.routers.solana-testnet-agave-pruned-rocksdb.rule=Path(`/solana-testnet-agave`) || Path(`/solana-testnet-agave/`)}
       - traefik.http.routers.solana-testnet-agave-pruned-rocksdb.middlewares=solana-testnet-agave-pruned-rocksdb-stripprefix, ipallowlist
 
-  solana-testnet-firehose:
+  solana-testnet-agave-firehose:
     image: ${SOLANA_FIRESOL_IMAGE:-ghcr.io/streamingfast/firehose-solana}:${SOLANA_TESTNET_FIRESOL_VERSION:-v1.1.3}
     expose:
       - 10015
@@ -129,10 +129,10 @@ services:
     entrypoint: [sh, -c, exec firesol start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
-      - --relayer-source=http://solana-testnet-client:10010
+      - --relayer-source=http://solana-testnet-agave-client:10010
     restart: unless-stopped
     depends_on:
-      - solana-testnet
+      - solana-testnet-agave
     networks:
       - chains
     volumes:
@@ -146,21 +146,21 @@ services:
       - traefik.http.services.solana-testnet-agave-pruned-rocksdb-firehose.loadbalancer.server.port=10015
       - traefik.http.routers.solana-testnet-agave-pruned-rocksdb-firehose.entrypoints=grpc
       - ${NO_SSL:-traefik.http.routers.solana-testnet-agave-pruned-rocksdb-firehose.tls.certresolver=myresolver}
-      - traefik.http.routers.solana-testnet-agave-pruned-rocksdb-firehose.rule=Host(`solana-testnet-firehose.${DOMAIN}`)
+      - traefik.http.routers.solana-testnet-agave-pruned-rocksdb-firehose.rule=Host(`solana-testnet-agave-firehose.${DOMAIN}`)
       - traefik.http.routers.solana-testnet-agave-pruned-rocksdb-firehose.middlewares=ipallowlist
 
-  solana-testnet-events:
+  solana-testnet-agave-events:
     image: ${SOLANA_FIRESOL_IMAGE:-anzaxyz/agave}:${SOLANA_TESTNET_FIRESOL_VERSION:-v2.2.14}
     expose:
       - 10016
     entrypoint: [sh, -c, exec firesol start substreams-tier-1 substreams-tier-2 $@, _]
     command:
-      - --common-live-blocks-addr=http://solana-testnet-firehose:10014
+      - --common-live-blocks-addr=http://solana-testnet-agave-firehose:10014
       - --log-to-file=false
       - --substreams-rpc-endpoints=${SOLANA_TESTNET_FIRESOL_ARCHIVE_RPC}
     restart: unless-stopped
     depends_on:
-      - solana-testnet
+      - solana-testnet-agave
     networks:
       - chains
     volumes:
@@ -173,7 +173,7 @@ services:
       - traefik.http.services.solana-testnet-agave-pruned-rocksdb-events.loadbalancer.server.port=10016
       - traefik.http.routers.solana-testnet-agave-pruned-rocksdb-events.entrypoints=grpc
       - ${NO_SSL:-traefik.http.routers.solana-testnet-agave-pruned-rocksdb-events.tls.certresolver=myresolver}
-      - traefik.http.routers.solana-testnet-agave-pruned-rocksdb-events.rule=Host(`solana-testnet-events.${DOMAIN}`)
+      - traefik.http.routers.solana-testnet-agave-pruned-rocksdb-events.rule=Host(`solana-testnet-agave-events.${DOMAIN}`)
       - traefik.http.routers.solana-testnet-agave-pruned-rocksdb-events.middlewares=ipallowlist
 
 volumes:

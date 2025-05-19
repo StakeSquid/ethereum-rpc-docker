@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-mainnet \
+# curl -X POST https://${IP}.traefik.me/ethereum-mainnet-erigon3 \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  ethereum-mainnet:
+  ethereum-mainnet-erigon3:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_MAINNET_ERIGON3_VERSION:-v3.0.3}
     sysctls:
       # TCP Performance
@@ -103,20 +103,20 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet
+      - traefik.http.middlewares.ethereum-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-erigon3
       - traefik.http.services.ethereum-mainnet-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet`) || Path(`/ethereum-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=Path(`/ethereum-mainnet`) || Path(`/ethereum-mainnet/`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-erigon3`) || Path(`/ethereum-mainnet-erigon3/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.rule=Path(`/ethereum-mainnet-erigon3`) || Path(`/ethereum-mainnet-erigon3/`)}
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.middlewares=ethereum-mainnet-erigon3-pruned-trace-stripprefix, ipallowlist
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace.service=ethereum-mainnet-erigon3-pruned-trace
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.service=ethereum-mainnet-erigon3-pruned-trace-node
       - traefik.http.services.ethereum-mainnet-erigon3-pruned-trace-node.loadbalancer.server.port=5555
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet/eth`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.rule=PathPrefix(`/ethereum-mainnet/eth`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-erigon3/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.rule=PathPrefix(`/ethereum-mainnet-erigon3/eth`)}
       - traefik.http.routers.ethereum-mainnet-erigon3-pruned-trace-node.middlewares=ethereum-mainnet-erigon3-pruned-trace-stripprefix, ipallowlist
     shm_size: 2gb
 

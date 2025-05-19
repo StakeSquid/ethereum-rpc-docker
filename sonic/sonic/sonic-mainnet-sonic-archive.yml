@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/sonic-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/sonic-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  sonic-mainnet-archive:
+  sonic-mainnet:
     build:
       context: ./sonic
       dockerfile: sonic.Dockerfile
@@ -94,12 +94,12 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.sonic-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/sonic-mainnet-archive
+      - traefik.http.middlewares.sonic-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/sonic-mainnet
       - traefik.http.services.sonic-mainnet-sonic-archive.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && (Path(`/sonic-mainnet-archive`) || Path(`/sonic-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.sonic-mainnet-sonic-archive.rule=Path(`/sonic-mainnet-archive`) || Path(`/sonic-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && (Path(`/sonic-mainnet`) || Path(`/sonic-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.sonic-mainnet-sonic-archive.rule=Path(`/sonic-mainnet`) || Path(`/sonic-mainnet/`)}
       - traefik.http.routers.sonic-mainnet-sonic-archive.middlewares=sonic-mainnet-sonic-archive-stripprefix, ipallowlist
 
 volumes:

@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/viction-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/viction-mainnet-node-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  viction-mainnet-archive-client:
+  viction-mainnet-node-archive-client:
     image: ${VICTION_NODE_IMAGE:-buildonviction/node}:${VICTION_MAINNET_NODE_VERSION:-v2.4.6}
     sysctls:
       # TCP Performance
@@ -72,19 +72,19 @@ services:
     labels:
       - prometheus-scrape.enabled=false
 
-  viction-mainnet-archive:
+  viction-mainnet-node-archive:
     image: nginx
     expose:
       - '80'
     environment:
-      PROXY_HOST: viction-mainnet-archive-client
+      PROXY_HOST: viction-mainnet-node-archive-client
       RPC_PATH: ''
       RPC_PORT: 8545
       WS_PATH: ''
       WS_PORT: 8546
     restart: unless-stopped
     depends_on:
-      - viction-mainnet-archive-client
+      - viction-mainnet-node-archive-client
     networks:
       - chains
     volumes:
@@ -93,12 +93,12 @@ services:
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.viction-mainnet-node-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet-archive
+      - traefik.http.middlewares.viction-mainnet-node-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-mainnet-node-archive
       - traefik.http.services.viction-mainnet-node-archive-leveldb-hash.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/viction-mainnet-archive`) || Path(`/viction-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=Path(`/viction-mainnet-archive`) || Path(`/viction-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/viction-mainnet-node-archive`) || Path(`/viction-mainnet-node-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.rule=Path(`/viction-mainnet-node-archive`) || Path(`/viction-mainnet-node-archive/`)}
       - traefik.http.routers.viction-mainnet-node-archive-leveldb-hash.middlewares=viction-mainnet-node-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:

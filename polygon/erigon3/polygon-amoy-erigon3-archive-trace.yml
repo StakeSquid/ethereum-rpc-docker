@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/polygon-amoy-archive \
+# curl -X POST https://${IP}.traefik.me/polygon-amoy-erigon3-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  polygon-amoy-archive:
+  polygon-amoy-erigon3-archive:
     image: ${POLYGON_ERIGON3_IMAGE:-erigontech/erigon}:${POLYGON_AMOY_ERIGON3_VERSION:-v3.0.3}
     sysctls:
       # TCP Performance
@@ -92,12 +92,12 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.polygon-amoy-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/polygon-amoy-archive
+      - traefik.http.middlewares.polygon-amoy-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/polygon-amoy-erigon3-archive
       - traefik.http.services.polygon-amoy-erigon3-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/polygon-amoy-archive`) || Path(`/polygon-amoy-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.polygon-amoy-erigon3-archive-trace.rule=Path(`/polygon-amoy-archive`) || Path(`/polygon-amoy-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.polygon-amoy-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/polygon-amoy-erigon3-archive`) || Path(`/polygon-amoy-erigon3-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.polygon-amoy-erigon3-archive-trace.rule=Path(`/polygon-amoy-erigon3-archive`) || Path(`/polygon-amoy-erigon3-archive/`)}
       - traefik.http.routers.polygon-amoy-erigon3-archive-trace.middlewares=polygon-amoy-erigon3-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 

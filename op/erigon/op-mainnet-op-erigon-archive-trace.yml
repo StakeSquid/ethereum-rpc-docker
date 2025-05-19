@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/op-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/op-mainnet-op-erigon \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  op-mainnet-archive:
+  op-mainnet-op-erigon:
     image: ${OP_ERIGON_IMAGE:-testinprod/op-erigon}:${OP_MAINNET_ERIGON_VERSION:-v2.61.1-0.8.3}
     sysctls:
       # TCP Performance
@@ -69,7 +69,6 @@ services:
       - --p2p.allowed-ports=32509
       - --p2p.allowed-ports=37509
       - --port=12509
-      - --rollup.historicalrpc="http://op-mainnet-archive-classic:8545"
       - --rollup.sequencerhttp=https://mainnet-sequencer.optimism.io
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
@@ -85,8 +84,6 @@ services:
       - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
-    depends_on:
-      - op-mainnet-archive-classic
     networks:
       - chains
     volumes:
@@ -100,16 +97,16 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.op-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/op-mainnet-archive
+      - traefik.http.middlewares.op-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/op-mainnet-op-erigon
       - traefik.http.services.op-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-erigon-archive-trace.rule=Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet-op-erigon`) || Path(`/op-mainnet-op-erigon/`))}
+      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-erigon-archive-trace.rule=Path(`/op-mainnet-op-erigon`) || Path(`/op-mainnet-op-erigon/`)}
       - traefik.http.routers.op-mainnet-op-erigon-archive-trace.middlewares=op-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  op-mainnet-archive-node:
+  op-mainnet-op-erigon-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.2}
     ports:
       - 17509:17509
@@ -121,7 +118,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://op-mainnet-archive:8551
+      - OP_NODE_L2_ENGINE_RPC=http://op-mainnet-op-erigon:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
@@ -142,7 +139,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - op-mainnet-archive
+      - op-mainnet-op-erigon
     networks:
       - chains
     volumes:
@@ -154,7 +151,7 @@ services:
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
 
-  op-mainnet-archive-classic:
+  op-mainnet-l2geth-archive-classic:
     image: ${OP_L2GETH_IMAGE:-ethereumoptimism/l2geth}:${OP_MAINNET_L2GETH_VERSION:-0.5.31}
     sysctls:
       # TCP Performance

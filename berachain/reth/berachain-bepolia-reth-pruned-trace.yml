@@ -1,6 +1,6 @@
 ---
 # you should backup the peers of your beacond node frequently.
-# docker exec -it rpc-berachain-bepolia-node-1 curl http://localhost:26657/net_info | jq -r '
+# docker exec -it rpc-berachain-bepolia-reth-pruned-node-1 curl http://localhost:26657/net_info | jq -r '
 #  .result.peers[]
 #  | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr | split(":") | last)"
 #' | paste -sd,
@@ -29,7 +29,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/berachain-bepolia \
+# curl -X POST https://${IP}.traefik.me/berachain-bepolia-reth-pruned \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -39,7 +39,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  berachain-bepolia:
+  berachain-bepolia-reth-pruned:
     image: ${BERACHAIN_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${BERACHAIN_BEPOLIA_RETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
@@ -115,16 +115,16 @@ services:
       - prometheus-scrape.port=9001
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.berachain-bepolia-reth-pruned-trace-stripprefix.stripprefix.prefixes=/berachain-bepolia
+      - traefik.http.middlewares.berachain-bepolia-reth-pruned-trace-stripprefix.stripprefix.prefixes=/berachain-bepolia-reth-pruned
       - traefik.http.services.berachain-bepolia-reth-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/berachain-bepolia`) || Path(`/berachain-bepolia/`))}
-      - ${NO_SSL:+traefik.http.routers.berachain-bepolia-reth-pruned-trace.rule=Path(`/berachain-bepolia`) || Path(`/berachain-bepolia/`)}
+      - ${NO_SSL:-traefik.http.routers.berachain-bepolia-reth-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/berachain-bepolia-reth-pruned`) || Path(`/berachain-bepolia-reth-pruned/`))}
+      - ${NO_SSL:+traefik.http.routers.berachain-bepolia-reth-pruned-trace.rule=Path(`/berachain-bepolia-reth-pruned`) || Path(`/berachain-bepolia-reth-pruned/`)}
       - traefik.http.routers.berachain-bepolia-reth-pruned-trace.middlewares=berachain-bepolia-reth-pruned-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  berachain-bepolia-node:
+  berachain-bepolia-reth-pruned-node:
     build:
       context: ./berachain
       dockerfile: beacon-kit.Dockerfile
@@ -135,7 +135,7 @@ services:
       - 17274:17274
       - 17274:17274/udp
     environment:
-      - AUTH_RPC=http://berachain-bepolia:8551
+      - AUTH_RPC=http://berachain-bepolia-reth-pruned:8551
       - CHAINID=80069
       - CHAINNAME=bepolia
       - CHAIN_SPEC=testnet

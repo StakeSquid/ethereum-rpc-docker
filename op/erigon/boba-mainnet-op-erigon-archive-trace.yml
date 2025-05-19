@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/boba-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/boba-mainnet-op-erigon \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  boba-mainnet-archive:
+  boba-mainnet-op-erigon:
     image: ${BOBA_ERIGON_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-erigon}:${BOBA_MAINNET_ERIGON_VERSION:-v1.2.11}
     sysctls:
       # TCP Performance
@@ -96,16 +96,16 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.boba-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/boba-mainnet-archive
+      - traefik.http.middlewares.boba-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/boba-mainnet-op-erigon
       - traefik.http.services.boba-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/boba-mainnet-archive`) || Path(`/boba-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.boba-mainnet-op-erigon-archive-trace.rule=Path(`/boba-mainnet-archive`) || Path(`/boba-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/boba-mainnet-op-erigon`) || Path(`/boba-mainnet-op-erigon/`))}
+      - ${NO_SSL:+traefik.http.routers.boba-mainnet-op-erigon-archive-trace.rule=Path(`/boba-mainnet-op-erigon`) || Path(`/boba-mainnet-op-erigon/`)}
       - traefik.http.routers.boba-mainnet-op-erigon-archive-trace.middlewares=boba-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  boba-mainnet-archive-node:
+  boba-mainnet-op-erigon-node:
     image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-v1.6.18}
     ports:
       - 16732:16732
@@ -117,7 +117,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://boba-mainnet-archive:8551
+      - OP_NODE_L2_ENGINE_RPC=http://boba-mainnet-op-erigon:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
@@ -138,7 +138,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - boba-mainnet-archive
+      - boba-mainnet-op-erigon
     networks:
       - chains
     volumes:

@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  haqq-mainnet:
+  haqq-mainnet-client:
     image: ${HAQQ_HAQQ_IMAGE:-alhaqq/haqq}:${HAQQ_MAINNET_HAQQ_VERSION:-v1.8.2}
     sysctls:
       # TCP Performance
@@ -50,6 +50,7 @@ services:
       - 10465:10465/udp
     expose:
       - 8545
+      - 8546
     entrypoint: [haqqd, start]
     command: --p2p.laddr=tcp://0.0.0.0:10465
     restart: unless-stopped
@@ -62,9 +63,30 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
+
+  haqq-mainnet:
+    image: nginx
+    expose:
+      - '80'
+    environment:
+      PROXY_HOST: haqq-mainnet-client
+      RPC_PATH: ''
+      RPC_PORT: 8545
+      WS_PATH: ''
+      WS_PORT: 8546
+    restart: unless-stopped
+    depends_on:
+      - haqq-mainnet-client
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.haqq-mainnet-haqq-pruned-stripprefix.stripprefix.prefixes=/haqq-mainnet
-      - traefik.http.services.haqq-mainnet-haqq-pruned.loadbalancer.server.port=8545
+      - traefik.http.services.haqq-mainnet-haqq-pruned.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.haqq-mainnet-haqq-pruned.rule=Host(`$DOMAIN`) && (Path(`/haqq-mainnet`) || Path(`/haqq-mainnet/`))}

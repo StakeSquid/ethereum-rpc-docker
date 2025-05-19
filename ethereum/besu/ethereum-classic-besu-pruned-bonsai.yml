@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-classic \
+# curl -X POST https://${IP}.traefik.me/ethereum-classic-besu \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  ethereum-classic-client:
+  ethereum-classic-besu-client:
     image: ${ETHEREUM_BESU_IMAGE:-hyperledger/besu}:${ETHEREUM_CLASSIC_BESU_VERSION:-25.4.1}
     sysctls:
       # TCP Performance
@@ -87,19 +87,19 @@ services:
       - prometheus-scrape.port=9545
       - prometheus-scrape.path=/metrics
 
-  ethereum-classic:
+  ethereum-classic-besu:
     image: nginx
     expose:
       - '80'
     environment:
-      PROXY_HOST: ethereum-classic-client
+      PROXY_HOST: ethereum-classic-besu-client
       RPC_PATH: ''
       RPC_PORT: 8545
       WS_PATH: ''
       WS_PORT: 8546
     restart: unless-stopped
     depends_on:
-      - ethereum-classic-client
+      - ethereum-classic-besu-client
     networks:
       - chains
     volumes:
@@ -108,12 +108,12 @@ services:
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-classic-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/ethereum-classic
+      - traefik.http.middlewares.ethereum-classic-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/ethereum-classic-besu
       - traefik.http.services.ethereum-classic-besu-pruned-bonsai.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.ethereum-classic-besu-pruned-bonsai.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-classic-besu-pruned-bonsai.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-classic-besu-pruned-bonsai.rule=Host(`$DOMAIN`) && (Path(`/ethereum-classic`) || Path(`/ethereum-classic/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-classic-besu-pruned-bonsai.rule=Path(`/ethereum-classic`) || Path(`/ethereum-classic/`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-classic-besu-pruned-bonsai.rule=Host(`$DOMAIN`) && (Path(`/ethereum-classic-besu`) || Path(`/ethereum-classic-besu/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-classic-besu-pruned-bonsai.rule=Path(`/ethereum-classic-besu`) || Path(`/ethereum-classic-besu/`)}
       - traefik.http.routers.ethereum-classic-besu-pruned-bonsai.middlewares=ethereum-classic-besu-pruned-bonsai-stripprefix, ipallowlist
 
 volumes:

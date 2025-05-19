@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-hoodi \
+# curl -X POST https://${IP}.traefik.me/ethereum-hoodi-erigon3 \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  ethereum-hoodi:
+  ethereum-hoodi-erigon3:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOODI_ERIGON3_VERSION:-v3.0.3}
     sysctls:
       # TCP Performance
@@ -103,20 +103,20 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-hoodi-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-hoodi
+      - traefik.http.middlewares.ethereum-hoodi-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/ethereum-hoodi-erigon3
       - traefik.http.services.ethereum-hoodi-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-hoodi`) || Path(`/ethereum-hoodi/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace.rule=Path(`/ethereum-hoodi`) || Path(`/ethereum-hoodi/`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-hoodi-erigon3`) || Path(`/ethereum-hoodi-erigon3/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace.rule=Path(`/ethereum-hoodi-erigon3`) || Path(`/ethereum-hoodi-erigon3/`)}
       - traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace.middlewares=ethereum-hoodi-erigon3-pruned-trace-stripprefix, ipallowlist
       - traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace.service=ethereum-hoodi-erigon3-pruned-trace
       - traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace-node.service=ethereum-hoodi-erigon3-pruned-trace-node
       - traefik.http.services.ethereum-hoodi-erigon3-pruned-trace-node.loadbalancer.server.port=5555
       - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-hoodi/eth`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace-node.rule=PathPrefix(`/ethereum-hoodi/eth`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-hoodi-erigon3/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace-node.rule=PathPrefix(`/ethereum-hoodi-erigon3/eth`)}
       - traefik.http.routers.ethereum-hoodi-erigon3-pruned-trace-node.middlewares=ethereum-hoodi-erigon3-pruned-trace-stripprefix, ipallowlist
     shm_size: 2gb
 

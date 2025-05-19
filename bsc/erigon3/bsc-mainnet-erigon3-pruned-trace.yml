@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/bsc-mainnet \
+# curl -X POST https://${IP}.traefik.me/bsc-mainnet-erigon3 \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  bsc-mainnet:
+  bsc-mainnet-erigon3:
     image: ${BSC_ERIGON3_IMAGE:-ghcr.io/node-real/bsc-erigon}:${BSC_MAINNET_ERIGON3_VERSION:-v1.3.6}
     sysctls:
       # TCP Performance
@@ -91,12 +91,12 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.bsc-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/bsc-mainnet
+      - traefik.http.middlewares.bsc-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/bsc-mainnet-erigon3
       - traefik.http.services.bsc-mainnet-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.bsc-mainnet-erigon3-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.bsc-mainnet-erigon3-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.bsc-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-mainnet`) || Path(`/bsc-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.bsc-mainnet-erigon3-pruned-trace.rule=Path(`/bsc-mainnet`) || Path(`/bsc-mainnet/`)}
+      - ${NO_SSL:-traefik.http.routers.bsc-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-mainnet-erigon3`) || Path(`/bsc-mainnet-erigon3/`))}
+      - ${NO_SSL:+traefik.http.routers.bsc-mainnet-erigon3-pruned-trace.rule=Path(`/bsc-mainnet-erigon3`) || Path(`/bsc-mainnet-erigon3/`)}
       - traefik.http.routers.bsc-mainnet-erigon3-pruned-trace.middlewares=bsc-mainnet-erigon3-pruned-trace-stripprefix, ipallowlist
     shm_size: 2gb
 

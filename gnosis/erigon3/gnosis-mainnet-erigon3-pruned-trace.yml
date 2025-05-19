@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/gnosis-mainnet \
+# curl -X POST https://${IP}.traefik.me/gnosis-mainnet-erigon3 \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  gnosis-mainnet:
+  gnosis-mainnet-erigon3:
     image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.3}
     sysctls:
       # TCP Performance
@@ -102,12 +102,12 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.gnosis-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/gnosis-mainnet
+      - traefik.http.middlewares.gnosis-mainnet-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/gnosis-mainnet-erigon3
       - traefik.http.services.gnosis-mainnet-erigon3-pruned-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-mainnet`) || Path(`/gnosis-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Path(`/gnosis-mainnet`) || Path(`/gnosis-mainnet/`)}
+      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-mainnet-erigon3`) || Path(`/gnosis-mainnet-erigon3/`))}
+      - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.rule=Path(`/gnosis-mainnet-erigon3`) || Path(`/gnosis-mainnet-erigon3/`)}
       - traefik.http.routers.gnosis-mainnet-erigon3-pruned-trace.middlewares=gnosis-mainnet-erigon3-pruned-trace-stripprefix, ipallowlist
     shm_size: 2gb
 

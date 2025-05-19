@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/op-sepolia-archive \
+# curl -X POST https://${IP}.traefik.me/op-sepolia-op-erigon \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  op-sepolia-archive:
+  op-sepolia-op-erigon:
     image: ${OP_ERIGON_IMAGE:-testinprod/op-erigon}:${OP_SEPOLIA_ERIGON_VERSION:-v2.61.1-0.8.3}
     sysctls:
       # TCP Performance
@@ -96,16 +96,16 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.op-sepolia-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/op-sepolia-archive
+      - traefik.http.middlewares.op-sepolia-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/op-sepolia-op-erigon
       - traefik.http.services.op-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-erigon-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.op-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.op-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/op-sepolia-archive`) || Path(`/op-sepolia-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.op-sepolia-op-erigon-archive-trace.rule=Path(`/op-sepolia-archive`) || Path(`/op-sepolia-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.op-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/op-sepolia-op-erigon`) || Path(`/op-sepolia-op-erigon/`))}
+      - ${NO_SSL:+traefik.http.routers.op-sepolia-op-erigon-archive-trace.rule=Path(`/op-sepolia-op-erigon`) || Path(`/op-sepolia-op-erigon/`)}
       - traefik.http.routers.op-sepolia-op-erigon-archive-trace.middlewares=op-sepolia-op-erigon-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  op-sepolia-archive-node:
+  op-sepolia-op-erigon-node:
     image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_SEPOLIA_NODE_VERSION:-v1.13.2}
     ports:
       - 15373:15373
@@ -117,7 +117,7 @@ services:
       - OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}
       - OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://op-sepolia-archive:8551
+      - OP_NODE_L2_ENGINE_RPC=http://op-sepolia-op-erigon:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
@@ -139,7 +139,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - op-sepolia-archive
+      - op-sepolia-op-erigon
     networks:
       - chains
     volumes:

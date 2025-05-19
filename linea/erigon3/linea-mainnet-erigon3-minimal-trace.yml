@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/linea-mainnet-minimal \
+# curl -X POST https://${IP}.traefik.me/linea-mainnet-erigon3-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  linea-mainnet-minimal:
+  linea-mainnet-erigon3-minimal:
     image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_MAINNET_ERIGON3_VERSION:-v3.0.3}
     sysctls:
       # TCP Performance
@@ -94,12 +94,12 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.linea-mainnet-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/linea-mainnet-minimal
+      - traefik.http.middlewares.linea-mainnet-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/linea-mainnet-erigon3-minimal
       - traefik.http.services.linea-mainnet-erigon3-minimal-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/linea-mainnet-minimal`) || Path(`/linea-mainnet-minimal/`))}
-      - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Path(`/linea-mainnet-minimal`) || Path(`/linea-mainnet-minimal/`)}
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/linea-mainnet-erigon3-minimal`) || Path(`/linea-mainnet-erigon3-minimal/`))}
+      - ${NO_SSL:+traefik.http.routers.linea-mainnet-erigon3-minimal-trace.rule=Path(`/linea-mainnet-erigon3-minimal`) || Path(`/linea-mainnet-erigon3-minimal/`)}
       - traefik.http.routers.linea-mainnet-erigon3-minimal-trace.middlewares=linea-mainnet-erigon3-minimal-trace-stripprefix, ipallowlist
     shm_size: 2gb
 

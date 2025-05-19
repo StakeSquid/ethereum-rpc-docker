@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/ethereum-mainnet-reth \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  ethereum-mainnet-archive:
+  ethereum-mainnet-reth:
     image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
@@ -96,16 +96,16 @@ services:
       - prometheus-scrape.port=9001
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-mainnet-reth-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-archive
+      - traefik.http.middlewares.ethereum-mainnet-reth-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-mainnet-reth
       - traefik.http.services.ethereum-mainnet-reth-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-archive`) || Path(`/ethereum-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Path(`/ethereum-mainnet-archive`) || Path(`/ethereum-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-reth`) || Path(`/ethereum-mainnet-reth/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace.rule=Path(`/ethereum-mainnet-reth`) || Path(`/ethereum-mainnet-reth/`)}
       - traefik.http.routers.ethereum-mainnet-reth-archive-trace.middlewares=ethereum-mainnet-reth-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  ethereum-mainnet-archive-node:
+  ethereum-mainnet-reth-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v6.0.0-rc.3}
     ports:
       - 19563:19563
@@ -116,7 +116,7 @@ services:
       - --checkpoint-sync-url=https://mainnet.beaconstate.info
       - --datadir=/data
       - --enable-historical-state-representation=false
-      - --execution-endpoint=http://ethereum-mainnet-archive:8551
+      - --execution-endpoint=http://ethereum-mainnet-reth:8551
       - --grpc-gateway-host=0.0.0.0
       - --jwt-secret=/jwtsecret
       - --mainnet
@@ -128,7 +128,7 @@ services:
       - --rpc-host=0.0.0.0
     restart: unless-stopped
     depends_on:
-      - ethereum-mainnet-archive
+      - ethereum-mainnet-reth
     networks:
       - chains
     volumes:
@@ -140,12 +140,12 @@ services:
       - prometheus-scrape.port=8080
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-mainnet-reth-archive-trace-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-archive
+      - traefik.http.middlewares.ethereum-mainnet-reth-archive-trace-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-reth
       - traefik.http.services.ethereum-mainnet-reth-archive-trace-node.loadbalancer.server.port=3500
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-archive/eth`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.rule=PathPrefix(`/ethereum-mainnet-archive/eth`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-reth/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.rule=PathPrefix(`/ethereum-mainnet-reth/eth`)}
       - traefik.http.routers.ethereum-mainnet-reth-archive-trace-node.middlewares=ethereum-mainnet-reth-archive-trace-node-stripprefix, ipallowlist
 
 volumes:

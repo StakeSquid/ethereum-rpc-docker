@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/rootstock-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/rootstock-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  rootstock-mainnet-archive-client:
+  rootstock-mainnet-client:
     image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_MAINNET_RSKJ_VERSION:-ARROWHEAD-6.1.0}
     sysctls:
       # TCP Performance
@@ -64,19 +64,19 @@ services:
     labels:
       - prometheus-scrape.enabled=false
 
-  rootstock-mainnet-archive:
+  rootstock-mainnet:
     image: nginx
     expose:
       - '80'
     environment:
-      PROXY_HOST: rootstock-mainnet-archive-client
+      PROXY_HOST: rootstock-mainnet-client
       RPC_PATH: /
       RPC_PORT: 8545
       WS_PATH: /
       WS_PORT: 8546
     restart: unless-stopped
     depends_on:
-      - rootstock-mainnet-archive-client
+      - rootstock-mainnet-client
     networks:
       - chains
     volumes:
@@ -85,12 +85,12 @@ services:
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.rootstock-mainnet-rskj-archive-stripprefix.stripprefix.prefixes=/rootstock-mainnet-archive
+      - traefik.http.middlewares.rootstock-mainnet-rskj-archive-stripprefix.stripprefix.prefixes=/rootstock-mainnet
       - traefik.http.services.rootstock-mainnet-rskj-archive.loadbalancer.server.port=80
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Host(`$DOMAIN`) && (Path(`/rootstock-mainnet-archive`) || Path(`/rootstock-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Path(`/rootstock-mainnet-archive`) || Path(`/rootstock-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Host(`$DOMAIN`) && (Path(`/rootstock-mainnet`) || Path(`/rootstock-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Path(`/rootstock-mainnet`) || Path(`/rootstock-mainnet/`)}
       - traefik.http.routers.rootstock-mainnet-rskj-archive.middlewares=rootstock-mainnet-rskj-archive-stripprefix, ipallowlist
 
 volumes:

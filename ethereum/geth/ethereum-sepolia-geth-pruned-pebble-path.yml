@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-sepolia \
+# curl -X POST https://${IP}.traefik.me/ethereum-sepolia-geth \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  ethereum-sepolia:
+  ethereum-sepolia-geth:
     image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_SEPOLIA_GETH_VERSION:-v1.15.7}
     sysctls:
       # TCP Performance
@@ -94,15 +94,15 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-sepolia-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-sepolia
+      - traefik.http.middlewares.ethereum-sepolia-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-sepolia-geth
       - traefik.http.services.ethereum-sepolia-geth-pruned-pebble-path.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia`) || Path(`/ethereum-sepolia/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.rule=Path(`/ethereum-sepolia`) || Path(`/ethereum-sepolia/`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia-geth`) || Path(`/ethereum-sepolia-geth/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.rule=Path(`/ethereum-sepolia-geth`) || Path(`/ethereum-sepolia-geth/`)}
       - traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.middlewares=ethereum-sepolia-geth-pruned-pebble-path-stripprefix, ipallowlist
 
-  ethereum-sepolia-node:
+  ethereum-sepolia-geth-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v6.0.0-rc.3}
     ports:
       - 19710:19710
@@ -113,7 +113,7 @@ services:
       - --checkpoint-sync-url=https://sepolia.beaconstate.info
       - --datadir=/data
       - --enable-historical-state-representation=false
-      - --execution-endpoint=http://ethereum-sepolia:8551
+      - --execution-endpoint=http://ethereum-sepolia-geth:8551
       - --grpc-gateway-host=0.0.0.0
       - --jwt-secret=/jwtsecret
       - --monitoring-host=0.0.0.0
@@ -125,7 +125,7 @@ services:
       - --sepolia
     restart: unless-stopped
     depends_on:
-      - ethereum-sepolia
+      - ethereum-sepolia-geth
     networks:
       - chains
     volumes:
@@ -137,12 +137,12 @@ services:
       - prometheus-scrape.port=8080
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-sepolia-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-sepolia
+      - traefik.http.middlewares.ethereum-sepolia-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-sepolia-geth
       - traefik.http.services.ethereum-sepolia-geth-pruned-pebble-path-node.loadbalancer.server.port=3500
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia/eth`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.rule=PathPrefix(`/ethereum-sepolia/eth`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-geth/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.rule=PathPrefix(`/ethereum-sepolia-geth/eth`)}
       - traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path-node.middlewares=ethereum-sepolia-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:

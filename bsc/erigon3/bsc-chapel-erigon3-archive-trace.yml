@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/bsc-chapel-archive \
+# curl -X POST https://${IP}.traefik.me/bsc-chapel-erigon3-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  bsc-chapel-archive:
+  bsc-chapel-erigon3-archive:
     image: ${BSC_ERIGON3_IMAGE:-ghcr.io/node-real/bsc-erigon}:${BSC_CHAPEL_ERIGON3_VERSION:-v1.3.6}
     sysctls:
       # TCP Performance
@@ -91,12 +91,12 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.bsc-chapel-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/bsc-chapel-archive
+      - traefik.http.middlewares.bsc-chapel-erigon3-archive-trace-stripprefix.stripprefix.prefixes=/bsc-chapel-erigon3-archive
       - traefik.http.services.bsc-chapel-erigon3-archive-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-archive-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-chapel-archive`) || Path(`/bsc-chapel-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.bsc-chapel-erigon3-archive-trace.rule=Path(`/bsc-chapel-archive`) || Path(`/bsc-chapel-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.bsc-chapel-erigon3-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/bsc-chapel-erigon3-archive`) || Path(`/bsc-chapel-erigon3-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.bsc-chapel-erigon3-archive-trace.rule=Path(`/bsc-chapel-erigon3-archive`) || Path(`/bsc-chapel-erigon3-archive/`)}
       - traefik.http.routers.bsc-chapel-erigon3-archive-trace.middlewares=bsc-chapel-erigon3-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 

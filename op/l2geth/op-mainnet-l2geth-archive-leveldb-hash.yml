@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/op-mainnet-archive \
+# curl -X POST https://${IP}.traefik.me/op-mainnet-l2geth-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  op-mainnet-archive:
+  op-mainnet-l2geth-archive:
     image: ${OP_L2GETH_IMAGE:-ethereumoptimism/l2geth}:${OP_MAINNET_L2GETH_VERSION:-0.5.31}
     sysctls:
       # TCP Performance
@@ -93,12 +93,12 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.op-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/op-mainnet-archive
+      - traefik.http.middlewares.op-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/op-mainnet-l2geth-archive
       - traefik.http.services.op-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.rule=Path(`/op-mainnet-archive`) || Path(`/op-mainnet-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/op-mainnet-l2geth-archive`) || Path(`/op-mainnet-l2geth-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.rule=Path(`/op-mainnet-l2geth-archive`) || Path(`/op-mainnet-l2geth-archive/`)}
       - traefik.http.routers.op-mainnet-l2geth-archive-leveldb-hash.middlewares=op-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipallowlist
 
 volumes:

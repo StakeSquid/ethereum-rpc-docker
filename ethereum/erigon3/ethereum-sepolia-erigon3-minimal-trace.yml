@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-sepolia-minimal \
+# curl -X POST https://${IP}.traefik.me/ethereum-sepolia-erigon3-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  ethereum-sepolia-minimal:
+  ethereum-sepolia-erigon3-minimal:
     image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_SEPOLIA_ERIGON3_VERSION:-v3.0.3}
     sysctls:
       # TCP Performance
@@ -103,20 +103,20 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-sepolia-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia-minimal
+      - traefik.http.middlewares.ethereum-sepolia-erigon3-minimal-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia-erigon3-minimal
       - traefik.http.services.ethereum-sepolia-erigon3-minimal-trace.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia-minimal`) || Path(`/ethereum-sepolia-minimal/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Path(`/ethereum-sepolia-minimal`) || Path(`/ethereum-sepolia-minimal/`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia-erigon3-minimal`) || Path(`/ethereum-sepolia-erigon3-minimal/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.rule=Path(`/ethereum-sepolia-erigon3-minimal`) || Path(`/ethereum-sepolia-erigon3-minimal/`)}
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipallowlist
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace.service=ethereum-sepolia-erigon3-minimal-trace
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.service=ethereum-sepolia-erigon3-minimal-trace-node
       - traefik.http.services.ethereum-sepolia-erigon3-minimal-trace-node.loadbalancer.server.port=5555
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-minimal/eth`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=PathPrefix(`/ethereum-sepolia-minimal/eth`)}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-erigon3-minimal/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.rule=PathPrefix(`/ethereum-sepolia-erigon3-minimal/eth`)}
       - traefik.http.routers.ethereum-sepolia-erigon3-minimal-trace-node.middlewares=ethereum-sepolia-erigon3-minimal-trace-stripprefix, ipallowlist
     shm_size: 2gb
 

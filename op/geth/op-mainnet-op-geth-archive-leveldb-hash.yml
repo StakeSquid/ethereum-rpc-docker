@@ -67,7 +67,6 @@ services:
       - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=13399
-      - --rollup.historicalrpc=http://op-mainnet-archive-classic:8545
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -87,8 +86,6 @@ services:
       - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
-    depends_on:
-      - op-mainnet-archive-classic
     networks:
       - chains
     volumes:
@@ -155,7 +152,7 @@ services:
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
 
-  op-mainnet-archive-classic:
+  op-mainnet-l2geth-archive-classic:
     image: ${OP_L2GETH_IMAGE:-ethereumoptimism/l2geth}:${OP_MAINNET_L2GETH_VERSION:-0.5.31}
     sysctls:
       # TCP Performance
