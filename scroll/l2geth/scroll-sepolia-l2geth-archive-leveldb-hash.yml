@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   scroll-sepolia-archive:
-    image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_SEPOLIA_L2GETH_VERSION:-scroll-v5.8.38}
+    image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_SEPOLIA_L2GETH_VERSION:-scroll-v5.8.42}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
