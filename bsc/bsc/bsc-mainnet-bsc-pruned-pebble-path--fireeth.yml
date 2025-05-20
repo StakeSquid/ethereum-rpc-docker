@@ -132,7 +132,7 @@ services:
       - traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path-firehose.middlewares=ipallowlist
 
   bsc-mainnet-events:
-    image: ${BSC_FIREETH_IMAGE:-ghcr.io/bnb-chain/bsc}:${BSC_MAINNET_FIREETH_VERSION:-1.5.12}
+    image: ${BSC_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BSC_MAINNET_FIREETH_VERSION:-v2.11.9-bnb}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth start substreams-tier-1 substreams-tier-2 $@, _]

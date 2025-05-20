@@ -139,7 +139,7 @@ services:
       - traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path-firehose.middlewares=ipallowlist
 
   op-mainnet-events:
-    image: ${OP_FIREETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${OP_MAINNET_FIREETH_VERSION:-v1.101503.4}
+    image: ${OP_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${OP_MAINNET_FIREETH_VERSION:-v2.11.9-optimism-v1.101503.4-op-node.v1.13.2}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth start substreams-tier-1 substreams-tier-2 $@, _]

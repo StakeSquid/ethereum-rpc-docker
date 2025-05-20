@@ -126,7 +126,7 @@ services:
       - traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash-firehose.middlewares=ipallowlist
 
   arbitrum-one-events:
-    image: ${ARBITRUM_FIREETH_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_ONE_FIREETH_VERSION:-v3.6.2-5b41a2d}
+    image: ${ARBITRUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ARBITRUM_ONE_FIREETH_VERSION:-v2.11.7-nitro-nitro-v3.5.5-fh3.0}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth start substreams-tier-1 substreams-tier-2 $@, _]

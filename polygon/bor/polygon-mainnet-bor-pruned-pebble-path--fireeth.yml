@@ -133,7 +133,7 @@ services:
       - traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path-firehose.middlewares=ipallowlist
 
   polygon-mainnet-events:
-    image: ${POLYGON_FIREETH_IMAGE:-0xpolygon/bor}:${POLYGON_MAINNET_FIREETH_VERSION:-2.0.3}
+    image: ${POLYGON_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${POLYGON_MAINNET_FIREETH_VERSION:-v2.11.9-polygon-v1.4.1-fh2.4-3}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth start substreams-tier-1 substreams-tier-2 $@, _]
