@@ -111,7 +111,7 @@ services:
       - 10015
       - 10014
     environment:
-      - ${ETHEREUM_MAINNET_FIREETH_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
+      - ${ETHEREUM_MAINNET_FIREETH_BLOCKS_STORE:-/app/firehose-data/storage/merged-blocks}
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
@@ -122,7 +122,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${ETHEREUM_MAINNET_FIREETH_DATA:-ethereum-mainnet-fireeth}:/firehose-data
+      - ${ETHEREUM_MAINNET_FIREETH_DATA:-ethereum-mainnet-fireeth}:/app/firehose-data
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
@@ -150,7 +150,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${ETHEREUM_MAINNET_FIREETH_DATA:-ethereum-mainnet-fireeth}:/firehose-data
+      - ${ETHEREUM_MAINNET_FIREETH_DATA:-ethereum-mainnet-fireeth}:/app/firehose-data
     logging: *logging-defaults
     labels:
       - traefik.enable=true

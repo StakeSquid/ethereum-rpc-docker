@@ -101,7 +101,7 @@ services:
       - 10015
       - 10014
     environment:
-      - ${ARBITRUM_ONE_FIREETH_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
+      - ${ARBITRUM_ONE_FIREETH_BLOCKS_STORE:-/app/firehose-data/storage/merged-blocks}
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
@@ -112,7 +112,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${ARBITRUM_ONE_FIREETH_DATA:-arbitrum-one-fireeth}:/firehose-data
+      - ${ARBITRUM_ONE_FIREETH_DATA:-arbitrum-one-fireeth}:/app/firehose-data
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
@@ -140,7 +140,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${ARBITRUM_ONE_FIREETH_DATA:-arbitrum-one-fireeth}:/firehose-data
+      - ${ARBITRUM_ONE_FIREETH_DATA:-arbitrum-one-fireeth}:/app/firehose-data
     logging: *logging-defaults
     labels:
       - traefik.enable=true
