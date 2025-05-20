@@ -137,7 +137,7 @@ services:
     image: ${POLYGON_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${POLYGON_MAINNET_FIREETH_VERSION:-v2.11.9-polygon-v1.4.1-fh2.4-3}
     expose:
       - 10016
-    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier-1 substreams-tier-2 $@, _]
+    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]
     command:
       - --common-live-blocks-addr=http://polygon-mainnet-firehose:10014
       - --log-to-file=false

@@ -155,7 +155,7 @@ services:
     image: ${SOLANA_FIRESOL_IMAGE:-ghcr.io/streamingfast/firehose-solana}:${SOLANA_MAINNET_FIRESOL_VERSION:-v1.1.3}
     expose:
       - 10016
-    entrypoint: [sh, -c, exec firesol --config-file="" --log-to-file=false start substreams-tier-1 substreams-tier-2 $@, _]
+    entrypoint: [sh, -c, exec firesol --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]
     command:
       - --common-live-blocks-addr=http://solana-mainnet-agave-firehose:10014
       - --log-to-file=false
