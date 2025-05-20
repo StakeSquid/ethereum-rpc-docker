@@ -69,6 +69,7 @@ services:
       - --rpc.txfeecap=0
       - --state.scheme=hash
       - --syncmode=full
+      - --vmtrace=firehose
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,debug,admin,txpool,engine
