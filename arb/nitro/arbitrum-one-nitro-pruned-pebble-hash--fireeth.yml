@@ -78,6 +78,7 @@ services:
     networks:
       - chains
     volumes:
+      - ${ARBITRUM_ONE_FIREETH_DATA:-arbitrum-one-fireeth}:/app/firehose-data
       - ${ARBITRUM_ONE_NITRO_PRUNED_PEBBLE_HASH_DATA:-arbitrum-one-nitro-pruned-pebble-hash}:/root/.arbitrum
       - ./tmp/arbitrum-one:/tmp
       - /slowdisk:/slowdisk

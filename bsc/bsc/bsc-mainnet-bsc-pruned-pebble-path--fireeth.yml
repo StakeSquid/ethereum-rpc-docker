@@ -86,6 +86,7 @@ services:
       - chains
     volumes:
       - ${BSC_MAINNET_BSC_PRUNED_PEBBLE_PATH_DATA:-bsc-mainnet-bsc-pruned-pebble-path}:/bsc/.ethereum
+      - ${BSC_MAINNET_FIREETH_DATA:-bsc-mainnet-fireeth}:/app/firehose-data
       - ./bsc/mainnet:/config
       - /slowdisk:/slowdisk
     logging: *logging-defaults

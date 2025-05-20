@@ -91,6 +91,7 @@ services:
     networks:
       - chains
     volumes:
+      - ${UNICHAIN_MAINNET_FIREETH_DATA:-unichain-mainnet-fireeth}:/app/firehose-data
       - ${UNICHAIN_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-unichain-mainnet-op-geth-pruned-pebble-path}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk

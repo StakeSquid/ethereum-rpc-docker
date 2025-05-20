@@ -88,6 +88,7 @@ services:
     networks:
       - chains
     volumes:
+      - ${ETHEREUM_MAINNET_FIREETH_DATA:-ethereum-mainnet-fireeth}:/app/firehose-data
       - ${ETHEREUM_MAINNET_GETH_PRUNED_PEBBLE_PATH_DATA:-ethereum-mainnet-geth-pruned-pebble-path}:/root/.ethereum
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk

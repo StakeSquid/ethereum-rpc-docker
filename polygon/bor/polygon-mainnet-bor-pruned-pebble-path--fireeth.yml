@@ -88,6 +88,7 @@ services:
       - chains
     volumes:
       - ${POLYGON_MAINNET_BOR_PRUNED_PEBBLE_PATH_DATA:-polygon-mainnet-bor-pruned-pebble-path}:/root.bor/
+      - ${POLYGON_MAINNET_FIREETH_DATA:-polygon-mainnet-fireeth}:/app/firehose-data
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:

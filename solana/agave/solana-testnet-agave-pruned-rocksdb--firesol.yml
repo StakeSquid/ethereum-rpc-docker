@@ -83,6 +83,7 @@ services:
       - chains
     volumes:
       - ${SOLANA_TESTNET_AGAVE_PRUNED_ROCKSDB_DATA:-solana-testnet-agave-pruned-rocksdb}:/ledger
+      - ${SOLANA_TESTNET_FIRESOL_DATA:-solana-testnet-firesol}:/app/firehose-data
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:

@@ -91,6 +91,7 @@ services:
     networks:
       - chains
     volumes:
+      - ${OP_MAINNET_FIREETH_DATA:-op-mainnet-fireeth}:/app/firehose-data
       - ${OP_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-op-mainnet-op-geth-pruned-pebble-path}:/data
       - ./op/op/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
