@@ -52,7 +52,7 @@ services:
       - 8545
       - 6060
       - 10010
-    entrypoint: [sh, -c, exec fireeth start reader-node --log-to-file=false --reader-node-arguments "$*", _]
+    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start reader-node --log-to-file=false --reader-node-arguments "$*", _]
     command:
       - --config=/config/config.toml
       - --datadir=/bsc/.ethereum
@@ -108,7 +108,7 @@ services:
       - 10014
     environment:
       - ${BSC_MAINNET_FIREETH_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
-    entrypoint: [sh, -c, exec fireeth start firehose index-builder relayer merger $@, _]
+    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
       - --relayer-source=http://bsc-mainnet:12037
@@ -135,7 +135,7 @@ services:
     image: ${BSC_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BSC_MAINNET_FIREETH_VERSION:-v2.11.9-bnb}
     expose:
       - 10016
-    entrypoint: [sh, -c, exec fireeth start substreams-tier-1 substreams-tier-2 $@, _]
+    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier-1 substreams-tier-2 $@, _]
     command:
       - --common-live-blocks-addr=http://bsc-mainnet-firehose:10014
       - --log-to-file=false

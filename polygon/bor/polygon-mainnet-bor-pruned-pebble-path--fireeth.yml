@@ -52,7 +52,7 @@ services:
       - 8545
       - 6060
       - 10010
-    entrypoint: [sh, -c, exec fireeth start reader-node --log-to-file=false --reader-node-arguments "server $*", _]
+    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start reader-node --log-to-file=false --reader-node-arguments "server $*", _]
     command:
       - --bor.heimdall=https://polygon-heimdall-rest.publicnode.com
       - --chain=mainnet
@@ -109,7 +109,7 @@ services:
       - 10014
     environment:
       - ${POLYGON_MAINNET_FIREETH_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
-    entrypoint: [sh, -c, exec fireeth start firehose index-builder relayer merger $@, _]
+    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
       - --relayer-source=http://polygon-mainnet:14961
@@ -136,7 +136,7 @@ services:
     image: ${POLYGON_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${POLYGON_MAINNET_FIREETH_VERSION:-v2.11.9-polygon-v1.4.1-fh2.4-3}
     expose:
       - 10016
-    entrypoint: [sh, -c, exec fireeth start substreams-tier-1 substreams-tier-2 $@, _]
+    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier-1 substreams-tier-2 $@, _]
     command:
       - --common-live-blocks-addr=http://polygon-mainnet-firehose:10014
       - --log-to-file=false

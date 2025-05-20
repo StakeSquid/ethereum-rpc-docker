@@ -102,7 +102,7 @@ services:
       - 10014
     environment:
       - ${ARBITRUM_ONE_FIREETH_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
-    entrypoint: [sh, -c, exec fireeth start firehose index-builder relayer merger $@, _]
+    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
       - --relayer-source=http://arbitrum-one:14317
@@ -129,7 +129,7 @@ services:
     image: ${ARBITRUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ARBITRUM_ONE_FIREETH_VERSION:-v2.11.7-nitro-nitro-v3.5.5-fh3.0}
     expose:
       - 10016
-    entrypoint: [sh, -c, exec fireeth start substreams-tier-1 substreams-tier-2 $@, _]
+    entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier-1 substreams-tier-2 $@, _]
     command:
       - --common-live-blocks-addr=http://arbitrum-one-firehose:10014
       - --log-to-file=false
