@@ -142,7 +142,7 @@ services:
     command:
       - --common-live-blocks-addr=http://ethereum-mainnet-geth-firehose:10014
       - --log-to-file=false
-      - --substreams-rpc-endpoints=${ETHEREUM_MAINNET_FIREETH_ARCHIVE_RPC}
+      - --substreams-rpc-endpoints=${ETHEREUM_MAINNET_EXECUTION_ARCHIVE_RPC}
     restart: unless-stopped
     depends_on:
       - ethereum-mainnet-geth

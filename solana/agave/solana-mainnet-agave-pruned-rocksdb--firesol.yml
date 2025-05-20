@@ -159,7 +159,7 @@ services:
     command:
       - --common-live-blocks-addr=http://solana-mainnet-agave-firehose:10014
       - --log-to-file=false
-      - --substreams-rpc-endpoints=${SOLANA_MAINNET_FIRESOL_ARCHIVE_RPC}
+      - --substreams-rpc-endpoints=${SOLANA_MAINNET_EXECUTION_ARCHIVE_RPC}
     restart: unless-stopped
     depends_on:
       - solana-mainnet-agave

@@ -133,7 +133,7 @@ services:
     command:
       - --common-live-blocks-addr=http://arbitrum-one-firehose:10014
       - --log-to-file=false
-      - --substreams-rpc-endpoints=${ARBITRUM_ONE_FIREETH_ARCHIVE_RPC}
+      - --substreams-rpc-endpoints=${ARBITRUM_ONE_EXECUTION_ARCHIVE_RPC}
     restart: unless-stopped
     depends_on:
       - arbitrum-one

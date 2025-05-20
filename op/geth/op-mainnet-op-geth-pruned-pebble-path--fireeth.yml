@@ -146,7 +146,7 @@ services:
     command:
       - --common-live-blocks-addr=http://op-mainnet-firehose:10014
       - --log-to-file=false
-      - --substreams-rpc-endpoints=${OP_MAINNET_FIREETH_ARCHIVE_RPC}
+      - --substreams-rpc-endpoints=${OP_MAINNET_EXECUTION_ARCHIVE_RPC}
     restart: unless-stopped
     depends_on:
       - op-mainnet

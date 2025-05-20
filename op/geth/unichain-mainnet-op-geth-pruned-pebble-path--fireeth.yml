@@ -145,7 +145,7 @@ services:
     command:
       - --common-live-blocks-addr=http://unichain-mainnet-firehose:10014
       - --log-to-file=false
-      - --substreams-rpc-endpoints=${UNICHAIN_MAINNET_FIREETH_ARCHIVE_RPC}
+      - --substreams-rpc-endpoints=${UNICHAIN_MAINNET_EXECUTION_ARCHIVE_RPC}
     restart: unless-stopped
     depends_on:
       - unichain-mainnet
