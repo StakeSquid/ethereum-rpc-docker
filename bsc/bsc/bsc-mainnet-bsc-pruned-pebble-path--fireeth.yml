@@ -112,7 +112,7 @@ services:
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
-      - --relayer-source=http://bsc-mainnet:12037
+      - --relayer-source=http://bsc-mainnet:10010
     restart: unless-stopped
     depends_on:
       - bsc-mainnet

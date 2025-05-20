@@ -115,7 +115,7 @@ services:
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
-      - --relayer-source=http://ethereum-mainnet-geth:12023
+      - --relayer-source=http://ethereum-mainnet-geth:10010
     restart: unless-stopped
     depends_on:
       - ethereum-mainnet-geth
