@@ -125,7 +125,7 @@ services:
       - 10015
       - 10014
     environment:
-      - ${SOLANA_TESTNET_FIRESOL_BLOCKS_STORE:-/firehose-data/storage/merged-blocks}
+      - ${SOLANA_TESTNET_FIRESOL_BLOCKS_STORE:-/app/firehose-data/storage/merged-blocks}
     entrypoint: [sh, -c, exec firesol --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
@@ -136,7 +136,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${SOLANA_TESTNET_FIRESOL_DATA:-solana-testnet-firesol}:/firehose-data
+      - ${SOLANA_TESTNET_FIRESOL_DATA:-solana-testnet-firesol}:/app/firehose-data
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
@@ -164,7 +164,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${SOLANA_TESTNET_FIRESOL_DATA:-solana-testnet-firesol}:/firehose-data
+      - ${SOLANA_TESTNET_FIRESOL_DATA:-solana-testnet-firesol}:/app/firehose-data
     logging: *logging-defaults
     labels:
       - traefik.enable=true
