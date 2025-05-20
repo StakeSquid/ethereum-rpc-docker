@@ -115,7 +115,7 @@ services:
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
-      - --relayer-source=http://ethereum-mainnet-geth:10010
+      - --relayer-source=ethereum-mainnet-geth:10010
     restart: unless-stopped
     depends_on:
       - ethereum-mainnet-geth
@@ -141,7 +141,7 @@ services:
       - 10016
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]
     command:
-      - --common-live-blocks-addr=http://ethereum-mainnet-geth-firehose:10014
+      - --common-live-blocks-addr=ethereum-mainnet-geth-firehose:10014
       - --log-to-file=false
       - --substreams-rpc-endpoints=${ETHEREUM_MAINNET_EXECUTION_ARCHIVE_RPC}
     restart: unless-stopped

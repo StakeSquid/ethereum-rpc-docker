@@ -118,7 +118,7 @@ services:
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
-      - --relayer-source=http://unichain-mainnet:10010
+      - --relayer-source=unichain-mainnet:10010
     restart: unless-stopped
     depends_on:
       - unichain-mainnet
@@ -144,7 +144,7 @@ services:
       - 10016
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]
     command:
-      - --common-live-blocks-addr=http://unichain-mainnet-firehose:10014
+      - --common-live-blocks-addr=unichain-mainnet-firehose:10014
       - --log-to-file=false
       - --substreams-rpc-endpoints=${UNICHAIN_MAINNET_EXECUTION_ARCHIVE_RPC}
     restart: unless-stopped

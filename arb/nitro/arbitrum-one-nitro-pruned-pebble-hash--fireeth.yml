@@ -105,7 +105,7 @@ services:
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
       - --log-to-file=false
-      - --relayer-source=http://arbitrum-one:10010
+      - --relayer-source=arbitrum-one:10010
     restart: unless-stopped
     depends_on:
       - arbitrum-one
@@ -131,7 +131,7 @@ services:
       - 10016
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]
     command:
-      - --common-live-blocks-addr=http://arbitrum-one-firehose:10014
+      - --common-live-blocks-addr=arbitrum-one-firehose:10014
       - --log-to-file=false
       - --substreams-rpc-endpoints=${ARBITRUM_ONE_EXECUTION_ARCHIVE_RPC}
     restart: unless-stopped
