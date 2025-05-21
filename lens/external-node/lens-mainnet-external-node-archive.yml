@@ -129,7 +129,6 @@ services:
     environment:
       - PGPORT=5430
       - POSTGRES_PASSWORD=notsecurepassword
-    entrypoint: [postgres]
     command:
       - -c checkpoint_completion_target=0.9
       - -c checkpoint_timeout=1800
@@ -143,6 +142,7 @@ services:
       - -c min_wal_size=4GB
       - -c random_page_cost=1.1
       - -c shared_buffers=2GB
+      - postgres
     networks:
       - chains
     volumes:
