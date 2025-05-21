@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   zksync-era-boojnet-client:
-    image: ${ZKSYNC_ERA_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ZKSYNC_ERA_BOOJNET_EXTERNAL_NODE_VERSION:-v28.0.0}
+    image: ${ZKSYNC_ERA_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ZKSYNC_ERA_BOOJNET_EXTERNAL_NODE_VERSION:-v28.2.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
