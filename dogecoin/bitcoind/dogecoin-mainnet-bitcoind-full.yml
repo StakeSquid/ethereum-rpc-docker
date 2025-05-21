@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/dogecoin-mainnet \
+# curl -X POST https://${IP}.traefik.me/dogecoin-mainnet-bitcoind \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,8 +29,8 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  dogecoin-mainnet:
-    image: ${DOGECOIN_BITCOIND_IMAGE:-btcpayserver/dogecoin}:${DOGECOIN_MAINNET_BITCOIND_VERSION:-1.14.7}
+  dogecoin-mainnet-bitcoind:
+    image: ${DOGECOIN_BITCOIND_IMAGE:-}:${DOGECOIN_MAINNET_BITCOIND_VERSION:-}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -80,41 +80,41 @@ services:
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.dogecoin-mainnet-bitcoind-full-stripprefix.stripprefix.prefixes=/dogecoin-mainnet
+      - traefik.http.middlewares.dogecoin-mainnet-bitcoind-full-stripprefix.stripprefix.prefixes=/dogecoin-mainnet-bitcoind
       - traefik.http.services.dogecoin-mainnet-bitcoind-full.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full.rule=Host(`$DOMAIN`) && (Path(`/dogecoin-mainnet`) || Path(`/dogecoin-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full.rule=Path(`/dogecoin-mainnet`) || Path(`/dogecoin-mainnet/`)}
+      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full.rule=Host(`$DOMAIN`) && (Path(`/dogecoin-mainnet-bitcoind`) || Path(`/dogecoin-mainnet-bitcoind/`))}
+      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full.rule=Path(`/dogecoin-mainnet-bitcoind`) || Path(`/dogecoin-mainnet-bitcoind/`)}
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full.middlewares=dogecoin-mainnet-bitcoind-full-stripprefix, ipallowlist
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full.service=dogecoin-mainnet-bitcoind-full
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashblock.service=dogecoin-mainnet-bitcoind-full-hashblock
       - traefik.http.services.dogecoin-mainnet-bitcoind-full-hashblock.loadbalancer.server.port=28332
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashblock.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashblock.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashblock.rule=Host(`$DOMAIN`) && PathPrefix(`/dogecoin-mainnet/hashblock`)}
-      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashblock.rule=PathPrefix(`/dogecoin-mainnet/hashblock`)}
+      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashblock.rule=Host(`$DOMAIN`) && PathPrefix(`/dogecoin-mainnet-bitcoind/hashblock`)}
+      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashblock.rule=PathPrefix(`/dogecoin-mainnet-bitcoind/hashblock`)}
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashblock.middlewares=dogecoin-mainnet-bitcoind-full-stripprefix, ipallowlist
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashtx.service=dogecoin-mainnet-bitcoind-full-hashtx
       - traefik.http.services.dogecoin-mainnet-bitcoind-full-hashtx.loadbalancer.server.port=28333
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashtx.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashtx.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashtx.rule=Host(`$DOMAIN`) && PathPrefix(`/dogecoin-mainnet/hashtx`)}
-      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashtx.rule=PathPrefix(`/dogecoin-mainnet/hashtx`)}
+      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashtx.rule=Host(`$DOMAIN`) && PathPrefix(`/dogecoin-mainnet-bitcoind/hashtx`)}
+      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashtx.rule=PathPrefix(`/dogecoin-mainnet-bitcoind/hashtx`)}
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full-hashtx.middlewares=dogecoin-mainnet-bitcoind-full-stripprefix, ipallowlist
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawblock.service=dogecoin-mainnet-bitcoind-full-rawblock
       - traefik.http.services.dogecoin-mainnet-bitcoind-full-rawblock.loadbalancer.server.port=28334
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawblock.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawblock.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawblock.rule=Host(`$DOMAIN`) && PathPrefix(`/dogecoin-mainnet/rawblock`)}
-      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawblock.rule=PathPrefix(`/dogecoin-mainnet/rawblock`)}
+      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawblock.rule=Host(`$DOMAIN`) && PathPrefix(`/dogecoin-mainnet-bitcoind/rawblock`)}
+      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawblock.rule=PathPrefix(`/dogecoin-mainnet-bitcoind/rawblock`)}
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawblock.middlewares=dogecoin-mainnet-bitcoind-full-stripprefix, ipallowlist
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawtx.service=dogecoin-mainnet-bitcoind-full-rawtx
       - traefik.http.services.dogecoin-mainnet-bitcoind-full-rawtx.loadbalancer.server.port=28335
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawtx.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawtx.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawtx.rule=Host(`$DOMAIN`) && PathPrefix(`/dogecoin-mainnet/rawtx`)}
-      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawtx.rule=PathPrefix(`/dogecoin-mainnet/rawtx`)}
+      - ${NO_SSL:-traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawtx.rule=Host(`$DOMAIN`) && PathPrefix(`/dogecoin-mainnet-bitcoind/rawtx`)}
+      - ${NO_SSL:+traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawtx.rule=PathPrefix(`/dogecoin-mainnet-bitcoind/rawtx`)}
       - traefik.http.routers.dogecoin-mainnet-bitcoind-full-rawtx.middlewares=dogecoin-mainnet-bitcoind-full-stripprefix, ipallowlist
 
 volumes:

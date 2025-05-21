@@ -19,7 +19,7 @@
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/litecoin-testnet \
+# curl -X POST https://${IP}.traefik.me/litecoin-testnet-bitcoind \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 x-logging-defaults: &logging-defaults
@@ -29,8 +29,8 @@ x-logging-defaults: &logging-defaults
     max-file: '3'
 
 services:
-  litecoin-testnet:
-    image: ${LITECOIN_BITCOIND_IMAGE:-uphold/litecoin-core}:${LITECOIN_TESTNET_BITCOIND_VERSION:-0.21}
+  litecoin-testnet-bitcoind:
+    image: ${LITECOIN_BITCOIND_IMAGE:-}:${LITECOIN_TESTNET_BITCOIND_VERSION:-}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -81,41 +81,41 @@ services:
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.litecoin-testnet-bitcoind-full-stripprefix.stripprefix.prefixes=/litecoin-testnet
+      - traefik.http.middlewares.litecoin-testnet-bitcoind-full-stripprefix.stripprefix.prefixes=/litecoin-testnet-bitcoind
       - traefik.http.services.litecoin-testnet-bitcoind-full.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full.rule=Host(`$DOMAIN`) && (Path(`/litecoin-testnet`) || Path(`/litecoin-testnet/`))}
-      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full.rule=Path(`/litecoin-testnet`) || Path(`/litecoin-testnet/`)}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full.rule=Host(`$DOMAIN`) && (Path(`/litecoin-testnet-bitcoind`) || Path(`/litecoin-testnet-bitcoind/`))}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full.rule=Path(`/litecoin-testnet-bitcoind`) || Path(`/litecoin-testnet-bitcoind/`)}
       - traefik.http.routers.litecoin-testnet-bitcoind-full.middlewares=litecoin-testnet-bitcoind-full-stripprefix, ipallowlist
       - traefik.http.routers.litecoin-testnet-bitcoind-full.service=litecoin-testnet-bitcoind-full
       - traefik.http.routers.litecoin-testnet-bitcoind-full-hashblock.service=litecoin-testnet-bitcoind-full-hashblock
       - traefik.http.services.litecoin-testnet-bitcoind-full-hashblock.loadbalancer.server.port=28332
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-hashblock.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-hashblock.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-hashblock.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet/hashblock`)}
-      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full-hashblock.rule=PathPrefix(`/litecoin-testnet/hashblock`)}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-hashblock.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet-bitcoind/hashblock`)}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full-hashblock.rule=PathPrefix(`/litecoin-testnet-bitcoind/hashblock`)}
       - traefik.http.routers.litecoin-testnet-bitcoind-full-hashblock.middlewares=litecoin-testnet-bitcoind-full-stripprefix, ipallowlist
       - traefik.http.routers.litecoin-testnet-bitcoind-full-hashtx.service=litecoin-testnet-bitcoind-full-hashtx
       - traefik.http.services.litecoin-testnet-bitcoind-full-hashtx.loadbalancer.server.port=28333
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-hashtx.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-hashtx.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-hashtx.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet/hashtx`)}
-      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full-hashtx.rule=PathPrefix(`/litecoin-testnet/hashtx`)}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-hashtx.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet-bitcoind/hashtx`)}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full-hashtx.rule=PathPrefix(`/litecoin-testnet-bitcoind/hashtx`)}
       - traefik.http.routers.litecoin-testnet-bitcoind-full-hashtx.middlewares=litecoin-testnet-bitcoind-full-stripprefix, ipallowlist
       - traefik.http.routers.litecoin-testnet-bitcoind-full-rawblock.service=litecoin-testnet-bitcoind-full-rawblock
       - traefik.http.services.litecoin-testnet-bitcoind-full-rawblock.loadbalancer.server.port=28334
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-rawblock.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-rawblock.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-rawblock.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet/rawblock`)}
-      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full-rawblock.rule=PathPrefix(`/litecoin-testnet/rawblock`)}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-rawblock.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet-bitcoind/rawblock`)}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full-rawblock.rule=PathPrefix(`/litecoin-testnet-bitcoind/rawblock`)}
       - traefik.http.routers.litecoin-testnet-bitcoind-full-rawblock.middlewares=litecoin-testnet-bitcoind-full-stripprefix, ipallowlist
       - traefik.http.routers.litecoin-testnet-bitcoind-full-rawtx.service=litecoin-testnet-bitcoind-full-rawtx
       - traefik.http.services.litecoin-testnet-bitcoind-full-rawtx.loadbalancer.server.port=28335
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-rawtx.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-rawtx.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-rawtx.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet/rawtx`)}
-      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full-rawtx.rule=PathPrefix(`/litecoin-testnet/rawtx`)}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-bitcoind-full-rawtx.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet-bitcoind/rawtx`)}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-bitcoind-full-rawtx.rule=PathPrefix(`/litecoin-testnet-bitcoind/rawtx`)}
       - traefik.http.routers.litecoin-testnet-bitcoind-full-rawtx.middlewares=litecoin-testnet-bitcoind-full-stripprefix, ipallowlist
 
 volumes:

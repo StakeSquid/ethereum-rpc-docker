@@ -1,0 +1,145 @@
+---
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:litecoin/litecoind/litecoin-testnet-litecoind-full.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/litecoin-testnet \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  litecoin-testnet:
+    image: ${LITECOIN_LITECOIND_IMAGE:-uphold/litecoin-core}:${LITECOIN_TESTNET_LITECOIND_VERSION:-0.21}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 10051:10051
+      - 10051:10051/udp
+    expose:
+      - 8545
+      - '28332' # ZMQ hashblock port
+      - '28333' # ZMQ hashtx port
+      - '28334' # ZMQ rawblock port
+      - '28335' # ZMQ rawtx port
+    entrypoint: [litecoind]
+    command:
+      - -datadir=/data
+      - -externalip=${IP}
+      - -port=10051
+      - -printtoconsole
+      - -rpcallowip=::/0
+      - -rpcauth=username:0b6623bdebb516ced10631668833e42a$c478b38890678c51b9f013174a20addb317c2046b68c05e0250ff86e31a505f7
+      - -rpcbind=0.0.0.0
+      - -rpcport=8545
+      - -server
+      - -testnet
+      - -zmqpubhashblock=tcp://0.0.0.0:28332
+      - -zmqpubhashtx=tcp://0.0.0.0:28333
+      - -zmqpubrawblock=tcp://0.0.0.0:28334
+      - -zmqpubrawtx=tcp://0.0.0.0:28335
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${LITECOIN_TESTNET_LITECOIND_FULL_DATA:-litecoin-testnet-litecoind-full}:/data
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+      - traefik.enable=true
+      - traefik.http.middlewares.litecoin-testnet-litecoind-full-stripprefix.stripprefix.prefixes=/litecoin-testnet
+      - traefik.http.services.litecoin-testnet-litecoind-full.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full.rule=Host(`$DOMAIN`) && (Path(`/litecoin-testnet`) || Path(`/litecoin-testnet/`))}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-litecoind-full.rule=Path(`/litecoin-testnet`) || Path(`/litecoin-testnet/`)}
+      - traefik.http.routers.litecoin-testnet-litecoind-full.middlewares=litecoin-testnet-litecoind-full-stripprefix, ipallowlist
+      - traefik.http.routers.litecoin-testnet-litecoind-full.service=litecoin-testnet-litecoind-full
+      - traefik.http.routers.litecoin-testnet-litecoind-full-hashblock.service=litecoin-testnet-litecoind-full-hashblock
+      - traefik.http.services.litecoin-testnet-litecoind-full-hashblock.loadbalancer.server.port=28332
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-hashblock.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-hashblock.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-hashblock.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet/hashblock`)}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-litecoind-full-hashblock.rule=PathPrefix(`/litecoin-testnet/hashblock`)}
+      - traefik.http.routers.litecoin-testnet-litecoind-full-hashblock.middlewares=litecoin-testnet-litecoind-full-stripprefix, ipallowlist
+      - traefik.http.routers.litecoin-testnet-litecoind-full-hashtx.service=litecoin-testnet-litecoind-full-hashtx
+      - traefik.http.services.litecoin-testnet-litecoind-full-hashtx.loadbalancer.server.port=28333
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-hashtx.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-hashtx.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-hashtx.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet/hashtx`)}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-litecoind-full-hashtx.rule=PathPrefix(`/litecoin-testnet/hashtx`)}
+      - traefik.http.routers.litecoin-testnet-litecoind-full-hashtx.middlewares=litecoin-testnet-litecoind-full-stripprefix, ipallowlist
+      - traefik.http.routers.litecoin-testnet-litecoind-full-rawblock.service=litecoin-testnet-litecoind-full-rawblock
+      - traefik.http.services.litecoin-testnet-litecoind-full-rawblock.loadbalancer.server.port=28334
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-rawblock.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-rawblock.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-rawblock.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet/rawblock`)}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-litecoind-full-rawblock.rule=PathPrefix(`/litecoin-testnet/rawblock`)}
+      - traefik.http.routers.litecoin-testnet-litecoind-full-rawblock.middlewares=litecoin-testnet-litecoind-full-stripprefix, ipallowlist
+      - traefik.http.routers.litecoin-testnet-litecoind-full-rawtx.service=litecoin-testnet-litecoind-full-rawtx
+      - traefik.http.services.litecoin-testnet-litecoind-full-rawtx.loadbalancer.server.port=28335
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-rawtx.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-rawtx.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.litecoin-testnet-litecoind-full-rawtx.rule=Host(`$DOMAIN`) && PathPrefix(`/litecoin-testnet/rawtx`)}
+      - ${NO_SSL:+traefik.http.routers.litecoin-testnet-litecoind-full-rawtx.rule=PathPrefix(`/litecoin-testnet/rawtx`)}
+      - traefik.http.routers.litecoin-testnet-litecoind-full-rawtx.middlewares=litecoin-testnet-litecoind-full-stripprefix, ipallowlist
+
+volumes:
+  litecoin-testnet-litecoind-full:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: litecoin-testnet
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
