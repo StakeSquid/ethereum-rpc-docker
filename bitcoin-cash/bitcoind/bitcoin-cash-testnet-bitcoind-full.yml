@@ -61,7 +61,7 @@ services:
       - -port=14363
       - -printtoconsole
       - -rpcallowip=::/0
-      - -rpcauth=username:0b6623bdebb516ced10631668833e42a$c478b38890678c51b9f013174a20addb317c2046b68c05e0250ff86e31a505f7
+      - -rpcauth=username:0b6623bdebb516ced10631668833e42a$$c478b38890678c51b9f013174a20addb317c2046b68c05e0250ff86e31a505f7
       - -rpcbind=0.0.0.0
       - -rpcport=8545
       - -server
