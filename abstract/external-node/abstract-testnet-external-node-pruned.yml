@@ -1,0 +1,171 @@
+---
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:abstract/external-node/abstract-testnet-external-node-pruned.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/abstract-testnet \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  abstract-testnet-client:
+    image: ${ABSTRACT_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ABSTRACT_TESTNET_EXTERNAL_NODE_VERSION:-v28.2.1}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12157:12157
+      - 12157:12157/udp
+    expose:
+      - 8545
+      - 8546
+    environment:
+      - DATABASE_POOL_SIZE=50
+      - DATABASE_URL=postgres://postgres:notsecurepassword@abstract-testnet-db:5430/zksync_local_ext_node
+      - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
+      - EN_ETH_CLIENT_URL=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - EN_HEALTHCHECK_PORT=3081
+      - EN_HTTP_PORT=8545
+      - EN_L1_CHAIN_ID=11155111
+      - EN_L2_CHAIN_ID=11124
+      - EN_MAIN_NODE_URL=https://api.testnet.abs.xyz
+      - EN_MAX_RESPONSE_BODY_SIZE_MB=30
+      - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
+      - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
+      - EN_PROMETHEUS_PORT=3322
+      - EN_PRUNING_ENABLED=true
+      - EN_REQ_ENTITIES_LIMIT=100000
+      - EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL=abstract-testnet-external-node-snapshots
+      - EN_SNAPSHOTS_OBJECT_STORE_MODE=GCSAnonymousReadOnly
+      - EN_SNAPSHOTS_RECOVERY_ENABLED=true
+      - EN_STATE_CACHE_PATH=./db/ext-node/state_keeper
+      - EN_WS_PORT=8546
+      - RUST_LOG=warn,zksync=info,zksync_core::metadata_calculator=debug,zksync_state=info,zksync_utils=info,zksync_web3_decl::client=error
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ABSTRACT_TESTNET_EXTERNAL_NODE_PRUNED_DATA:-abstract-testnet-external-node-pruned}:/db
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+
+  abstract-testnet:
+    image: nginx
+    expose:
+      - '80'
+    environment:
+      PROXY_HOST: abstract-testnet-client
+      RPC_PATH: ''
+      RPC_PORT: 8545
+      WS_PATH: ''
+      WS_PORT: 8546
+    restart: unless-stopped
+    depends_on:
+      - abstract-testnet-client
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+      - traefik.enable=true
+      - traefik.http.middlewares.abstract-testnet-external-node-pruned-stripprefix.stripprefix.prefixes=/abstract-testnet
+      - traefik.http.services.abstract-testnet-external-node-pruned.loadbalancer.server.port=80
+      - ${NO_SSL:-traefik.http.routers.abstract-testnet-external-node-pruned.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.abstract-testnet-external-node-pruned.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.abstract-testnet-external-node-pruned.rule=Host(`$DOMAIN`) && (Path(`/abstract-testnet`) || Path(`/abstract-testnet/`))}
+      - ${NO_SSL:+traefik.http.routers.abstract-testnet-external-node-pruned.rule=Path(`/abstract-testnet`) || Path(`/abstract-testnet/`)}
+      - traefik.http.routers.abstract-testnet-external-node-pruned.middlewares=abstract-testnet-external-node-pruned-stripprefix, ipallowlist
+
+  abstract-testnet-db:
+    image: postgres:14
+    expose:
+      - 5430
+    environment:
+      - PGPORT=5430
+      - POSTGRES_PASSWORD=notsecurepassword
+    command: >
+      postgres
+      -c max_connections=200
+      -c log_error_verbosity=terse
+      -c shared_buffers=2GB
+      -c effective_cache_size=4GB
+      -c maintenance_work_mem=1GB
+      -c checkpoint_completion_target=0.9
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c min_wal_size=4GB
+      -c max_wal_size=16GB
+      -c max_worker_processes=16
+      -c checkpoint_timeout=1800
+    networks:
+      - chains
+    volumes:
+      - ${ABSTRACT_TESTNET_EXTERNAL_NODE_PRUNED__DB_DATA:-abstract-testnet-external-node-pruned_db}:/var/lib/postgresql/data
+    healthcheck:
+      interval: 1s
+      timeout: 3s
+      test: [CMD-SHELL, psql -U postgres -c "select exists (select * from pg_stat_activity where datname = '' and application_name = 'pg_restore')" | grep -e ".f$$"]
+
+volumes:
+  abstract-testnet-external-node-pruned:
+  abstract-testnet-external-node-pruned_db:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: abstract-sepolia
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
