@@ -54,7 +54,7 @@ services:
       - '28333' # ZMQ hashtx port
       - '28334' # ZMQ rawblock port
       - '28335' # ZMQ rawtx port
-    entrypoint: [bitcoin-cashd]
+    entrypoint: [bitcoind]
     command:
       - -datadir=/data
       - -externalip=${IP}
@@ -128,17 +128,10 @@ x-upstreams:
       generic:
         rpc:
           url: $${RPC_URL}
-        ws:
-          frameSize: 20Mb
-          msgSize: 50Mb
-          url: $${WS_URL}
+          basic-auth:
+            username: username
+            password: password
+        zeromq:
+          address: $${RPC_URL}/hashblock
     chain: bitcoin-cash
-    method-groups:
-      enabled:
-        - debug
-        - filter
-    methods:
-      disabled:
-      enabled:
-        - name: txpool_content # TODO: should be disabled for rollup nodes
 ...

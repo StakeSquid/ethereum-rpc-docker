@@ -129,17 +129,10 @@ x-upstreams:
       generic:
         rpc:
           url: $${RPC_URL}
-        ws:
-          frameSize: 20Mb
-          msgSize: 50Mb
-          url: $${WS_URL}
+          basic-auth:
+            username: username
+            password: password
+        zeromq:
+          address: $${RPC_URL}/hashblock
     chain: dogecoin-testnet
-    method-groups:
-      enabled:
-        - debug
-        - filter
-    methods:
-      disabled:
-      enabled:
-        - name: txpool_content # TODO: should be disabled for rollup nodes
 ...
