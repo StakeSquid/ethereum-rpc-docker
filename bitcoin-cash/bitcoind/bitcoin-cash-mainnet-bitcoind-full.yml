@@ -1,0 +1,144 @@
+---
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:bitcoin-cash/bitcoind/bitcoin-cash-mainnet-bitcoind-full.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/bitcoin-cash-mainnet \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  bitcoin-cash-mainnet:
+    image: ${BITCOIN_CASH_BITCOIND_IMAGE:-bitcoinabc/bitcoin-abc}:${BITCOIN_CASH_MAINNET_BITCOIND_VERSION:-0.31.4}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 10863:10863
+      - 10863:10863/udp
+    expose:
+      - 8545
+      - '28332' # ZMQ hashblock port
+      - '28333' # ZMQ hashtx port
+      - '28334' # ZMQ rawblock port
+      - '28335' # ZMQ rawtx port
+    entrypoint: [bitcoin-cashd]
+    command:
+      - -datadir=/data
+      - -externalip=${IP}
+      - -port=10863
+      - -printtoconsole
+      - -rpcallowip=::/0
+      - -rpcauth=username:0b6623bdebb516ced10631668833e42a$c478b38890678c51b9f013174a20addb317c2046b68c05e0250ff86e31a505f7
+      - -rpcbind=0.0.0.0
+      - -rpcport=8545
+      - -server
+      - -zmqpubhashblock=tcp://0.0.0.0:28332
+      - -zmqpubhashtx=tcp://0.0.0.0:28333
+      - -zmqpubrawblock=tcp://0.0.0.0:28334
+      - -zmqpubrawtx=tcp://0.0.0.0:28335
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${BITCOIN_CASH_MAINNET_BITCOIND_FULL_DATA:-bitcoin-cash-mainnet-bitcoind-full}:/data
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+      - traefik.enable=true
+      - traefik.http.middlewares.bitcoin-cash-mainnet-bitcoind-full-stripprefix.stripprefix.prefixes=/bitcoin-cash-mainnet
+      - traefik.http.services.bitcoin-cash-mainnet-bitcoind-full.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full.rule=Host(`$DOMAIN`) && (Path(`/bitcoin-cash-mainnet`) || Path(`/bitcoin-cash-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full.rule=Path(`/bitcoin-cash-mainnet`) || Path(`/bitcoin-cash-mainnet/`)}
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full.middlewares=bitcoin-cash-mainnet-bitcoind-full-stripprefix, ipallowlist
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full.service=bitcoin-cash-mainnet-bitcoind-full
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashblock.service=bitcoin-cash-mainnet-bitcoind-full-hashblock
+      - traefik.http.services.bitcoin-cash-mainnet-bitcoind-full-hashblock.loadbalancer.server.port=28332
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashblock.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashblock.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashblock.rule=Host(`$DOMAIN`) && PathPrefix(`/bitcoin-cash-mainnet/hashblock`)}
+      - ${NO_SSL:+traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashblock.rule=PathPrefix(`/bitcoin-cash-mainnet/hashblock`)}
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashblock.middlewares=bitcoin-cash-mainnet-bitcoind-full-stripprefix, ipallowlist
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashtx.service=bitcoin-cash-mainnet-bitcoind-full-hashtx
+      - traefik.http.services.bitcoin-cash-mainnet-bitcoind-full-hashtx.loadbalancer.server.port=28333
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashtx.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashtx.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashtx.rule=Host(`$DOMAIN`) && PathPrefix(`/bitcoin-cash-mainnet/hashtx`)}
+      - ${NO_SSL:+traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashtx.rule=PathPrefix(`/bitcoin-cash-mainnet/hashtx`)}
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-hashtx.middlewares=bitcoin-cash-mainnet-bitcoind-full-stripprefix, ipallowlist
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawblock.service=bitcoin-cash-mainnet-bitcoind-full-rawblock
+      - traefik.http.services.bitcoin-cash-mainnet-bitcoind-full-rawblock.loadbalancer.server.port=28334
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawblock.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawblock.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawblock.rule=Host(`$DOMAIN`) && PathPrefix(`/bitcoin-cash-mainnet/rawblock`)}
+      - ${NO_SSL:+traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawblock.rule=PathPrefix(`/bitcoin-cash-mainnet/rawblock`)}
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawblock.middlewares=bitcoin-cash-mainnet-bitcoind-full-stripprefix, ipallowlist
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawtx.service=bitcoin-cash-mainnet-bitcoind-full-rawtx
+      - traefik.http.services.bitcoin-cash-mainnet-bitcoind-full-rawtx.loadbalancer.server.port=28335
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawtx.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawtx.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawtx.rule=Host(`$DOMAIN`) && PathPrefix(`/bitcoin-cash-mainnet/rawtx`)}
+      - ${NO_SSL:+traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawtx.rule=PathPrefix(`/bitcoin-cash-mainnet/rawtx`)}
+      - traefik.http.routers.bitcoin-cash-mainnet-bitcoind-full-rawtx.middlewares=bitcoin-cash-mainnet-bitcoind-full-stripprefix, ipallowlist
+
+volumes:
+  bitcoin-cash-mainnet-bitcoind-full:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: bitcoin-cash
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
