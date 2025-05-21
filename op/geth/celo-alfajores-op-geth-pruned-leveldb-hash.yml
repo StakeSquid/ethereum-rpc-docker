@@ -91,7 +91,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 5m
     depends_on:
-      - celo-alfajores-geth-pruned
+      - celo-alfajores-geth
     networks:
       - chains
     volumes:
