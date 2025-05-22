@@ -126,7 +126,7 @@ services:
       - traefik.http.routers.base-mainnet-op-reth-minimal-trace.middlewares=base-mainnet-op-reth-minimal-trace-stripprefix, ipallowlist
 
   base-mainnet-op-reth-minimal-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.13.2}
+    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.13.3}
     ports:
       - 16240:16240
       - 16240:16240/udp

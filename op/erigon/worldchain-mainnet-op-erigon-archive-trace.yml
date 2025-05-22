@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   worldchain-mainnet-op-erigon-node:
-    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_MAINNET_NODE_VERSION:-v1.13.2}
+    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_MAINNET_NODE_VERSION:-v1.13.3}
     ports:
       - 16629:16629
       - 16629:16629/udp
