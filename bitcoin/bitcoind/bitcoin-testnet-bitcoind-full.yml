@@ -149,8 +149,8 @@ bitcoin-testnet-indexer:
     - traefik.http.services.bitcoin-testnet-bitcoind-full-esplora.loadbalancer.server.port=3000
     - ${NO_SSL:-traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.entrypoints=websecure}
     - ${NO_SSL:-traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.tls.certresolver=myresolver}
-    - ${NO_SSL:-traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.rule=Host(`$DOMAIN`) && (PathPrefix(`bitcoin-testnet/address`) || PathPrefix(`bitcoin-testnet/tx`) || PathPrefix(`bitcoin-testnet/block`) || PathPrefix(`bitcoin-testnet/blocks`) || PathPrefix(`bitcoin-testnet/mempool`) || PathPrefix(`bitcoin-testnet/fee-estimates`) || PathPrefix(`bitcoin-testnet/scripthash`) || PathPrefix(`bitcoin-testnet/asset`))
-    - ${NO_SSL:+traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.rule=PathPrefix(`bitcoin-testnet/address`) || PathPrefix(`bitcoin-testnet/tx`) || PathPrefix(`bitcoin-testnet/block`) || PathPrefix(`bitcoin-testnet/blocks`) || PathPrefix(`bitcoin-testnet/mempool`) || PathPrefix(`bitcoin-testnet/fee-estimates`) || PathPrefix(`bitcoin-testnet/scripthash`) || PathPrefix(`bitcoin-testnet/asset`))
+    - ${NO_SSL:-traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.rule=Host(`$DOMAIN`) && (PathPrefix(`bitcoin-testnet/address`) || PathPrefix(`bitcoin-testnet/tx`) || PathPrefix(`bitcoin-testnet/block`) || PathPrefix(`bitcoin-testnet/blocks`) || PathPrefix(`bitcoin-testnet/mempool`) || PathPrefix(`bitcoin-testnet/fee-estimates`) || PathPrefix(`bitcoin-testnet/scripthash`) || PathPrefix(`bitcoin-testnet/asset`))}
+    - ${NO_SSL:+traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.rule=PathPrefix(`bitcoin-testnet/address`) || PathPrefix(`bitcoin-testnet/tx`) || PathPrefix(`bitcoin-testnet/block`) || PathPrefix(`bitcoin-testnet/blocks`) || PathPrefix(`bitcoin-testnet/mempool`) || PathPrefix(`bitcoin-testnet/fee-estimates`) || PathPrefix(`bitcoin-testnet/scripthash`) || PathPrefix(`bitcoin-testnet/asset`))}
     - traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.middlewares=bitcoin-testnet-bitcoind-full-esplora-stripprefix, ipallowlist
 
 volumes:

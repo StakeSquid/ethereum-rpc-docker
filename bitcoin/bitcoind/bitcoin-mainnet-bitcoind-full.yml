@@ -148,8 +148,8 @@ bitcoin-mainnet-indexer:
     - traefik.http.services.bitcoin-mainnet-bitcoind-full-esplora.loadbalancer.server.port=3000
     - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.entrypoints=websecure}
     - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.tls.certresolver=myresolver}
-    - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.rule=Host(`$DOMAIN`) && (PathPrefix(`bitcoin-mainnet/address`) || PathPrefix(`bitcoin-mainnet/tx`) || PathPrefix(`bitcoin-mainnet/block`) || PathPrefix(`bitcoin-mainnet/blocks`) || PathPrefix(`bitcoin-mainnet/mempool`) || PathPrefix(`bitcoin-mainnet/fee-estimates`) || PathPrefix(`bitcoin-mainnet/scripthash`) || PathPrefix(`bitcoin-mainnet/asset`))
-    - ${NO_SSL:+traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.rule=PathPrefix(`bitcoin-mainnet/address`) || PathPrefix(`bitcoin-mainnet/tx`) || PathPrefix(`bitcoin-mainnet/block`) || PathPrefix(`bitcoin-mainnet/blocks`) || PathPrefix(`bitcoin-mainnet/mempool`) || PathPrefix(`bitcoin-mainnet/fee-estimates`) || PathPrefix(`bitcoin-mainnet/scripthash`) || PathPrefix(`bitcoin-mainnet/asset`))
+    - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.rule=Host(`$DOMAIN`) && (PathPrefix(`bitcoin-mainnet/address`) || PathPrefix(`bitcoin-mainnet/tx`) || PathPrefix(`bitcoin-mainnet/block`) || PathPrefix(`bitcoin-mainnet/blocks`) || PathPrefix(`bitcoin-mainnet/mempool`) || PathPrefix(`bitcoin-mainnet/fee-estimates`) || PathPrefix(`bitcoin-mainnet/scripthash`) || PathPrefix(`bitcoin-mainnet/asset`))}
+    - ${NO_SSL:+traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.rule=PathPrefix(`bitcoin-mainnet/address`) || PathPrefix(`bitcoin-mainnet/tx`) || PathPrefix(`bitcoin-mainnet/block`) || PathPrefix(`bitcoin-mainnet/blocks`) || PathPrefix(`bitcoin-mainnet/mempool`) || PathPrefix(`bitcoin-mainnet/fee-estimates`) || PathPrefix(`bitcoin-mainnet/scripthash`) || PathPrefix(`bitcoin-mainnet/asset`))}
     - traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.middlewares=bitcoin-mainnet-bitcoind-full-esplora-stripprefix, ipallowlist
 
 volumes:
