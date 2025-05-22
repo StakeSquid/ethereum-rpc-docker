@@ -66,8 +66,7 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --metrics
-      - --metrics.addr=0.0.0.0
-      - --metrics.port=6060
+      - --metrics.prometheus-addr=0.0.0.0:6060
       - --nat=extip:${IP}
       - --port=12188
       - --rpc.gascap=600000000
