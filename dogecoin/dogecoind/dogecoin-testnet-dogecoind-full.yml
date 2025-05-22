@@ -126,7 +126,7 @@ x-upstreams:
     labels:
       provider: $${PROVIDER}
     connection:
-      generic:
+      bitcoin:
         rpc:
           url: $${RPC_URL}
           basic-auth:
