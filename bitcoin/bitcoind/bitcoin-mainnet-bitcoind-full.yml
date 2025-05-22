@@ -117,40 +117,34 @@ services:
       - ${NO_SSL:+traefik.http.routers.bitcoin-mainnet-bitcoind-full-rawtx.rule=PathPrefix(`/bitcoin-mainnet/rawtx`)}
       - traefik.http.routers.bitcoin-mainnet-bitcoind-full-rawtx.middlewares=bitcoin-mainnet-bitcoind-full-stripprefix, ipallowlist
 
-bitcoin-mainnet-indexer:
-
-  logging: *logging-defaults
-
-  image: blockstream/esplora
-
-  expose:
-    - 3000   # HTTP
-    - 50001   # RPC (electrum)
-
-  environment:
-    - ELECTRS_DAEMON_RPC_ADDR=bitcoin-mainnet:8545
-    - ELECTRS_DAEMON_P2P_ADDR=bitcoin-mainnet:12518
-    - ELECTRS_RPC_USER=username
-    - ELECTRS_RPC_PASS=password
-    - ELECTRS_JSONRPC_IMPORT=true
-    - ELECTRS_NETWORK=bitcoin    # Options: bitcoin, testnet, signet, regtest, liquidv1, liquidtestnet
-    - ELECTRS_DB_DIR=/data/electrs
-    - ELECTRS_ELECTRUM_RPC_ADDR=0.0.0.0:50001
-    - ELECTRS_HTTP_ADDR=0.0.0.0:3000
-
-  volumes:
-    - ${BITCOIN_MAINNET_BITCOIND_FULL__ESPLORA_DATA:-bitcoin-mainnet-bitcoind-full_esplora}:/data
-
-  labels:
-    - traefik.enable=true
-    - traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.service=bitcoin-mainnet-bitcoind-full-esplora
-    - traefik.http.middlewares.bitcoin-mainnet-bitcoind-full-esplora-stripprefix.stripprefix.prefixes=/bitcoin-mainnet
-    - traefik.http.services.bitcoin-mainnet-bitcoind-full-esplora.loadbalancer.server.port=3000
-    - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.entrypoints=websecure}
-    - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.tls.certresolver=myresolver}
-    - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.rule=Host(`$DOMAIN`) && (PathPrefix(`bitcoin-mainnet/address`) || PathPrefix(`bitcoin-mainnet/tx`) || PathPrefix(`bitcoin-mainnet/block`) || PathPrefix(`bitcoin-mainnet/blocks`) || PathPrefix(`bitcoin-mainnet/mempool`) || PathPrefix(`bitcoin-mainnet/fee-estimates`) || PathPrefix(`bitcoin-mainnet/scripthash`) || PathPrefix(`bitcoin-mainnet/asset`))}
-    - ${NO_SSL:+traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.rule=PathPrefix(`bitcoin-mainnet/address`) || PathPrefix(`bitcoin-mainnet/tx`) || PathPrefix(`bitcoin-mainnet/block`) || PathPrefix(`bitcoin-mainnet/blocks`) || PathPrefix(`bitcoin-mainnet/mempool`) || PathPrefix(`bitcoin-mainnet/fee-estimates`) || PathPrefix(`bitcoin-mainnet/scripthash`) || PathPrefix(`bitcoin-mainnet/asset`))}
-    - traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.middlewares=bitcoin-mainnet-bitcoind-full-esplora-stripprefix, ipallowlist
+  bitcoin-mainnet-indexer:
+    image: blockstream/esplora
+    expose:
+      - 3000 # HTTP
+      - 50001 # RPC (electrum)
+    environment:
+      - ELECTRS_DAEMON_P2P_ADDR=bitcoin-mainnet:12518
+      - ELECTRS_DAEMON_RPC_ADDR=bitcoin-mainnet:8545
+      - ELECTRS_DB_DIR=/data/electrs
+      - ELECTRS_ELECTRUM_RPC_ADDR=0.0.0.0:50001
+      - ELECTRS_HTTP_ADDR=0.0.0.0:3000
+      - ELECTRS_JSONRPC_IMPORT=true
+      - ELECTRS_NETWORK=bitcoin
+      - ELECTRS_RPC_PASS=password
+      - ELECTRS_RPC_USER=username
+    volumes:
+      - ${BITCOIN_MAINNET_BITCOIND_FULL__ESPLORA_DATA:-bitcoin-mainnet-bitcoind-full_esplora}:/data
+    logging: *logging-defaults
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.service=bitcoin-mainnet-bitcoind-full-esplora
+      - traefik.http.middlewares.bitcoin-mainnet-bitcoind-full-esplora-stripprefix.stripprefix.prefixes=/bitcoin-mainnet
+      - traefik.http.services.bitcoin-mainnet-bitcoind-full-esplora.loadbalancer.server.port=3000
+      - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.rule=Host(`$DOMAIN`) && (PathPrefix(`bitcoin-mainnet/address`) || PathPrefix(`bitcoin-mainnet/tx`) || PathPrefix(`bitcoin-mainnet/block`) || PathPrefix(`bitcoin-mainnet/blocks`) || PathPrefix(`bitcoin-mainnet/mempool`) || PathPrefix(`bitcoin-mainnet/fee-estimates`) || PathPrefix(`bitcoin-mainnet/scripthash`) || PathPrefix(`bitcoin-mainnet/asset`))}
+      - ${NO_SSL:+traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.rule=PathPrefix(`bitcoin-mainnet/address`) || PathPrefix(`bitcoin-mainnet/tx`) || PathPrefix(`bitcoin-mainnet/block`) || PathPrefix(`bitcoin-mainnet/blocks`) || PathPrefix(`bitcoin-mainnet/mempool`) || PathPrefix(`bitcoin-mainnet/fee-estimates`) || PathPrefix(`bitcoin-mainnet/scripthash`) || PathPrefix(`bitcoin-mainnet/asset`))}
+      - traefik.http.routers.bitcoin-mainnet-bitcoind-full-esplora.middlewares=bitcoin-mainnet-bitcoind-full-esplora-stripprefix, ipallowlist
 
 volumes:
   bitcoin-mainnet-bitcoind-full:
