@@ -118,6 +118,41 @@ services:
       - ${NO_SSL:+traefik.http.routers.bitcoin-testnet-bitcoind-full-rawtx.rule=PathPrefix(`/bitcoin-testnet/rawtx`)}
       - traefik.http.routers.bitcoin-testnet-bitcoind-full-rawtx.middlewares=bitcoin-testnet-bitcoind-full-stripprefix, ipallowlist
 
+bitcoin-testnet-indexer:
+
+  logging: *logging-defaults
+
+  image: blockstream/esplora
+
+  expose:
+    - 3000   # HTTP
+    - 50001   # RPC (electrum)
+
+  environment:
+    - ELECTRS_DAEMON_RPC_ADDR=bitcoin-testnet:8545
+    - ELECTRS_DAEMON_P2P_ADDR=bitcoin-testnet:13668
+    - ELECTRS_RPC_USER=username
+    - ELECTRS_RPC_PASS=password
+    - ELECTRS_JSONRPC_IMPORT=true
+    - ELECTRS_NETWORK=bitcoin-testnet    # Options: bitcoin, testnet, signet, regtest, liquidv1, liquidtestnet
+    - ELECTRS_DB_DIR=/data/electrs
+    - ELECTRS_ELECTRUM_RPC_ADDR=0.0.0.0:50001
+    - ELECTRS_HTTP_ADDR=0.0.0.0:3000
+
+  volumes:
+    - ${BITCOIN_TESTNET_BITCOIND_FULL__ESPLORA_DATA:-bitcoin-testnet-bitcoind-full_esplora}:/data
+
+  labels:
+    - traefik.enable=true
+    - traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.service=bitcoin-testnet-bitcoind-full-esplora
+    - traefik.http.middlewares.bitcoin-testnet-bitcoind-full-esplora-stripprefix.stripprefix.prefixes=/bitcoin-testnet
+    - traefik.http.services.bitcoin-testnet-bitcoind-full-esplora.loadbalancer.server.port=3000
+    - ${NO_SSL:-traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.entrypoints=websecure}
+    - ${NO_SSL:-traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.tls.certresolver=myresolver}
+    - ${NO_SSL:-traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.rule=Host(`$DOMAIN`) && (PathPrefix(`bitcoin-testnet/address`) || PathPrefix(`bitcoin-testnet/tx`) || PathPrefix(`bitcoin-testnet/block`) || PathPrefix(`bitcoin-testnet/blocks`) || PathPrefix(`bitcoin-testnet/mempool`) || PathPrefix(`bitcoin-testnet/fee-estimates`) || PathPrefix(`bitcoin-testnet/scripthash`) || PathPrefix(`bitcoin-testnet/asset`))
+    - ${NO_SSL:+traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.rule=PathPrefix(`bitcoin-testnet/address`) || PathPrefix(`bitcoin-testnet/tx`) || PathPrefix(`bitcoin-testnet/block`) || PathPrefix(`bitcoin-testnet/blocks`) || PathPrefix(`bitcoin-testnet/mempool`) || PathPrefix(`bitcoin-testnet/fee-estimates`) || PathPrefix(`bitcoin-testnet/scripthash`) || PathPrefix(`bitcoin-testnet/asset`))
+    - traefik.http.routers.bitcoin-testnet-bitcoind-full-esplora.middlewares=bitcoin-testnet-bitcoind-full-esplora-stripprefix, ipallowlist
+
 volumes:
   bitcoin-testnet-bitcoind-full:
 
