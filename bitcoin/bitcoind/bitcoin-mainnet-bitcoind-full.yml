@@ -132,6 +132,8 @@ services:
       - ELECTRS_NETWORK=bitcoin
       - ELECTRS_RPC_PASS=password
       - ELECTRS_RPC_USER=username
+    networks:
+      - chains
     volumes:
       - ${BITCOIN_MAINNET_BITCOIND_FULL__ESPLORA_DATA:-bitcoin-mainnet-bitcoind-full_esplora}:/data
     logging: *logging-defaults
