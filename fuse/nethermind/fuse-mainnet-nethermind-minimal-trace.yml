@@ -1,0 +1,122 @@
+---
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:fuse/nethermind/fuse-mainnet-nethermind-minimal-trace.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/fuse-mainnet-minimal \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  fuse-mainnet-minimal:
+    image: ${FUSE_NETHERMIND_IMAGE:-fusenet/node}:${FUSE_MAINNET_NETHERMIND_VERSION:-nethermind-1.28.0-v6.0.3}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 10689:10689
+      - 10689:10689/udp
+    expose:
+      - 8545
+      - 9091
+    environment:
+      - NETHERMIND_CONFIG=
+      - NETHERMIND_INIT_WEBSOCKETSENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_ENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_ENABLEDMODULES=[Eth,Subscribe,Trace,TxPool,Web3,Personal,Proof,Net,Parity,Health,Rpc,Debug,Admin]
+      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
+      - NETHERMIND_JSONRPCCONFIG_PORT=8545
+      - NETHERMIND_JSONRPCCONFIG_WEBSOCKETSPORT=8545
+      - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
+      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=10689
+      - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=250
+      - NETHERMIND_NETWORKCONFIG_P2PPORT=10689
+      - NETHERMIND_PRUNINGCONFIG_MODE=Full
+      - NETHERMIND_STORECONFIG_STORERECEIPTS=False
+      - NETHERMIND_SYNCCONFIG_DOWNLOADBODIESINFASTSYNC=False
+      - NETHERMIND_SYNCCONFIG_DOWNLOADRECEIPTSINFASTSYNC=False
+      - NETHERMIND_SYNCCONFIG_FASTSYNC=True
+      - NETHERMIND_SYNCCONFIG_NONVALIDATORNODE=True
+      - NETHERMIND_SYNCCONFIG_SNAPSYNC=True
+      - NETHERMIND_TRACESTORECONFIG_BLOCKSTOKEEP=0
+      - NETHERMIND_TRACESTORECONFIG_ENABLED=true
+      - NETHERMIND_TRACESTORECONFIG_TRACETYPES=Trace,Rewards
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${FUSE_MAINNET_NETHERMIND_MINIMAL_TRACE_DATA:-fuse-mainnet-nethermind-minimal-trace}:/nethermind
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9091
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.fuse-mainnet-nethermind-minimal-trace-stripprefix.stripprefix.prefixes=/fuse-mainnet-minimal
+      - traefik.http.services.fuse-mainnet-nethermind-minimal-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.fuse-mainnet-nethermind-minimal-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.fuse-mainnet-nethermind-minimal-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.fuse-mainnet-nethermind-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/fuse-mainnet-minimal`) || Path(`/fuse-mainnet-minimal/`))}
+      - ${NO_SSL:+traefik.http.routers.fuse-mainnet-nethermind-minimal-trace.rule=Path(`/fuse-mainnet-minimal`) || Path(`/fuse-mainnet-minimal/`)}
+      - traefik.http.routers.fuse-mainnet-nethermind-minimal-trace.middlewares=fuse-mainnet-nethermind-minimal-trace-stripprefix, ipallowlist
+
+volumes:
+  fuse-mainnet-nethermind-minimal-trace:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: fuse
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
