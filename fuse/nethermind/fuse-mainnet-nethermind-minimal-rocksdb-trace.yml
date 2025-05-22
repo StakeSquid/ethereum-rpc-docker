@@ -52,7 +52,7 @@ services:
       - 8545
       - 9091
     environment:
-      - NETHERMIND_CONFIG=
+      - NETHERMIND_CONFIG=fuse
       - NETHERMIND_INITCONFIG_BASEDBPATH=/data/db
       - NETHERMIND_INITCONFIG_LOGDIRECTORY=/data/logs
       - NETHERMIND_INITCONFIG_WEBSOCKETSENABLED=true
