@@ -149,6 +149,7 @@ services:
 
 volumes:
   bitcoin-testnet-bitcoind-full:
+  bitcoin-testnet-bitcoind-full_esplora:
 
 x-upstreams:
   - id: $${ID}

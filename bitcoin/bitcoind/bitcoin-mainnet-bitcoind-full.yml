@@ -148,6 +148,7 @@ services:
 
 volumes:
   bitcoin-mainnet-bitcoind-full:
+  bitcoin-mainnet-bitcoind-full_esplora:
 
 x-upstreams:
   - id: $${ID}
