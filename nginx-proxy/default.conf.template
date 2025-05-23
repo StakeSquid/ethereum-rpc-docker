@@ -26,6 +26,7 @@ server {
 
     location / {
         proxy_pass http://$proxy_connection;
+        resolver 127.0.0.11 ipv6=off valid=10s;
         proxy_http_version 1.1;         # Override default HTTP/1.0
         proxy_set_header Host localhost;
         proxy_set_header X-Real-IP $remote_addr;
