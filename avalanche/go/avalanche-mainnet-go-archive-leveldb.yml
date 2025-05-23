@@ -69,12 +69,6 @@ services:
       - ./avalanche/mainnet:/config
       - /slowdisk:/slowdisk
     logging: *logging-defaults
-    healthcheck:
-      test: [CMD-SHELL, echo >/dev/tcp/localhost/12934]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-      start_period: 2s
     labels:
       - prometheus-scrape.enabled=false
 
