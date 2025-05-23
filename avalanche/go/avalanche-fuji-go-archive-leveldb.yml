@@ -69,6 +69,12 @@ services:
       - ./avalanche/fuji:/config
       - /slowdisk:/slowdisk
     logging: *logging-defaults
+    healthcheck:
+      test: [CMD-SHELL, echo >/dev/tcp/localhost/10046]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 2s
     labels:
       - prometheus-scrape.enabled=false
 
