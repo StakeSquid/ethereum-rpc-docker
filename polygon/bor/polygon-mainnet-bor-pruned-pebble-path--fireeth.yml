@@ -112,6 +112,8 @@ services:
       - ${POLYGON_MAINNET_FIREETH_BLOCKS_STORE:-/app/firehose-data/storage/merged-blocks}
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
+      - --firehose-rate-limit-bucket-fill-rate=${POLYGON_MAINNET_FIREHOSE_RATE_LIMIT_BUCKET_FILL_RATE:-1s}
+      - --firehose-rate-limit-bucket-size=${POLYGON_MAINNET_FIREHOSE_RATE_LIMIT_BUCKET_SIZE:-200}
       - --log-to-file=false
       - --relayer-source=polygon-mainnet:10010
     restart: unless-stopped
@@ -141,7 +143,9 @@ services:
     command:
       - --common-live-blocks-addr=polygon-mainnet-firehose:10014
       - --log-to-file=false
+      - --substreams-block-execution-timeout=${POLYGON_MAINNET_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-30m0s}
       - --substreams-rpc-endpoints=${POLYGON_MAINNET_EXECUTION_ARCHIVE_RPC}
+      - --substreams-tier1-max-subrequests=${POLYGON_MAINNET_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-20}
     restart: unless-stopped
     depends_on:
       - polygon-mainnet

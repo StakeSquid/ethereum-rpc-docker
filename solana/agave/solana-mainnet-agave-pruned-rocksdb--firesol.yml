@@ -131,6 +131,8 @@ services:
       - ${SOLANA_MAINNET_FIRESOL_BLOCKS_STORE:-/app/firehose-data/storage/merged-blocks}
     entrypoint: [sh, -c, exec firesol --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
+      - --firehose-rate-limit-bucket-fill-rate=${SOLANA_MAINNET_FIREHOSE_RATE_LIMIT_BUCKET_FILL_RATE:-1s}
+      - --firehose-rate-limit-bucket-size=${SOLANA_MAINNET_FIREHOSE_RATE_LIMIT_BUCKET_SIZE:-200}
       - --log-to-file=false
       - --relayer-source=solana-mainnet-agave-client:10010
     restart: unless-stopped
@@ -160,7 +162,9 @@ services:
     command:
       - --common-live-blocks-addr=solana-mainnet-agave-firehose:10014
       - --log-to-file=false
+      - --substreams-block-execution-timeout=${SOLANA_MAINNET_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-30m0s}
       - --substreams-rpc-endpoints=${SOLANA_MAINNET_EXECUTION_ARCHIVE_RPC}
+      - --substreams-tier1-max-subrequests=${SOLANA_MAINNET_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-20}
     restart: unless-stopped
     depends_on:
       - solana-mainnet-agave

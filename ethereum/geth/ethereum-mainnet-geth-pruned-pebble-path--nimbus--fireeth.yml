@@ -115,6 +115,8 @@ services:
       - ${ETHEREUM_MAINNET_FIREETH_BLOCKS_STORE:-/app/firehose-data/storage/merged-blocks}
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start firehose index-builder relayer merger $@, _]
     command:
+      - --firehose-rate-limit-bucket-fill-rate=${ETHEREUM_MAINNET_FIREHOSE_RATE_LIMIT_BUCKET_FILL_RATE:-1s}
+      - --firehose-rate-limit-bucket-size=${ETHEREUM_MAINNET_FIREHOSE_RATE_LIMIT_BUCKET_SIZE:-200}
       - --log-to-file=false
       - --relayer-source=ethereum-mainnet-geth:10010
     restart: unless-stopped
@@ -144,7 +146,9 @@ services:
     command:
       - --common-live-blocks-addr=ethereum-mainnet-geth-firehose:10014
       - --log-to-file=false
+      - --substreams-block-execution-timeout=${ETHEREUM_MAINNET_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-30m0s}
       - --substreams-rpc-endpoints=${ETHEREUM_MAINNET_EXECUTION_ARCHIVE_RPC}
+      - --substreams-tier1-max-subrequests=${ETHEREUM_MAINNET_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-20}
     restart: unless-stopped
     depends_on:
       - ethereum-mainnet-geth
