@@ -1,0 +1,152 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:taiko/nethermind/taiko-hekla-nethermind-archive-rocksdb-trace.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/taiko-hekla-nethermind-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  taiko-hekla-nethermind-archive:
+    image: ${TAIKO_NETHERMIND_IMAGE:-nethermind/nethermind}:${TAIKO_HEKLA_NETHERMIND_VERSION:-v1.31.11}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 14108:14108
+      - 14108:14108/udp
+    expose:
+      - 8545
+      - 9091
+    env_file:
+      - ./taiko/hekla.env
+    environment:
+      - NETHERMIND_CONFIG=taiko-hekla_archive
+      - NETHERMIND_INITCONFIG_BASEDBPATH=/data/db
+      - NETHERMIND_INITCONFIG_LOGDIRECTORY=/data/logs
+      - NETHERMIND_INITCONFIG_WEBSOCKETSENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_ENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_ENABLEDMODULES=[Eth,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Rpc,Debug,Admin,Traces]
+      - NETHERMIND_JSONRPCCONFIG_ENGINEHOST=0.0.0.0
+      - NETHERMIND_JSONRPCCONFIG_ENGINEPORT=8551
+      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
+      - NETHERMIND_JSONRPCCONFIG_JWTSECRETFILE=/jwtsecret
+      - NETHERMIND_JSONRPCCONFIG_PORT=8545
+      - NETHERMIND_JSONRPCCONFIG_WEBSOCKETSPORT=8545
+      - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
+      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=14108
+      - NETHERMIND_NETWORKCONFIG_EXTERNALIP=${IP}
+      - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=250
+      - NETHERMIND_NETWORKCONFIG_P2PPORT=14108
+      - NETHERMIND_RECEIPTCONFIG_TXLOOKUPLIMIT=0
+      - NETHERMIND_TRACESTORECONFIG_BLOCKSTOKEEP=0
+      - NETHERMIND_TRACESTORECONFIG_ENABLED=true
+      - NETHERMIND_TRACESTORECONFIG_TRACETYPES=Trace,Rewards
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${TAIKO_HEKLA_NETHERMIND_ARCHIVE_ROCKSDB_TRACE_DATA:-taiko-hekla-nethermind-archive-rocksdb-trace}:/data
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9091
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.taiko-hekla-nethermind-archive-rocksdb-trace-stripprefix.stripprefix.prefixes=/taiko-hekla-nethermind-archive
+      - traefik.http.services.taiko-hekla-nethermind-archive-rocksdb-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.taiko-hekla-nethermind-archive-rocksdb-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.taiko-hekla-nethermind-archive-rocksdb-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.taiko-hekla-nethermind-archive-rocksdb-trace.rule=Host(`$DOMAIN`) && (Path(`/taiko-hekla-nethermind-archive`) || Path(`/taiko-hekla-nethermind-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.taiko-hekla-nethermind-archive-rocksdb-trace.rule=Path(`/taiko-hekla-nethermind-archive`) || Path(`/taiko-hekla-nethermind-archive/`)}
+      - traefik.http.routers.taiko-hekla-nethermind-archive-rocksdb-trace.middlewares=taiko-hekla-nethermind-archive-rocksdb-trace-stripprefix, ipallowlist
+
+  taiko-hekla-nethermind-archive-node:
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.5.0}
+    ports:
+      - 19108:19108
+      - 19108:19108/udp
+    env_file:
+      - ./taiko/hekla.env
+    environment:
+      - JWT_SECRET=/jwtsecret
+      - L1_BEACON=${ETHEREUM_HOLESKY_BEACON_REST}
+      - L1_WS=${ETHEREUM_HOLESKY_EXECUTION_WS}
+      - L2_AUTH=http://taiko-hekla-nethermind-archive:8551
+      - L2_WS=ws://taiko-hekla-nethermind-archive:8545
+      - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
+      - P2P_CHECK_POINT_SYNC_URL=https://rpc.hekla.taiko.xyz
+      - P2P_SYNC=true
+    entrypoint: [taiko-client, driver]
+    restart: unless-stopped
+    depends_on:
+      - taiko-hekla-nethermind-archive
+    networks:
+      - chains
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+
+volumes:
+  taiko-hekla-nethermind-archive-rocksdb-trace:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: taiko-hekla
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
