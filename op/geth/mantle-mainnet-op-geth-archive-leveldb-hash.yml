@@ -1,4 +1,9 @@
 ---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 # You should use a snapshot for Mantle
 # https://github.com/mantlenetworkio/networks/blob/main/run-node-mainnetv2.md
 

@@ -1,4 +1,9 @@
 ---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 # You need to initialize the postgres database from a db dump as described
 # here https://docs-zkevm.cronos.org/for-node-hosts/running-nodes/cronos-zkevm-mainnet
 # and change this yaml file temporarily to run pg_restore

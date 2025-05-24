@@ -1,4 +1,9 @@
 ---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 # this is a minimal node, it will not have a full state. you achieve this by removing files form the static_files directory
 # it's important to disable certain methods on the rpc server which would otherwise cause issues with the drpc gateway.
 # this is why we have a minimal profile that doesn't actually exist in reth.

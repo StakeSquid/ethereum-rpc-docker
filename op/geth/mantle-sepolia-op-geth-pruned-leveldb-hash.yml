@@ -1,4 +1,9 @@
 ---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 # You should use a snapshot for Mantle
 # in fact sepolia doesn't have a genesis.json anywhere to init the datadir from but here you get a datadir
 #  https://github.com/mantlenetworkio/networks/blob/main/run-node-sepolia.md

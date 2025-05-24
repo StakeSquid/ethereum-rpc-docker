@@ -1,9 +1,3 @@
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: "10m"
-    max-file: "3"
-
 networks:
   chains:
     driver: bridge

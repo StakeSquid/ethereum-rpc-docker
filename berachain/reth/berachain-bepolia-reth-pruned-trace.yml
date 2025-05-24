@@ -1,4 +1,9 @@
 ---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 # you should backup the peers of your beacond node frequently.
 # docker exec -it rpc-berachain-bepolia-reth-pruned-node-1 curl http://localhost:26657/net_info | jq -r '
 #  .result.peers[]
