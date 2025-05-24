@@ -1,0 +1,154 @@
+---
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:gnosis/nethermind/gnosis-mainnet-nethermind-archive-rocksdb-trace.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/gnosis-mainnet-nethermind-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  gnosis-mainnet-nethermind-archive:
+    image: ${GNOSIS_NETHERMIND_IMAGE:-nethermind/nethermind}:${GNOSIS_MAINNET_NETHERMIND_VERSION:-v1.31.11}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12245:12245
+      - 12245:12245/udp
+    expose:
+      - 8545
+      - 9091
+    environment:
+      - NETHERMIND_CONFIG=gnosis_archive
+      - NETHERMIND_INITCONFIG_BASEDBPATH=/data/db
+      - NETHERMIND_INITCONFIG_LOGDIRECTORY=/data/logs
+      - NETHERMIND_INITCONFIG_WEBSOCKETSENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_ENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_ENABLEDMODULES=[Eth,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Rpc,Debug,Admin,Traces]
+      - NETHERMIND_JSONRPCCONFIG_ENGINEHOST=0.0.0.0
+      - NETHERMIND_JSONRPCCONFIG_ENGINEPORT=8551
+      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
+      - NETHERMIND_JSONRPCCONFIG_JWTSECRETFILE=/jwtsecret
+      - NETHERMIND_JSONRPCCONFIG_PORT=8545
+      - NETHERMIND_JSONRPCCONFIG_WEBSOCKETSPORT=8545
+      - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
+      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=12245
+      - NETHERMIND_NETWORKCONFIG_EXTERNALIP=${IP}
+      - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=250
+      - NETHERMIND_NETWORKCONFIG_P2PPORT=12245
+      - NETHERMIND_RECEIPTCONFIG_TXLOOKUPLIMIT=0
+      - NETHERMIND_TRACESTORECONFIG_BLOCKSTOKEEP=0
+      - NETHERMIND_TRACESTORECONFIG_ENABLED=true
+      - NETHERMIND_TRACESTORECONFIG_TRACETYPES=Trace,Rewards
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${GNOSIS_MAINNET_NETHERMIND_ARCHIVE_ROCKSDB_TRACE_DATA:-gnosis-mainnet-nethermind-archive-rocksdb-trace}:/data
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9091
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.gnosis-mainnet-nethermind-archive-rocksdb-trace-stripprefix.stripprefix.prefixes=/gnosis-mainnet-nethermind-archive
+      - traefik.http.services.gnosis-mainnet-nethermind-archive-rocksdb-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-nethermind-archive-rocksdb-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-nethermind-archive-rocksdb-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.gnosis-mainnet-nethermind-archive-rocksdb-trace.rule=Host(`$DOMAIN`) && (Path(`/gnosis-mainnet-nethermind-archive`) || Path(`/gnosis-mainnet-nethermind-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.gnosis-mainnet-nethermind-archive-rocksdb-trace.rule=Path(`/gnosis-mainnet-nethermind-archive`) || Path(`/gnosis-mainnet-nethermind-archive/`)}
+      - traefik.http.routers.gnosis-mainnet-nethermind-archive-rocksdb-trace.middlewares=gnosis-mainnet-nethermind-archive-rocksdb-trace-stripprefix, ipallowlist
+
+  gnosis-mainnet-nethermind-archive-node:
+    image: ${GNOSIS_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${GNOSIS_MAINNET_NIMBUS_VERSION:-amd64-v25.5.0}
+    user: root
+    ports:
+      - 17245:17245
+      - 17245:17245/udp
+    expose:
+      - 3500
+    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=gnosis --trusted-node-url=https://checkpoint.gnosischain.com --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
+    command:
+      - --history=prune
+      - --jwt-secret=/jwtsecret
+      - --metrics-address=0.0.0.0
+      - --metrics-port=8008
+      - --nat=extip:${IP}
+      - --network=gnosis
+      - --rest
+      - --rest-address=0.0.0.0
+      - --rest-port=3500
+      - --tcp-port=17245
+      - --udp-port=17245
+      - --web3-url=http://gnosis-mainnet-nethermind-archive:8551
+    restart: unless-stopped
+    depends_on:
+      - gnosis-mainnet-nethermind-archive
+    networks:
+      - chains
+    volumes:
+      - ${GNOSIS_MAINNET_NETHERMIND_ARCHIVE_ROCKSDB_TRACE__NIMBUS_DATA:-gnosis-mainnet-nethermind-archive-rocksdb-trace_nimbus}:/root/.cache/nimbus/BeaconNode
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=8008
+      - prometheus-scrape.path=/metrics
+
+volumes:
+  gnosis-mainnet-nethermind-archive-rocksdb-trace:
+  gnosis-mainnet-nethermind-archive-rocksdb-trace_nimbus:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: gnosis
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
