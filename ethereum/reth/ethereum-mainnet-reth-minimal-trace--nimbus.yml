@@ -25,11 +25,6 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-mainnet-reth-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   ethereum-mainnet-reth-minimal:
@@ -109,12 +104,25 @@ services:
       - traefik.http.routers.ethereum-mainnet-reth-minimal-trace.middlewares=ethereum-mainnet-reth-minimal-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
+  ethereum-mainnet-reth-minimal-pruner:
+    image: debian:latest
+    entrypoint: [/scripts/prune-reth.sh]
+    restart: no
+    volumes:
+      - ./scripts/castrate-reth.sh:/scripts/prune-reth.sh
+      - ethereum-mainnet-reth-minimal-trace:/data
+    logging: *logging-defaults
+    profiles:
+      - pruning
+
   ethereum-mainnet-reth-minimal-node:
     image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-amd64-v25.4.1}
     user: root
     ports:
       - 19286:19286
       - 19286:19286/udp
+    expose:
+      - 3500
     entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=mainnet --trusted-node-url=https://mainnet.beaconstate.info --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
     command:
       - --history=prune
@@ -150,16 +158,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-reth-minimal/eth`)}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.rule=PathPrefix(`/ethereum-mainnet-reth-minimal/eth`)}
       - traefik.http.routers.ethereum-mainnet-reth-minimal-trace-node.middlewares=ethereum-mainnet-reth-minimal-trace-node-stripprefix, ipallowlist
-
-  ethereum-mainnet-reth-minimal-pruner:
-    image: debian:latest
-    entrypoint: [/scripts/prune-reth.sh]
-    restart: no
-    volumes:
-      - ./scripts/castrate-reth.sh:/scripts/prune-reth.sh
-      - ethereum-mainnet-reth-minimal-trace:/data
-    profiles:
-      - pruning
 
 volumes:
   ethereum-mainnet-reth-minimal-trace:
@@ -209,6 +207,14 @@ x-upstreams:
         - name: eth_getBlockTransactionCountByNumber
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
   - id: $${ID}-beacon-chain
     chain: eth-beacon-chain
     labels:

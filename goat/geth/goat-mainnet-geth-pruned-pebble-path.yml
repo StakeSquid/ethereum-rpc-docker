@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/goat-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   goat-mainnet:
@@ -121,14 +116,12 @@ services:
       - ./goat/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - goat-mainnet-geth-pruned-pebble-path:/geth
-      - goat-mainnet-geth-pruned-pebble-path_node:/root/.goat
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
 
 volumes:
   goat-mainnet-geth-pruned-pebble-path:
-  goat-mainnet-geth-pruned-pebble-path_node:
 
 x-upstreams:
   - id: $${ID}

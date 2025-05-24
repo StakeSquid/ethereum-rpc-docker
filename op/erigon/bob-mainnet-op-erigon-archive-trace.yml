@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/bob-mainnet-op-erigon \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   bob-mainnet-op-erigon:
@@ -150,6 +145,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.bob-mainnet-op-erigon-archive-trace-node-stripprefix.stripprefix.prefixes=/bob-mainnet-op-erigon/node
+      - traefik.http.services.bob-mainnet-op-erigon-archive-trace-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-erigon-archive-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-erigon-archive-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`bob-mainnet-op-erigon/node`)}
+      - ${NO_SSL:+traefik.http.routers.bob-mainnet-op-erigon-archive-trace-node.rule=PathPrefix(`bob-mainnet-op-erigon/node`)}
+      - traefik.http.routers.bob-mainnet-op-erigon-archive-trace-node.middlewares=bob-mainnet-op-erigon-archive-trace-node-stripprefix, ipallowlist
 
 volumes:
   bob-mainnet-op-erigon-archive-trace:

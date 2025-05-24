@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/arbitrum-one \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   arbitrum-one:
@@ -136,9 +131,9 @@ services:
     command:
       - --common-live-blocks-addr=arbitrum-one-firehose:10014
       - --log-to-file=false
-      - --substreams-block-execution-timeout=${ARBITRUM_ONE_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-30m0s}
+      - --substreams-block-execution-timeout=${ARBITRUM_ONE_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-3m0s}
       - --substreams-rpc-endpoints=${ARBITRUM_ONE_EXECUTION_ARCHIVE_RPC}
-      - --substreams-tier1-max-subrequests=${ARBITRUM_ONE_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-20}
+      - --substreams-tier1-max-subrequests=${ARBITRUM_ONE_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-4}
     restart: unless-stopped
     depends_on:
       - arbitrum-one

@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/fuse-mainnet-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   fuse-mainnet-minimal:
@@ -57,7 +52,7 @@ services:
       - NETHERMIND_INITCONFIG_LOGDIRECTORY=/data/logs
       - NETHERMIND_INITCONFIG_WEBSOCKETSENABLED=true
       - NETHERMIND_JSONRPCCONFIG_ENABLED=true
-      - NETHERMIND_JSONRPCCONFIG_ENABLEDMODULES=[Eth,Subscribe,Trace,TxPool,Web3,Personal,Proof,Net,Parity,Health,Rpc,Debug,Admin]
+      - NETHERMIND_JSONRPCCONFIG_ENABLEDMODULES=[Eth,Subscribe,TxPool,Web3,Personal,Proof,Net,Parity,Health,Rpc,Debug,Admin,Traces]
       - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
       - NETHERMIND_JSONRPCCONFIG_PORT=8545
       - NETHERMIND_JSONRPCCONFIG_WEBSOCKETSPORT=8545

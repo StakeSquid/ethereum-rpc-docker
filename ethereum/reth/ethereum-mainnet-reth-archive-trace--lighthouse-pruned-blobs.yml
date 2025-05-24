@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-mainnet-reth \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   ethereum-mainnet-reth:
@@ -110,6 +105,8 @@ services:
     ports:
       - 19563:19563
       - 19563:19563/udp
+    expose:
+      - 3500
     entrypoint: [lighthouse, beacon_node]
     command:
       - --allow-insecure-genesis-sync
@@ -137,7 +134,6 @@ services:
     networks:
       - chains
     volumes:
-      - ${ETHEREUM_MAINNET_RETH_ARCHIVE_TRACE__LIGHTHOUSE_PRUNED_BLOBS_DATA:-ethereum-mainnet-reth-archive-trace_lighthouse-pruned-blobs}:/data
       - .jwtsecret:/jwtsecret:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -181,6 +177,14 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
   - id: $${ID}-beacon-chain
     chain: eth-beacon-chain
     labels:

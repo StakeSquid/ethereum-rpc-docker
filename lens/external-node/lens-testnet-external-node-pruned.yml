@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/lens-testnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   lens-testnet-client:
@@ -150,6 +145,7 @@ services:
       interval: 1s
       timeout: 3s
       test: [CMD-SHELL, psql -U postgres -c "select exists (select * from pg_stat_activity where datname = '' and application_name = 'pg_restore')" | grep -e ".f$$"]
+    logging: *logging-defaults
 
 volumes:
   lens-testnet-external-node-pruned:

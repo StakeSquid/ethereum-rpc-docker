@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/lisk-sepolia \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   lisk-sepolia:
@@ -159,6 +154,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.lisk-sepolia-op-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/lisk-sepolia/node
+      - traefik.http.services.lisk-sepolia-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`lisk-sepolia/node`)}
+      - ${NO_SSL:+traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path-node.rule=PathPrefix(`lisk-sepolia/node`)}
+      - traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-path-node.middlewares=lisk-sepolia-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:
   lisk-sepolia-op-geth-pruned-pebble-path:

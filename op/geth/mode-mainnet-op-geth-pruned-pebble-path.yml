@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/mode-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   mode-mainnet:
@@ -151,6 +146,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.mode-mainnet-op-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/mode-mainnet/node
+      - traefik.http.services.mode-mainnet-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`mode-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-path-node.rule=PathPrefix(`mode-mainnet/node`)}
+      - traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-path-node.middlewares=mode-mainnet-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:
   mode-mainnet-op-geth-pruned-pebble-path:

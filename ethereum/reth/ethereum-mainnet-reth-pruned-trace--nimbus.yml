@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-mainnet-reth-pruned \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   ethereum-mainnet-reth-pruned:
@@ -112,6 +107,8 @@ services:
     ports:
       - 15150:15150
       - 15150:15150/udp
+    expose:
+      - 3500
     entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=mainnet --trusted-node-url=https://mainnet.beaconstate.info --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
     command:
       - --history=prune
@@ -174,6 +171,14 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
   - id: $${ID}-beacon-chain
     chain: eth-beacon-chain
     labels:

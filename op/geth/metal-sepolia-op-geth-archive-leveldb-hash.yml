@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/metal-sepolia-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   metal-sepolia-archive:
@@ -146,6 +141,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.metal-sepolia-op-geth-archive-leveldb-hash-node-stripprefix.stripprefix.prefixes=/metal-sepolia-archive/node
+      - traefik.http.services.metal-sepolia-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`metal-sepolia-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`metal-sepolia-archive/node`)}
+      - traefik.http.routers.metal-sepolia-op-geth-archive-leveldb-hash-node.middlewares=metal-sepolia-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:
   metal-sepolia-op-geth-archive-leveldb-hash:

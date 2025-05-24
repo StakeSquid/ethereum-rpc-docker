@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/fraxtal-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   fraxtal-mainnet:
@@ -159,6 +154,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.fraxtal-mainnet-op-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/fraxtal-mainnet/node
+      - traefik.http.services.fraxtal-mainnet-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`fraxtal-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path-node.rule=PathPrefix(`fraxtal-mainnet/node`)}
+      - traefik.http.routers.fraxtal-mainnet-op-geth-pruned-pebble-path-node.middlewares=fraxtal-mainnet-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:
   fraxtal-mainnet-op-geth-pruned-pebble-path:

@@ -25,11 +25,6 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-mainnet-reth-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   ethereum-mainnet-reth-minimal:
@@ -109,11 +104,24 @@ services:
       - traefik.http.routers.ethereum-mainnet-reth-minimal-trace.middlewares=ethereum-mainnet-reth-minimal-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
+  ethereum-mainnet-reth-minimal-pruner:
+    image: debian:latest
+    entrypoint: [/scripts/prune-reth.sh]
+    restart: no
+    volumes:
+      - ./scripts/castrate-reth.sh:/scripts/prune-reth.sh
+      - ethereum-mainnet-reth-minimal-trace:/data
+    logging: *logging-defaults
+    profiles:
+      - pruning
+
   ethereum-mainnet-reth-minimal-node:
     image: ${ETHEREUM_BLSYNC_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_BLSYNC_VERSION:-alltools-v1.15.7}
     ports:
       - 19286:19286
       - 19286:19286/udp
+    expose:
+      - 3500
     entrypoint: [blsync]
     command:
       - --beacon.api=https://lodestar-mainnet.chainsafe.io
@@ -131,16 +139,6 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  ethereum-mainnet-reth-minimal-pruner:
-    image: debian:latest
-    entrypoint: [/scripts/prune-reth.sh]
-    restart: no
-    volumes:
-      - ./scripts/castrate-reth.sh:/scripts/prune-reth.sh
-      - ethereum-mainnet-reth-minimal-trace:/data
-    profiles:
-      - pruning
 
 volumes:
   ethereum-mainnet-reth-minimal-trace:

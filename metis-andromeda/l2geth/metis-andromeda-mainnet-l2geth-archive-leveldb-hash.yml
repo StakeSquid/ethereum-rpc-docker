@@ -23,11 +23,6 @@
 # curl -X POST https://${IP}.traefik.me/metis-andromeda-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   metis-andromeda-mainnet-archive-client:
@@ -141,6 +136,8 @@ services:
     ports:
       - 15743:15743
       - 15743:15743/udp
+    expose:
+      - 7878
     environment:
       - DATA_TRANSPORT_LAYER__BATCH_INBOX_ADDRESS=0xff00000000000000000000000000000000001088
       - DATA_TRANSPORT_LAYER__BATCH_INBOX_L1_HEIGHT=19438451

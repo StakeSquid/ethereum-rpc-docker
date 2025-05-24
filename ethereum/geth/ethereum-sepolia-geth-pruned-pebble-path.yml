@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-sepolia-geth \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   ethereum-sepolia-geth:
@@ -107,6 +102,8 @@ services:
     ports:
       - 19710:19710
       - 19710:19710/udp
+    expose:
+      - 3500
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -188,6 +185,14 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain-sepolia
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
   - id: $${ID}-beacon-chain
     chain: eth-beacon-chain-sepolia
     labels:

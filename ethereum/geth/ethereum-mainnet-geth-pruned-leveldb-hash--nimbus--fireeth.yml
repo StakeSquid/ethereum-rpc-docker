@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-mainnet-geth \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   ethereum-mainnet-geth:
@@ -146,9 +141,9 @@ services:
     command:
       - --common-live-blocks-addr=ethereum-mainnet-geth-firehose:10014
       - --log-to-file=false
-      - --substreams-block-execution-timeout=${ETHEREUM_MAINNET_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-30m0s}
+      - --substreams-block-execution-timeout=${ETHEREUM_MAINNET_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-3m0s}
       - --substreams-rpc-endpoints=${ETHEREUM_MAINNET_EXECUTION_ARCHIVE_RPC}
-      - --substreams-tier1-max-subrequests=${ETHEREUM_MAINNET_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-20}
+      - --substreams-tier1-max-subrequests=${ETHEREUM_MAINNET_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-4}
     restart: unless-stopped
     depends_on:
       - ethereum-mainnet-geth
@@ -173,6 +168,8 @@ services:
     ports:
       - 15455:15455
       - 15455:15455/udp
+    expose:
+      - 3500
     entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=mainnet --trusted-node-url=https://mainnet.beaconstate.info --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
     command:
       - --history=prune
@@ -250,6 +247,14 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
   - id: $${ID}-beacon-chain
     chain: eth-beacon-chain
     labels:

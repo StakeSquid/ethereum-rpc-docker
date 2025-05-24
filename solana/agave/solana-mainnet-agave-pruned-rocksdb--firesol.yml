@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/solana-mainnet-agave \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   solana-mainnet-agave-client:
@@ -162,9 +157,9 @@ services:
     command:
       - --common-live-blocks-addr=solana-mainnet-agave-firehose:10014
       - --log-to-file=false
-      - --substreams-block-execution-timeout=${SOLANA_MAINNET_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-30m0s}
+      - --substreams-block-execution-timeout=${SOLANA_MAINNET_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-3m0s}
       - --substreams-rpc-endpoints=${SOLANA_MAINNET_EXECUTION_ARCHIVE_RPC}
-      - --substreams-tier1-max-subrequests=${SOLANA_MAINNET_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-20}
+      - --substreams-tier1-max-subrequests=${SOLANA_MAINNET_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-4}
     restart: unless-stopped
     depends_on:
       - solana-mainnet-agave

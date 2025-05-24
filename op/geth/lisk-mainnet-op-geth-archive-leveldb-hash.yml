@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/lisk-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   lisk-mainnet-archive:
@@ -154,6 +149,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.lisk-mainnet-op-geth-archive-leveldb-hash-node-stripprefix.stripprefix.prefixes=/lisk-mainnet-archive/node
+      - traefik.http.services.lisk-mainnet-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.lisk-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`lisk-mainnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.lisk-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`lisk-mainnet-archive/node`)}
+      - traefik.http.routers.lisk-mainnet-op-geth-archive-leveldb-hash-node.middlewares=lisk-mainnet-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:
   lisk-mainnet-op-geth-archive-leveldb-hash:

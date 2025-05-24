@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/snax-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   snax-mainnet-archive:
@@ -151,6 +146,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.snax-mainnet-op-geth-archive-leveldb-hash-node-stripprefix.stripprefix.prefixes=/snax-mainnet-archive/node
+      - traefik.http.services.snax-mainnet-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`snax-mainnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`snax-mainnet-archive/node`)}
+      - traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash-node.middlewares=snax-mainnet-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:
   snax-mainnet-op-geth-archive-leveldb-hash:

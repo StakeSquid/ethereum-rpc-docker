@@ -32,11 +32,6 @@
 # curl -X POST https://${IP}.traefik.me/berachain-mainnet-reth \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   berachain-mainnet-reth:
@@ -145,7 +140,6 @@ services:
     networks:
       - chains
     volumes:
-      - ${BERACHAIN_MAINNET_RETH_ARCHIVE_TRACE__NODE_DATA:-berachain-mainnet-reth-archive-trace_node}:/root/.beacond/data
       - .jwtsecret:/jwtsecret:ro
       - berachain-mainnet-reth-archive-trace_config:/root/.beacond/config
     logging: *logging-defaults
@@ -154,8 +148,8 @@ services:
 
 volumes:
   berachain-mainnet-reth-archive-trace:
+  berachain-mainnet-reth-archive-trace_beacon-kit:
   berachain-mainnet-reth-archive-trace_config:
-  berachain-mainnet-reth-archive-trace_node:
 
 x-upstreams:
   - id: $${ID}

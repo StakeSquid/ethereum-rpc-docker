@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/celo-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   celo-mainnet-archive:
@@ -169,6 +164,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.celo-mainnet-op-geth-archive-leveldb-hash-node-stripprefix.stripprefix.prefixes=/celo-mainnet-archive/node
+      - traefik.http.services.celo-mainnet-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`celo-mainnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.celo-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`celo-mainnet-archive/node`)}
+      - traefik.http.routers.celo-mainnet-op-geth-archive-leveldb-hash-node.middlewares=celo-mainnet-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
   celo-mainnet-archive-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_MAINNET_EIGENDA_PROXY_VERSION:-v1.6.4}
@@ -186,7 +189,9 @@ services:
     networks:
       - chains
     volumes:
-      - ${CELO_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_DATA:-celo-mainnet-op-geth-archive-leveldb-hash_eigenda}:/data
+      - ${CELO_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_PROXY_DATA:-celo-mainnet-op-geth-archive-leveldb-hash_eigenda-proxy}:/data
+      - ./op/celo/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
@@ -241,11 +246,7 @@ services:
     volumes:
       - ${CELO_MAINNET_GETH_ARCHIVE_LEVELDB_HASH_DATA:-celo-mainnet-geth-archive-leveldb-hash}:/root/.celo
       - /slowdisk:/slowdisk
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-        max-file: '3'
+    logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=6060
@@ -254,9 +255,45 @@ services:
 volumes:
   celo-mainnet-geth-archive-leveldb-hash:
   celo-mainnet-op-geth-archive-leveldb-hash:
-  celo-mainnet-op-geth-archive-leveldb-hash_eigenda:
+  celo-mainnet-op-geth-archive-leveldb-hash_eigenda-proxy:
 
 x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: celo
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

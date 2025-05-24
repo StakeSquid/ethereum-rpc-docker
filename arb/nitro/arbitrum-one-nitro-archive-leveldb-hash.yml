@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/arbitrum-one-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   arbitrum-one-archive:
@@ -139,11 +134,7 @@ services:
     volumes:
       - ${ARBITRUM_ONE_ARBNODE_ARCHIVE_LEVELDB_HASH_DATA:-arbitrum-one-arbnode-archive-leveldb-hash}:/data
       - /slowdisk:/slowdisk
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-        max-file: '3'
+    logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
 
@@ -188,4 +179,24 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: arbitrum
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
 ...

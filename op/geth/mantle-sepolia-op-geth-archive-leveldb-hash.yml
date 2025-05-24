@@ -25,11 +25,6 @@
 # curl -X POST https://${IP}.traefik.me/mantle-sepolia-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   mantle-sepolia-archive:
@@ -150,6 +145,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.mantle-sepolia-op-geth-archive-leveldb-hash-node-stripprefix.stripprefix.prefixes=/mantle-sepolia-archive/node
+      - traefik.http.services.mantle-sepolia-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`mantle-sepolia-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`mantle-sepolia-archive/node`)}
+      - traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.middlewares=mantle-sepolia-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:
   mantle-sepolia-op-geth-archive-leveldb-hash:

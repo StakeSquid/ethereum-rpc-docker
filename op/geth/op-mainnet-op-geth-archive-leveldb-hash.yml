@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/op-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   op-mainnet-archive:
@@ -154,6 +149,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.op-mainnet-op-geth-archive-leveldb-hash-node-stripprefix.stripprefix.prefixes=/op-mainnet-archive/node
+      - traefik.http.services.op-mainnet-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`op-mainnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`op-mainnet-archive/node`)}
+      - traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.middlewares=op-mainnet-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
   op-mainnet-l2geth-archive:
     image: ${OP_L2GETH_IMAGE:-ethereumoptimism/l2geth}:${OP_MAINNET_L2GETH_VERSION:-0.5.31}
@@ -206,11 +209,7 @@ services:
       - ${OP_MAINNET_L2GETH_ARCHIVE_LEVELDB_HASH_DATA:-op-mainnet-l2geth-archive-leveldb-hash}:/geth
       - ./op/op/mainnet:/config
       - /slowdisk:/slowdisk
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-        max-file: '3'
+    logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
 
@@ -219,6 +218,42 @@ volumes:
   op-mainnet-op-geth-archive-leveldb-hash:
 
 x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: optimism
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
   - id: $${ID}
     labels:
       provider: $${PROVIDER}

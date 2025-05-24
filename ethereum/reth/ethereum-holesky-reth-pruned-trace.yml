@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/ethereum-holesky-reth-pruned \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   ethereum-holesky-reth-pruned:
@@ -111,6 +106,8 @@ services:
     ports:
       - 16849:16849
       - 16849:16849/udp
+    expose:
+      - 3500
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
@@ -175,6 +172,14 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain-holesky
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
   - id: $${ID}-beacon-chain
     chain: eth-beacon-chain-holesky
     labels:

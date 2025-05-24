@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/base-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   base-mainnet:
@@ -149,9 +144,9 @@ services:
     command:
       - --common-live-blocks-addr=base-mainnet-firehose:10014
       - --log-to-file=false
-      - --substreams-block-execution-timeout=${BASE_MAINNET_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-30m0s}
+      - --substreams-block-execution-timeout=${BASE_MAINNET_SUBSTREAMS_BLOCK_EXECUTION_TIMEOUT:-3m0s}
       - --substreams-rpc-endpoints=${BASE_MAINNET_EXECUTION_ARCHIVE_RPC}
-      - --substreams-tier1-max-subrequests=${BASE_MAINNET_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-20}
+      - --substreams-tier1-max-subrequests=${BASE_MAINNET_SUBSTREAMS_TIER1_MAX_SUBREQUESTS:-4}
     restart: unless-stopped
     depends_on:
       - base-mainnet
@@ -213,6 +208,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.base-mainnet-op-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/base-mainnet/node
+      - traefik.http.services.base-mainnet-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`base-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-node.rule=PathPrefix(`base-mainnet/node`)}
+      - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-node.middlewares=base-mainnet-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:
   base-mainnet-op-geth-pruned-pebble-path:

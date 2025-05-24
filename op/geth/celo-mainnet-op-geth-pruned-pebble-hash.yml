@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/celo-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   celo-mainnet:
@@ -166,6 +161,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.celo-mainnet-op-geth-pruned-pebble-hash-node-stripprefix.stripprefix.prefixes=/celo-mainnet/node
+      - traefik.http.services.celo-mainnet-op-geth-pruned-pebble-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-pruned-pebble-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-pruned-pebble-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-pruned-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`celo-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.celo-mainnet-op-geth-pruned-pebble-hash-node.rule=PathPrefix(`celo-mainnet/node`)}
+      - traefik.http.routers.celo-mainnet-op-geth-pruned-pebble-hash-node.middlewares=celo-mainnet-op-geth-pruned-pebble-hash-node-stripprefix, ipallowlist
 
   celo-mainnet-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_MAINNET_EIGENDA_PROXY_VERSION:-v1.6.4}
@@ -183,14 +186,16 @@ services:
     networks:
       - chains
     volumes:
-      - ${CELO_MAINNET_OP_GETH_PRUNED_PEBBLE_HASH__EIGENDA_DATA:-celo-mainnet-op-geth-pruned-pebble-hash_eigenda}:/data
+      - ${CELO_MAINNET_OP_GETH_PRUNED_PEBBLE_HASH__EIGENDA_PROXY_DATA:-celo-mainnet-op-geth-pruned-pebble-hash_eigenda-proxy}:/data
+      - ./op/celo/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
 
 volumes:
   celo-mainnet-op-geth-pruned-pebble-hash:
-  celo-mainnet-op-geth-pruned-pebble-hash_eigenda:
+  celo-mainnet-op-geth-pruned-pebble-hash_eigenda-proxy:
 
 x-upstreams:
   - id: $${ID}

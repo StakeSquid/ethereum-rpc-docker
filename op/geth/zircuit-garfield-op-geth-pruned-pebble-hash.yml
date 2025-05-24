@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/zircuit-garfield \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   zircuit-garfield:
@@ -51,11 +46,13 @@ services:
       - 8551
     environment:
       - GETH_CONFIG=/config/gethconfig.toml
+      - GETH_ETHSTATS=d${DOMAIN}:${ZIRCUIT_GARFIELD_WS_SECRET}@${ZIRCUIT_GARFIELD_ETH_STATS_SERVER}:${ZIRCUIT_GARFIELD_ETH_STATS_SERVER_PORT}
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://proxyd-ingress-us.garfield-testnet.zircuit.com?token=drpcV4hDaEwatB9G3zgk8gBkaH5s4TVMGeuUvlBIiVTD
       - GETH_TXPOOL_GLOBALQUEUE=1024
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
+      - --circuit-capacity-check=false
       - --datadir=/data
       - --db.engine=pebble
       - --gcmode=full
@@ -63,6 +60,7 @@ services:
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
+      - --network=garfield
       - --nodiscover
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
@@ -105,7 +103,7 @@ services:
       - traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash.middlewares=zircuit-garfield-op-geth-pruned-pebble-hash-stripprefix, ipallowlist
 
   zircuit-garfield-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${ZIRCUIT_GARFIELD_NODE_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${GARFIELD_NODE_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}
     ports:
       - 17397:17397
       - 17397:17397/udp
@@ -123,7 +121,7 @@ services:
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_METRIC_ENABLED=true
-      - OP_NODE_NETWORK=zircuit-garfield
+      - OP_NODE_NETWORK=garfield
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
       - OP_NODE_P2P_LISTEN_TCP_PORT=17397
@@ -132,6 +130,10 @@ services:
       - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SEQUENCER_ENABLED=false
+      - OP_NODE_SEQUENCER_L1_CONFS=0
+      - OP_NODE_SEQUENCER_MAX_SAFE_LAG=0
+      - OP_NODE_SEQUENCER_STOPPED=false
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
       - OP_NODE_SYNCMODE=consensus-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
@@ -149,6 +151,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.zircuit-garfield-op-geth-pruned-pebble-hash-node-stripprefix.stripprefix.prefixes=/zircuit-garfield/node
+      - traefik.http.services.zircuit-garfield-op-geth-pruned-pebble-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`zircuit-garfield/node`)}
+      - ${NO_SSL:+traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.rule=PathPrefix(`zircuit-garfield/node`)}
+      - traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.middlewares=zircuit-garfield-op-geth-pruned-pebble-hash-node-stripprefix, ipallowlist
 
 volumes:
   zircuit-garfield-op-geth-pruned-pebble-hash:

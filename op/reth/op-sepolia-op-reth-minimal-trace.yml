@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/op-sepolia-op-reth-minimal \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   op-sepolia-op-reth-minimal:
@@ -149,6 +144,14 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.op-sepolia-op-reth-minimal-trace-node-stripprefix.stripprefix.prefixes=/op-sepolia-op-reth-minimal/node
+      - traefik.http.services.op-sepolia-op-reth-minimal-trace-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-minimal-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-minimal-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.op-sepolia-op-reth-minimal-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`op-sepolia-op-reth-minimal/node`)}
+      - ${NO_SSL:+traefik.http.routers.op-sepolia-op-reth-minimal-trace-node.rule=PathPrefix(`op-sepolia-op-reth-minimal/node`)}
+      - traefik.http.routers.op-sepolia-op-reth-minimal-trace-node.middlewares=op-sepolia-op-reth-minimal-trace-node-stripprefix, ipallowlist
 
 volumes:
   op-sepolia-op-reth-minimal-trace:

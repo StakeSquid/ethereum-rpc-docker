@@ -22,11 +22,6 @@
 # curl -X POST https://${IP}.traefik.me/op-mainnet-l2geth-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-x-logging-defaults: &logging-defaults
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
 
 services:
   op-mainnet-l2geth-archive:
