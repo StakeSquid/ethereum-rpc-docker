@@ -83,9 +83,9 @@ ENV SCCACHE_DIR=/tmp/sccache
 ENV RUSTC_WRAPPER=/usr/local/bin/sccache
 
 # Set C/C++ flags for dependencies
-ENV CFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
-ENV CXXFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
-ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections -flto=thin"
+ENV CFLAGS_BASE="-O3 -flto -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
+ENV CXXFLAGS_BASE="-O3 -flto -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
+ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections -flto"
 
 # Configure architecture-specific flags and build
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
@@ -159,6 +159,26 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         RUSTFLAGS="-C target-cpu=native -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3" \
         CFLAGS="$CFLAGS_BASE -march=native" \
         CXXFLAGS="$CXXFLAGS_BASE -march=native"; \
+    elif [ "$ARCH_TARGET" = "multinode-zen4" ] || [ "$ARCH_TARGET" = "multinode-7950x" ]; then \
+        # Optimized for multiple nodes on same machine - reduced cache assumptions
+        RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner" \
+        CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=512" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=512"; \
+    elif [ "$ARCH_TARGET" = "multinode-zen5" ] || [ "$ARCH_TARGET" = "multinode-9950x" ]; then \
+        # Optimized for multiple nodes on same machine - reduced cache assumptions
+        RUSTFLAGS="-C target-cpu=znver5 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner" \
+        CFLAGS="$CFLAGS_BASE -march=znver5 -mtune=znver5 --param l1-cache-line-size=64 --param l1-cache-size=48 --param l2-cache-size=512" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=znver5 -mtune=znver5 --param l1-cache-line-size=64 --param l1-cache-size=48 --param l2-cache-size=512"; \
+    elif [ "$ARCH_TARGET" = "multinode-epyc" ]; then \
+        # Optimized for multiple nodes on EPYC systems - assume shared resources
+        RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3" \
+        CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=256" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=256"; \
+    elif [ "$ARCH_TARGET" = "multinode-generic" ]; then \
+        # Generic multinode optimization - conservative cache assumptions
+        RUSTFLAGS="-C target-cpu=x86-64-v3 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3" \
+        CFLAGS="$CFLAGS_BASE -march=x86-64-v3 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=256" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=x86-64-v3 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=256"; \
     else \
         RUSTFLAGS="-C target-cpu=$ARCH_TARGET -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3" \
         CFLAGS="$CFLAGS_BASE -march=$ARCH_TARGET" \

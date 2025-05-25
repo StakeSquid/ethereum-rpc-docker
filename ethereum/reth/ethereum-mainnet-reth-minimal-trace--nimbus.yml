@@ -9,6 +9,17 @@ x-logging-defaults: &logging-defaults
 # this is why we have a minimal profile that doesn't actually exist in reth.
 # This node is built from source with architecture-specific optimizations
 # Build command: docker compose build --build-arg ARCH_TARGET=${ARCH_TARGET:-native} ethereum-mainnet-reth-minimal
+#
+# IMPORTANT: Cache optimization considerations
+
+# If running multiple nodes on the same machine, be aware that:
+# - L3 cache is shared across all cores, causing cache contention
+# - Multiple nodes compete for cache space, reducing optimization effectiveness
+
+# - Consider CPU pinning to minimize cache conflicts:
+#   docker run --cpuset-cpus="0-7" ethereum-mainnet-reth-minimal  # Pin to specific cores
+# - For AMD X3D CPUs, CCD0 (cores 0-7) has the 3D V-Cache
+# - For multi-node setups, generic builds may perform better than cache-optimized ones
 
 # Usage:
 #
