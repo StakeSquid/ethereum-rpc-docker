@@ -188,7 +188,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     echo "Building with RUSTFLAGS: $RUSTFLAGS" && \
     if [ "$BUILD_OP_RETH" = "true" ]; then \
         echo "Building op-reth with optimism feature" && \
-        cargo build --profile $PROFILE --locked --bin op-reth --features optimism,jemalloc,asm-keccak && \
+        cargo build --profile $PROFILE --locked --bin op-reth --features optimism,jemalloc,asm-keccak --manifest-path crates/optimism/bin/Cargo.toml && \
         cp target/$PROFILE/op-reth /usr/local/bin/op-reth; \
     else \
         echo "Building standard reth" && \
