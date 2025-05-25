@@ -112,6 +112,11 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-slp-vectorize-hor-store" \
         CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=65536" \
         CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=65536"; \
+    elif [ "$ARCH_TARGET" = "7900" ] || [ "$ARCH_TARGET" = "zen4-7900" ]; then \
+        # AMD Ryzen 9 7900: 12 cores, 12MB L2 (1MB per core), 64MB L3
+        RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-slp-vectorize-hor-store" \
+        CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=65536" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=65536"; \
     elif [ "$ARCH_TARGET" = "7950x3d" ] || [ "$ARCH_TARGET" = "zen4-x3d" ]; then \
         RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-slp-vectorize-hor-store -C llvm-args=-data-sections -C llvm-args=-function-sections" \
         CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=98304" \
@@ -166,6 +171,11 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         CXXFLAGS="$CXXFLAGS_BASE -march=native"; \
     elif [ "$ARCH_TARGET" = "multinode-zen4" ] || [ "$ARCH_TARGET" = "multinode-7950x" ]; then \
         # Optimized for multiple nodes on same machine - reduced cache assumptions
+        RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner" \
+        CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=512" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=512"; \
+    elif [ "$ARCH_TARGET" = "multinode-7900" ]; then \
+        # Optimized for multiple nodes on AMD Ryzen 9 7900 (12 cores) - reduced cache assumptions
         RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner" \
         CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=512" \
         CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=512"; \
