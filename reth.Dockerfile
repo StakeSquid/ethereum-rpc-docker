@@ -83,9 +83,9 @@ ENV SCCACHE_DIR=/tmp/sccache
 ENV RUSTC_WRAPPER=/usr/local/bin/sccache
 
 # Set C/C++ flags for dependencies
-ENV CFLAGS_BASE="-O3 -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
-ENV CXXFLAGS_BASE="-O3 -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
-ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections"
+ENV CFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
+ENV CXXFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
+ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections -flto=thin"
 
 # Configure architecture-specific flags and build
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
@@ -100,7 +100,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         CFLAGS="$CFLAGS_BASE -march=znver5 -mtune=znver5 --param l1-cache-line-size=64 --param l1-cache-size=48 --param l2-cache-size=2048 --param l3-cache-size=65536" \
         CXXFLAGS="$CXXFLAGS_BASE -march=znver5 -mtune=znver5 --param l1-cache-line-size=64 --param l1-cache-size=48 --param l2-cache-size=2048 --param l3-cache-size=65536"; \
     elif [ "$ARCH_TARGET" = "epyc-4564p" ] || [ "$ARCH_TARGET" = "zen4c-4564p" ]; then \
-        RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread -C llvm-args=-slp-vectorize-hor-store -C llvm-args=-data-sections -C llvm-args=-function-sections" \
+        RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=lld -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread -C llvm-args=-slp-vectorize-hor-store -C llvm-args=-data-sections -C llvm-args=-function-sections" \
         CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=65536" \
         CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=65536"; \
     elif [ "$ARCH_TARGET" = "zen4" ]; then \
