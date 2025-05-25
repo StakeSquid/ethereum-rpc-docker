@@ -4,9 +4,12 @@ ARG LLVM_VERSION=20250514100911
 FROM ${LLVM_IMAGE}:${LLVM_VERSION} as builder
 
 # Install Rust and nightly toolchain for advanced optimizations
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal
-ENV PATH="/root/.cargo/bin:${PATH}"
-RUN rustup toolchain install nightly && \
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
+ENV PATH=/usr/local/cargo/bin:$PATH
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+    sh -s -- -y --no-modify-path --default-toolchain stable --profile minimal && \
+    rustup toolchain install nightly && \
     rustup component add rust-src --toolchain nightly
 
 # Install additional build dependencies
