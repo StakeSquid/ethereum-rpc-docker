@@ -1,7 +1,7 @@
 # Multi-stage build for reth with architecture-specific optimizations
 ARG LLVM_IMAGE=snowstep/llvm
 ARG LLVM_VERSION=20250514100911
-FROM ${LLVM_IMAGE}:${LLVM_VERSION} as builder
+FROM ${LLVM_IMAGE}:${LLVM_VERSION} AS builder
 
 # Install build dependencies and tools
 RUN apt-get update && apt-get install -y \
@@ -80,7 +80,7 @@ ENV CXXFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interpositi
 ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections -fuse-ld=/usr/local/bin/mold"
 
 # Create build script with architecture-specific optimizations
-RUN cat > /build/build.sh << 'EOF'
+RUN cat > /build/build.sh << 'EOFSCRIPT'
 #!/bin/bash
 set -e
 
@@ -178,7 +178,7 @@ else
     echo "Building standard reth"
     cargo build --profile $PROFILE --locked --bin reth --features jemalloc,asm-keccak
 fi
-EOF
+EOFSCRIPT
 
 RUN chmod +x /build/build.sh
 
