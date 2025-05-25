@@ -1,29 +1,23 @@
 # Multi-stage build for reth with architecture-specific optimizations
-FROM rust:1.83-bookworm as builder
+ARG LLVM_IMAGE=snowstep/llvm
+ARG LLVM_VERSION=20250514100911
+FROM ${LLVM_IMAGE}:${LLVM_VERSION} as builder
 
-# Install nightly toolchain for advanced optimizations
+# Install Rust and nightly toolchain for advanced optimizations
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal
+ENV PATH="/root/.cargo/bin:${PATH}"
 RUN rustup toolchain install nightly && \
     rustup component add rust-src --toolchain nightly
 
-# Install build dependencies
+# Install additional build dependencies
 RUN apt-get update && apt-get install -y \
     git \
-    cmake \
-    make \
     libssl-dev \
     pkg-config \
     wget \
-    gnupg \
-    software-properties-common \
     ninja-build \
     ccache \
     && rm -rf /var/lib/apt/lists/*
-
-# Install latest LLVM 20.1.5 from official releases for maximum optimization
-RUN wget https://github.com/llvm/llvm-project/releases/download/llvmorg-20.1.5/clang+llvm-20.1.5-x86_64-linux-gnu.tar.xz && \
-    tar xf clang+llvm-20.1.5-x86_64-linux-gnu.tar.xz && \
-    cp -r clang+llvm-20.1.5-x86_64-linux-gnu/* /usr/local/ && \
-    rm -rf clang+llvm-20.1.5-x86_64-linux-gnu*
 
 # Install mold linker (faster than lld)
 RUN wget https://github.com/rui314/mold/releases/download/v2.30.0/mold-2.30.0-x86_64-linux.tar.gz && \
@@ -68,11 +62,12 @@ WORKDIR /build
 RUN git clone $RETH_REPO . && \
     git checkout $RETH_VERSION
 
-# Set environment variables for optimization with LLVM 20.1.5
-ENV CC=/usr/local/bin/clang
-ENV CXX=/usr/local/bin/clang++
-ENV AR=/usr/local/bin/llvm-ar
-ENV RANLIB=/usr/local/bin/llvm-ranlib
+# Set environment variables for optimization
+# The snowstep/llvm image already has clang and LLVM tools in PATH
+ENV CC=clang
+ENV CXX=clang++
+ENV AR=llvm-ar
+ENV RANLIB=llvm-ranlib
 ENV LD=/usr/local/bin/mold
 ENV SCCACHE_DIR=/tmp/sccache
 ENV RUSTC_WRAPPER=/usr/local/bin/sccache
