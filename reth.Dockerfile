@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y \
     wget \
     ninja-build \
     ccache \
+    autoconf \
+    automake \
+    libtool \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up clang as default C/C++ compiler
@@ -79,10 +82,10 @@ ENV LD=/usr/local/bin/mold
 ENV SCCACHE_DIR=/tmp/sccache
 ENV RUSTC_WRAPPER=/usr/local/bin/sccache
 
-# Set aggressive C/C++ flags for dependencies (will be overridden per architecture)
-ENV CFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
-ENV CXXFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
-ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections -fuse-ld=/usr/local/bin/mold"
+# Set C/C++ flags for dependencies
+ENV CFLAGS_BASE="-O3 -fomit-frame-pointer"
+ENV CXXFLAGS_BASE="-O3 -fomit-frame-pointer"
+ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections"
 
 # Configure architecture-specific flags and build
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
