@@ -95,10 +95,22 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         RUSTFLAGS="-C target-cpu=znver5 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread" \
         CFLAGS="$CFLAGS_BASE -march=znver5" \
         CXXFLAGS="$CXXFLAGS_BASE -march=znver5"; \
+    elif [ "$ARCH_TARGET" = "9950x" ] || [ "$ARCH_TARGET" = "zen5-9950x" ]; then \
+        RUSTFLAGS="-C target-cpu=znver5 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread -C llvm-args=-slp-vectorize-hor-store" \
+        CFLAGS="$CFLAGS_BASE -march=znver5 -mtune=znver5 --param l1-cache-line-size=64 --param l1-cache-size=48 --param l2-cache-size=2048 --param l3-cache-size=65536" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=znver5 -mtune=znver5 --param l1-cache-line-size=64 --param l1-cache-size=48 --param l2-cache-size=2048 --param l3-cache-size=65536"; \
+    elif [ "$ARCH_TARGET" = "epyc-4564p" ] || [ "$ARCH_TARGET" = "zen4c-4564p" ]; then \
+        RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread -C llvm-args=-slp-vectorize-hor-store -C llvm-args=-data-sections -C llvm-args=-function-sections" \
+        CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=65536" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=65536"; \
     elif [ "$ARCH_TARGET" = "zen4" ]; then \
         RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner" \
         CFLAGS="$CFLAGS_BASE -march=znver4" \
         CXXFLAGS="$CXXFLAGS_BASE -march=znver4"; \
+    elif [ "$ARCH_TARGET" = "7950x3d" ] || [ "$ARCH_TARGET" = "zen4-x3d" ]; then \
+        RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-slp-vectorize-hor-store -C llvm-args=-data-sections -C llvm-args=-function-sections" \
+        CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=98304" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=98304"; \
     elif [ "$ARCH_TARGET" = "zen3" ]; then \
         RUSTFLAGS="-C target-cpu=znver3 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3" \
         CFLAGS="$CFLAGS_BASE -march=znver3" \
