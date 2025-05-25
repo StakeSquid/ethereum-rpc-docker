@@ -3,6 +3,17 @@ ARG LLVM_IMAGE=snowstep/llvm
 ARG LLVM_VERSION=20250514100911
 FROM ${LLVM_IMAGE}:${LLVM_VERSION} as builder
 
+# Install build dependencies and tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    libssl-dev \
+    pkg-config \
+    wget \
+    ninja-build \
+    ccache \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install Rust and nightly toolchain for advanced optimizations
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
@@ -11,16 +22,6 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
     sh -s -- -y --no-modify-path --default-toolchain stable --profile minimal && \
     rustup toolchain install nightly && \
     rustup component add rust-src --toolchain nightly
-
-# Install additional build dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    libssl-dev \
-    pkg-config \
-    wget \
-    ninja-build \
-    ccache \
-    && rm -rf /var/lib/apt/lists/*
 
 # Install mold linker (faster than lld)
 RUN wget https://github.com/rui314/mold/releases/download/v2.30.0/mold-2.30.0-x86_64-linux.tar.gz && \
