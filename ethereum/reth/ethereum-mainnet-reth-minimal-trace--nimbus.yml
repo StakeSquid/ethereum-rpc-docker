@@ -7,6 +7,8 @@ x-logging-defaults: &logging-defaults
 # this is a minimal node, it will not have a full state. you achieve this by removing files form the static_files directory
 # it's important to disable certain methods on the rpc server which would otherwise cause issues with the drpc gateway.
 # this is why we have a minimal profile that doesn't actually exist in reth.
+# This node is built from source with architecture-specific optimizations
+# Build command: docker compose build --build-arg ARCH_TARGET=${ARCH_TARGET:-native} ethereum-mainnet-reth-minimal
 
 # Usage:
 #
@@ -33,7 +35,15 @@ x-logging-defaults: &logging-defaults
 
 services:
   ethereum-mainnet-reth-minimal:
-    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.4.3}
+    build:
+      context: ./
+      dockerfile: reth.Dockerfile
+      args:
+        RETH_VERSION: ${ETHEREUM_MAINNET_RETH_VERSION:-v1.4.3}
+        RETH_REPO: ${ETHEREUM_MAINNET_RETH_REPO:-https://github.com/paradigmxyz/reth}
+        ARCH_TARGET: ${ARCH_TARGET:-native}
+        PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
+        BUILD_OP_RETH: false
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
