@@ -79,77 +79,111 @@ ENV CFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition
 ENV CXXFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
 ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections -fuse-ld=/usr/local/bin/mold"
 
-# Configure CPU-specific optimizations with enhanced flags
-# Map common architecture names to LLVM target-cpu values
-RUN if [ "$ARCH_TARGET" = "zen5" ]; then \
-        export RUSTFLAGS="-C target-cpu=znver5 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread"; \
-        export CFLAGS="$CFLAGS_BASE -march=znver5"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=znver5"; \
-    elif [ "$ARCH_TARGET" = "zen4" ]; then \
-        export RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner"; \
-        export CFLAGS="$CFLAGS_BASE -march=znver4"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=znver4"; \
-    elif [ "$ARCH_TARGET" = "zen3" ]; then \
-        export RUSTFLAGS="-C target-cpu=znver3 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=znver3"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=znver3"; \
-    elif [ "$ARCH_TARGET" = "zen2" ]; then \
-        export RUSTFLAGS="-C target-cpu=znver2 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=znver2"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=znver2"; \
-    elif [ "$ARCH_TARGET" = "skylake" ]; then \
-        export RUSTFLAGS="-C target-cpu=skylake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=skylake"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=skylake"; \
-    elif [ "$ARCH_TARGET" = "cascadelake" ]; then \
-        export RUSTFLAGS="-C target-cpu=cascadelake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=cascadelake"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=cascadelake"; \
-    elif [ "$ARCH_TARGET" = "icelake" ]; then \
-        export RUSTFLAGS="-C target-cpu=icelake-server -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=icelake-server"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=icelake-server"; \
-    elif [ "$ARCH_TARGET" = "sapphirerapids" ]; then \
-        export RUSTFLAGS="-C target-cpu=sapphirerapids -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=sapphirerapids"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=sapphirerapids"; \
-    elif [ "$ARCH_TARGET" = "emeraldrapids" ]; then \
-        export RUSTFLAGS="-C target-cpu=emeraldrapids -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=emeraldrapids"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=emeraldrapids"; \
-    elif [ "$ARCH_TARGET" = "alderlake" ]; then \
-        export RUSTFLAGS="-C target-cpu=alderlake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=alderlake"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=alderlake"; \
-    elif [ "$ARCH_TARGET" = "raptorlake" ]; then \
-        export RUSTFLAGS="-C target-cpu=raptorlake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=raptorlake"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=raptorlake"; \
-    elif [ "$ARCH_TARGET" = "x86-64-v3" ]; then \
-        export RUSTFLAGS="-C target-cpu=x86-64-v3 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=x86-64-v3"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=x86-64-v3"; \
-    elif [ "$ARCH_TARGET" = "x86-64-v4" ]; then \
-        export RUSTFLAGS="-C target-cpu=x86-64-v4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=x86-64-v4"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=x86-64-v4"; \
-    elif [ "$ARCH_TARGET" = "native" ]; then \
-        export RUSTFLAGS="-C target-cpu=native -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=native"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=native"; \
-    else \
-        export RUSTFLAGS="-C target-cpu=$ARCH_TARGET -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
-        export CFLAGS="$CFLAGS_BASE -march=$ARCH_TARGET"; \
-        export CXXFLAGS="$CXXFLAGS_BASE -march=$ARCH_TARGET"; \
-    fi && \
-    echo "Building with RUSTFLAGS: $RUSTFLAGS" && \
-    if [ "$BUILD_OP_RETH" = "true" ]; then \
-        echo "Building op-reth with optimism feature" && \
-        cargo build --profile $PROFILE --locked --bin op-reth --features optimism,jemalloc,asm-keccak; \
-    else \
-        echo "Building standard reth" && \
-        cargo build --profile $PROFILE --locked --bin reth --features jemalloc,asm-keccak; \
-    fi
+# Create build script with architecture-specific optimizations
+RUN cat > /build/build.sh << 'EOF'
+#!/bin/bash
+set -e
+
+# Base flags
+RUSTFLAGS_BASE="-C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"
+CFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
+CXXFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
+
+# Configure CPU-specific optimizations
+case "$ARCH_TARGET" in
+    "zen5")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=znver5 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread"
+        export CFLAGS="$CFLAGS_BASE -march=znver5"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=znver5"
+        ;;
+    "zen4")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=znver4 -C llvm-args=-enable-machine-outliner"
+        export CFLAGS="$CFLAGS_BASE -march=znver4"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=znver4"
+        ;;
+    "zen3")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=znver3"
+        export CFLAGS="$CFLAGS_BASE -march=znver3"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=znver3"
+        ;;
+    "zen2")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=znver2"
+        export CFLAGS="$CFLAGS_BASE -march=znver2"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=znver2"
+        ;;
+    "skylake")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=skylake"
+        export CFLAGS="$CFLAGS_BASE -march=skylake"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=skylake"
+        ;;
+    "cascadelake")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=cascadelake"
+        export CFLAGS="$CFLAGS_BASE -march=cascadelake"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=cascadelake"
+        ;;
+    "icelake")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=icelake-server"
+        export CFLAGS="$CFLAGS_BASE -march=icelake-server"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=icelake-server"
+        ;;
+    "sapphirerapids")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=sapphirerapids"
+        export CFLAGS="$CFLAGS_BASE -march=sapphirerapids"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=sapphirerapids"
+        ;;
+    "emeraldrapids")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=emeraldrapids"
+        export CFLAGS="$CFLAGS_BASE -march=emeraldrapids"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=emeraldrapids"
+        ;;
+    "alderlake")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=alderlake"
+        export CFLAGS="$CFLAGS_BASE -march=alderlake"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=alderlake"
+        ;;
+    "raptorlake")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=raptorlake"
+        export CFLAGS="$CFLAGS_BASE -march=raptorlake"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=raptorlake"
+        ;;
+    "x86-64-v3")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=x86-64-v3"
+        export CFLAGS="$CFLAGS_BASE -march=x86-64-v3"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=x86-64-v3"
+        ;;
+    "x86-64-v4")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=x86-64-v4"
+        export CFLAGS="$CFLAGS_BASE -march=x86-64-v4"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=x86-64-v4"
+        ;;
+    "native")
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=native"
+        export CFLAGS="$CFLAGS_BASE -march=native"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=native"
+        ;;
+    *)
+        export RUSTFLAGS="$RUSTFLAGS_BASE -C target-cpu=$ARCH_TARGET"
+        export CFLAGS="$CFLAGS_BASE -march=$ARCH_TARGET"
+        export CXXFLAGS="$CXXFLAGS_BASE -march=$ARCH_TARGET"
+        ;;
+esac
+
+echo "Building with RUSTFLAGS: $RUSTFLAGS"
+echo "Building with CFLAGS: $CFLAGS"
+
+if [ "$BUILD_OP_RETH" = "true" ]; then
+    echo "Building op-reth with optimism feature"
+    cargo build --profile $PROFILE --locked --bin op-reth --features optimism,jemalloc,asm-keccak
+else
+    echo "Building standard reth"
+    cargo build --profile $PROFILE --locked --bin reth --features jemalloc,asm-keccak
+fi
+EOF
+
+RUN chmod +x /build/build.sh
+
+# Run the build
+RUN /build/build.sh
 
 # Final stage - minimal runtime
 FROM debian:bookworm-slim
