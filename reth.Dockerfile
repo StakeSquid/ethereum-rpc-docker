@@ -5,6 +5,7 @@ FROM ${LLVM_IMAGE}:${LLVM_VERSION} AS builder
 
 # Install build dependencies and tools
 RUN apt-get update && apt-get install -y \
+    build-essential \
     curl \
     git \
     libssl-dev \
