@@ -48,6 +48,12 @@ type WebSocketStats struct {
 	MessagesReceived int
 }
 
+// CUDataPoint represents a historical CU data point with timestamp
+type CUDataPoint struct {
+	Timestamp time.Time
+	CU        int
+}
+
 // StatsCollector maintains statistics for periodic summaries
 type StatsCollector struct {
 	mu                 sync.Mutex
@@ -62,6 +68,7 @@ type StatsCollector struct {
 	methodCUPrices     map[string]int // Map of method names to CU prices
 	totalCU            int            // Total CU earned
 	methodCU           map[string]int // Track CU earned per method
+	historicalCU       []CUDataPoint  // Historical CU data for different time windows
 }
 
 func NewStatsCollector(summaryInterval time.Duration) *StatsCollector {
@@ -72,6 +79,7 @@ func NewStatsCollector(summaryInterval time.Duration) *StatsCollector {
 		summaryInterval: summaryInterval,
 		methodCUPrices:  initCUPrices(), // Initialize CU prices
 		methodCU:        make(map[string]int),
+		historicalCU:    make([]CUDataPoint, 0, 2000), // Store up to ~24 hours of 1-minute intervals
 	}
 
 	// Start the periodic summary goroutine
@@ -266,7 +274,49 @@ func (sc *StatsCollector) printSummary() {
 	fmt.Printf("Total HTTP Requests: %d\n", sc.totalRequests)
 	fmt.Printf("Total WebSocket Connections: %d\n", sc.totalWsConnections)
 	fmt.Printf("Error Rate: %.2f%%\n", float64(sc.errorCount)/float64(sc.totalRequests+sc.totalWsConnections)*100)
-	fmt.Printf("Total Compute Units Earned: %d CU\n", sc.totalCU)
+	fmt.Printf("Total Compute Units Earned (current interval): %d CU\n", sc.totalCU)
+
+	// Calculate and display CU for different time windows
+	timeWindows := []struct {
+		duration time.Duration
+		label    string
+	}{
+		{10 * time.Minute, "Last 10 minutes"},
+		{1 * time.Hour, "Last hour"},
+		{3 * time.Hour, "Last 3 hours"},
+		{24 * time.Hour, "Last 24 hours"},
+	}
+
+	fmt.Printf("\nHistorical Compute Units:\n")
+	for _, window := range timeWindows {
+		actualCU, needsExtrapolation := sc.calculateCUForTimeWindow(window.duration)
+
+		if needsExtrapolation {
+			// Calculate actual data duration for extrapolation
+			now := time.Now()
+			cutoff := now.Add(-window.duration)
+			actualDuration := time.Duration(0)
+
+			// Check current interval
+			if sc.startTime.After(cutoff) {
+				actualDuration = now.Sub(sc.startTime)
+			}
+
+			// Check historical data
+			for i := len(sc.historicalCU) - 1; i >= 0; i-- {
+				point := sc.historicalCU[i]
+				if point.Timestamp.Before(cutoff) {
+					break
+				}
+				actualDuration = now.Sub(point.Timestamp)
+			}
+
+			extrapolatedCU := sc.extrapolateCU(actualCU, actualDuration, window.duration)
+			fmt.Printf("  %s: %s\n", window.label, formatCUWithExtrapolation(extrapolatedCU, true))
+		} else {
+			fmt.Printf("  %s: %s\n", window.label, formatCUWithExtrapolation(actualCU, false))
+		}
+	}
 
 	// Calculate response time statistics for primary backend
 	var primaryDurations []time.Duration
@@ -366,6 +416,27 @@ func (sc *StatsCollector) printSummary() {
 
 	fmt.Printf("================================\n\n")
 
+	// Store current interval's CU data in historical data before resetting
+	if sc.totalCU > 0 {
+		sc.historicalCU = append(sc.historicalCU, CUDataPoint{
+			Timestamp: time.Now(),
+			CU:        sc.totalCU,
+		})
+	}
+
+	// Clean up old historical data (keep only last 24 hours + some buffer)
+	cutoff := time.Now().Add(-25 * time.Hour)
+	newStart := 0
+	for i, point := range sc.historicalCU {
+		if point.Timestamp.After(cutoff) {
+			newStart = i
+			break
+		}
+	}
+	if newStart > 0 {
+		sc.historicalCU = sc.historicalCU[newStart:]
+	}
+
 	// Reset statistics for the next interval
 	// Keep only the last 1000 requests to prevent unlimited memory growth
 	if len(sc.requestStats) > 1000 {
@@ -396,6 +467,65 @@ func minInt(a, b int) int {
 		return a
 	}
 	return b
+}
+
+// calculateCUForTimeWindow calculates total CU for a given time window
+func (sc *StatsCollector) calculateCUForTimeWindow(window time.Duration) (int, bool) {
+	now := time.Now()
+	cutoff := now.Add(-window)
+
+	totalCU := 0
+	actualDataDuration := time.Duration(0)
+
+	// First add the current interval's CU if it's within the window
+	if sc.startTime.After(cutoff) {
+		totalCU += sc.totalCU
+		actualDataDuration = now.Sub(sc.startTime)
+	}
+
+	// Add historical CU data within the window
+	for i := len(sc.historicalCU) - 1; i >= 0; i-- {
+		point := sc.historicalCU[i]
+		if point.Timestamp.Before(cutoff) {
+			break // Data is too old
+		}
+		totalCU += point.CU
+
+		// Update actual data duration
+		if actualDataDuration == 0 {
+			actualDataDuration = now.Sub(point.Timestamp)
+		} else {
+			actualDataDuration = now.Sub(point.Timestamp)
+		}
+	}
+
+	// Check if we need extrapolation
+	needsExtrapolation := actualDataDuration < window && actualDataDuration > 0
+
+	return totalCU, needsExtrapolation
+}
+
+// extrapolateCU extrapolates CU data when there's insufficient historical data
+func (sc *StatsCollector) extrapolateCU(actualCU int, actualDuration, targetDuration time.Duration) int {
+	if actualDuration <= 0 {
+		return 0
+	}
+
+	// Calculate CU per second rate
+	cuPerSecond := float64(actualCU) / actualDuration.Seconds()
+
+	// Extrapolate to target duration
+	extrapolatedCU := cuPerSecond * targetDuration.Seconds()
+
+	return int(extrapolatedCU)
+}
+
+// formatCUWithExtrapolation formats CU value with extrapolation indicator
+func formatCUWithExtrapolation(cu int, isExtrapolated bool) string {
+	if isExtrapolated {
+		return fmt.Sprintf("%d CU (extrapolated)", cu)
+	}
+	return fmt.Sprintf("%d CU", cu)
 }
 
 func main() {
