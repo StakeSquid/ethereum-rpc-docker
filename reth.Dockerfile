@@ -83,9 +83,9 @@ ENV SCCACHE_DIR=/tmp/sccache
 ENV RUSTC_WRAPPER=/usr/local/bin/sccache
 
 # Set C/C++ flags for dependencies
-ENV CFLAGS_BASE="-O3 -fomit-frame-pointer"
-ENV CXXFLAGS_BASE="-O3 -fomit-frame-pointer"
-ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections"
+ENV CFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
+ENV CXXFLAGS_BASE="-O3 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
+ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections -flto=thin"
 
 # Configure architecture-specific flags and build
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
