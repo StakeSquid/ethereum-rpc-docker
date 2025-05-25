@@ -15,6 +15,10 @@ RUN apt-get update && apt-get install -y \
     ccache \
     && rm -rf /var/lib/apt/lists/*
 
+# Set up clang as default C/C++ compiler
+RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100 && \
+    update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
+
 # Install Rust
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
