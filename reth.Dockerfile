@@ -14,14 +14,12 @@ RUN apt-get update && apt-get install -y \
     ccache \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Rust and nightly toolchain for advanced optimizations
+# Install Rust
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
-    sh -s -- -y --no-modify-path --default-toolchain stable --profile minimal && \
-    rustup toolchain install nightly && \
-    rustup component add rust-src --toolchain nightly
+    sh -s -- -y --no-modify-path --default-toolchain stable --profile minimal
 
 # Install mold linker (faster than lld)
 RUN wget https://github.com/rui314/mold/releases/download/v2.30.0/mold-2.30.0-x86_64-linux.tar.gz && \
@@ -84,47 +82,47 @@ ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections -fuse-ld=/usr/local/bin/m
 # Configure CPU-specific optimizations with enhanced flags
 # Map common architecture names to LLVM target-cpu values
 RUN if [ "$ARCH_TARGET" = "zen5" ]; then \
-        export RUSTFLAGS="-C target-cpu=znver5 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=znver5 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread"; \
+        export RUSTFLAGS="-C target-cpu=znver5 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread"; \
         export CFLAGS="$CFLAGS_BASE -march=znver5"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=znver5"; \
     elif [ "$ARCH_TARGET" = "zen4" ]; then \
-        export RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=znver4 -C llvm-args=-enable-machine-outliner"; \
+        export RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner"; \
         export CFLAGS="$CFLAGS_BASE -march=znver4"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=znver4"; \
     elif [ "$ARCH_TARGET" = "zen3" ]; then \
-        export RUSTFLAGS="-C target-cpu=znver3 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=znver3"; \
+        export RUSTFLAGS="-C target-cpu=znver3 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
         export CFLAGS="$CFLAGS_BASE -march=znver3"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=znver3"; \
     elif [ "$ARCH_TARGET" = "zen2" ]; then \
-        export RUSTFLAGS="-C target-cpu=znver2 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=znver2"; \
+        export RUSTFLAGS="-C target-cpu=znver2 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
         export CFLAGS="$CFLAGS_BASE -march=znver2"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=znver2"; \
     elif [ "$ARCH_TARGET" = "skylake" ]; then \
-        export RUSTFLAGS="-C target-cpu=skylake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=skylake"; \
+        export RUSTFLAGS="-C target-cpu=skylake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
         export CFLAGS="$CFLAGS_BASE -march=skylake"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=skylake"; \
     elif [ "$ARCH_TARGET" = "cascadelake" ]; then \
-        export RUSTFLAGS="-C target-cpu=cascadelake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=cascadelake"; \
+        export RUSTFLAGS="-C target-cpu=cascadelake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
         export CFLAGS="$CFLAGS_BASE -march=cascadelake"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=cascadelake"; \
     elif [ "$ARCH_TARGET" = "icelake" ]; then \
-        export RUSTFLAGS="-C target-cpu=icelake-server -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=icelake-server"; \
+        export RUSTFLAGS="-C target-cpu=icelake-server -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
         export CFLAGS="$CFLAGS_BASE -march=icelake-server"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=icelake-server"; \
     elif [ "$ARCH_TARGET" = "sapphirerapids" ]; then \
-        export RUSTFLAGS="-C target-cpu=sapphirerapids -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=sapphirerapids"; \
+        export RUSTFLAGS="-C target-cpu=sapphirerapids -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
         export CFLAGS="$CFLAGS_BASE -march=sapphirerapids"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=sapphirerapids"; \
     elif [ "$ARCH_TARGET" = "emeraldrapids" ]; then \
-        export RUSTFLAGS="-C target-cpu=emeraldrapids -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=emeraldrapids"; \
+        export RUSTFLAGS="-C target-cpu=emeraldrapids -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
         export CFLAGS="$CFLAGS_BASE -march=emeraldrapids"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=emeraldrapids"; \
     elif [ "$ARCH_TARGET" = "alderlake" ]; then \
-        export RUSTFLAGS="-C target-cpu=alderlake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=alderlake"; \
+        export RUSTFLAGS="-C target-cpu=alderlake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
         export CFLAGS="$CFLAGS_BASE -march=alderlake"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=alderlake"; \
     elif [ "$ARCH_TARGET" = "raptorlake" ]; then \
-        export RUSTFLAGS="-C target-cpu=raptorlake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -Z tune-cpu=raptorlake"; \
+        export RUSTFLAGS="-C target-cpu=raptorlake -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3"; \
         export CFLAGS="$CFLAGS_BASE -march=raptorlake"; \
         export CXXFLAGS="$CXXFLAGS_BASE -march=raptorlake"; \
     elif [ "$ARCH_TARGET" = "x86-64-v3" ]; then \
@@ -147,10 +145,10 @@ RUN if [ "$ARCH_TARGET" = "zen5" ]; then \
     echo "Building with RUSTFLAGS: $RUSTFLAGS" && \
     if [ "$BUILD_OP_RETH" = "true" ]; then \
         echo "Building op-reth with optimism feature" && \
-        cargo +nightly build --profile $PROFILE --locked --bin op-reth --features optimism,jemalloc,asm-keccak -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort; \
+        cargo build --profile $PROFILE --locked --bin op-reth --features optimism,jemalloc,asm-keccak; \
     else \
         echo "Building standard reth" && \
-        cargo +nightly build --profile $PROFILE --locked --bin reth --features jemalloc,asm-keccak -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort; \
+        cargo build --profile $PROFILE --locked --bin reth --features jemalloc,asm-keccak; \
     fi
 
 # Final stage - minimal runtime
