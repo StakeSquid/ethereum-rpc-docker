@@ -50,7 +50,7 @@ type WebSocketStats struct {
 
 // CUDataPoint represents a historical CU data point with timestamp
 type CUDataPoint struct {
-	Timestamp time.Time
+	Timestamp time.Time // End time of the interval
 	CU        int
 }
 
@@ -295,33 +295,36 @@ func (sc *StatsCollector) printSummary() {
 		actualCU, needsExtrapolation := sc.calculateCUForTimeWindow(window.duration)
 
 		if needsExtrapolation {
-			// Calculate actual data duration for extrapolation using the same logic as calculateCUForTimeWindow
+			// Calculate actual data duration for extrapolation
 			now := time.Now()
 			cutoff := now.Add(-window.duration)
-			var earliestTimestamp time.Time
+			var oldestDataStartTime time.Time
 			hasData := false
 
 			// Check current interval
 			if sc.intervalStartTime.After(cutoff) {
-				earliestTimestamp = sc.intervalStartTime
+				oldestDataStartTime = sc.intervalStartTime
 				hasData = true
 			}
 
-			// Check historical data for earliest timestamp
+			// Check historical data
 			for i := len(sc.historicalCU) - 1; i >= 0; i-- {
 				point := sc.historicalCU[i]
+				intervalStart := point.Timestamp.Add(-sc.summaryInterval)
+
 				if point.Timestamp.Before(cutoff) {
 					break
 				}
-				if !hasData || point.Timestamp.Before(earliestTimestamp) {
-					earliestTimestamp = point.Timestamp
+
+				if !hasData || intervalStart.Before(oldestDataStartTime) {
+					oldestDataStartTime = intervalStart
 				}
 				hasData = true
 			}
 
 			var actualDuration time.Duration
 			if hasData {
-				actualDuration = now.Sub(earliestTimestamp)
+				actualDuration = now.Sub(oldestDataStartTime)
 			}
 
 			extrapolatedCU := sc.extrapolateCU(actualCU, actualDuration, window.duration)
@@ -432,7 +435,7 @@ func (sc *StatsCollector) printSummary() {
 	// Store current interval's CU data in historical data before resetting
 	if sc.totalCU > 0 {
 		sc.historicalCU = append(sc.historicalCU, CUDataPoint{
-			Timestamp: time.Now(),
+			Timestamp: time.Now(), // Store the end time of the interval
 			CU:        sc.totalCU,
 		})
 	}
@@ -488,27 +491,34 @@ func (sc *StatsCollector) calculateCUForTimeWindow(window time.Duration) (int, b
 	cutoff := now.Add(-window)
 
 	totalCU := 0
-	var earliestTimestamp time.Time
+	var oldestDataStartTime time.Time
 	hasData := false
 
-	// First add the current interval's CU if it's within the window
+	// Add current interval's CU if it started within the window
 	if sc.intervalStartTime.After(cutoff) {
 		totalCU += sc.totalCU
-		earliestTimestamp = sc.intervalStartTime
+		oldestDataStartTime = sc.intervalStartTime
 		hasData = true
 	}
 
 	// Add historical CU data within the window
+	// Historical timestamps represent the END of intervals
 	for i := len(sc.historicalCU) - 1; i >= 0; i-- {
 		point := sc.historicalCU[i]
+		// Calculate the start time of this historical interval
+		intervalStart := point.Timestamp.Add(-sc.summaryInterval)
+
+		// Skip if the interval ended before our cutoff
 		if point.Timestamp.Before(cutoff) {
-			break // Data is too old
+			break
 		}
+
+		// Include this interval's CU
 		totalCU += point.CU
 
-		// Track the earliest timestamp within the window
-		if !hasData || point.Timestamp.Before(earliestTimestamp) {
-			earliestTimestamp = point.Timestamp
+		// Track the oldest data start time
+		if !hasData || intervalStart.Before(oldestDataStartTime) {
+			oldestDataStartTime = intervalStart
 		}
 		hasData = true
 	}
@@ -516,10 +526,10 @@ func (sc *StatsCollector) calculateCUForTimeWindow(window time.Duration) (int, b
 	// Calculate actual data span
 	var actualDataDuration time.Duration
 	if hasData {
-		actualDataDuration = now.Sub(earliestTimestamp)
+		actualDataDuration = now.Sub(oldestDataStartTime)
 	}
 
-	// Check if we need extrapolation - only if data span is less than requested window
+	// We need extrapolation if we don't have enough historical data to cover the window
 	needsExtrapolation := hasData && actualDataDuration < window
 
 	return totalCU, needsExtrapolation
