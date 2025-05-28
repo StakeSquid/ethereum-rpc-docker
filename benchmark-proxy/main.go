@@ -479,6 +479,7 @@ func (sc *StatsCollector) printSummary() {
 
 	// Print per-backend statistics
 	fmt.Printf("\nPer-Backend Response Time Comparison:\n")
+	fmt.Printf("Note: 'User Latency' = actual time users wait; 'Backend Time' = winning backend's response time\n")
 	fmt.Printf("%-20s %10s %10s %10s %10s %10s %10s %10s\n",
 		"Backend", "Count", "Min", "Avg", "Max", "p50", "p90", "p99")
 	fmt.Printf("%s\n", strings.Repeat("-", 100))
@@ -515,7 +516,7 @@ func (sc *StatsCollector) printSummary() {
 			formatDuration(p50), formatDuration(p90), formatDuration(p99))
 	}
 
-	// Then show the winner's time (what backend actually took)
+	// Then show the backend time (what backend actually took)
 	if len(sc.firstResponseDurations) > 0 {
 		firstRespDurations := make([]time.Duration, len(sc.firstResponseDurations))
 		copy(firstRespDurations, sc.firstResponseDurations)
@@ -542,7 +543,7 @@ func (sc *StatsCollector) printSummary() {
 		p99 := firstRespDurations[p99idx]
 
 		fmt.Printf("%-20s %10d %10s %10s %10s %10s %10s %10s\n",
-			"Winner's Time", len(firstRespDurations),
+			"Backend Time", len(firstRespDurations),
 			formatDuration(min), formatDuration(avg), formatDuration(max),
 			formatDuration(p50), formatDuration(p90), formatDuration(p99))
 		fmt.Printf("%s\n", strings.Repeat("-", 100))
@@ -818,7 +819,7 @@ func (sc *StatsCollector) printSummary() {
 					formatDuration(p50), formatDuration(p90), formatDuration(p99))
 			}
 
-			// Show Winner's Time statistics for this method
+			// Show Backend Time statistics for this method
 			if methodFirstDurations, exists := sc.methodFirstResponseDurations[method]; exists && len(methodFirstDurations) > 0 {
 				// Make a copy and sort
 				durations := make([]time.Duration, len(methodFirstDurations))
@@ -852,7 +853,7 @@ func (sc *StatsCollector) printSummary() {
 				}
 
 				fmt.Printf("  %-20s %10d %10s %10s %10s %10s %10s %10s\n",
-					"Winner's Time", len(durations),
+					"Backend Time", len(durations),
 					formatDuration(min), formatDuration(avg), formatDuration(max),
 					formatDuration(p50), formatDuration(p90), formatDuration(p99))
 				fmt.Printf("  %s\n", strings.Repeat("-", 98))
@@ -1197,6 +1198,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 		go func(b Backend) {
 			defer wg.Done()
 
+			// Track when this goroutine actually starts processing
+			goroutineStartTime := time.Now()
+
 			// If this is a secondary backend, wait for p50 delay
 			if b.Role != "primary" {
 				select {
@@ -1217,9 +1221,10 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 			backendReq, err := http.NewRequestWithContext(ctx, r.Method, b.URL, bytes.NewReader(body))
 			if err != nil {
 				statsChan <- ResponseStats{
-					Backend: b.Name,
-					Error:   err,
-					Method:  method,
+					Backend:  b.Name,
+					Error:    err,
+					Method:   method,
+					Duration: time.Since(goroutineStartTime), // Include any wait time
 				}
 				return
 			}
@@ -1241,7 +1246,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 				if !errors.Is(err, context.Canceled) {
 					statsChan <- ResponseStats{
 						Backend:  b.Name,
-						Duration: reqDuration,
+						Duration: reqDuration, // Keep backend-specific duration
 						Error:    err,
 						Method:   method,
 					}
@@ -1255,7 +1260,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 			if err != nil {
 				statsChan <- ResponseStats{
 					Backend:  b.Name,
-					Duration: reqDuration,
+					Duration: reqDuration, // Keep backend-specific duration
 					Error:    err,
 					Method:   method,
 				}
@@ -1265,7 +1270,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 			statsChan <- ResponseStats{
 				Backend:    b.Name,
 				StatusCode: resp.StatusCode,
-				Duration:   reqDuration,
+				Duration:   reqDuration, // This is the backend-specific duration
 				Method:     method,
 			}
 
