@@ -1318,7 +1318,6 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 		backend string
 		resp    *http.Response
 		err     error
-		body    []byte
 	}, len(backends))
 
 	// Track if we've already sent a response
@@ -1417,18 +1416,6 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 				}
 			}
 
-			// Read response body
-			respBody, err := io.ReadAll(resp.Body)
-			if err != nil {
-				statsChan <- ResponseStats{
-					Backend:  b.Name,
-					Duration: reqDuration, // Keep backend-specific duration
-					Error:    err,
-					Method:   method,
-				}
-				return
-			}
-
 			statsChan <- ResponseStats{
 				Backend:    b.Name,
 				StatusCode: resp.StatusCode,
@@ -1442,8 +1429,10 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 					backend string
 					resp    *http.Response
 					err     error
-					body    []byte
-				}{b.Name, resp, nil, respBody}
+				}{b.Name, resp, nil}
+			} else {
+				// Not the winning response, need to drain and close the body
+				io.Copy(io.Discard, resp.Body)
 			}
 		}(backend)
 	}
@@ -1453,7 +1442,6 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 		backend string
 		resp    *http.Response
 		err     error
-		body    []byte
 	}
 	var responseReceivedTime time.Time
 
@@ -1486,6 +1474,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 
 	// Send the response to the client
 	if response.err == nil && response.resp != nil {
+		defer response.resp.Body.Close()
+
 		// Copy response headers
 		for name, values := range response.resp.Header {
 			for _, value := range values {
@@ -1493,7 +1483,12 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 			}
 		}
 		w.WriteHeader(response.resp.StatusCode)
-		w.Write(response.body)
+
+		// Stream the response body to the client
+		_, streamErr := io.Copy(w, response.resp.Body)
+		if streamErr != nil && enableDetailedLogs {
+			log.Printf("Error streaming response body: %v", streamErr)
+		}
 	} else {
 		// No valid response received from any backend
 		http.Error(w, "All backends failed", http.StatusBadGateway)
