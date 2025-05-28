@@ -1527,6 +1527,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 
 		w.WriteHeader(response.resp.StatusCode)
 
+		// Track when streaming started
+		streamingStartTime := time.Now()
+
 		// Stream the response body to the client with proper error handling
 		done := make(chan error, 1)
 		go func() {
@@ -1556,7 +1559,17 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 		case <-ctx.Done():
 			// Context timeout - client connection might be gone
 			if enableDetailedLogs {
-				log.Printf("Context cancelled while streaming response: %v", ctx.Err())
+				streamingDuration := time.Since(streamingStartTime)
+				totalRequestDuration := time.Since(startTime)
+
+				// Determine if it was a timeout or cancellation
+				reason := "timeout"
+				if ctx.Err() == context.Canceled {
+					reason = "client disconnection"
+				}
+
+				log.Printf("Context cancelled while streaming response from backend '%s' (method: %s) after streaming for %s (total request time: %s) - reason: %s",
+					response.backend, method, streamingDuration, totalRequestDuration, reason)
 			}
 		}
 	} else {
