@@ -1405,7 +1405,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 				}
 				return
 			}
-			defer resp.Body.Close()
+
+			// Don't close resp.Body here - it will be closed by the winner or drained by losers
 
 			// Signal primary response immediately for secondary backends to check
 			if b.Role == "primary" && resp.StatusCode < 400 {
@@ -1433,6 +1434,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 			} else {
 				// Not the winning response, need to drain and close the body
 				io.Copy(io.Discard, resp.Body)
+				resp.Body.Close()
 			}
 		}(backend)
 	}
