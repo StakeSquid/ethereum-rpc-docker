@@ -965,6 +965,9 @@ func (sc *StatsCollector) printSummary() {
 	sc.totalRequests = 0
 	sc.totalWsConnections = 0
 
+	// Reset WebSocket connections to prevent memory leak
+	sc.wsConnections = sc.wsConnections[:0]
+
 	// Reset the interval start time for the next interval
 	sc.intervalStartTime = time.Now()
 }
@@ -1273,10 +1276,19 @@ func main() {
 func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, client *http.Client, enableDetailedLogs bool, statsCollector *StatsCollector) {
 	startTime := time.Now()
 
+	// Limit request body size to 10MB to prevent memory exhaustion
+	const maxBodySize = 10 * 1024 * 1024 // 10MB
+	r.Body = http.MaxBytesReader(w, r.Body, maxBodySize)
+
 	// Read the entire request body
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "Error reading request body", http.StatusBadRequest)
+		// Check if the error is due to body size limit
+		if strings.Contains(err.Error(), "request body too large") {
+			http.Error(w, "Request body too large (max 10MB)", http.StatusRequestEntityTooLarge)
+		} else {
+			http.Error(w, "Error reading request body", http.StatusBadRequest)
+		}
 		return
 	}
 	defer r.Body.Close()
