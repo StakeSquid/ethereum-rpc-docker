@@ -1216,6 +1216,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 
 	// Track if we've already sent a response
 	var responseHandled atomic.Bool
+	var firstBackendStartTime atomic.Pointer[time.Time]
 
 	for _, backend := range backends {
 		// Skip secondary backends for stateful methods
@@ -1236,6 +1237,12 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 
 			// Track when this goroutine actually starts processing
 			goroutineStartTime := time.Now()
+
+			// Record the first backend start time (should be primary)
+			if b.Role == "primary" {
+				t := goroutineStartTime
+				firstBackendStartTime.Store(&t)
+			}
 
 			// If this is a secondary backend, wait for p50 delay
 			if b.Role != "primary" {
@@ -1332,15 +1339,18 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 		err     error
 		body    []byte
 	}
+	var responseReceivedTime time.Time
 
 	select {
 	case response = <-responseChan:
 		// Got a response
+		responseReceivedTime = time.Now()
 	case <-time.After(30 * time.Second):
 		// Timeout
 		if !responseHandled.CompareAndSwap(false, true) {
 			// Someone else handled it
 			response = <-responseChan
+			responseReceivedTime = time.Now()
 		} else {
 			http.Error(w, "Timeout waiting for any backend", http.StatusGatewayTimeout)
 			// Always wait for primary backend to complete before collecting stats
@@ -1395,11 +1405,20 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 		// Find the stat for the winning backend and update it with the actual user-experienced duration
 		for i := range stats {
 			if stats[i].Backend == response.backend && stats[i].Error == nil {
+				// Calculate user latency from when the first backend started processing
+				var userLatency time.Duration
+				if firstStart := firstBackendStartTime.Load(); firstStart != nil && !responseReceivedTime.IsZero() {
+					userLatency = responseReceivedTime.Sub(*firstStart)
+				} else {
+					// Fallback to original calculation if somehow we don't have the times
+					userLatency = time.Since(startTime)
+				}
+
 				// Create a special stat entry for the actual first response time
 				actualFirstResponseStat := ResponseStats{
 					Backend:    "actual-first-response",
 					StatusCode: stats[i].StatusCode,
-					Duration:   time.Since(startTime), // This is what the user actually experienced
+					Duration:   userLatency,
 					Error:      nil,
 					Method:     stats[i].Method,
 				}
