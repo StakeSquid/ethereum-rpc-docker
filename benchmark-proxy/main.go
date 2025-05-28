@@ -60,6 +60,8 @@ type StatsCollector struct {
 	requestStats       []ResponseStats
 	methodStats        map[string][]time.Duration            // Track durations by method
 	backendMethodStats map[string]map[string][]time.Duration // Track durations by backend and method
+	backendWins        map[string]int                        // Track how many times each backend responded first
+	methodBackendWins  map[string]map[string]int             // Track wins per method per backend
 	totalRequests      int
 	errorCount         int
 	wsConnections      []WebSocketStats // Track websocket connections
@@ -79,6 +81,8 @@ func NewStatsCollector(summaryInterval time.Duration) *StatsCollector {
 		requestStats:       make([]ResponseStats, 0, 1000),
 		methodStats:        make(map[string][]time.Duration),
 		backendMethodStats: make(map[string]map[string][]time.Duration),
+		backendWins:        make(map[string]int),
+		methodBackendWins:  make(map[string]map[string]int),
 		appStartTime:       now,
 		intervalStartTime:  now,
 		summaryInterval:    summaryInterval,
@@ -173,6 +177,30 @@ func initCUPrices() map[string]int {
 func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Duration) {
 	sc.mu.Lock()
 	defer sc.mu.Unlock()
+
+	// Find the fastest successful response
+	var fastestBackend string
+	var fastestDuration time.Duration = time.Hour // Initialize with a very large duration
+	var method string
+
+	for _, stat := range stats {
+		if stat.Error == nil && stat.Duration < fastestDuration {
+			fastestDuration = stat.Duration
+			fastestBackend = stat.Backend
+			method = stat.Method
+		}
+	}
+
+	// Track the win if we found a successful response
+	if fastestBackend != "" {
+		sc.backendWins[fastestBackend]++
+
+		// Track wins per method
+		if _, exists := sc.methodBackendWins[method]; !exists {
+			sc.methodBackendWins[method] = make(map[string]int)
+		}
+		sc.methodBackendWins[method][fastestBackend]++
+	}
 
 	// Add stats to the collection
 	for _, stat := range stats {
@@ -446,6 +474,34 @@ func (sc *StatsCollector) printSummary() {
 			formatDuration(p50), formatDuration(p90), formatDuration(p99))
 	}
 
+	// Print backend wins statistics
+	fmt.Printf("\nBackend First Response Wins:\n")
+	fmt.Printf("%-20s %10s %10s\n", "Backend", "Wins", "Win %")
+	fmt.Printf("%s\n", strings.Repeat("-", 42))
+
+	totalWins := 0
+	for _, wins := range sc.backendWins {
+		totalWins += wins
+	}
+
+	// Sort backends by wins for consistent output
+	type backendWin struct {
+		backend string
+		wins    int
+	}
+	var winList []backendWin
+	for backend, wins := range sc.backendWins {
+		winList = append(winList, backendWin{backend, wins})
+	}
+	sort.Slice(winList, func(i, j int) bool {
+		return winList[i].wins > winList[j].wins
+	})
+
+	for _, bw := range winList {
+		winPercentage := float64(bw.wins) / float64(totalWins) * 100
+		fmt.Printf("%-20s %10d %9.1f%%\n", bw.backend, bw.wins, winPercentage)
+	}
+
 	// Print per-method statistics
 	if len(sc.methodStats) > 0 {
 		fmt.Printf("\nPer-Method Statistics (Primary Backend):\n")
@@ -539,6 +595,35 @@ func (sc *StatsCollector) printSummary() {
 			method := methodList[i].method
 
 			fmt.Printf("\n  Method: %s (Total requests: %d)\n", method, methodList[i].count)
+
+			// Show wins for this method if available
+			if methodWins, exists := sc.methodBackendWins[method]; exists {
+				fmt.Printf("  First Response Wins: ")
+				totalMethodWins := 0
+				for _, wins := range methodWins {
+					totalMethodWins += wins
+				}
+
+				// Sort backends by wins for this method
+				var methodWinList []backendWin
+				for backend, wins := range methodWins {
+					methodWinList = append(methodWinList, backendWin{backend, wins})
+				}
+				sort.Slice(methodWinList, func(i, j int) bool {
+					return methodWinList[i].wins > methodWinList[j].wins
+				})
+
+				// Print wins inline
+				for idx, bw := range methodWinList {
+					if idx > 0 {
+						fmt.Printf(", ")
+					}
+					winPercentage := float64(bw.wins) / float64(totalMethodWins) * 100
+					fmt.Printf("%s: %d (%.1f%%)", bw.backend, bw.wins, winPercentage)
+				}
+				fmt.Printf("\n")
+			}
+
 			fmt.Printf("  %-20s %10s %10s %10s %10s %10s %10s %10s\n",
 				"Backend", "Count", "Min", "Avg", "Max", "p50", "p90", "p99")
 			fmt.Printf("  %s\n", strings.Repeat("-", 98))
@@ -624,6 +709,10 @@ func (sc *StatsCollector) printSummary() {
 			sc.backendMethodStats[backend][method] = sc.backendMethodStats[backend][method][:0]
 		}
 	}
+
+	// Reset backend wins statistics
+	sc.backendWins = make(map[string]int)
+	sc.methodBackendWins = make(map[string]map[string]int)
 
 	// Reset CU counters for the next interval
 	sc.totalCU = 0
