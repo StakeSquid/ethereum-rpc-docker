@@ -78,9 +78,10 @@ type StatsCollector struct {
 	totalCU                            int            // Total CU earned
 	methodCU                           map[string]int // Track CU earned per method
 	historicalCU                       []CUDataPoint  // Historical CU data for different time windows
+	hasSecondaryBackends               bool           // Track if secondary backends are configured
 }
 
-func NewStatsCollector(summaryInterval time.Duration) *StatsCollector {
+func NewStatsCollector(summaryInterval time.Duration, hasSecondaryBackends bool) *StatsCollector {
 	now := time.Now()
 	sc := &StatsCollector{
 		requestStats:                       make([]ResponseStats, 0, 1000),
@@ -98,6 +99,7 @@ func NewStatsCollector(summaryInterval time.Duration) *StatsCollector {
 		methodCUPrices:                     initCUPrices(), // Initialize CU prices
 		methodCU:                           make(map[string]int),
 		historicalCU:                       make([]CUDataPoint, 0, 2000), // Store up to ~24 hours of 1-minute intervals
+		hasSecondaryBackends:               hasSecondaryBackends,
 	}
 
 	// Start the periodic summary goroutine
@@ -620,7 +622,26 @@ func (sc *StatsCollector) printSummary() {
 		sort.Strings(methods)
 
 		for _, method := range methods {
-			durations := sc.methodStats[method]
+			var durations []time.Duration
+			var displayLabel string
+
+			// If secondary backends are configured and we have actual user latency data, use that
+			if sc.hasSecondaryBackends {
+				if actualDurations, exists := sc.methodActualFirstResponseDurations[method]; exists && len(actualDurations) > 0 {
+					durations = make([]time.Duration, len(actualDurations))
+					copy(durations, actualDurations)
+					displayLabel = method + " (User Latency)"
+				} else {
+					// Fall back to primary backend times if no actual latency data
+					durations = sc.methodStats[method]
+					displayLabel = method + " (Primary Backend)"
+				}
+			} else {
+				// No secondary backends, use primary backend times
+				durations = sc.methodStats[method]
+				displayLabel = method
+			}
+
 			if len(durations) == 0 {
 				continue
 			}
@@ -657,8 +678,8 @@ func (sc *StatsCollector) printSummary() {
 			cuPrice := sc.methodCUPrices[method]
 			cuEarned := sc.methodCU[method]
 
-			fmt.Printf("  %-30s Count: %-5d Avg: %-10s Min: %-10s Max: %-10s p50: %-10s p90: %-10s p99: %-10s CU: %d x %d = %d\n",
-				method, len(durations),
+			fmt.Printf("  %-50s Count: %-5d Avg: %-10s Min: %-10s Max: %-10s p50: %-10s p90: %-10s p99: %-10s CU: %d x %d = %d\n",
+				displayLabel, len(durations),
 				formatDuration(avg), formatDuration(minDuration), formatDuration(max),
 				formatDuration(p50), formatDuration(p90), formatDuration(p99),
 				cuPrice, len(durations), cuEarned)
@@ -1081,7 +1102,7 @@ func main() {
 	}
 
 	// Create stats collector for periodic summaries
-	statsCollector := NewStatsCollector(time.Duration(summaryInterval) * time.Second)
+	statsCollector := NewStatsCollector(time.Duration(summaryInterval)*time.Second, secondaryBackendsStr != "")
 
 	// Configure backends
 	var backends []Backend
