@@ -56,39 +56,43 @@ type CUDataPoint struct {
 
 // StatsCollector maintains statistics for periodic summaries
 type StatsCollector struct {
-	mu                 sync.Mutex
-	requestStats       []ResponseStats
-	methodStats        map[string][]time.Duration            // Track durations by method
-	backendMethodStats map[string]map[string][]time.Duration // Track durations by backend and method
-	backendWins        map[string]int                        // Track how many times each backend responded first
-	methodBackendWins  map[string]map[string]int             // Track wins per method per backend
-	totalRequests      int
-	errorCount         int
-	wsConnections      []WebSocketStats // Track websocket connections
-	totalWsConnections int
-	appStartTime       time.Time // Application start time (never reset)
-	intervalStartTime  time.Time // Current interval start time (reset each interval)
-	summaryInterval    time.Duration
-	methodCUPrices     map[string]int // Map of method names to CU prices
-	totalCU            int            // Total CU earned
-	methodCU           map[string]int // Track CU earned per method
-	historicalCU       []CUDataPoint  // Historical CU data for different time windows
+	mu                           sync.Mutex
+	requestStats                 []ResponseStats
+	methodStats                  map[string][]time.Duration            // Track durations by method
+	backendMethodStats           map[string]map[string][]time.Duration // Track durations by backend and method
+	backendWins                  map[string]int                        // Track how many times each backend responded first
+	methodBackendWins            map[string]map[string]int             // Track wins per method per backend
+	firstResponseDurations       []time.Duration                       // Track durations of first successful responses
+	methodFirstResponseDurations map[string][]time.Duration            // Track first response durations by method
+	totalRequests                int
+	errorCount                   int
+	wsConnections                []WebSocketStats // Track websocket connections
+	totalWsConnections           int
+	appStartTime                 time.Time // Application start time (never reset)
+	intervalStartTime            time.Time // Current interval start time (reset each interval)
+	summaryInterval              time.Duration
+	methodCUPrices               map[string]int // Map of method names to CU prices
+	totalCU                      int            // Total CU earned
+	methodCU                     map[string]int // Track CU earned per method
+	historicalCU                 []CUDataPoint  // Historical CU data for different time windows
 }
 
 func NewStatsCollector(summaryInterval time.Duration) *StatsCollector {
 	now := time.Now()
 	sc := &StatsCollector{
-		requestStats:       make([]ResponseStats, 0, 1000),
-		methodStats:        make(map[string][]time.Duration),
-		backendMethodStats: make(map[string]map[string][]time.Duration),
-		backendWins:        make(map[string]int),
-		methodBackendWins:  make(map[string]map[string]int),
-		appStartTime:       now,
-		intervalStartTime:  now,
-		summaryInterval:    summaryInterval,
-		methodCUPrices:     initCUPrices(), // Initialize CU prices
-		methodCU:           make(map[string]int),
-		historicalCU:       make([]CUDataPoint, 0, 2000), // Store up to ~24 hours of 1-minute intervals
+		requestStats:                 make([]ResponseStats, 0, 1000),
+		methodStats:                  make(map[string][]time.Duration),
+		backendMethodStats:           make(map[string]map[string][]time.Duration),
+		backendWins:                  make(map[string]int),
+		methodBackendWins:            make(map[string]map[string]int),
+		firstResponseDurations:       make([]time.Duration, 0, 1000),
+		methodFirstResponseDurations: make(map[string][]time.Duration),
+		appStartTime:                 now,
+		intervalStartTime:            now,
+		summaryInterval:              summaryInterval,
+		methodCUPrices:               initCUPrices(), // Initialize CU prices
+		methodCU:                     make(map[string]int),
+		historicalCU:                 make([]CUDataPoint, 0, 2000), // Store up to ~24 hours of 1-minute intervals
 	}
 
 	// Start the periodic summary goroutine
@@ -200,6 +204,15 @@ func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Dur
 			sc.methodBackendWins[method] = make(map[string]int)
 		}
 		sc.methodBackendWins[method][fastestBackend]++
+
+		// Track first response duration
+		sc.firstResponseDurations = append(sc.firstResponseDurations, fastestDuration)
+
+		// Track first response duration by method
+		if _, exists := sc.methodFirstResponseDurations[method]; !exists {
+			sc.methodFirstResponseDurations[method] = make([]time.Duration, 0, 100)
+		}
+		sc.methodFirstResponseDurations[method] = append(sc.methodFirstResponseDurations[method], fastestDuration)
 	}
 
 	// Add stats to the collection
@@ -441,6 +454,39 @@ func (sc *StatsCollector) printSummary() {
 		"Backend", "Count", "Min", "Avg", "Max", "p50", "p90", "p99")
 	fmt.Printf("%s\n", strings.Repeat("-", 100))
 
+	// First, show the "First Response" merged statistics
+	if len(sc.firstResponseDurations) > 0 {
+		firstRespDurations := make([]time.Duration, len(sc.firstResponseDurations))
+		copy(firstRespDurations, sc.firstResponseDurations)
+
+		sort.Slice(firstRespDurations, func(i, j int) bool {
+			return firstRespDurations[i] < firstRespDurations[j]
+		})
+
+		var sum time.Duration
+		for _, d := range firstRespDurations {
+			sum += d
+		}
+
+		avg := sum / time.Duration(len(firstRespDurations))
+		min := firstRespDurations[0]
+		max := firstRespDurations[len(firstRespDurations)-1]
+
+		p50idx := len(firstRespDurations) * 50 / 100
+		p90idx := len(firstRespDurations) * 90 / 100
+		p99idx := minInt(len(firstRespDurations)-1, len(firstRespDurations)*99/100)
+
+		p50 := firstRespDurations[p50idx]
+		p90 := firstRespDurations[p90idx]
+		p99 := firstRespDurations[p99idx]
+
+		fmt.Printf("%-20s %10d %10s %10s %10s %10s %10s %10s\n",
+			"First Response", len(firstRespDurations),
+			formatDuration(min), formatDuration(avg), formatDuration(max),
+			formatDuration(p50), formatDuration(p90), formatDuration(p99))
+		fmt.Printf("%s\n", strings.Repeat("-", 100))
+	}
+
 	for _, backend := range backendNames {
 		durations := backendDurations[backend]
 		if len(durations) == 0 {
@@ -666,6 +712,46 @@ func (sc *StatsCollector) printSummary() {
 					formatDuration(min), formatDuration(avg), formatDuration(max),
 					formatDuration(p50), formatDuration(p90), formatDuration(p99))
 			}
+
+			// Show First Response statistics for this method
+			if methodFirstDurations, exists := sc.methodFirstResponseDurations[method]; exists && len(methodFirstDurations) > 0 {
+				// Make a copy and sort
+				durations := make([]time.Duration, len(methodFirstDurations))
+				copy(durations, methodFirstDurations)
+
+				sort.Slice(durations, func(i, j int) bool {
+					return durations[i] < durations[j]
+				})
+
+				var sum time.Duration
+				for _, d := range durations {
+					sum += d
+				}
+
+				avg := sum / time.Duration(len(durations))
+				min := durations[0]
+				max := durations[len(durations)-1]
+
+				p50 := min
+				p90 := min
+				p99 := min
+
+				if len(durations) >= 2 {
+					p50idx := len(durations) * 50 / 100
+					p90idx := len(durations) * 90 / 100
+					p99idx := minInt(len(durations)-1, len(durations)*99/100)
+
+					p50 = durations[p50idx]
+					p90 = durations[p90idx]
+					p99 = durations[p99idx]
+				}
+
+				fmt.Printf("  %-20s %10d %10s %10s %10s %10s %10s %10s\n",
+					"First Response", len(durations),
+					formatDuration(min), formatDuration(avg), formatDuration(max),
+					formatDuration(p50), formatDuration(p90), formatDuration(p99))
+				fmt.Printf("  %s\n", strings.Repeat("-", 98))
+			}
 		}
 	}
 
@@ -713,6 +799,16 @@ func (sc *StatsCollector) printSummary() {
 	// Reset backend wins statistics
 	sc.backendWins = make(map[string]int)
 	sc.methodBackendWins = make(map[string]map[string]int)
+
+	// Reset first response statistics
+	if len(sc.firstResponseDurations) > 1000 {
+		sc.firstResponseDurations = sc.firstResponseDurations[len(sc.firstResponseDurations)-1000:]
+	} else {
+		sc.firstResponseDurations = sc.firstResponseDurations[:0]
+	}
+	for method := range sc.methodFirstResponseDurations {
+		sc.methodFirstResponseDurations[method] = sc.methodFirstResponseDurations[method][:0]
+	}
 
 	// Reset CU counters for the next interval
 	sc.totalCU = 0
