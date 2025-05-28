@@ -1077,6 +1077,30 @@ func (sc *StatsCollector) GetPrimaryP50() time.Duration {
 	return primaryDurations[p50idx]
 }
 
+// GetPrimaryP50ForMethod calculates the current p50 latency for a specific method on the primary backend
+func (sc *StatsCollector) GetPrimaryP50ForMethod(method string) time.Duration {
+	sc.mu.Lock()
+	defer sc.mu.Unlock()
+
+	// Get method-specific durations for primary backend
+	if durations, exists := sc.methodStats[method]; exists && len(durations) >= 5 {
+		// Make a copy to avoid modifying the original
+		durationsCopy := make([]time.Duration, len(durations))
+		copy(durationsCopy, durations)
+
+		// Sort and find p50
+		sort.Slice(durationsCopy, func(i, j int) bool {
+			return durationsCopy[i] < durationsCopy[j]
+		})
+
+		p50idx := len(durationsCopy) * 50 / 100
+		return durationsCopy[p50idx]
+	}
+
+	// If we don't have enough method-specific data, fall back to global p50
+	return sc.GetPrimaryP50()
+}
+
 // isStatefulMethod returns true if the method requires session state and must always go to primary
 func isStatefulMethod(method string) bool {
 	statefulMethods := map[string]bool{
@@ -1197,8 +1221,12 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 		method = jsonRPCReq.Method
 	}
 
-	// Get current p50 delay for primary backend
-	p50Delay := statsCollector.GetPrimaryP50()
+	// Get current p50 delay for this specific method on primary backend
+	p50Delay := statsCollector.GetPrimaryP50ForMethod(method)
+
+	if enableDetailedLogs {
+		log.Printf("Method: %s, P50 delay: %s", method, p50Delay)
+	}
 
 	// Check if this is a stateful method that must go to primary only
 	isStateful := isStatefulMethod(method)
