@@ -1097,8 +1097,27 @@ func (sc *StatsCollector) GetPrimaryP50ForMethod(method string) time.Duration {
 		return durationsCopy[p50idx]
 	}
 
-	// If we don't have enough method-specific data, fall back to global p50
-	return sc.GetPrimaryP50()
+	// If we don't have enough method-specific data, calculate global p50 here
+	// (instead of calling GetPrimaryP50 which would cause nested mutex lock)
+	var primaryDurations []time.Duration
+	for _, stat := range sc.requestStats {
+		if stat.Backend == "primary" && stat.Error == nil {
+			primaryDurations = append(primaryDurations, stat.Duration)
+		}
+	}
+
+	// If we don't have enough data, return a sensible default
+	if len(primaryDurations) < 10 {
+		return 10 * time.Millisecond // Default to 10ms
+	}
+
+	// Sort and find p50
+	sort.Slice(primaryDurations, func(i, j int) bool {
+		return primaryDurations[i] < primaryDurations[j]
+	})
+
+	p50idx := len(primaryDurations) * 50 / 100
+	return primaryDurations[p50idx]
 }
 
 // isStatefulMethod returns true if the method requires session state and must always go to primary
