@@ -1263,22 +1263,21 @@ func main() {
 			handleWebSocketRequest(w, r, backends, client, &upgrader, statsCollector)
 		} else {
 			// Handle regular HTTP request
-			stats := handleRequest(w, r, backends, client, enableDetailedLogs == "true", statsCollector)
-			statsCollector.AddStats(stats, 0) // The 0 is a placeholder, we're not using totalDuration in the collector
+			handleRequest(w, r, backends, client, enableDetailedLogs == "true", statsCollector)
 		}
 	})
 
 	log.Fatal(http.ListenAndServe(listenAddr, nil))
 }
 
-func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, client *http.Client, enableDetailedLogs bool, statsCollector *StatsCollector) []ResponseStats {
+func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, client *http.Client, enableDetailedLogs bool, statsCollector *StatsCollector) {
 	startTime := time.Now()
 
 	// Read the entire request body
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Error reading request body", http.StatusBadRequest)
-		return nil
+		return
 	}
 	defer r.Body.Close()
 
@@ -1469,7 +1468,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 			for stat := range statsChan {
 				stats = append(stats, stat)
 			}
-			return stats
+			return
 		}
 	}
 
@@ -1483,57 +1482,65 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 		}
 		w.WriteHeader(response.resp.StatusCode)
 		w.Write(response.body)
+	} else {
+		// No valid response received from any backend
+		http.Error(w, "All backends failed", http.StatusBadGateway)
 	}
 
-	// Always wait for primary backend to complete before collecting stats
-	// This ensures primary backend stats are always included
+	// Collect stats asynchronously to avoid blocking the response
 	go func() {
+		// Always wait for primary backend to complete before collecting stats
+		// This ensures primary backend stats are always included
 		primaryWg.Wait() // Wait for primary backend to complete first
 		wg.Wait()        // Then wait for all other backends
 		close(statsChan)
-	}()
 
-	// Collect stats
-	var stats []ResponseStats
-	for stat := range statsChan {
-		stats = append(stats, stat)
-	}
+		// Collect stats
+		var stats []ResponseStats
+		for stat := range statsChan {
+			stats = append(stats, stat)
+		}
 
-	// Log response times if enabled
-	totalDuration := time.Since(startTime)
-	if enableDetailedLogs {
-		logResponseStats(totalDuration, stats)
-	}
+		// Log response times if enabled
+		totalDuration := time.Since(startTime)
+		if enableDetailedLogs {
+			logResponseStats(totalDuration, stats)
+		}
 
-	// Add the actual user-experienced duration for the winning response
-	if response.err == nil && response.backend != "" {
-		// Find the stat for the winning backend and update it with the actual user-experienced duration
-		for i := range stats {
-			if stats[i].Backend == response.backend && stats[i].Error == nil {
-				// Calculate user latency from when the first backend started processing
-				var userLatency time.Duration
-				if firstStart := firstBackendStartTime.Load(); firstStart != nil && !responseReceivedTime.IsZero() {
-					userLatency = responseReceivedTime.Sub(*firstStart)
-				} else {
-					// Fallback to original calculation if somehow we don't have the times
-					userLatency = time.Since(startTime)
+		// Add the actual user-experienced duration for the winning response
+		if response.err == nil && response.backend != "" {
+			// Find the stat for the winning backend and update it with the actual user-experienced duration
+			for i := range stats {
+				if stats[i].Backend == response.backend && stats[i].Error == nil {
+					// Calculate user latency from when the first backend started processing
+					var userLatency time.Duration
+					if firstStart := firstBackendStartTime.Load(); firstStart != nil && !responseReceivedTime.IsZero() {
+						userLatency = responseReceivedTime.Sub(*firstStart)
+					} else {
+						// Fallback to original calculation if somehow we don't have the times
+						userLatency = time.Since(startTime)
+					}
+
+					// Create a special stat entry for the actual first response time
+					actualFirstResponseStat := ResponseStats{
+						Backend:    "actual-first-response",
+						StatusCode: stats[i].StatusCode,
+						Duration:   userLatency,
+						Error:      nil,
+						Method:     stats[i].Method,
+					}
+					stats = append(stats, actualFirstResponseStat)
+					break
 				}
-
-				// Create a special stat entry for the actual first response time
-				actualFirstResponseStat := ResponseStats{
-					Backend:    "actual-first-response",
-					StatusCode: stats[i].StatusCode,
-					Duration:   userLatency,
-					Error:      nil,
-					Method:     stats[i].Method,
-				}
-				stats = append(stats, actualFirstResponseStat)
-				break
 			}
 		}
-	}
 
-	return stats
+		// Send stats to collector
+		statsCollector.AddStats(stats, 0)
+	}()
+
+	// Return immediately after sending response to client
+	return
 }
 
 func logResponseStats(totalDuration time.Duration, stats []ResponseStats) {
