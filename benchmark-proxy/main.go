@@ -79,6 +79,7 @@ type StatsCollector struct {
 	methodCU                           map[string]int // Track CU earned per method
 	historicalCU                       []CUDataPoint  // Historical CU data for different time windows
 	hasSecondaryBackends               bool           // Track if secondary backends are configured
+	skippedSecondaryRequests           int            // Track how many secondary requests were skipped
 }
 
 func NewStatsCollector(summaryInterval time.Duration, hasSecondaryBackends bool) *StatsCollector {
@@ -248,7 +249,13 @@ func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Dur
 
 		sc.requestStats = append(sc.requestStats, stat)
 		if stat.Error != nil {
-			sc.errorCount++
+			// Don't count skipped secondary backends as errors
+			if stat.Error.Error() != "skipped - primary responded within p50" {
+				sc.errorCount++
+			} else {
+				// Track that we skipped a secondary request
+				sc.skippedSecondaryRequests++
+			}
 		}
 
 		// Track method-specific stats for all backends
@@ -366,6 +373,11 @@ func (sc *StatsCollector) printSummary() {
 	fmt.Printf("Total HTTP Requests: %d\n", sc.totalRequests)
 	fmt.Printf("Total WebSocket Connections: %d\n", sc.totalWsConnections)
 	fmt.Printf("Error Rate: %.2f%%\n", float64(sc.errorCount)/float64(sc.totalRequests+sc.totalWsConnections)*100)
+	if sc.hasSecondaryBackends && sc.skippedSecondaryRequests > 0 {
+		fmt.Printf("Skipped Secondary Requests: %d (%.1f%% of requests)\n",
+			sc.skippedSecondaryRequests,
+			float64(sc.skippedSecondaryRequests)/float64(sc.totalRequests)*100)
+	}
 	fmt.Printf("Total Compute Units Earned (current interval): %d CU\n", sc.totalCU)
 
 	// Calculate and display CU for different time windows
@@ -949,6 +961,7 @@ func (sc *StatsCollector) printSummary() {
 
 	// Reset error count for the next interval
 	sc.errorCount = 0
+	sc.skippedSecondaryRequests = 0
 	sc.totalRequests = 0
 	sc.totalWsConnections = 0
 
@@ -1229,10 +1242,20 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 				delayTimer := time.NewTimer(p50Delay)
 				select {
 				case <-delayTimer.C:
-					// Continue after delay
+					// Timer expired, primary is slow, proceed with secondary request
 				case <-responseChan:
-					// Someone already responded, but continue anyway to collect stats
+					// Someone (likely primary) already responded fast enough
+					// Skip sending to secondary backend
 					delayTimer.Stop()
+
+					// Still record that we skipped this backend
+					statsChan <- ResponseStats{
+						Backend:  b.Name,
+						Error:    fmt.Errorf("skipped - primary responded within p50"),
+						Method:   method,
+						Duration: time.Since(goroutineStartTime),
+					}
+					return
 				}
 			}
 
