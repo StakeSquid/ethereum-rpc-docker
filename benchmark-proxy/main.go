@@ -505,38 +505,40 @@ func (sc *StatsCollector) printSummary() {
 
 	// Print per-method statistics for ALL backends
 	if len(sc.backendMethodStats) > 0 {
-		fmt.Printf("\nPer-Method Backend Comparison:\n")
+		fmt.Printf("\nPer-Method Backend Comparison (Top 3 Methods):\n")
 
-		// Collect all unique methods across all backends
-		allMethods := make(map[string]bool)
+		// Collect all unique methods across all backends with their total counts
+		methodCounts := make(map[string]int)
 		for _, methods := range sc.backendMethodStats {
-			for method := range methods {
-				allMethods[method] = true
+			for method, durations := range methods {
+				methodCounts[method] += len(durations)
 			}
 		}
 
-		// Sort methods for consistent output
-		var methodList []string
-		for method := range allMethods {
-			methodList = append(methodList, method)
+		// Sort methods by total count (descending)
+		type methodCount struct {
+			method string
+			count  int
 		}
-		sort.Strings(methodList)
+		var methodList []methodCount
+		for method, count := range methodCounts {
+			methodList = append(methodList, methodCount{method, count})
+		}
+		sort.Slice(methodList, func(i, j int) bool {
+			return methodList[i].count > methodList[j].count
+		})
 
-		// For each method, show stats from all backends
-		for _, method := range methodList {
-			hasData := false
-			for _, backend := range backendNames {
-				if durations, exists := sc.backendMethodStats[backend][method]; exists && len(durations) > 0 {
-					hasData = true
-					break
-				}
-			}
+		// Only show top 3 methods
+		maxMethods := 3
+		if len(methodList) < maxMethods {
+			maxMethods = len(methodList)
+		}
 
-			if !hasData {
-				continue
-			}
+		// For each of the top methods, show stats from all backends
+		for i := 0; i < maxMethods; i++ {
+			method := methodList[i].method
 
-			fmt.Printf("\n  Method: %s\n", method)
+			fmt.Printf("\n  Method: %s (Total requests: %d)\n", method, methodList[i].count)
 			fmt.Printf("  %-20s %10s %10s %10s %10s %10s %10s %10s\n",
 				"Backend", "Count", "Min", "Avg", "Max", "p50", "p90", "p99")
 			fmt.Printf("  %s\n", strings.Repeat("-", 98))
