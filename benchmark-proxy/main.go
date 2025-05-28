@@ -58,7 +58,8 @@ type CUDataPoint struct {
 type StatsCollector struct {
 	mu                 sync.Mutex
 	requestStats       []ResponseStats
-	methodStats        map[string][]time.Duration // Track durations by method
+	methodStats        map[string][]time.Duration            // Track durations by method
+	backendMethodStats map[string]map[string][]time.Duration // Track durations by backend and method
 	totalRequests      int
 	errorCount         int
 	wsConnections      []WebSocketStats // Track websocket connections
@@ -75,14 +76,15 @@ type StatsCollector struct {
 func NewStatsCollector(summaryInterval time.Duration) *StatsCollector {
 	now := time.Now()
 	sc := &StatsCollector{
-		requestStats:      make([]ResponseStats, 0, 1000),
-		methodStats:       make(map[string][]time.Duration),
-		appStartTime:      now,
-		intervalStartTime: now,
-		summaryInterval:   summaryInterval,
-		methodCUPrices:    initCUPrices(), // Initialize CU prices
-		methodCU:          make(map[string]int),
-		historicalCU:      make([]CUDataPoint, 0, 2000), // Store up to ~24 hours of 1-minute intervals
+		requestStats:       make([]ResponseStats, 0, 1000),
+		methodStats:        make(map[string][]time.Duration),
+		backendMethodStats: make(map[string]map[string][]time.Duration),
+		appStartTime:       now,
+		intervalStartTime:  now,
+		summaryInterval:    summaryInterval,
+		methodCUPrices:     initCUPrices(), // Initialize CU prices
+		methodCU:           make(map[string]int),
+		historicalCU:       make([]CUDataPoint, 0, 2000), // Store up to ~24 hours of 1-minute intervals
 	}
 
 	// Start the periodic summary goroutine
@@ -179,17 +181,34 @@ func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Dur
 			sc.errorCount++
 		}
 
-		// Track method-specific stats for primary backend
-		if stat.Backend == "primary" && stat.Error == nil {
-			if _, exists := sc.methodStats[stat.Method]; !exists {
-				sc.methodStats[stat.Method] = make([]time.Duration, 0, 100)
+		// Track method-specific stats for all backends
+		if stat.Error == nil {
+			// Initialize backend map if not exists
+			if _, exists := sc.backendMethodStats[stat.Backend]; !exists {
+				sc.backendMethodStats[stat.Backend] = make(map[string][]time.Duration)
 			}
-			sc.methodStats[stat.Method] = append(sc.methodStats[stat.Method], stat.Duration)
 
-			// Add CU for this method
-			cuValue := sc.methodCUPrices[stat.Method]
-			sc.totalCU += cuValue
-			sc.methodCU[stat.Method] += cuValue
+			// Initialize method array if not exists
+			if _, exists := sc.backendMethodStats[stat.Backend][stat.Method]; !exists {
+				sc.backendMethodStats[stat.Backend][stat.Method] = make([]time.Duration, 0, 100)
+			}
+
+			// Add the duration
+			sc.backendMethodStats[stat.Backend][stat.Method] = append(
+				sc.backendMethodStats[stat.Backend][stat.Method], stat.Duration)
+
+			// Keep tracking primary backend in the old way for backward compatibility
+			if stat.Backend == "primary" {
+				if _, exists := sc.methodStats[stat.Method]; !exists {
+					sc.methodStats[stat.Method] = make([]time.Duration, 0, 100)
+				}
+				sc.methodStats[stat.Method] = append(sc.methodStats[stat.Method], stat.Duration)
+
+				// Add CU for this method
+				cuValue := sc.methodCUPrices[stat.Method]
+				sc.totalCU += cuValue
+				sc.methodCU[stat.Method] += cuValue
+			}
 		}
 	}
 
@@ -373,6 +392,60 @@ func (sc *StatsCollector) printSummary() {
 		fmt.Printf("  p99: %s\n", formatDuration(p99))
 	}
 
+	// Calculate response time statistics for ALL backends
+	backendDurations := make(map[string][]time.Duration)
+	for _, stat := range sc.requestStats {
+		if stat.Error == nil {
+			backendDurations[stat.Backend] = append(backendDurations[stat.Backend], stat.Duration)
+		}
+	}
+
+	// Sort backend names for consistent output
+	var backendNames []string
+	for backend := range backendDurations {
+		backendNames = append(backendNames, backend)
+	}
+	sort.Strings(backendNames)
+
+	// Print per-backend statistics
+	fmt.Printf("\nPer-Backend Response Time Comparison:\n")
+	fmt.Printf("%-20s %10s %10s %10s %10s %10s %10s %10s\n",
+		"Backend", "Count", "Min", "Avg", "Max", "p50", "p90", "p99")
+	fmt.Printf("%s\n", strings.Repeat("-", 100))
+
+	for _, backend := range backendNames {
+		durations := backendDurations[backend]
+		if len(durations) == 0 {
+			continue
+		}
+
+		sort.Slice(durations, func(i, j int) bool {
+			return durations[i] < durations[j]
+		})
+
+		var sum time.Duration
+		for _, d := range durations {
+			sum += d
+		}
+
+		avg := sum / time.Duration(len(durations))
+		min := durations[0]
+		max := durations[len(durations)-1]
+
+		p50idx := len(durations) * 50 / 100
+		p90idx := len(durations) * 90 / 100
+		p99idx := minInt(len(durations)-1, len(durations)*99/100)
+
+		p50 := durations[p50idx]
+		p90 := durations[p90idx]
+		p99 := durations[p99idx]
+
+		fmt.Printf("%-20s %10d %10s %10s %10s %10s %10s %10s\n",
+			backend, len(durations),
+			formatDuration(min), formatDuration(avg), formatDuration(max),
+			formatDuration(p50), formatDuration(p90), formatDuration(p99))
+	}
+
 	// Print per-method statistics
 	if len(sc.methodStats) > 0 {
 		fmt.Printf("\nPer-Method Statistics (Primary Backend):\n")
@@ -430,6 +503,85 @@ func (sc *StatsCollector) printSummary() {
 		}
 	}
 
+	// Print per-method statistics for ALL backends
+	if len(sc.backendMethodStats) > 0 {
+		fmt.Printf("\nPer-Method Backend Comparison:\n")
+
+		// Collect all unique methods across all backends
+		allMethods := make(map[string]bool)
+		for _, methods := range sc.backendMethodStats {
+			for method := range methods {
+				allMethods[method] = true
+			}
+		}
+
+		// Sort methods for consistent output
+		var methodList []string
+		for method := range allMethods {
+			methodList = append(methodList, method)
+		}
+		sort.Strings(methodList)
+
+		// For each method, show stats from all backends
+		for _, method := range methodList {
+			hasData := false
+			for _, backend := range backendNames {
+				if durations, exists := sc.backendMethodStats[backend][method]; exists && len(durations) > 0 {
+					hasData = true
+					break
+				}
+			}
+
+			if !hasData {
+				continue
+			}
+
+			fmt.Printf("\n  Method: %s\n", method)
+			fmt.Printf("  %-20s %10s %10s %10s %10s %10s %10s %10s\n",
+				"Backend", "Count", "Min", "Avg", "Max", "p50", "p90", "p99")
+			fmt.Printf("  %s\n", strings.Repeat("-", 98))
+
+			for _, backend := range backendNames {
+				durations, exists := sc.backendMethodStats[backend][method]
+				if !exists || len(durations) == 0 {
+					continue
+				}
+
+				sort.Slice(durations, func(i, j int) bool {
+					return durations[i] < durations[j]
+				})
+
+				var sum time.Duration
+				for _, d := range durations {
+					sum += d
+				}
+
+				avg := sum / time.Duration(len(durations))
+				min := durations[0]
+				max := durations[len(durations)-1]
+
+				p50 := min
+				p90 := min
+				p99 := min
+
+				if len(durations) >= 2 {
+					p50idx := len(durations) * 50 / 100
+					p90idx := len(durations) * 90 / 100
+					p99idx := minInt(len(durations)-1, len(durations)*99/100)
+
+					p50 = durations[p50idx]
+					p90 = durations[p90idx]
+					p99 = durations[p99idx]
+				}
+
+				fmt.Printf("  %-20s %10d %10s %10s %10s %10s %10s %10s\n",
+					backend, len(durations),
+					formatDuration(min), formatDuration(avg), formatDuration(max),
+					formatDuration(p50), formatDuration(p90), formatDuration(p99))
+			}
+		}
+	}
+
 	fmt.Printf("================================\n\n")
 
 	// Store current interval's CU data in historical data before resetting
@@ -462,6 +614,13 @@ func (sc *StatsCollector) printSummary() {
 	// Reset method-specific statistics
 	for method := range sc.methodStats {
 		sc.methodStats[method] = sc.methodStats[method][:0]
+	}
+
+	// Reset backend method-specific statistics
+	for backend := range sc.backendMethodStats {
+		for method := range sc.backendMethodStats[backend] {
+			sc.backendMethodStats[backend][method] = sc.backendMethodStats[backend][method][:0]
+		}
 	}
 
 	// Reset CU counters for the next interval
