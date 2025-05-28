@@ -1217,6 +1217,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 	// Track if we've already sent a response
 	var responseHandled atomic.Bool
 	var firstBackendStartTime atomic.Pointer[time.Time]
+	primaryResponseChan := make(chan struct{}, 1) // Signal when primary gets a response
 
 	for _, backend := range backends {
 		// Skip secondary backends for stateful methods
@@ -1250,9 +1251,8 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 				select {
 				case <-delayTimer.C:
 					// Timer expired, primary is slow, proceed with secondary request
-				case <-responseChan:
-					// Someone (likely primary) already responded fast enough
-					// Skip sending to secondary backend
+				case <-primaryResponseChan:
+					// Primary already got a response, skip secondary
 					delayTimer.Stop()
 
 					// Still record that we skipped this backend
@@ -1300,6 +1300,15 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 				return
 			}
 			defer resp.Body.Close()
+
+			// Signal primary response immediately for secondary backends to check
+			if b.Role == "primary" && resp.StatusCode < 400 {
+				select {
+				case primaryResponseChan <- struct{}{}:
+				default:
+					// Channel already has a signal
+				}
+			}
 
 			// Read response body
 			respBody, err := io.ReadAll(resp.Body)
