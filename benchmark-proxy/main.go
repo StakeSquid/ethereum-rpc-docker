@@ -538,10 +538,22 @@ func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Dur
 			hasActualFirst = true
 			method = stat.Method
 		} else if stat.Error == nil && stat.Duration < fastestDuration {
-			fastestDuration = stat.Duration
-			fastestBackend = stat.Backend
-			if method == "" {
-				method = stat.Method
+			// Primary backend can always be fastest, secondary only if successful status
+			canBeWinner := false
+			if stat.Backend == "primary" {
+				// Primary can always be winner (regardless of status code)
+				canBeWinner = true
+			} else {
+				// Secondary backend can only be winner with successful status code
+				canBeWinner = stat.StatusCode < 400
+			}
+
+			if canBeWinner {
+				fastestDuration = stat.Duration
+				fastestBackend = stat.Backend
+				if method == "" {
+					method = stat.Method
+				}
 			}
 		}
 	}
