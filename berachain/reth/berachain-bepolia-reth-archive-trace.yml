@@ -147,6 +147,7 @@ services:
     networks:
       - chains
     volumes:
+      - ${BERACHAIN_BEPOLIA_RETH_ARCHIVE_TRACE__BEACON_KIT_DATA:-berachain-bepolia-reth-archive-trace_beacon-kit}:/root/.beacond/data
       - .jwtsecret:/jwtsecret:ro
       - berachain-bepolia-reth-archive-trace_config:/root/.beacond/config
     logging: *logging-defaults
