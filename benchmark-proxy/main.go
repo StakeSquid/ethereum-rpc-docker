@@ -1946,7 +1946,24 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 			}
 
 			// Try to be the first to respond
-			if responseHandled.CompareAndSwap(false, true) {
+			// Primary backend always wins, secondary only wins with successful responses
+			shouldWin := false
+			if b.Role == "primary" {
+				// Primary backend always tries to win (whether success or error)
+				shouldWin = responseHandled.CompareAndSwap(false, true)
+			} else {
+				// Secondary backend only tries to win if response is successful
+				if resp.StatusCode < 400 {
+					shouldWin = responseHandled.CompareAndSwap(false, true)
+				} else {
+					// Secondary backend has error status, don't try to win
+					if enableDetailedLogs {
+						log.Printf("Secondary backend %s returned error status %d, not using response", b.Name, resp.StatusCode)
+					}
+				}
+			}
+
+			if shouldWin {
 				responseChan <- struct {
 					backend string
 					resp    *http.Response
