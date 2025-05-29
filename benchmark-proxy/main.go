@@ -318,42 +318,69 @@ func (sp *SecondaryProbe) runProbe() {
 		backendMin := time.Hour // Start with large value
 
 		for _, method := range sp.probeMethods {
-			reqBody := []byte(fmt.Sprintf(
-				`{"jsonrpc":"2.0","method":"%s","params":[],"id":"probe-%d"}`,
-				method, time.Now().UnixNano(),
-			))
+			methodMin := time.Hour // Track minimum for this method on this backend
+			methodSuccesses := 0
 
-			req, err := http.NewRequest("POST", backend.URL, bytes.NewReader(reqBody))
-			if err != nil {
-				continue
+			// Perform 10 probes for this method and take the minimum
+			for probe := 0; probe < 10; probe++ {
+				reqBody := []byte(fmt.Sprintf(
+					`{"jsonrpc":"2.0","method":"%s","params":[],"id":"probe-%d-%d"}`,
+					method, time.Now().UnixNano(), probe,
+				))
+
+				req, err := http.NewRequest("POST", backend.URL, bytes.NewReader(reqBody))
+				if err != nil {
+					continue
+				}
+
+				req.Header.Set("Content-Type", "application/json")
+				// Ensure connection reuse by setting Connection: keep-alive
+				req.Header.Set("Connection", "keep-alive")
+
+				start := time.Now()
+				resp, err := sp.client.Do(req)
+				duration := time.Since(start)
+
+				if err == nil && resp != nil {
+					resp.Body.Close()
+
+					if resp.StatusCode == 200 {
+						methodSuccesses++
+						successfulProbes++
+
+						// Track minimum for this method on this backend
+						if duration < methodMin {
+							methodMin = duration
+						}
+
+						if sp.enableDetailedLogs {
+							log.Printf("Probe %d/10: backend=%s method=%s duration=%s status=%d (min so far: %s)",
+								probe+1, backend.Name, method, duration, resp.StatusCode, methodMin)
+						}
+					}
+				}
+
+				// Small delay between probes to avoid overwhelming the backend
+				if probe < 9 { // Don't delay after the last probe
+					time.Sleep(10 * time.Millisecond)
+				}
 			}
 
-			req.Header.Set("Content-Type", "application/json")
+			// Only use this method's timing if we had successful probes
+			if methodSuccesses > 0 && methodMin < time.Hour {
+				// Update method timing (use minimum across all backends)
+				if currentMin, exists := newMethodTimings[method]; !exists || methodMin < currentMin {
+					newMethodTimings[method] = methodMin
+				}
 
-			start := time.Now()
-			resp, err := sp.client.Do(req)
-			duration := time.Since(start)
+				// Track backend minimum
+				if methodMin < backendMin {
+					backendMin = methodMin
+				}
 
-			if err == nil && resp != nil {
-				resp.Body.Close()
-
-				if resp.StatusCode == 200 {
-					successfulProbes++
-
-					// Update method timing (use minimum across all backends)
-					if currentMin, exists := newMethodTimings[method]; !exists || duration < currentMin {
-						newMethodTimings[method] = duration
-					}
-
-					// Track backend minimum
-					if duration < backendMin {
-						backendMin = duration
-					}
-
-					if sp.enableDetailedLogs {
-						log.Printf("Probe: backend=%s method=%s duration=%s status=%d",
-							backend.Name, method, duration, resp.StatusCode)
-					}
+				if sp.enableDetailedLogs {
+					log.Printf("Method %s on backend %s: %d/10 successful probes, min duration: %s",
+						method, backend.Name, methodSuccesses, methodMin)
 				}
 			}
 		}
@@ -1647,10 +1674,12 @@ func main() {
 	client := &http.Client{
 		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
-			MaxIdleConns:        100,
-			MaxIdleConnsPerHost: 100,
-			IdleConnTimeout:     90 * time.Second,
-			DisableCompression:  true, // Typically JSON-RPC doesn't benefit from compression
+			MaxIdleConns:        200,               // Increased for better connection pooling
+			MaxIdleConnsPerHost: 50,                // Increased per-host limit for probing
+			IdleConnTimeout:     120 * time.Second, // Longer idle timeout for connection reuse
+			DisableCompression:  true,              // Typically JSON-RPC doesn't benefit from compression
+			DisableKeepAlives:   false,             // Ensure keep-alives are enabled
+			MaxConnsPerHost:     50,                // Limit concurrent connections per host
 		},
 	}
 
