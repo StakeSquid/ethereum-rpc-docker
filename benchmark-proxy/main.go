@@ -1168,11 +1168,11 @@ func (sc *StatsCollector) printSummary() {
 			cuPrice := sc.methodCUPrices[method]
 			cuEarned := sc.methodCU[method]
 
-			fmt.Printf("  %-50s Count: %-5d Avg: %-10s Min: %-10s Max: %-10s p50: %-10s p90: %-10s p99: %-10s CU: %d x %d = %d\n",
+			fmt.Printf("  %-50s Count: %-5d Avg: %-10s Min: %-10s Max: %-10s p50: %-10s p90: %-10s p99: %-10s CU: %d (%d)\n",
 				displayLabel, len(durations),
 				formatDuration(avg), formatDuration(minDuration), formatDuration(max),
 				formatDuration(p50), formatDuration(p90), formatDuration(p99),
-				cuPrice, len(durations), cuEarned)
+				cuEarned, cuPrice)
 		}
 	}
 
