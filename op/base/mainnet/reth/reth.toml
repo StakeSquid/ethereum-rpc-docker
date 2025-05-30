@@ -1,0 +1,2 @@
+[stages.merkle]
+clean_threshold = 30000
