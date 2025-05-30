@@ -272,6 +272,46 @@ func parseRequestInfo(body []byte) (*RequestInfo, error) {
 		HasParams: len(req.Params) > 0,
 	}
 
+	// Special handling for eth_getLogs
+	if req.Method == "eth_getLogs" && info.HasParams {
+		blockTags, err := parseEthLogsFilter(req.Params)
+		if err == nil && len(blockTags) > 0 {
+			// For eth_getLogs, we'll return the first block tag that requires primary routing
+			// or "latest" if any of them is "latest"
+			for _, tag := range blockTags {
+				if requiresPrimaryBackend(tag) || tag == "latest" {
+					info.BlockTag = tag
+					break
+				}
+			}
+			// If no special tags found but we have tags, use the first one
+			if info.BlockTag == "" && len(blockTags) > 0 {
+				info.BlockTag = blockTags[0]
+			}
+		}
+		return info, nil
+	}
+
+	// Special handling for trace_filter
+	if req.Method == "trace_filter" && info.HasParams {
+		blockTags, err := parseTraceFilter(req.Params)
+		if err == nil && len(blockTags) > 0 {
+			// For trace_filter, we'll return the first block tag that requires primary routing
+			// or "latest" if any of them is "latest"
+			for _, tag := range blockTags {
+				if requiresPrimaryBackend(tag) || tag == "latest" {
+					info.BlockTag = tag
+					break
+				}
+			}
+			// If no special tags found but we have tags, use the first one
+			if info.BlockTag == "" && len(blockTags) > 0 {
+				info.BlockTag = blockTags[0]
+			}
+		}
+		return info, nil
+	}
+
 	// Methods that commonly use block tags
 	methodsWithBlockTags := map[string]int{
 		"eth_getBalance":                          -1, // last param
@@ -286,8 +326,17 @@ func parseRequestInfo(body []byte) (*RequestInfo, error) {
 		"eth_getTransactionByBlockNumberAndIndex": 0,  // first param
 		"eth_getUncleByBlockNumberAndIndex":       0,  // first param
 		"eth_getUncleCountByBlockNumber":          0,  // first param
+		// Trace methods that use block tags
+		"trace_block":                   0,  // first param (block number/tag)
+		"trace_replayBlockTransactions": 0,  // first param (block number/tag)
+		"trace_call":                    -1, // last param (block tag)
+		// Debug methods that use block tags
+		"debug_traceBlockByNumber": 0, // first param (block number/tag)
+		"debug_traceCall":          1, // SPECIAL: second param (call object, block tag, trace config)
 		// Note: eth_getLogs uses a filter object with fromBlock/toBlock fields,
-		// which would need special handling and is not included here
+		// which is handled specially above
+		// Note: trace_filter uses a filter object similar to eth_getLogs,
+		// which needs special handling
 	}
 
 	paramPos, hasBlockTag := methodsWithBlockTags[req.Method]
@@ -318,6 +367,15 @@ func parseRequestInfo(body []byte) (*RequestInfo, error) {
 		return info, nil
 	}
 
+	// Special handling for debug_traceCall where position 1 might be omitted
+	// If we're checking position 1 but only have 2 params, the middle param might be omitted
+	if req.Method == "debug_traceCall" && paramPos == 1 && len(params) == 2 {
+		// With only 2 params, it's likely (call_object, trace_config) without block tag
+		// The block tag would default to "latest" on the backend
+		info.BlockTag = "latest"
+		return info, nil
+	}
+
 	// Try to parse as string (block tag)
 	var blockTag string
 	if err := json.Unmarshal(blockTagParam, &blockTag); err == nil {
@@ -336,6 +394,25 @@ func parseBlockTagsFromBatch(body []byte) ([]string, error) {
 
 	blockTags := make([]string, 0)
 	for _, req := range batchReqs {
+		// Special handling for eth_getLogs
+		if req.Method == "eth_getLogs" && len(req.Params) > 0 {
+			logsTags, err := parseEthLogsFilter(req.Params)
+			if err == nil {
+				blockTags = append(blockTags, logsTags...)
+			}
+			continue
+		}
+
+		// Special handling for trace_filter
+		if req.Method == "trace_filter" && len(req.Params) > 0 {
+			traceTags, err := parseTraceFilter(req.Params)
+			if err == nil {
+				blockTags = append(blockTags, traceTags...)
+			}
+			continue
+		}
+
+		// Regular handling for other methods
 		reqBytes, err := json.Marshal(req)
 		if err != nil {
 			continue
@@ -348,6 +425,92 @@ func parseBlockTagsFromBatch(body []byte) ([]string, error) {
 
 		if info.BlockTag != "" {
 			blockTags = append(blockTags, info.BlockTag)
+		}
+	}
+
+	return blockTags, nil
+}
+
+// parseEthLogsFilter extracts block tags from eth_getLogs filter parameter
+func parseEthLogsFilter(params json.RawMessage) ([]string, error) {
+	// eth_getLogs takes a single filter object parameter
+	var paramArray []json.RawMessage
+	if err := json.Unmarshal(params, &paramArray); err != nil {
+		return nil, err
+	}
+
+	if len(paramArray) == 0 {
+		return nil, nil
+	}
+
+	// Parse the filter object
+	var filter struct {
+		FromBlock json.RawMessage `json:"fromBlock"`
+		ToBlock   json.RawMessage `json:"toBlock"`
+	}
+
+	if err := json.Unmarshal(paramArray[0], &filter); err != nil {
+		return nil, err
+	}
+
+	blockTags := make([]string, 0, 2)
+
+	// Extract fromBlock if present
+	if len(filter.FromBlock) > 0 {
+		var fromBlock string
+		if err := json.Unmarshal(filter.FromBlock, &fromBlock); err == nil && fromBlock != "" {
+			blockTags = append(blockTags, fromBlock)
+		}
+	}
+
+	// Extract toBlock if present
+	if len(filter.ToBlock) > 0 {
+		var toBlock string
+		if err := json.Unmarshal(filter.ToBlock, &toBlock); err == nil && toBlock != "" {
+			blockTags = append(blockTags, toBlock)
+		}
+	}
+
+	return blockTags, nil
+}
+
+// parseTraceFilter extracts block tags from trace_filter filter parameter
+func parseTraceFilter(params json.RawMessage) ([]string, error) {
+	// trace_filter takes a single filter object parameter
+	var paramArray []json.RawMessage
+	if err := json.Unmarshal(params, &paramArray); err != nil {
+		return nil, err
+	}
+
+	if len(paramArray) == 0 {
+		return nil, nil
+	}
+
+	// Parse the filter object
+	var filter struct {
+		FromBlock json.RawMessage `json:"fromBlock"`
+		ToBlock   json.RawMessage `json:"toBlock"`
+	}
+
+	if err := json.Unmarshal(paramArray[0], &filter); err != nil {
+		return nil, err
+	}
+
+	blockTags := make([]string, 0, 2)
+
+	// Extract fromBlock if present
+	if len(filter.FromBlock) > 0 {
+		var fromBlock string
+		if err := json.Unmarshal(filter.FromBlock, &fromBlock); err == nil && fromBlock != "" {
+			blockTags = append(blockTags, fromBlock)
+		}
+	}
+
+	// Extract toBlock if present
+	if len(filter.ToBlock) > 0 {
+		var toBlock string
+		if err := json.Unmarshal(filter.ToBlock, &toBlock); err == nil && toBlock != "" {
+			blockTags = append(blockTags, toBlock)
 		}
 	}
 
@@ -659,6 +822,7 @@ func initCUPrices() map[string]int {
 		"debug_traceBlockByNumber":                90,
 		"debug_traceCall":                         90,
 		"debug_traceTransaction":                  90,
+		"debug_storageRangeAt":                    50, // Storage access method
 		"eth_accounts":                            0,
 		"eth_blockNumber":                         10,
 		"eth_call":                                21,
@@ -1870,6 +2034,19 @@ func requiresPrimaryOnlyMethod(method string) bool {
 		"eth_getWork":        true,
 		"eth_submitWork":     true,
 		"eth_submitHashrate": true,
+
+		// Complex methods with special block handling
+		"eth_callMany":   true, // Has complex block handling with multiple calls at different blocks
+		"eth_simulateV1": true, // Simulation should use primary for consistency
+
+		// Trace methods that depend on transaction data
+		"trace_transaction":       true, // Traces already mined transaction by hash
+		"trace_replayTransaction": true, // Replays transaction execution by hash
+		"trace_rawTransaction":    true, // Simulates raw transaction data
+
+		// Debug methods that should use primary
+		"debug_traceTransaction": true, // Debug version of trace by tx hash
+		"debug_storageRangeAt":   true, // Accesses internal storage state
 	}
 
 	return primaryOnlyMethods[method]
