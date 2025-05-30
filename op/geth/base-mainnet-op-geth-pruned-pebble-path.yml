@@ -90,6 +90,7 @@ services:
       - chains
     volumes:
       - ${BASE_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-base-mainnet-op-geth-pruned-pebble-path}:/data
+      - ./op/base/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -143,6 +144,7 @@ services:
     networks:
       - chains
     volumes:
+      - ./op/base/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:

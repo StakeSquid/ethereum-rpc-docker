@@ -56,6 +56,7 @@ services:
     entrypoint: [op-reth, node]
     command:
       - --chain=optimism
+      - --config=/config/reth/reth.toml
       - --datadir=/root/.local/share/reth
       - --engine.cross-block-cache-size=${OP_MAINNET_RETH_STATE_CACHE:-4096}
       - --full
