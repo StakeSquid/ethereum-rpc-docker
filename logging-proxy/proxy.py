@@ -75,27 +75,100 @@ def proxy():
 
     # Send the original 'incoming' data to the target
     response = requests.post(TARGET_URL_HTTP, json=incoming)
-    outgoing = response.json()
+    
+    # Extract method name for error tracking
+    method_name = None
+    if isinstance(incoming, dict) and 'method' in incoming:
+        method_name = incoming['method']
+    
+    # Handle HTTP errors
+    if response.status_code != 200:
+        # Log HTTP error
+        log_lines = [request_log]
+        error_log = f"<== HTTP Error {response.status_code}: {response.reason}"
+        log_lines.append(error_log)
+        
+        # Try to include response body if it's not too large
+        try:
+            response_text = response.text[:1000]  # Limit to first 1000 chars
+            if response_text:
+                log_lines.append(f"<== Response Body: {response_text}")
+        except:
+            pass
+        
+        print('\n---\n'.join(log_lines), file=sys.stdout, flush=True)
+        
+        # Track this as an error
+        if method_name:
+            error_methods.add(method_name)
+        
+        # Create JSON-RPC error response
+        outgoing = {
+            "jsonrpc": "2.0",
+            "error": {
+                "code": -32603,  # Internal error per JSON-RPC spec
+                "message": f"HTTP {response.status_code} from upstream server",
+                "data": {
+                    "http_status": response.status_code,
+                    "http_reason": response.reason
+                }
+            }
+        }
+        if isinstance(incoming, dict) and 'id' in incoming:
+            outgoing['id'] = incoming['id']
+        else:
+            outgoing['id'] = None
+            
+        return jsonify(outgoing)
+    
+    # Try to parse JSON response
+    try:
+        outgoing = response.json()
+    except ValueError as e:
+        # Log JSON parsing error
+        log_lines = [request_log]
+        error_log = f"<== JSON Parse Error: {str(e)}"
+        log_lines.append(error_log)
+        log_lines.append(f"<== Response Body: {response.text[:500]}")
+        
+        print('\n---\n'.join(log_lines), file=sys.stdout, flush=True)
+        
+        # Track this as an error
+        if method_name:
+            error_methods.add(method_name)
+        
+        # Create JSON-RPC error response
+        outgoing = {
+            "jsonrpc": "2.0",
+            "error": {
+                "code": -32603,  # Internal error
+                "message": "Invalid JSON response from upstream server",
+                "data": str(e)
+            }
+        }
+        if isinstance(incoming, dict) and 'id' in incoming:
+            outgoing['id'] = incoming['id']
+        else:
+            outgoing['id'] = None
+            
+        return jsonify(outgoing)
 
     # Initialize log_lines here, decide what to include based on error status and ignored methods
     log_lines = []
     log_this_error = True # Flag to control logging of the current error
 
     if 'error' in outgoing:
-        method_name = None
         # First, check if the method itself dictates ignoring the error
-        if isinstance(incoming, dict) and 'method' in incoming:
-            method_name = incoming['method']
-            if method_name in ignored_error_methods:
-                log_this_error = False
-                print(f"INFO: Ignored error for method '{method_name}' (logging suppressed).", file=sys.stdout, flush=True)
+        if method_name and method_name in ignored_error_methods:
+            log_this_error = False
+            print(f"INFO: Ignored error for method '{method_name}' (logging suppressed).", file=sys.stdout, flush=True)
 
         # Second, if we haven't decided to ignore it yet, check the error code
-        #if log_this_error and isinstance(outgoing['error'], dict) and outgoing['error'].get('code') == 3:
-        #    log_this_error = False
+        if log_this_error and isinstance(outgoing['error'], dict) and outgoing['error'].get('code') == 3:
+            log_this_error = False
             # Optional: Log that an error was ignored due to its code
-        #    method_str = f" for method '{method_name}'" if method_name else ""
-        #    print(f"INFO: Ignored error{method_str} due to error code 3 (logging suppressed).", file=sys.stdout, flush=True)
+            method_str = f" for method '{method_name}'" if method_name else ""
+            print(f"INFO: Ignored error{method_str} due to error code 3 (logging suppressed).", file=sys.stdout, flush=True)
 
         # Only log the request/error response if log_this_error is True
         if log_this_error:
@@ -110,9 +183,8 @@ def proxy():
 
     else:
         # For success, log only the success message with the method name
-        method_name = "unknown_method" # Default if not found
-        if isinstance(incoming, dict) and 'method' in incoming:
-            method_name = incoming['method']
+        if not method_name:
+            method_name = "unknown_method" # Default if not found
         response_log = f"<== Response (Success): Method '{method_name}' completed."
         log_lines.append(response_log)
 
