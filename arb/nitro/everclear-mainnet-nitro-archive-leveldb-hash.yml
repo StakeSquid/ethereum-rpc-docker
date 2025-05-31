@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   everclear-mainnet-archive:
-    image: ${EVERCLEAR_NITRO_IMAGE:-offchainlabs/nitro-node}:${EVERCLEAR_MAINNET_NITRO_VERSION:-v3.6.4-28199cd}
+    image: ${EVERCLEAR_NITRO_IMAGE:-offchainlabs/nitro-node}:${EVERCLEAR_MAINNET_NITRO_VERSION:-v3.6.5-89cef87}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

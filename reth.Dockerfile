@@ -108,6 +108,11 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-enable-dfa-jump-thread -C llvm-args=-slp-vectorize-hor-store -C llvm-args=-data-sections -C llvm-args=-function-sections" \
         CFLAGS="$CFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=131072" \
         CXXFLAGS="$CXXFLAGS_BASE -march=znver4 -mtune=znver4 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=1024 --param l3-cache-size=131072"; \
+    elif [ "$ARCH_TARGET" = "epyc-7443p" ] || [ "$ARCH_TARGET" = "zen3-7443p" ]; then \
+        # AMD EPYC 7443P: 24 cores, 12MB L2 (512KB per core), 128MB L3
+        RUSTFLAGS="-C target-cpu=znver3 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner -C llvm-args=-enable-gvn-hoist -C llvm-args=-slp-vectorize-hor-store -C llvm-args=-data-sections -C llvm-args=-function-sections" \
+        CFLAGS="$CFLAGS_BASE -march=znver3 -mtune=znver3 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=512 --param l3-cache-size=131072" \
+        CXXFLAGS="$CXXFLAGS_BASE -march=znver3 -mtune=znver3 --param l1-cache-line-size=64 --param l1-cache-size=32 --param l2-cache-size=512 --param l3-cache-size=131072"; \
     elif [ "$ARCH_TARGET" = "zen4" ]; then \
         RUSTFLAGS="-C target-cpu=znver4 -C link-arg=-fuse-ld=/usr/local/bin/mold -C opt-level=3 -C llvm-args=-enable-machine-outliner" \
         CFLAGS="$CFLAGS_BASE -march=znver4" \
