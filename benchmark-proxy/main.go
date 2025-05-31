@@ -2154,6 +2154,11 @@ func requiresPrimaryOnlyMethod(method string) bool {
 		// Debug methods that should use primary
 		"debug_traceTransaction": true, // Debug version of trace by tx hash
 		"debug_storageRangeAt":   true, // Accesses internal storage state
+
+		// Transaction query methods - must go to primary
+		// These can return null if tx is not found, and secondary might not have recent txs
+		"eth_getTransactionByHash":  true,
+		"eth_getTransactionReceipt": true,
 	}
 
 	return primaryOnlyMethods[method]
