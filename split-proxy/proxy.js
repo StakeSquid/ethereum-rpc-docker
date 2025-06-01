@@ -135,7 +135,7 @@ class RPCProxy {
   async handleRequest(req, res) {
     const requestId = this.generateRequestId();
     const startTime = Date.now();
-    
+    const hrStartTime = process.hrtime.bigint(); // Add high-resolution start time
     const requestBody = req.body;
 
     // Validate request body
@@ -228,16 +228,19 @@ class RPCProxy {
     // Track when response is actually finished
     res.on('finish', () => {
       responseCompleted = true;
+      const finishTimeHR = Number(process.hrtime.bigint() - hrStartTime) / 1000000;
       logger.debug({
         requestId,
         method: requestBody.method,
         elapsedMs: Date.now() - startTime,
+        finishTimeHrMs: finishTimeHR,
       }, 'Response finished successfully');
     });
 
     // Also track response close events
     res.on('close', () => {
       if (!responseCompleted) {
+        const closeTimeHR = Number(process.hrtime.bigint() - hrStartTime) / 1000000;
         logger.warn({
           requestId,
           reason: 'response_closed',
@@ -245,6 +248,7 @@ class RPCProxy {
           headersSent: res.headersSent,
           method: requestBody.method,
           elapsedMs: Date.now() - startTime,
+          closeTimeHrMs: closeTimeHR,
           clientClosed,
         }, 'Response connection closed before completion');
       }
@@ -256,7 +260,8 @@ class RPCProxy {
         requestId, 
         requestBody, 
         res, 
-        startTime, 
+        startTime,
+        hrStartTime, // Pass high-resolution start time
         () => clientClosed, 
         () => responseCompleted = true,
         () => clientCloseReason
@@ -343,7 +348,7 @@ class RPCProxy {
     }
   }
 
-  async streamResponse(requestId, requestBody, res, startTime, isClientClosed, isResponseCompleted, getClientCloseReason) {
+  async streamResponse(requestId, requestBody, res, startTime, hrStartTime, isClientClosed, isResponseCompleted, getClientCloseReason) {
     let responseData = '';
     let statusCode = 0;
     let upstreamResponse = null;
@@ -552,6 +557,7 @@ class RPCProxy {
           isResponseCompleted(); // Mark response as completed
           
           const totalTime = Date.now() - startTime;
+          const totalTimeHR = Number(process.hrtime.bigint() - hrStartTime) / 1000000; // Convert nanoseconds to milliseconds with decimal precision
           
           // Combine chunks and convert to string for logging
           const rawData = Buffer.concat(chunks);
@@ -580,21 +586,25 @@ class RPCProxy {
               if (res.writableHighWaterMark && res.writableLength > 0) {
                 res.once('drain', () => {
                   res.end(() => {
+                    const transferCompleteHR = Number(process.hrtime.bigint() - hrStartTime) / 1000000;
                     logger.debug({
                       requestId,
                       endpoint: 'stream',
                       responseSize: rawData.length,
                       clientClosed: isClientClosed(),
+                      transferCompleteHrMs: transferCompleteHR,
                     }, 'Ended streaming response after drain');
                   });
                 });
               } else {
                 res.end(() => {
+                  const transferCompleteHR = Number(process.hrtime.bigint() - hrStartTime) / 1000000;
                   logger.debug({
                     requestId,
                     endpoint: 'stream',
                     responseSize: rawData.length,
                     clientClosed: isClientClosed(),
+                    transferCompleteHrMs: transferCompleteHR,
                   }, 'Ended streaming response');
                 });
               }
@@ -614,6 +624,7 @@ class RPCProxy {
               requestId,
               endpoint: 'stream',
               totalTimeMs: totalTime,
+              totalTimeHrMs: totalTimeHR, // High-resolution time in milliseconds
               responseSize: rawData.length,
               contentEncoding: response.headers['content-encoding'],
               responseHeaders: response.headers,
@@ -628,10 +639,16 @@ class RPCProxy {
             }, 'Client closed connection quickly (normal for JSON-RPC)');
           }
           
+          // Add transfer timing to final log
+          const endTime = process.hrtime.bigint();
+          const streamingDurationHR = Number(endTime - streamMethodStartTime) / 1000000;
+          
           logger.info({
             requestId,
             endpoint: 'stream',
             totalTimeMs: totalTime,
+            totalTimeHrMs: totalTimeHR, // High-resolution time in milliseconds
+            streamingDurationHrMs: streamingDurationHR, // Time spent in streamResponse method
             responseSize: rawData.length,
             contentEncoding: response.headers['content-encoding'],
             clientClosed: isClientClosed(),
@@ -642,6 +659,7 @@ class RPCProxy {
             data: responseData,
             size: rawData.length,
             latency: totalTime,
+            latencyHR: totalTimeHR, // Add high-resolution latency
             contentEncoding: response.headers['content-encoding'],
           });
         });
@@ -682,6 +700,7 @@ class RPCProxy {
   async compareResponse(requestId, requestBody, startTime) {
     try {
       const compareStart = Date.now();
+      const compareStartHR = process.hrtime.bigint(); // Add high-resolution timing
       // Create fresh client for this request
       const client = this.createClient(this.compareEndpoint);
       const response = await client.post('/', requestBody, {
@@ -693,6 +712,7 @@ class RPCProxy {
       });
 
       const compareLatency = Date.now() - compareStart;
+      const compareLatencyHR = Number(process.hrtime.bigint() - compareStartHR) / 1000000; // High-resolution in milliseconds
       const compareData = typeof response.data === 'string' 
         ? response.data 
         : JSON.stringify(response.data);
@@ -702,6 +722,7 @@ class RPCProxy {
         requestId,
         endpoint: 'compare',
         latencyMs: compareLatency,
+        latencyHrMs: compareLatencyHR, // High-resolution timing
         statusCode: response.status,
         responseSize: compareSize,
       }, 'Compare response received');
@@ -711,6 +732,7 @@ class RPCProxy {
         data: compareData,
         size: compareSize,
         latency: compareLatency,
+        latencyHR: compareLatencyHR, // Include high-resolution timing
       };
 
     } catch (error) {
