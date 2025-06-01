@@ -252,8 +252,11 @@ class RPCProxy {
 
       // Capture and stream the response
       response.data.on('data', (chunk) => {
+        // Always capture data for comparison purposes
+        responseData += chunk.toString();
+        
+        // Only write to client if still connected
         if (!isClientClosed() && !res.writableEnded) {
-          responseData += chunk.toString();
           try {
             res.write(chunk);
           } catch (writeError) {
