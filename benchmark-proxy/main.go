@@ -202,7 +202,8 @@ type StatsCollector struct {
 	methodCU                           map[string]int    // Track CU earned per method
 	historicalCU                       []CUDataPoint     // Historical CU data for different time windows
 	hasSecondaryBackends               bool              // Track if secondary backends are configured
-	skippedSecondaryRequests           int               // Track how many secondary requests were skipped
+	skippedSecondaryRequests           int               // Track how many REQUESTS had secondaries skipped
+	totalSecondarySkips                int               // Track total individual secondary backend skips
 	secondaryProbe                     *SecondaryProbe   // Reference to secondary probe
 	chainHeadMonitor                   *ChainHeadMonitor // Reference to chain head monitor
 }
@@ -1038,6 +1039,7 @@ func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Dur
 	}
 
 	// Add stats to the collection (skip actual-first-response as it's synthetic)
+	requestHadSkips := false // Track if this request had any secondary skips
 	for _, stat := range stats {
 		if stat.Backend == "actual-first-response" {
 			continue // Don't add synthetic entries to regular stats
@@ -1049,8 +1051,9 @@ func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Dur
 			if !strings.Contains(stat.Error.Error(), "skipped - primary responded") {
 				sc.errorCount++
 			} else {
-				// Track that we skipped a secondary request
-				sc.skippedSecondaryRequests++
+				// Track individual secondary skip
+				sc.totalSecondarySkips++
+				requestHadSkips = true
 			}
 		}
 
@@ -1088,6 +1091,11 @@ func (sc *StatsCollector) AddStats(stats []ResponseStats, totalDuration time.Dur
 				}
 			}
 		}
+	}
+
+	// Count this request as having skipped secondaries if any were skipped
+	if requestHadSkips {
+		sc.skippedSecondaryRequests++
 	}
 
 	sc.totalRequests++
@@ -1307,9 +1315,14 @@ func (sc *StatsCollector) printSummary() {
 	}
 
 	if sc.hasSecondaryBackends && sc.skippedSecondaryRequests > 0 {
-		fmt.Printf("Skipped Secondary Requests: %d (%.1f%% of requests)\n",
+		fmt.Printf("Requests with Skipped Secondaries: %d (%.1f%% of requests)\n",
 			sc.skippedSecondaryRequests,
 			float64(sc.skippedSecondaryRequests)/float64(sc.totalRequests)*100)
+		if sc.totalSecondarySkips > sc.skippedSecondaryRequests {
+			fmt.Printf("Total Secondary Skips: %d (%.1f skips per request with skips)\n",
+				sc.totalSecondarySkips,
+				float64(sc.totalSecondarySkips)/float64(sc.skippedSecondaryRequests))
+		}
 	}
 	fmt.Printf("Total Compute Units Earned (current interval): %d CU\n", sc.totalCU)
 
@@ -1895,6 +1908,7 @@ func (sc *StatsCollector) printSummary() {
 	// Reset error count for the next interval
 	sc.errorCount = 0
 	sc.skippedSecondaryRequests = 0
+	sc.totalSecondarySkips = 0
 	sc.totalRequests = 0
 	sc.totalWsConnections = 0
 
@@ -2765,6 +2779,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 					case primaryFailedFast <- struct{}{}:
 					default:
 					}
+					if enableDetailedLogs {
+						log.Printf("Primary backend failed with connection error for %s: %v", displayMethod, err)
+					}
 				}
 
 				statsChan <- ResponseStats{
@@ -2784,6 +2801,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 				select {
 				case primaryFailedFast <- struct{}{}:
 				default:
+				}
+				if enableDetailedLogs {
+					log.Printf("Primary backend returned HTTP error %d for %s", resp.StatusCode, displayMethod)
 				}
 			}
 
