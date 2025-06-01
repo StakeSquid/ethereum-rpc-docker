@@ -260,23 +260,39 @@ class RPCProxy {
         () => responseCompleted = true,
         () => clientCloseReason
       );
-      const comparePromise = this.compareResponse(requestId, requestBody, startTime);
+      
+      // Check if method should be excluded from comparison
+      const excludedMethods = ['eth_sendRawTransaction', 'eth_sendTransaction'];
+      const shouldCompare = !excludedMethods.includes(requestBody.method);
+      
+      let comparePromise = null;
+      if (shouldCompare) {
+        comparePromise = this.compareResponse(requestId, requestBody, startTime);
+      } else {
+        logger.info({
+          requestId,
+          method: requestBody.method,
+          reason: 'excluded_write_transaction',
+        }, 'Skipping comparison for write transaction method');
+      }
 
       // Wait for the stream to complete and get response info
       const streamInfo = await streamPromise;
 
-      // Get comparison response
-      comparePromise.then(compareInfo => {
-        if (compareInfo && streamInfo) {
-          this.compareResponses(requestId, streamInfo, compareInfo, requestBody);
-        }
-      }).catch(err => {
-        logger.error({
-          requestId,
-          error: err.message,
-          endpoint: 'compare',
-        }, 'Error in comparison request');
-      });
+      // Get comparison response if applicable
+      if (comparePromise) {
+        comparePromise.then(compareInfo => {
+          if (compareInfo && streamInfo) {
+            this.compareResponses(requestId, streamInfo, compareInfo, requestBody);
+          }
+        }).catch(err => {
+          logger.error({
+            requestId,
+            error: err.message,
+            endpoint: 'compare',
+          }, 'Error in comparison request');
+        });
+      }
 
     } catch (error) {
       logger.error({
