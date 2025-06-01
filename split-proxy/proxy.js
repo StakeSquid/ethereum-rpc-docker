@@ -136,9 +136,6 @@ class RPCProxy {
     const requestId = this.generateRequestId();
     const startTime = Date.now();
     
-    // Add high-resolution timing
-    const hrStartTime = process.hrtime.bigint();
-    
     const requestBody = req.body;
 
     // Validate request body
@@ -350,6 +347,9 @@ class RPCProxy {
     let responseData = '';
     let statusCode = 0;
     let upstreamResponse = null;
+    
+    // Add high-resolution timing for this method
+    const streamMethodStartTime = process.hrtime.bigint();
 
     try {
       // Create fresh client for this request
@@ -417,7 +417,7 @@ class RPCProxy {
       const streamLatency = Date.now() - startTime;
       
       // Calculate pre-streaming overhead in nanoseconds
-      const preStreamOverheadNs = Number(process.hrtime.bigint() - hrStartTime);
+      const preStreamOverheadNs = Number(process.hrtime.bigint() - streamMethodStartTime);
 
       logger.info({
         requestId,
