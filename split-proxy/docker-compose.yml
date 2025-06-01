@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  eth-rpc-proxy:
+    build: .
+    container_name: eth-rpc-proxy
+    ports:
+      - "8545:8545"
+    environment:
+      # Replace these with your actual RPC endpoints
+      PRIMARY_RPC: ${PRIMARY_RPC:-http://primary-node:8545}
+      SECONDARY_RPC: ${SECONDARY_RPC:-http://secondary-node:8545}
+      PRIMARY_ROLE: ${PRIMARY_ROLE:-primary}
+      LATENCY_THRESHOLD_MS: ${LATENCY_THRESHOLD_MS:-1000}
+      SIZE_DIFF_THRESHOLD: ${SIZE_DIFF_THRESHOLD:-100}
+      LOG_MISMATCHES: ${LOG_MISMATCHES:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      NODE_ENV: production
+    restart: unless-stopped
+    networks:
+      - eth-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8545/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  eth-network:
+    driver: bridge 
