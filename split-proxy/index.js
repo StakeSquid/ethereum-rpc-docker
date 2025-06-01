@@ -12,6 +12,31 @@ app.use(express.json({
   type: 'application/json'
 }));
 
+// Request timeout middleware
+app.use((req, res, next) => {
+  // Set request timeout
+  req.setTimeout(config.requestTimeout, () => {
+    logger.error({
+      method: req.method,
+      url: req.url,
+      timeout: config.requestTimeout,
+    }, 'Request timeout');
+    
+    if (!res.headersSent) {
+      res.status(504).json({
+        jsonrpc: '2.0',
+        error: {
+          code: -32000,
+          message: 'Request timeout',
+        },
+        id: req.body?.id,
+      });
+    }
+  });
+  
+  next();
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({
@@ -59,6 +84,19 @@ const server = app.listen(config.port, () => {
     sizeDiffThreshold: config.sizeDiffThreshold,
   }, 'ETH JSON-RPC proxy started');
 });
+
+// Set server timeouts to be longer than request timeout
+// This prevents the server from closing connections while requests are in flight
+server.timeout = config.requestTimeout + 5000; // Add 5 seconds buffer
+server.keepAliveTimeout = config.requestTimeout + 5000;
+server.headersTimeout = config.requestTimeout + 6000; // Should be > keepAliveTimeout
+
+logger.info({
+  serverTimeout: server.timeout,
+  keepAliveTimeout: server.keepAliveTimeout,
+  headersTimeout: server.headersTimeout,
+  requestTimeout: config.requestTimeout,
+}, 'Server timeout configuration');
 
 // Graceful shutdown
 process.on('SIGTERM', () => {

@@ -146,14 +146,54 @@ class RPCProxy {
 
     // Handle client disconnect
     let clientClosed = false;
+    let clientCloseReason = null;
+    
     req.on('close', () => {
-      clientClosed = true;
-      logger.warn({ requestId }, 'Client connection closed');
+      if (!clientClosed) {
+        clientClosed = true;
+        clientCloseReason = 'connection_closed';
+        logger.warn({ 
+          requestId,
+          reason: clientCloseReason,
+          headers: req.headers,
+          userAgent: req.headers['user-agent'],
+          contentLength: req.headers['content-length'],
+          method: requestBody.method,
+          elapsedMs: Date.now() - startTime,
+        }, 'Client connection closed');
+      }
     });
 
     req.on('error', (error) => {
-      clientClosed = true;
-      logger.error({ requestId, error: error.message }, 'Client connection error');
+      if (!clientClosed) {
+        clientClosed = true;
+        clientCloseReason = `connection_error: ${error.code || error.message}`;
+        logger.error({ 
+          requestId, 
+          error: error.message,
+          code: error.code,
+          reason: clientCloseReason,
+          headers: req.headers,
+          method: requestBody.method,
+          elapsedMs: Date.now() - startTime,
+        }, 'Client connection error');
+      }
+    });
+
+    // Also track response close events
+    res.on('close', () => {
+      if (!clientClosed) {
+        clientClosed = true;
+        clientCloseReason = 'response_closed';
+        logger.warn({
+          requestId,
+          reason: clientCloseReason,
+          finished: res.finished,
+          headersSent: res.headersSent,
+          method: requestBody.method,
+          elapsedMs: Date.now() - startTime,
+        }, 'Response connection closed');
+      }
     });
 
     try {
@@ -228,9 +268,15 @@ class RPCProxy {
       // Set response headers only if client hasn't closed
       if (!isClientClosed() && !res.headersSent) {
         res.status(response.status);
+        
+        // Ensure proper keep-alive handling
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('Keep-Alive', `timeout=${Math.floor(config.requestTimeout / 1000)}`);
+        
         Object.entries(response.headers).forEach(([key, value]) => {
           // Remove content-encoding since we're requesting uncompressed
-          if (key.toLowerCase() !== 'content-encoding') {
+          // Don't override Connection header we just set
+          if (key.toLowerCase() !== 'content-encoding' && key.toLowerCase() !== 'connection') {
             res.setHeader(key, value);
           }
         });
