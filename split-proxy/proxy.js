@@ -142,11 +142,16 @@ class RPCProxy {
       method: requestBody.method,
       params: requestBody.params,
       endpoint: 'incoming',
+      httpVersion: req.httpVersion,
+      connection: req.headers.connection,
+      userAgent: req.headers['user-agent'],
+      acceptEncoding: req.headers['accept-encoding'],
     }, 'Received JSON-RPC request');
 
     // Handle client disconnect
     let clientClosed = false;
     let clientCloseReason = null;
+    let responseCompleted = false;
     
     req.on('close', () => {
       if (!clientClosed) {
@@ -160,6 +165,7 @@ class RPCProxy {
           contentLength: req.headers['content-length'],
           method: requestBody.method,
           elapsedMs: Date.now() - startTime,
+          responseCompleted,
         }, 'Client connection closed');
       }
     });
@@ -198,7 +204,7 @@ class RPCProxy {
 
     try {
       // Start both requests in parallel
-      const streamPromise = this.streamResponse(requestId, requestBody, res, startTime, () => clientClosed);
+      const streamPromise = this.streamResponse(requestId, requestBody, res, startTime, () => clientClosed, () => responseCompleted = true);
       const comparePromise = this.compareResponse(requestId, requestBody, startTime);
 
       // Wait for the stream to complete and get response info
@@ -237,7 +243,7 @@ class RPCProxy {
     }
   }
 
-  async streamResponse(requestId, requestBody, res, startTime, isClientClosed) {
+  async streamResponse(requestId, requestBody, res, startTime, isClientClosed, isResponseCompleted) {
     let responseData = '';
     let statusCode = 0;
     let upstreamResponse = null;
@@ -273,9 +279,14 @@ class RPCProxy {
       if (!isClientClosed() && !res.headersSent) {
         res.status(response.status);
         
-        // Ensure proper keep-alive handling
-        res.setHeader('Connection', 'keep-alive');
-        res.setHeader('Keep-Alive', `timeout=${Math.floor(config.requestTimeout / 1000)}`);
+        // Respect client's connection preference
+        const clientConnection = res.req.headers.connection;
+        if (clientConnection && clientConnection.toLowerCase() === 'close') {
+          res.setHeader('Connection', 'close');
+        } else {
+          res.setHeader('Connection', 'keep-alive');
+          res.setHeader('Keep-Alive', `timeout=${Math.floor(config.requestTimeout / 1000)}`);
+        }
         
         Object.entries(response.headers).forEach(([key, value]) => {
           // Don't override Connection header we just set
@@ -321,6 +332,8 @@ class RPCProxy {
 
       return new Promise((resolve, reject) => {
         response.data.on('end', () => {
+          isResponseCompleted(); // Mark response as completed
+          
           if (!isClientClosed() && !res.writableEnded) {
             try {
               res.end();
@@ -337,6 +350,24 @@ class RPCProxy {
           // Combine chunks and convert to string for logging
           const rawData = Buffer.concat(chunks);
           responseData = rawData.toString('utf8');
+          
+          // Log if client closed very early
+          if (isClientClosed() && totalTime < 10) {
+            logger.warn({
+              requestId,
+              endpoint: 'stream',
+              totalTimeMs: totalTime,
+              responseSize: rawData.length,
+              contentEncoding: response.headers['content-encoding'],
+              responseHeaders: response.headers,
+              method: requestBody.method,
+              httpVersion: res.req.httpVersion,
+              keepAlive: res.req.headers.connection,
+              clientClosedAt: clientCloseReason,
+              // For small responses, log the actual data to see what's happening
+              responseData: rawData.length < 200 ? responseData : '[truncated]',
+            }, 'Client closed connection very quickly');
+          }
           
           logger.info({
             requestId,
