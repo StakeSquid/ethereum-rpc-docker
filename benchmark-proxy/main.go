@@ -2577,9 +2577,18 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 	// Track if we've already sent a response
 	var responseHandled atomic.Bool
 	var firstBackendStartTime atomic.Pointer[time.Time]
-	primaryResponseChan := make(chan struct{})  // Signal when primary gets a response - NO BUFFER for broadcast
-	var primaryResponseOnce sync.Once           // Ensure channel is closed only once
-	primaryFailedFast := make(chan struct{}, 1) // Signal when primary fails immediately
+
+	// Count secondary backends for proper channel sizing
+	secondaryCount := 0
+	for _, backend := range backends {
+		if backend.Role == "secondary" {
+			secondaryCount++
+		}
+	}
+
+	// Buffer size = number of secondary backends so all can receive signal
+	primaryResponseChan := make(chan struct{}, secondaryCount) // Signal when primary gets a response
+	primaryFailedFast := make(chan struct{}, 1)                // Signal when primary fails immediately
 
 	for _, backend := range backends {
 		// Method routing checks for secondary backends
@@ -2780,10 +2789,14 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 
 			// Signal primary response immediately for secondary backends to check
 			if b.Role == "primary" && resp.StatusCode < 400 {
-				// Close the channel to broadcast to ALL secondary backends
-				primaryResponseOnce.Do(func() {
-					close(primaryResponseChan)
-				})
+				// Send signal for each secondary backend so they all get notified
+				for i := 0; i < secondaryCount; i++ {
+					select {
+					case primaryResponseChan <- struct{}{}:
+					default:
+						// Channel is full, some secondaries already received signal
+					}
+				}
 			}
 
 			statsChan <- ResponseStats{
