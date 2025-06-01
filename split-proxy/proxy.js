@@ -204,7 +204,15 @@ class RPCProxy {
 
     try {
       // Start both requests in parallel
-      const streamPromise = this.streamResponse(requestId, requestBody, res, startTime, () => clientClosed, () => responseCompleted = true);
+      const streamPromise = this.streamResponse(
+        requestId, 
+        requestBody, 
+        res, 
+        startTime, 
+        () => clientClosed, 
+        () => responseCompleted = true,
+        () => clientCloseReason
+      );
       const comparePromise = this.compareResponse(requestId, requestBody, startTime);
 
       // Wait for the stream to complete and get response info
@@ -243,7 +251,7 @@ class RPCProxy {
     }
   }
 
-  async streamResponse(requestId, requestBody, res, startTime, isClientClosed, isResponseCompleted) {
+  async streamResponse(requestId, requestBody, res, startTime, isClientClosed, isResponseCompleted, getClientCloseReason) {
     let responseData = '';
     let statusCode = 0;
     let upstreamResponse = null;
@@ -363,7 +371,7 @@ class RPCProxy {
               method: requestBody.method,
               httpVersion: res.req.httpVersion,
               keepAlive: res.req.headers.connection,
-              clientClosedAt: clientCloseReason,
+              clientClosedAt: getClientCloseReason(),
               // For small responses, log the actual data to see what's happening
               responseData: rawData.length < 200 ? responseData : '[truncated]',
             }, 'Client closed connection very quickly');
