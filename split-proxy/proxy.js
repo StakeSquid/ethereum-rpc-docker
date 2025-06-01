@@ -397,7 +397,7 @@ class RPCProxy {
       const chunks = [];
       
       // Check if we should buffer the response (for clients that don't handle streaming well)
-      const shouldBuffer = req.headers['user-agent'] && req.headers['user-agent'].includes('ReactorNetty');
+      const shouldBuffer = res.req.headers['user-agent'] && res.req.headers['user-agent'].includes('ReactorNetty');
       
       response.data.on('data', (chunk) => {
         // Always capture raw chunks for comparison
