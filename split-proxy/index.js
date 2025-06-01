@@ -102,6 +102,26 @@ server.timeout = config.requestTimeout + 5000; // Add 5 seconds buffer
 server.keepAliveTimeout = config.requestTimeout + 5000;
 server.headersTimeout = config.requestTimeout + 6000; // Should be > keepAliveTimeout
 
+// Additional configuration to prevent premature connection closure
+server.requestTimeout = config.requestTimeout + 10000; // Give extra time for response to complete
+server.on('connection', (socket) => {
+  // Disable Nagle's algorithm for better real-time performance
+  socket.setNoDelay(true);
+  
+  // Increase socket timeout
+  socket.setTimeout(config.requestTimeout + 10000);
+  
+  // Handle socket errors gracefully
+  socket.on('error', (err) => {
+    if (err.code !== 'ECONNRESET') {
+      logger.error({
+        error: err.message,
+        code: err.code,
+      }, 'Socket error');
+    }
+  });
+});
+
 logger.info({
   serverTimeout: server.timeout,
   keepAliveTimeout: server.keepAliveTimeout,
