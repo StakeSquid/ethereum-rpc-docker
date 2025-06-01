@@ -273,17 +273,45 @@ class RPCProxy {
         requestId,
         error: error.message,
         stack: error.stack,
+        streamEndpoint: this.streamEndpoint,
+        compareEndpoint: this.compareEndpoint,
       }, 'Error handling request');
 
-      if (!res.headersSent && !clientClosed) {
-        res.status(500).json({
-          jsonrpc: '2.0',
-          error: {
-            code: -32603,
-            message: 'Internal error',
-          },
-          id: requestBody.id,
-        });
+      // Always try to send an error response if possible
+      if (!res.headersSent && !res.writableEnded) {
+        try {
+          // Send a proper JSON-RPC error response
+          res.status(502).json({
+            jsonrpc: '2.0',
+            error: {
+              code: -32603,
+              message: 'Internal error: Unable to connect to upstream RPC endpoints',
+              data: {
+                error: error.message,
+                streamEndpoint: this.streamEndpoint,
+                compareEndpoint: this.compareEndpoint,
+              }
+            },
+            id: requestBody.id || null,
+          });
+          
+          logger.info({
+            requestId,
+            sentErrorResponse: true,
+          }, 'Sent error response to client');
+        } catch (sendError) {
+          logger.error({
+            requestId,
+            error: sendError.message,
+          }, 'Failed to send error response to client');
+        }
+      } else {
+        logger.warn({
+          requestId,
+          headersSent: res.headersSent,
+          writableEnded: res.writableEnded,
+          clientClosed,
+        }, 'Cannot send error response - headers already sent or connection closed');
       }
     }
   }
@@ -325,14 +353,36 @@ class RPCProxy {
         streamEndpoint: this.streamEndpoint,
       }, 'Making upstream request');
       
-      const response = await client.post('/', requestBody, {
-        responseType: 'stream',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept-Encoding': acceptEncoding, // Forward client's encoding preference
-        },
-        validateStatus: (status) => true, // Don't throw on any status
-      });
+      let response;
+      try {
+        response = await client.post('/', requestBody, {
+          responseType: 'stream',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept-Encoding': acceptEncoding, // Forward client's encoding preference
+          },
+          validateStatus: (status) => true, // Don't throw on any status
+        });
+      } catch (upstreamError) {
+        // Log the specific error details
+        logger.error({
+          requestId,
+          endpoint: 'stream',
+          error: upstreamError.message,
+          code: upstreamError.code,
+          streamEndpoint: this.streamEndpoint,
+          errno: upstreamError.errno,
+          syscall: upstreamError.syscall,
+          address: upstreamError.address,
+          port: upstreamError.port,
+        }, 'Failed to connect to upstream endpoint');
+        
+        // Re-throw with more context
+        const enhancedError = new Error(`Failed to connect to upstream RPC endpoint at ${this.streamEndpoint}: ${upstreamError.message}`);
+        enhancedError.code = upstreamError.code;
+        enhancedError.originalError = upstreamError;
+        throw enhancedError;
+      }
 
       upstreamResponse = response;
       statusCode = response.status;
@@ -521,6 +571,7 @@ class RPCProxy {
         error: error.message,
         code: error.code,
         statusCode: error.response?.status,
+        streamEndpoint: this.streamEndpoint,
       }, 'Stream request failed');
 
       // Clean up upstream response if it exists
