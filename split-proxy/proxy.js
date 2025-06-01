@@ -135,6 +135,10 @@ class RPCProxy {
   async handleRequest(req, res) {
     const requestId = this.generateRequestId();
     const startTime = Date.now();
+    
+    // Add high-resolution timing
+    const hrStartTime = process.hrtime.bigint();
+    
     const requestBody = req.body;
 
     // Validate request body
@@ -374,6 +378,9 @@ class RPCProxy {
         streamEndpoint: this.streamEndpoint,
       }, 'Making upstream request');
       
+      // Measure time to upstream request
+      const upstreamStartTime = process.hrtime.bigint();
+      
       let response;
       try {
         response = await client.post('/', requestBody, {
@@ -408,12 +415,17 @@ class RPCProxy {
       upstreamResponse = response;
       statusCode = response.status;
       const streamLatency = Date.now() - startTime;
+      
+      // Calculate pre-streaming overhead in nanoseconds
+      const preStreamOverheadNs = Number(process.hrtime.bigint() - hrStartTime);
 
       logger.info({
         requestId,
         endpoint: 'stream',
         latencyMs: streamLatency,
         statusCode: response.status,
+        preStreamOverheadNs,
+        upstreamConnectNs: Number(process.hrtime.bigint() - upstreamStartTime),
       }, 'Stream response started');
 
       // Set response headers if not already sent
@@ -481,6 +493,9 @@ class RPCProxy {
       let writeQueue = Promise.resolve();
       
       response.data.on('data', (chunk) => {
+        // Measure per-chunk overhead
+        const chunkStartTime = process.hrtime.bigint();
+        
         // Always capture raw chunks for comparison
         chunks.push(chunk);
         
@@ -490,6 +505,15 @@ class RPCProxy {
           writeQueue = writeQueue.then(() => new Promise((resolve) => {
             try {
               const canContinue = res.write(chunk, (err) => {
+                // Log per-chunk overhead
+                const chunkOverheadNs = Number(process.hrtime.bigint() - chunkStartTime);
+                if (chunkOverheadNs > 100000) { // Log if over 100 microseconds
+                  logger.debug({
+                    requestId,
+                    chunkOverheadNs,
+                    chunkSize: chunk.length,
+                  }, 'High chunk processing overhead');
+                }
                 if (err) {
                   logger.error({
                     requestId,
