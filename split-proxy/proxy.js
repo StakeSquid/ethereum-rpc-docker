@@ -172,26 +172,45 @@ class RPCProxy {
     let clientCloseReason = null;
     let responseCompleted = false;
     
-    req.on('close', () => {
+    // Use 'aborted' event which is more reliable for detecting client disconnects
+    req.on('aborted', () => {
       if (!clientClosed) {
+        clientClosed = true;
+        clientCloseReason = 'request_aborted';
+        const elapsedMs = Date.now() - startTime;
+        
+        logger.warn({ 
+          requestId,
+          reason: clientCloseReason,
+          headers: req.headers,
+          userAgent: req.headers['user-agent'],
+          contentLength: req.headers['content-length'],
+          method: requestBody.method,
+          elapsedMs,
+          responseCompleted,
+        }, 'Client aborted request');
+      }
+    });
+    
+    // The 'close' event can fire for various reasons, not just client disconnect
+    // Only consider it a client disconnect if the response hasn't been completed
+    req.on('close', () => {
+      // Only log as client disconnect if response wasn't completed
+      if (!clientClosed && !responseCompleted && !res.headersSent) {
         clientClosed = true;
         clientCloseReason = 'connection_closed';
         const elapsedMs = Date.now() - startTime;
         
-        // Immediate close (0-1ms) with no response is likely a client timeout or abort
-        if (elapsedMs <= 1 && !responseCompleted) {
-          logger.error({ 
+        // Only log as error if it happens very quickly (< 100ms)
+        if (elapsedMs < 100) {
+          logger.debug({ 
             requestId,
             reason: clientCloseReason,
-            headers: req.headers,
-            userAgent: req.headers['user-agent'],
-            contentLength: req.headers['content-length'],
             method: requestBody.method,
             elapsedMs,
             responseCompleted,
-            xForwardedFor: req.headers['x-forwarded-for'],
-            xRealIp: req.headers['x-real-ip'],
-          }, 'Client aborted connection immediately - likely timeout or network issue');
+            headersSent: res.headersSent,
+          }, 'Request closed early (may be normal behavior)');
         } else {
           logger.warn({ 
             requestId,
@@ -225,17 +244,16 @@ class RPCProxy {
 
     // Also track response close events
     res.on('close', () => {
-      if (!clientClosed) {
-        clientClosed = true;
-        clientCloseReason = 'response_closed';
+      if (!responseCompleted) {
         logger.warn({
           requestId,
-          reason: clientCloseReason,
+          reason: 'response_closed',
           finished: res.finished,
           headersSent: res.headersSent,
           method: requestBody.method,
           elapsedMs: Date.now() - startTime,
-        }, 'Response connection closed');
+          clientClosed,
+        }, 'Response connection closed before completion');
       }
     });
 
@@ -337,13 +355,8 @@ class RPCProxy {
           clientCloseReason: getClientCloseReason(),
           elapsedBeforeRequest: Date.now() - startTime,
         }, 'Client closed before upstream request could be made');
-        return {
-          statusCode: 0,
-          data: '',
-          size: 0,
-          latency: Date.now() - startTime,
-          contentEncoding: null,
-        };
+        // Don't return early - still try to make the request in case our detection was wrong
+        // The actual response sending will handle the client closed state
       }
       
       logger.debug({

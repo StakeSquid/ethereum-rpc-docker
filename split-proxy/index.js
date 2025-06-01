@@ -15,14 +15,16 @@ app.use(express.json({
 // Request timeout middleware
 app.use((req, res, next) => {
   // Set request timeout
-  req.setTimeout(config.requestTimeout, () => {
+  const timeoutHandle = setTimeout(() => {
     logger.error({
       method: req.method,
       url: req.url,
       timeout: config.requestTimeout,
+      headersSent: res.headersSent,
+      finished: res.finished,
     }, 'Request timeout');
     
-    if (!res.headersSent) {
+    if (!res.headersSent && !res.finished) {
       res.status(504).json({
         jsonrpc: '2.0',
         error: {
@@ -32,6 +34,15 @@ app.use((req, res, next) => {
         id: req.body?.id,
       });
     }
+  }, config.requestTimeout);
+  
+  // Clear timeout when response finishes
+  res.on('finish', () => {
+    clearTimeout(timeoutHandle);
+  });
+  
+  res.on('close', () => {
+    clearTimeout(timeoutHandle);
   });
   
   next();
