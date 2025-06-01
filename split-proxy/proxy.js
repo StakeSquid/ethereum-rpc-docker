@@ -188,6 +188,7 @@ class RPCProxy {
         responseType: 'stream',
         headers: {
           'Content-Type': 'application/json',
+          'Accept-Encoding': 'identity', // Request uncompressed responses
         },
       });
 
@@ -268,6 +269,7 @@ class RPCProxy {
       const response = await client.post('/', requestBody, {
         headers: {
           'Content-Type': 'application/json',
+          'Accept-Encoding': 'identity', // Request uncompressed responses
         },
       });
 
