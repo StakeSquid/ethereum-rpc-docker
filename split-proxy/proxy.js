@@ -137,6 +137,25 @@ class RPCProxy {
     const startTime = Date.now();
     const requestBody = req.body;
 
+    // Validate request body
+    if (!requestBody || !requestBody.method) {
+      logger.error({
+        requestId,
+        body: requestBody,
+        headers: req.headers,
+      }, 'Invalid or missing request body');
+      
+      res.status(400).json({
+        jsonrpc: '2.0',
+        error: {
+          code: -32600,
+          message: 'Invalid Request',
+        },
+        id: requestBody?.id || null,
+      });
+      return;
+    }
+
     logger.info({
       requestId,
       method: requestBody.method,
@@ -157,16 +176,34 @@ class RPCProxy {
       if (!clientClosed) {
         clientClosed = true;
         clientCloseReason = 'connection_closed';
-        logger.warn({ 
-          requestId,
-          reason: clientCloseReason,
-          headers: req.headers,
-          userAgent: req.headers['user-agent'],
-          contentLength: req.headers['content-length'],
-          method: requestBody.method,
-          elapsedMs: Date.now() - startTime,
-          responseCompleted,
-        }, 'Client connection closed');
+        const elapsedMs = Date.now() - startTime;
+        
+        // Immediate close (0-1ms) with no response is likely a client timeout or abort
+        if (elapsedMs <= 1 && !responseCompleted) {
+          logger.error({ 
+            requestId,
+            reason: clientCloseReason,
+            headers: req.headers,
+            userAgent: req.headers['user-agent'],
+            contentLength: req.headers['content-length'],
+            method: requestBody.method,
+            elapsedMs,
+            responseCompleted,
+            xForwardedFor: req.headers['x-forwarded-for'],
+            xRealIp: req.headers['x-real-ip'],
+          }, 'Client aborted connection immediately - likely timeout or network issue');
+        } else {
+          logger.warn({ 
+            requestId,
+            reason: clientCloseReason,
+            headers: req.headers,
+            userAgent: req.headers['user-agent'],
+            contentLength: req.headers['content-length'],
+            method: requestBody.method,
+            elapsedMs,
+            responseCompleted,
+          }, 'Client connection closed');
+        }
       }
     });
 
@@ -262,6 +299,31 @@ class RPCProxy {
       
       // Get the original Accept-Encoding from the client request
       const acceptEncoding = res.req.headers['accept-encoding'] || 'identity';
+      
+      // Check if client already closed before making upstream request
+      if (isClientClosed()) {
+        logger.warn({
+          requestId,
+          endpoint: 'stream',
+          method: requestBody.method,
+          clientCloseReason: getClientCloseReason(),
+          elapsedBeforeRequest: Date.now() - startTime,
+        }, 'Client closed before upstream request could be made');
+        return {
+          statusCode: 0,
+          data: '',
+          size: 0,
+          latency: Date.now() - startTime,
+          contentEncoding: null,
+        };
+      }
+      
+      logger.debug({
+        requestId,
+        endpoint: 'stream',
+        method: requestBody.method,
+        streamEndpoint: this.streamEndpoint,
+      }, 'Making upstream request');
       
       const response = await client.post('/', requestBody, {
         responseType: 'stream',
