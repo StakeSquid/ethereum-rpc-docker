@@ -18,6 +18,7 @@ const config = {
   
   // Logging
   logMismatches: process.env.LOG_MISMATCHES !== 'false', // default true
+  logAllMismatchedResponses: process.env.LOG_ALL_MISMATCHED_RESPONSES === 'true', // default false
   
   // Server
   port: parseInt(process.env.PORT || '8545', 10),

@@ -423,30 +423,65 @@ class RPCProxy {
       const logEntry = {
         requestId,
         method: requestBody.method,
+        request: requestBody, // Include the original request for context
         mismatches,
         streamEndpoint: this.streamEndpoint,
         compareEndpoint: this.compareEndpoint,
       };
 
-      // Include full compare response if size differs significantly
-      if (sizeDiff > config.sizeDiffThreshold) {
+      // Include full responses if there's any mismatch (not just size)
+      // This helps debug status code mismatches, timeouts, etc.
+      const shouldLogResponses = sizeDiff > config.sizeDiffThreshold || 
+                                streamResponse.statusCode !== compareResponse.statusCode ||
+                                (config.logAllMismatchedResponses === true);
+
+      if (shouldLogResponses) {
         try {
-          logEntry.compareResponseData = JSON.parse(compareResponse.data);
-          logEntry.streamResponseData = JSON.parse(streamResponse.data);
+          // Try to parse as JSON for better readability
+          logEntry.streamResponse = {
+            statusCode: streamResponse.statusCode,
+            size: streamResponse.size,
+            data: streamResponse.data ? JSON.parse(streamResponse.data) : null
+          };
+          logEntry.compareResponse = {
+            statusCode: compareResponse.statusCode,
+            size: compareResponse.size,
+            data: compareResponse.data ? JSON.parse(compareResponse.data) : null
+          };
         } catch (e) {
           // If not valid JSON, include raw data
-          logEntry.compareResponseData = compareResponse.data;
-          logEntry.streamResponseData = streamResponse.data;
+          logEntry.streamResponse = {
+            statusCode: streamResponse.statusCode,
+            size: streamResponse.size,
+            data: streamResponse.data
+          };
+          logEntry.compareResponse = {
+            statusCode: compareResponse.statusCode,
+            size: compareResponse.size,
+            data: compareResponse.data
+          };
         }
+        
+        // Log a summary for easier reading
+        logger.warn({
+          requestId,
+          method: requestBody.method,
+          mismatchTypes: mismatches.map(m => m.type),
+          streamEndpoint: this.streamEndpoint,
+          compareEndpoint: this.compareEndpoint,
+        }, 'Response mismatch detected - full details below');
       }
 
-      logger.warn(logEntry, 'Response mismatch detected');
+      // Log the full entry with all details
+      logger.warn(logEntry, 'Response mismatch details');
     } else {
       logger.debug({
         requestId,
         method: requestBody.method,
         streamLatency: streamResponse.latency,
         compareLatency: compareResponse.latency,
+        streamSize: streamResponse.size,
+        compareSize: compareResponse.size,
       }, 'Responses match');
     }
   }
