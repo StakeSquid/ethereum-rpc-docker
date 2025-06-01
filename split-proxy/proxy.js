@@ -364,6 +364,19 @@ class RPCProxy {
             res.setHeader(key, value);
           }
         });
+        
+        // Explicitly flush headers to ensure client receives them immediately
+        res.flushHeaders();
+        
+        logger.debug({
+          requestId,
+          endpoint: 'stream',
+          headersSent: true,
+          statusCode: response.status,
+          contentType: response.headers['content-type'],
+          contentLength: response.headers['content-length'],
+          transferEncoding: response.headers['transfer-encoding'],
+        }, 'Response headers sent');
       }
 
       // Handle upstream errors
@@ -382,12 +395,16 @@ class RPCProxy {
 
       // Capture and stream the response
       const chunks = [];
+      
+      // Check if we should buffer the response (for clients that don't handle streaming well)
+      const shouldBuffer = req.headers['user-agent'] && req.headers['user-agent'].includes('ReactorNetty');
+      
       response.data.on('data', (chunk) => {
         // Always capture raw chunks for comparison
         chunks.push(chunk);
         
-        // Only write to client if still connected
-        if (!isClientClosed() && !res.writableEnded) {
+        // Only write to client if still connected and not buffering
+        if (!shouldBuffer && !isClientClosed() && !res.writableEnded) {
           try {
             res.write(chunk);
           } catch (writeError) {
@@ -404,7 +421,36 @@ class RPCProxy {
         response.data.on('end', () => {
           isResponseCompleted(); // Mark response as completed
           
-          if (!isClientClosed() && !res.writableEnded) {
+          const totalTime = Date.now() - startTime;
+          
+          // Combine chunks and convert to string for logging
+          const rawData = Buffer.concat(chunks);
+          responseData = rawData.toString('utf8');
+          
+          // Send buffered response for clients that don't handle streaming
+          if (shouldBuffer && !isClientClosed() && !res.writableEnded) {
+            try {
+              // Remove transfer-encoding header for buffered responses
+              res.removeHeader('transfer-encoding');
+              // Set content-length for buffered response
+              res.setHeader('content-length', rawData.length);
+              // Send all data at once
+              res.end(rawData);
+              
+              logger.debug({
+                requestId,
+                endpoint: 'stream',
+                buffered: true,
+                responseSize: rawData.length,
+                clientClosed: isClientClosed(),
+              }, 'Sent buffered response to ReactorNetty client');
+            } catch (error) {
+              logger.error({
+                requestId,
+                error: error.message,
+              }, 'Error sending buffered response');
+            }
+          } else if (!isClientClosed() && !res.writableEnded) {
             try {
               res.end();
             } catch (endError) {
@@ -414,12 +460,6 @@ class RPCProxy {
               }, 'Error ending response');
             }
           }
-          
-          const totalTime = Date.now() - startTime;
-          
-          // Combine chunks and convert to string for logging
-          const rawData = Buffer.concat(chunks);
-          responseData = rawData.toString('utf8');
           
           // Log if client closed very early
           if (isClientClosed() && totalTime < 10) {
