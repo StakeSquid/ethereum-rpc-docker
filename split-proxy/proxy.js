@@ -732,7 +732,7 @@ class RPCProxy {
 
     // Check latency difference
     const latencyDiff = compareResponse.latency - streamResponse.latency;
-    if (latencyDiff > config.latencyThresholdMs) {
+    if (!config.ignoreLatencyMismatches && latencyDiff > config.latencyThresholdMs) {
       mismatches.push({
         type: 'latency',
         streamLatency: streamResponse.latency,
