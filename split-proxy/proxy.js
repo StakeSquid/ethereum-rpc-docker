@@ -361,7 +361,8 @@ class RPCProxy {
           
           // Log if client closed very early
           if (isClientClosed() && totalTime < 10) {
-            logger.warn({
+            // This appears to be normal JSON-RPC client behavior
+            logger.info({
               requestId,
               endpoint: 'stream',
               totalTimeMs: totalTime,
@@ -372,9 +373,11 @@ class RPCProxy {
               httpVersion: res.req.httpVersion,
               keepAlive: res.req.headers.connection,
               clientClosedAt: getClientCloseReason(),
+              responseComplete: true, // We're in the 'end' event, so response is complete
+              chunksReceived: chunks.length,
               // For small responses, log the actual data to see what's happening
               responseData: rawData.length < 200 ? responseData : '[truncated]',
-            }, 'Client closed connection very quickly');
+            }, 'Client closed connection quickly (normal for JSON-RPC)');
           }
           
           logger.info({
