@@ -245,11 +245,15 @@ class RPCProxy {
     try {
       // Create fresh client for this request
       const client = this.createClient(this.streamEndpoint);
+      
+      // Get the original Accept-Encoding from the client request
+      const acceptEncoding = res.req.headers['accept-encoding'] || 'identity';
+      
       const response = await client.post('/', requestBody, {
         responseType: 'stream',
         headers: {
           'Content-Type': 'application/json',
-          'Accept-Encoding': 'identity', // Request uncompressed responses
+          'Accept-Encoding': acceptEncoding, // Forward client's encoding preference
         },
         validateStatus: (status) => true, // Don't throw on any status
       });
@@ -274,9 +278,8 @@ class RPCProxy {
         res.setHeader('Keep-Alive', `timeout=${Math.floor(config.requestTimeout / 1000)}`);
         
         Object.entries(response.headers).forEach(([key, value]) => {
-          // Remove content-encoding since we're requesting uncompressed
           // Don't override Connection header we just set
-          if (key.toLowerCase() !== 'content-encoding' && key.toLowerCase() !== 'connection') {
+          if (key.toLowerCase() !== 'connection') {
             res.setHeader(key, value);
           }
         });
@@ -297,9 +300,10 @@ class RPCProxy {
       });
 
       // Capture and stream the response
+      const chunks = [];
       response.data.on('data', (chunk) => {
-        // Always capture data for comparison purposes
-        responseData += chunk.toString();
+        // Always capture raw chunks for comparison
+        chunks.push(chunk);
         
         // Only write to client if still connected
         if (!isClientClosed() && !res.writableEnded) {
@@ -330,19 +334,25 @@ class RPCProxy {
           
           const totalTime = Date.now() - startTime;
           
+          // Combine chunks and convert to string for logging
+          const rawData = Buffer.concat(chunks);
+          responseData = rawData.toString('utf8');
+          
           logger.info({
             requestId,
             endpoint: 'stream',
             totalTimeMs: totalTime,
-            responseSize: responseData.length,
+            responseSize: rawData.length,
+            contentEncoding: response.headers['content-encoding'],
             clientClosed: isClientClosed(),
           }, 'Stream response completed');
           
           resolve({
             statusCode,
             data: responseData,
-            size: responseData.length,
+            size: rawData.length,
             latency: totalTime,
+            contentEncoding: response.headers['content-encoding'],
           });
         });
 
@@ -386,7 +396,7 @@ class RPCProxy {
       const response = await client.post('/', requestBody, {
         headers: {
           'Content-Type': 'application/json',
-          'Accept-Encoding': 'identity', // Request uncompressed responses
+          'Accept-Encoding': 'gzip, deflate', // Accept compressed responses for comparison
         },
         validateStatus: (status) => true, // Don't throw on any status
       });
