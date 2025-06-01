@@ -2806,6 +2806,10 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 				Method:     displayMethod,
 			}
 
+			// Primary responses should ALWAYS be sent to the user (except HTTP errors >= 400)
+			// JSON-RPC errors from primary are valid responses that must be propagated
+			// The following checks only apply to secondary backends
+
 			// CRITICAL FIX: Only allow secondary backends to win if they have successful responses
 			if b.Role == "secondary" && resp.StatusCode >= 400 {
 				// Secondary returned an error - DO NOT let it win the race
@@ -2924,6 +2928,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request, backends []Backend, c
 
 			// Try to be the first to respond
 			if responseHandled.CompareAndSwap(false, true) {
+				if enableDetailedLogs {
+					log.Printf("Backend %s won the race for method %s with status %d", b.Name, displayMethod, resp.StatusCode)
+				}
 				responseChan <- struct {
 					backend string
 					resp    *http.Response
