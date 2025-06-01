@@ -681,8 +681,11 @@ class RPCProxy {
         response.data.on('end', async () => {
           isResponseCompleted(); // Mark response as completed
           
+          // Capture all timing values at the same moment to ensure consistency
+          const endTime = process.hrtime.bigint();
           const totalTime = Date.now() - startTime;
-          const totalTimeHR = Number(process.hrtime.bigint() - hrStartTime) / 1000000; // Convert nanoseconds to milliseconds with decimal precision
+          const totalTimeHR = Number(endTime - hrStartTime) / 1000000;
+          const streamingDurationHR = Number(endTime - streamMethodStartTime) / 1000000;
           
           // Combine chunks and convert to string for logging
           const rawData = Buffer.concat(chunks);
@@ -765,9 +768,6 @@ class RPCProxy {
           }
           
           // Add transfer timing to final log
-          const endTime = process.hrtime.bigint();
-          const streamingDurationHR = Number(endTime - streamMethodStartTime) / 1000000;
-          
           logger.info({
             requestId,
             endpoint: 'stream',
