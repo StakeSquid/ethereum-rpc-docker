@@ -108,9 +108,9 @@ fi
 
 
 if [ "$CHAIN_SPEC" = "testnet" ]; then
-    exec $BEACOND start --beacon-kit.chain-spec testnet --home /root/.beacond $@
+    exec $BEACOND start --beacon-kit.chain-spec testnet --home /root/.beacond --db_dir /root/.beacond_db --beacon-kit.engine.jwt-secret-path /jwtsecret $@
 else
-    exec $BEACOND start --home /root/.beacond --db_dir /root/.beacond_db $@
+    exec $BEACOND start --home /root/.beacond --db_dir /root/.beacond_db --beacon-kit.engine.jwt-secret-path /jwtsecret $@
 fi
 # --beacon-kit.engine.jwt-secret-path $CONFIG_DIR/jwt.hex --beacon-kit.kzg.trusted-setup-path $CONFIG_DIR/kzg-trusted-setup.json --home /root/.beacond 
 #--minimum-gas-prices 0atom
