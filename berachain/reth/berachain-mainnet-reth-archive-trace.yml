@@ -145,9 +145,9 @@ services:
     networks:
       - chains
     volumes:
-      - ${BERACHAIN_MAINNET_RETH_ARCHIVE_TRACE__BEACON_KIT_DATA:-berachain-mainnet-reth-archive-trace_beacon-kit}:/root/.beacond/data
+      - ${BERACHAIN_MAINNET_RETH_ARCHIVE_TRACE__BEACON_KIT_DATA:-berachain-mainnet-reth-archive-trace_beacon-kit}:/root/.beacond/db
       - .jwtsecret:/jwtsecret:ro
-      - berachain-mainnet-reth-archive-trace_config:/root/.beacond/config
+      - berachain-mainnet-reth-archive-trace_config:/root/.beacond/data
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
