@@ -146,7 +146,7 @@ services:
     volumes:
       - ${BERACHAIN_BARTIO_RETH_ARCHIVE_TRACE__BEACON_KIT_DATA:-berachain-bartio-reth-archive-trace_beacon-kit}:/root/.beacond_db
       - .jwtsecret:/jwtsecret:ro
-      - berachain-bartio-reth-archive-trace_config:/root/.beacond
+      - berachain-bartio-reth-archive-trace_config:/root/.beacond/data
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false

@@ -149,7 +149,7 @@ services:
     volumes:
       - ${BERACHAIN_BEPOLIA_RETH_ARCHIVE_TRACE__BEACON_KIT_DATA:-berachain-bepolia-reth-archive-trace_beacon-kit}:/root/.beacond_db
       - .jwtsecret:/jwtsecret:ro
-      - berachain-bepolia-reth-archive-trace_config:/root/.beacond
+      - berachain-bepolia-reth-archive-trace_config:/root/.beacond/data
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false

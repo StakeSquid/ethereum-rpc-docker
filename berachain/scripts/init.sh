@@ -15,7 +15,7 @@ AUTH_RPC=${AUTH_RPC:-http://berachain-bepolia:8551} # just as example
 #fi
 
 BEACOND=${BEACOND_PATH:-beacond}
-CONFIG_DIR="/root/.beacond/config"
+CONFIG_DIR="/root/.beacond/data"
 
 # Create config directory
 mkdir -p "$CONFIG_DIR"
