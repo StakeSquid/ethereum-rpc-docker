@@ -150,7 +150,7 @@ services:
     volumes:
       - ${BERACHAIN_BEPOLIA_RETH_PRUNED_TRACE__BEACON_KIT_DATA:-berachain-bepolia-reth-pruned-trace_beacon-kit}:/root/.beacond/data
       - .jwtsecret:/jwtsecret:ro
-      - berachain-bepolia-reth-pruned-trace_config:/root/.beacond/config
+      - berachain-bepolia-reth-pruned-trace_config:/root/.beacond
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
