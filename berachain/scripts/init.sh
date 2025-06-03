@@ -98,6 +98,9 @@ if [ -n "$MONIKER" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
     sed -i "s/^moniker = \".*\"/moniker = \"$MONIKER\"/" "$CONFIG_DIR/config.toml"
 fi
 
+if [ ! -e /root/.beacond/data/priv_validator_state.json ]; then
+  cp /root/.beacond/config/priv_validator_state.json /root/.beacond/data/priv_validator_state.json
+fi
 
 #echo "$CONFIG_DIR/jwt.hex: $(cat $CONFIG_DIR/jwt.hex)"
 
