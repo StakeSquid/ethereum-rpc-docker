@@ -144,7 +144,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${BERACHAIN_BARTIO_RETH_ARCHIVE_TRACE__BEACON_KIT_DATA:-berachain-bartio-reth-archive-trace_beacon-kit}:/root/.beacond/data
+      - ${BERACHAIN_BARTIO_RETH_ARCHIVE_TRACE__BEACON_KIT_DATA:-berachain-bartio-reth-archive-trace_beacon-kit}:/root/.beacond_db
       - .jwtsecret:/jwtsecret:ro
       - berachain-bartio-reth-archive-trace_config:/root/.beacond
     logging: *logging-defaults

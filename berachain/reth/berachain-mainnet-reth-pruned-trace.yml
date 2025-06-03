@@ -146,7 +146,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${BERACHAIN_MAINNET_RETH_PRUNED_TRACE__BEACON_KIT_DATA:-berachain-mainnet-reth-pruned-trace_beacon-kit}:/root/.beacond/data
+      - ${BERACHAIN_MAINNET_RETH_PRUNED_TRACE__BEACON_KIT_DATA:-berachain-mainnet-reth-pruned-trace_beacon-kit}:/root/.beacond_db
       - .jwtsecret:/jwtsecret:ro
       - berachain-mainnet-reth-pruned-trace_config:/root/.beacond
     logging: *logging-defaults
