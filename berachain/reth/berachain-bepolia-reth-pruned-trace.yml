@@ -148,9 +148,9 @@ services:
     networks:
       - chains
     volumes:
-      - ${BERACHAIN_BEPOLIA_RETH_PRUNED_TRACE__BEACON_KIT_DATA:-berachain-bepolia-reth-pruned-trace_beacon-kit}:/root/.beacond_db
+      - ${BERACHAIN_BEPOLIA_RETH_PRUNED_TRACE__BEACON_KIT_DATA:-berachain-bepolia-reth-pruned-trace_beacon-kit}:/root/.beacond/data
       - .jwtsecret:/jwtsecret:ro
-      - berachain-bepolia-reth-pruned-trace_config:/root/.beacond/data
+      - berachain-bepolia-reth-pruned-trace_config:/root/.beacond/config
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false

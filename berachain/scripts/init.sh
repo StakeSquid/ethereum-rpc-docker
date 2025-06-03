@@ -15,7 +15,7 @@ AUTH_RPC=${AUTH_RPC:-http://berachain-bepolia:8551} # just as example
 #fi
 
 BEACOND=${BEACOND_PATH:-beacond}
-CONFIG_DIR="/root/.beacond/data"
+CONFIG_DIR="/root/.beacond/config"
 
 # Create config directory
 mkdir -p "$CONFIG_DIR"
@@ -108,9 +108,9 @@ fi
 
 
 if [ "$CHAIN_SPEC" = "testnet" ]; then
-    exec $BEACOND start --beacon-kit.chain-spec testnet --home /root/.beacond --db_dir /root/.beacond/data --beacon-kit.engine.jwt-secret-path /jwtsecret --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json $@
+    exec $BEACOND start --beacon-kit.chain-spec testnet --home /root/.beacond --db_dir /root/.beacond/data --beacon-kit.engine.jwt-secret-path /root/.beacond/config/.jwt --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json $@
 else
-    exec $BEACOND start --home /root/.beacond --db_dir /root/.beacond/data --beacon-kit.engine.jwt-secret-path /jwtsecret --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json $@
+    exec $BEACOND start --home /root/.beacond --db_dir /root/.beacond/data --beacon-kit.engine.jwt-secret-path /root/.beacond/config/.jwt --beacon-kit.kzg.trusted-setup-path /root/.beacond/config/kzg-trusted-setup.json $@
 fi
 # --beacon-kit.engine.jwt-secret-path $CONFIG_DIR/jwt.hex --beacon-kit.kzg.trusted-setup-path $CONFIG_DIR/kzg-trusted-setup.json --home /root/.beacond 
 #--minimum-gas-prices 0atom
