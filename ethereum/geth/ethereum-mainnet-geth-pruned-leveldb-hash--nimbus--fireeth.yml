@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ethereum-mainnet-geth:
-    image: ${ETHEREUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ETHEREUM_MAINNET_FIREETH_VERSION:-v2.11.9-geth-v1.15.10-fh3.0-2}
+    image: ${ETHEREUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ETHEREUM_MAINNET_FIREETH_VERSION:-v2.11.11-geth-v1.15.11-fh3.0-2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.ethereum-mainnet-geth-pruned-leveldb-hash.middlewares=ethereum-mainnet-geth-pruned-leveldb-hash-stripprefix, ipallowlist
 
   ethereum-mainnet-geth-firehose:
-    image: ${ETHEREUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ETHEREUM_MAINNET_FIREETH_VERSION:-v2.11.9-geth-v1.15.10-fh3.0-2}
+    image: ${ETHEREUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ETHEREUM_MAINNET_FIREETH_VERSION:-v2.11.11-geth-v1.15.11-fh3.0-2}
     expose:
       - 10015
       - 10014
@@ -139,7 +139,7 @@ services:
       - traefik.http.routers.ethereum-mainnet-geth-pruned-leveldb-hash-firehose.middlewares=ipallowlist
 
   ethereum-mainnet-geth-events:
-    image: ${ETHEREUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ETHEREUM_MAINNET_FIREETH_VERSION:-v2.11.9-geth-v1.15.10-fh3.0-2}
+    image: ${ETHEREUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ETHEREUM_MAINNET_FIREETH_VERSION:-v2.11.11-geth-v1.15.11-fh3.0-2}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]

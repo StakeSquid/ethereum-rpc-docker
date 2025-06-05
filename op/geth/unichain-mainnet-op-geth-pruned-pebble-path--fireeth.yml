@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   unichain-mainnet:
-    image: ${UNICHAIN_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${UNICHAIN_MAINNET_FIREETH_VERSION:-v2.11.9-optimism-v1.101503.4-op-node.v1.13.2}
+    image: ${UNICHAIN_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${UNICHAIN_MAINNET_FIREETH_VERSION:-v2.11.11-optimism-v1.101503.4-op-node.v1.13.2-1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -110,7 +110,7 @@ services:
       - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path.middlewares=unichain-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   unichain-mainnet-firehose:
-    image: ${UNICHAIN_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${UNICHAIN_MAINNET_FIREETH_VERSION:-v2.11.9-optimism-v1.101503.4-op-node.v1.13.2}
+    image: ${UNICHAIN_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${UNICHAIN_MAINNET_FIREETH_VERSION:-v2.11.11-optimism-v1.101503.4-op-node.v1.13.2-1}
     expose:
       - 10015
       - 10014
@@ -142,7 +142,7 @@ services:
       - traefik.http.routers.unichain-mainnet-op-geth-pruned-pebble-path-firehose.middlewares=ipallowlist
 
   unichain-mainnet-events:
-    image: ${UNICHAIN_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${UNICHAIN_MAINNET_FIREETH_VERSION:-v2.11.9-optimism-v1.101503.4-op-node.v1.13.2}
+    image: ${UNICHAIN_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${UNICHAIN_MAINNET_FIREETH_VERSION:-v2.11.11-optimism-v1.101503.4-op-node.v1.13.2-1}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]
