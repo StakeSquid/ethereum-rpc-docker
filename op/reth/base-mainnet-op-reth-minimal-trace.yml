@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   base-mainnet-op-reth-minimal:
-    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_MAINNET_RETH_VERSION:-v1.4.7}
+    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_MAINNET_RETH_VERSION:-v1.4.8}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

@@ -40,7 +40,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   berachain-bepolia-reth-pruned:
-    image: ${BERACHAIN_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${BERACHAIN_BEPOLIA_RETH_VERSION:-v1.4.7}
+    image: ${BERACHAIN_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${BERACHAIN_BEPOLIA_RETH_VERSION:-v1.4.8}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
