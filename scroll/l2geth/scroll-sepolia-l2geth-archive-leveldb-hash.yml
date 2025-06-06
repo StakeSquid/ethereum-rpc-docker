@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   scroll-sepolia-archive:
-    image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_SEPOLIA_L2GETH_VERSION:-scroll-v5.8.42}
+    image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_SEPOLIA_L2GETH_VERSION:-scroll-v5.8.52}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -52,12 +52,16 @@ services:
       - 8545
       - 6060
     command:
+      - --cache.noprefetch
+      - --cache.snapshot=0
       - --cache=8192
       - --da.blob.beaconnode=${ETHEREUM_SEPOLIA_BEACON_REST}
       - --da.blob.blobscan=https://api.sepolia.blobscan.com/blobs/
       - --datadir=/root/.ethereum
       - --gcmode=archive
+      - --gpo.congestionthreshold=1000
       - --gpo.ignoreprice=1
+      - --gpo.maxprice=500000000
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,admin,debug
@@ -74,6 +78,7 @@ services:
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --scroll-sepolia
+      - --snapshot=false
       - --syncmode=full
       - --ws
       - --ws.addr=0.0.0.0
