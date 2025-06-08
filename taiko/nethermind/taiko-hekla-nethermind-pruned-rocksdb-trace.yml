@@ -95,7 +95,7 @@ services:
       - traefik.http.routers.taiko-hekla-nethermind-pruned-rocksdb-trace.middlewares=taiko-hekla-nethermind-pruned-rocksdb-trace-stripprefix, ipallowlist
 
   taiko-hekla-nethermind-node:
-    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.5.0}
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.6.2}
     ports:
       - 18209:18209
       - 18209:18209/udp
