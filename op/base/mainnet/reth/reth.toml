@@ -48,19 +48,14 @@ commit_threshold = 100000
 file_size = 524288000
 
 [prune]   
-block_interval = 5         
                                               
 [prune.segments]
-sender_recovery = "full"
 
 [prune.segments.receipts]                  
-distance = 10064
                                               
 [prune.segments.account_history]
-distance = 10064                          
                                               
 [prune.segments.storage_history]
-distance = 10064
                                               
 [prune.segments.receipts_log_filter]
 
