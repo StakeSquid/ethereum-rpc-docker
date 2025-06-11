@@ -22,7 +22,6 @@ max_cumulative_gas = 1500000000000
 max_duration = "10m"
 
 [stages.prune]       
-commit_threshold = 1000000
                                               
 [stages.account_hashing]
 clean_threshold = 500000
