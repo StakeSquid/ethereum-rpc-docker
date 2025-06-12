@@ -21,8 +21,7 @@ max_changes = 5000000
 max_cumulative_gas = 1500000000000
 max_duration = "10m"
 
-[stages.prune]       
-                                              
+                                            
 [stages.account_hashing]
 clean_threshold = 500000
 commit_threshold = 100000
@@ -45,18 +44,6 @@ commit_threshold = 100000
                                               
 [stages.etl]
 file_size = 524288000
-
-[prune]   
-                                              
-[prune.segments]
-
-[prune.segments.receipts]                  
-                                              
-[prune.segments.account_history]
-                                              
-[prune.segments.storage_history]
-                                              
-[prune.segments.receipts_log_filter]
 
 [peers]
 refill_slots_interval = "5s"
@@ -91,8 +78,6 @@ max = "1h"
 [sessions]
 session_command_buffer = 32
 session_event_buffer = 260
-
-[sessions.limits]
 
 [sessions.initial_internal_request_timeout]
 secs = 20
