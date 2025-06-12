@@ -6,6 +6,7 @@ services:
       - ./main_configs:/etc/dshackle
     expose:
       - 8080
+      - 8081
       - 25703
     #ports:
     #  - "2449:2449"
