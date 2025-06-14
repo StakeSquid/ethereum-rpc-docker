@@ -1,12 +1,19 @@
 FROM golang:1.22 as builder
 
 ARG VERSION
+ARG COMMIT
 ARG REPO
 ARG PATCH
 
 RUN apt-get update && apt-get install -y git musl-dev make
 
-RUN cd /go && git clone ${REPO:-https://github.com/0xsoniclabs/sonic.git} sonic && cd sonic && git fetch --tags && git checkout -b ${VERSION} tags/${VERSION}
+RUN cd /go && git clone ${REPO:-https://github.com/0xsoniclabs/sonic.git} sonic && cd sonic && git fetch --tags 
+
+RUN if [ -n "$COMMIT" ]; then \
+      git checkout -b ${VERSION} ${COMMIT}; \
+    else \
+      git checkout -b ${VERSION} tags/${VERSION}; \
+    fi
 
 COPY ${PATCH:-empty.patch} /tmp/my-patch.patch
 

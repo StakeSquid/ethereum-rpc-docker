@@ -36,6 +36,8 @@ services:
       args:
         VERSION: v1.2.1-h
         REPO: https://github.com/Fantom-foundation/sonic.git
+        COMMIT: ''
+        PATCH: ''
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

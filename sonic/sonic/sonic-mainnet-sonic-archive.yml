@@ -34,8 +34,10 @@ services:
       context: ./sonic
       dockerfile: sonic.Dockerfile
       args:
-        VERSION: 86647c65d5c7d4ba3b52abd81f20d977a91408f1
+        VERSION: v2.0.3
         REPO: https://github.com/0xsoniclabs/sonic.git
+        COMMIT: 86647c65d5c7d4ba3b52abd81f20d977a91408f1
+        PATCH: sonic.patch
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
