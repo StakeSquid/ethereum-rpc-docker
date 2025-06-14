@@ -32,7 +32,8 @@ services:
       - "traefik.http.routers.dshackle.rule=Host(`$GW_DOMAIN`)"
       - "${GW_ALLOW_LIST:+traefik.http.middlewares.gwallowlist.ipallowlist.sourcerange=$GW_ALLOW_LIST}"
       - "${GW_ALLOW_LIST:+traefik.http.routers.dshackle.middlewares=gwallowlist}"
-
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - chains
     logging: 

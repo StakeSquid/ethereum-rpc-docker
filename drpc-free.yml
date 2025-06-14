@@ -18,6 +18,8 @@ services:
       - "traefik.http.routers.drpc-free.entrypoints=grpc"
       - "traefik.http.routers.drpc-free.tls.certresolver=myresolver"
       - "traefik.http.routers.drpc-free.rule=Host(`$GW_FREE_DOMAIN`)"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - chains
     logging: 
