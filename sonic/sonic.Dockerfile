@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y git musl-dev make
 
 RUN cd /go && git clone ${REPO:-https://github.com/0xsoniclabs/sonic.git} sonic && cd sonic && git fetch --tags 
 
+WORKDIR /go/sonic
+
 RUN if [ -n "$COMMIT" ]; then \
       git checkout -b ${VERSION} ${COMMIT}; \
     else \
@@ -25,7 +27,6 @@ RUN if [ -n "$PATCH" ]; then \
       echo "No patch file provided. Skipping."; \
     fi
 
-WORKDIR /go/sonic
 
 ARG GOPROXY
 RUN go mod download
