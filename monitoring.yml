@@ -31,6 +31,210 @@ services:
       - chains
       - monitoring
 
+  init-prometheus:
+    image: busybox:latest
+    container_name: init-prometheus
+    command: sh -c "chown -R 65534:65534 /prometheus"  # Default Prometheus UID:GID is 65534
+    volumes:
+      - type: volume
+        source: prometheus_data
+        target: /prometheus
+    entrypoint: ""
+    deploy:
+      restart_policy:
+        condition: none
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus-autodiscover.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus:rw
+      - prometheus-docker-sd:/prometheus-docker-sd:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    expose:
+      - 9090
+    restart: unless-stopped
+    depends_on:
+      - init-prometheus
+      - prometheus-docker-sd
+      - wireguard
+    networks:
+      - chains
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.prometheus.loadbalancer.server.port=9090
+      - ${NO_SSL:-traefik.http.routers.prometheus.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.prometheus.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.prometheus.rule=Host(`prometheus.$DOMAIN`)}
+
+  prometheus-docker-sd:
+    image: "stucky/prometheus-docker-sd:latest"
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - prometheus-docker-sd:/prometheus-docker-sd:rw
+
+  init-loki:
+    image: busybox:latest
+    container_name: init-loki
+    command: sh -c "chown -R 10001:10001 /data"  # Default Loki UID:GID is 10001
+    volumes:
+      - type: volume
+        source: loki_data
+        target: /data
+    entrypoint: ""
+    deploy:
+      restart_policy:
+        condition: none
+
+  loki:
+    image: grafana/loki
+    container_name: loki
+    user: "10001"
+    volumes:
+      - loki_data:/data:rw
+      - ./loki:/etc/loki:ro
+    command: -config.file=/etc/loki/loki.yaml --print-config-stderr
+    expose:
+      - 3100
+    restart: unless-stopped
+    depends_on:
+      - init-loki
+    networks:
+      - chains
+
+  init-grafana:
+    image: busybox:latest
+    container_name: init-grafana
+    command: sh -c "chown -R 472:472 /var/lib/grafana"  # Default Grafana UID:GID is 472
+    volumes:
+      - type: volume
+        source: grafana_data
+        target: /var/lib/grafana
+    entrypoint: ""
+    deploy:
+      restart_policy:
+        condition: none
+
+  grafana:
+    image: grafana/grafana:main
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana:rw
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_DISABLE_BRUTE_FORCE_LOGIN_PROTECTION=true
+      - postgres_host=${DB_HOST:-postgres}
+      - postgres_user=${DB_USER:-graph-node}
+      - postgres_pass=${DB_PASS:-db-password}
+      - postgres_db=${GRAPH_NODE_DB_NAME:-graph-node}
+    restart: unless-stopped
+    expose:
+      - 3000
+    networks:
+      - chains
+    depends_on:
+      - init-grafana
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+      - ${NO_SSL:-traefik.http.routers.grafana.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.grafana.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.grafana.rule=Host(`grafana.$DOMAIN`)}
+
+  promtail:
+    image:  grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ./promtail/promtail.yaml:/etc/promtail/docker-config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/log:/var/log:ro
+    command: -config.file=/etc/promtail/docker-config.yaml
+    restart: unless-stopped
+    networks:
+      - chains
+
+  telegraf:
+    image: telegraf:latest
+    user: "0:994"
+    container_name: telegraf
+    restart: unless-stopped
+    networks:
+      - chains
+    expose:
+      - 9273
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9273"
+      - "prometheus-scrape.job_name=telegraf"
+      - "prometheus-scrape.metrics_path=/"
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    container_name: cadvisor
+    command: --enable_metrics=cpu,memory,network,disk --store_container_labels=false --docker_only=true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /cgroup:/cgroup:ro
+      - /dev:/dev:ro
+    restart: unless-stopped
+    expose:
+      - 8080
+    networks:
+      - chains
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=8080"
+      - "prometheus-scrape.job_name=cadvisor"
+      - "prometheus-scrape.metrics_path=/"
+
+  nodeexporter:
+    image: prom/node-exporter
+    container_name: nodeexporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    expose:
+      - 9100
+    networks:
+      - chains
+    labels:
+      - "prometheus-scrape.enabled=true"
+      - "prometheus-scrape.port=9100"
+      - "prometheus-scrape.job_name=nodeexporter"
+      - "prometheus-scrape.metrics_path=/"
+
+volumes:
+  prometheus_data:
+  prometheus-docker-sd:
+  loki_data:
+  grafana_data:
+
+
 ### NETWORK
 
 networks:
