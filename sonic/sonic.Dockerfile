@@ -2,10 +2,21 @@ FROM golang:1.22 as builder
 
 ARG VERSION
 ARG REPO
+ARG PATCH
 
 RUN apt-get update && apt-get install -y git musl-dev make
 
 RUN cd /go && git clone ${REPO:-https://github.com/0xsoniclabs/sonic.git} sonic && cd sonic && git fetch --tags && git checkout -b ${VERSION} tags/${VERSION}
+
+COPY ${PATCH:-empty.patch} /tmp/my-patch.patch
+
+RUN if [ -n "$PATCH" ]; then \
+      echo "Using patch file: $PATCH"; \
+      git apply --verbose /tmp/my-patch.patch || \
+      (echo "Patch failed to apply!" && exit 1); \
+    else \
+      echo "No patch file provided. Skipping."; \
+    fi
 
 WORKDIR /go/sonic
 
