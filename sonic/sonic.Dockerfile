@@ -1,4 +1,4 @@
-FROM golang:1.22 as builder
+FROM golang:1.24 as builder
 
 ARG VERSION
 ARG COMMIT
@@ -32,7 +32,7 @@ ARG GOPROXY
 RUN go mod download
 RUN make all
 
-FROM golang:1.22
+FROM golang:1.24
 
 COPY --from=builder /go/sonic/build/sonicd /usr/local/bin/
 COPY --from=builder /go/sonic/build/sonictool /usr/local/bin/
