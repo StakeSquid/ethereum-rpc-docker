@@ -34,7 +34,7 @@ services:
       context: ./sonic
       dockerfile: sonic.Dockerfile
       args:
-        VERSION: v2.0.3
+        VERSION: 86647c65d5c7d4ba3b52abd81f20d977a91408f1
         REPO: https://github.com/0xsoniclabs/sonic.git
     sysctls:
       # TCP Performance
