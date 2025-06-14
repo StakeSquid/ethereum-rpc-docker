@@ -1,0 +1,91 @@
+# Configuration: https://grafana.com/docs/loki/latest/configuration/
+
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  log_level: warn
+  http_server_read_timeout: 3m
+  http_server_write_timeout: 2m
+  grpc_server_max_recv_msg_size: 52428800
+  grpc_server_max_send_msg_size: 52428800
+  grpc_server_max_concurrent_streams: 100
+
+common:
+  path_prefix: /data/loki
+  storage:
+    filesystem:
+      chunks_directory: /data/chunks
+      rules_directory: /data/rules
+  replication_factor: 1
+
+frontend:
+  max_outstanding_per_tenant: 2048
+
+frontend_worker:
+  grpc_client_config:
+    max_recv_msg_size: 52428800
+    max_send_msg_size: 52428800
+    
+ingester:
+  wal:
+    enabled: true
+    dir: /data/loki/wal
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      heartbeat_timeout: 5m
+  
+  chunk_encoding: "snappy"
+  
+ingester_client:
+  grpc_client_config:
+    max_recv_msg_size: 52428800
+    max_send_msg_size: 52428800
+    
+limits_config:
+  ingestion_rate_mb: 30
+  ingestion_burst_size_mb: 100
+  split_queries_by_interval: 24h
+  per_stream_rate_limit: 10000000
+  per_stream_rate_limit_burst: 20000000
+  allow_structured_metadata: true  # Enabled for schema v13 and tsdb index type
+  reject_old_samples: true
+  reject_old_samples_max_age: 336h
+ruler:
+  alertmanager_url: http://alertmanager:9093
+
+querier:
+  max_concurrent: 1024
+
+query_range:
+  align_queries_with_step: true
+  max_retries: 5
+  cache_results: true
+  
+query_scheduler:
+  grpc_client_config:
+    max_recv_msg_size: 52428800
+    max_send_msg_size: 52428800
+    
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+
+    - from: 2025-01-31
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+analytics:
+  reporting_enabled: false

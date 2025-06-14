@@ -1,0 +1,72 @@
+server:
+  http_listen_port: 9080  # HTTP server for Promtail
+  grpc_listen_port: 0     # Disabling gRPC (not needed in most cases)
+
+positions:
+  filename: /tmp/positions.yaml  # Where Promtail saves its log read positions
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push  # Loki push endpoint
+    batchsize: 1024000                      # Max size of logs to batch in bytes (1MB)
+    batchwait: 1s                           # Max time to wait before sending a batch
+
+scrape_configs:
+######################################################################################
+#####################         SCRAPE DOCKER NETWORKS           #######################
+######################################################################################
+  - job_name: 'docker-containers'
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 10s
+        filters:
+          - name: network
+            values: 
+              - rpc_chains
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        target_label: 'container_name'
+      - source_labels: ['__meta_docker_container_image']
+        target_label: 'container_image'
+      - source_labels: ['__meta_docker_network_name']
+        target_label: 'network'
+
+######################################################################################
+#####################             SYSTEM LOGS                 #######################
+######################################################################################
+  - job_name: system
+    static_configs:
+      - targets: ["localhost"]
+        labels:
+          job: varlogs
+          nodename: system
+          __path__: /var/log/*log
+
+######################################################################################
+#####################             NGINX LOGS                  #######################
+######################################################################################
+  - job_name: nginx
+    static_configs:
+      - targets: ["localhost"]
+        labels:
+          job: nginx
+          nodename: system
+          __path__: /var/log/nginx/*.log
+
+######################################################################################
+#####################        JOURNALD / SYSTEMD LOGS           #######################
+######################################################################################
+  - job_name: journal
+    journal:
+      json: false
+      max_age: 12h
+      path: /var/log/journal
+      # matches: _TRANSPORT=kernel  # Optional filtering by transport type
+      labels:
+        job: systemd-journal
+    relabel_configs:
+      - source_labels: [__journal__systemd_unit]
+        target_label: systemd_unit
+      - source_labels: [__journal__hostname]
+        target_label: nodename
+      - source_labels: [__journal_syslog_identifier]
+        target_label: syslog_identifier
