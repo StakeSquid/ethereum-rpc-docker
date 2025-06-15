@@ -45,9 +45,6 @@ services:
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
-    ports:
-      - 10897:10897
-      - 10897:10897/udp
     expose:
       - 8545
       - 6060
@@ -58,7 +55,6 @@ services:
       - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.sepolia-api.lisk.com
     entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
     command:
-      - --bootnodes=enode://548f715f3fc388a7c917ba644a2f16270f1ede48a5d88a4d14ea287cc916068363f3092e39936f1a3e7885198bef0e5af951f1d7b1041ce8ba4010917777e71f@18.210.176.114:30301,enode://6f10052847a966a725c9f4adf6716f9141155b99a0fb487fea3f51498f4c2a2cb8d534e680ee678f9447db85b93ff7c74562762c3714783a7233ac448603b25f@107.21.251.55:30301
       - --datadir=/data
       - --db.engine=pebble
       - --gcmode=full
@@ -66,13 +62,12 @@ services:
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
-      - --nat=extip:${IP}
       - --networkid=4202
-      - --port=10897
+      - --nodiscover
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
-      - --syncmode=snap
+      - --syncmode=full
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,debug,admin,txpool,engine
@@ -145,7 +140,7 @@ services:
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
-      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_SYNCMODE=consensus-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
     restart: unless-stopped
