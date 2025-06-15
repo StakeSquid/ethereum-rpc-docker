@@ -147,6 +147,8 @@ services:
       - init-grafana
     labels:
       - traefik.enable=true
+      - traefik.http.middlewares.compress.compress=true
+      - traefik.http.routers.grafana.middlewares=compress
       - traefik.http.services.grafana.loadbalancer.server.port=3000
       - ${NO_SSL:-traefik.http.routers.grafana.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.grafana.tls.certresolver=myresolver}
