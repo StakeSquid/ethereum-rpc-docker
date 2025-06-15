@@ -65,7 +65,7 @@ services:
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
-      - --networkid=
+      - --networkid=48899
       - --nodiscover
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
