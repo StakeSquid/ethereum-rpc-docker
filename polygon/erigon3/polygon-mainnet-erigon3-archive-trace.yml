@@ -60,8 +60,6 @@ services:
       - --bor.heimdall=https://polygon-heimdall-rest.publicnode.com
       - --chain=bor-mainnet
       - --datadir=/root/.local/share/erigon
-      - --db.pagesize=16k
-      - --db.size.limit=16t
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,ots
