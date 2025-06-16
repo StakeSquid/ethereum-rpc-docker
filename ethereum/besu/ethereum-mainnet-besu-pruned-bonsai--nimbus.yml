@@ -84,6 +84,7 @@ services:
       - chains
     volumes:
       - ${ETHEREUM_MAINNET_BESU_PRUNED_BONSAI_DATA:-ethereum-mainnet-besu-pruned-bonsai}:/opt/besu/database
+      - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
