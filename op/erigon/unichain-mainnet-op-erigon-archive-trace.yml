@@ -71,7 +71,7 @@ services:
       - --port=11415
       - --rollup.sequencerhttp=https://mainnet.unichain.org
       - --rpc.gascap=6000000000
-      - --rpc.returndata.limit=1100000
+      - --rpc.returndata.limit=1500000
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,engine

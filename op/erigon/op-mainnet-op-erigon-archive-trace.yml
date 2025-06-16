@@ -73,7 +73,7 @@ services:
       - --rollup.historicalrpc=${OP_MAINNET_CLASSIC_ARCHIVE_RPC}
       - --rollup.sequencerhttp=https://mainnet-sequencer.optimism.io
       - --rpc.gascap=6000000000
-      - --rpc.returndata.limit=1100000
+      - --rpc.returndata.limit=1500000
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,engine

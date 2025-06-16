@@ -73,7 +73,7 @@ services:
       - --port=14831
       - --rollup.sequencerhttp=https://rpc.api.lisk.com
       - --rpc.gascap=6000000000
-      - --rpc.returndata.limit=1100000
+      - --rpc.returndata.limit=1500000
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,engine

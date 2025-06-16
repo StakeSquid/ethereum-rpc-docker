@@ -71,7 +71,7 @@ services:
       - --port=11629
       - --rollup.sequencerhttp=https://worldchain-mainnet.g.alchemy.com/public
       - --rpc.gascap=6000000000
-      - --rpc.returndata.limit=1100000
+      - --rpc.returndata.limit=1500000
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,engine
