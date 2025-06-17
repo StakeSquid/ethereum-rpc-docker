@@ -185,12 +185,4 @@ x-upstreams:
       generic:
         rpc:
           url: $${RPC_URL}
-  - id: $${ID}-beacon-chain
-    chain: eth-beacon-chain-sepolia
-    labels:
-      provider: $${PROVIDER}-beacon-chain
-    connection:
-      generic:
-        rpc:
-          url: $${RPC_URL}
 ...
