@@ -14,6 +14,17 @@ x-logging-defaults: &logging-defaults
 # if that file is found then the init script will merge them into any configured seeds from the environment variable.
 # If the environment variable is empty and the file is found then the init script will use the seeds from the config.toml file that was
 # downloaded in initialization from the repo above.
+#
+# something wild that appeared to me was that I had to delete /var/lib/docker/volumes/rpc_berachain-bepolia-reth-archive-trace_config/_data/genesis.json
+# after a fork of the chain to trigger a redownload of the genesis.json file and init of the node datadir.
+#
+# also it may be necessary to update the static peers and bootnodes from the repository to get it going again.
+#
+# frequently reth complains about never seeing a beacon client pushing for new blocks to sync to while the beacon client
+# complains about reth being synching and it can't push new block hashes. force-recreate helps.
+#
+# this is honestly the most flaky constructs of all of the chains in this repository. they expect you to run their refrence setup
+# and git pull to update and if something doesn't work to get a new chaindata snapshot.
 
 # Usage:
 #

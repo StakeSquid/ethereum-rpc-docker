@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ethereum-sepolia-geth:
-    image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_SEPOLIA_GETH_VERSION:-v1.15.7}
+    image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_SEPOLIA_GETH_VERSION:-v1.15.11}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -103,7 +103,7 @@ services:
       - traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.middlewares=ethereum-sepolia-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   ethereum-sepolia-geth-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v6.0.0-rc.3}
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v6.0.4}
     ports:
       - 19710:19710
       - 19710:19710/udp

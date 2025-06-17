@@ -122,7 +122,7 @@ services:
       - traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai.middlewares=ethereum-mainnet-besu-pruned-bonsai-stripprefix, ipallowlist
 
   ethereum-mainnet-besu-node:
-    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-amd64-v25.5.0}
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-amd64-v25.6.0}
     user: root
     ports:
       - 18205:18205

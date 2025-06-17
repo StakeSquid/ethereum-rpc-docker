@@ -122,7 +122,7 @@ services:
       - pruning
 
   ethereum-mainnet-reth-minimal-node:
-    image: ${ETHEREUM_BLSYNC_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_BLSYNC_VERSION:-alltools-v1.15.7}
+    image: ${ETHEREUM_BLSYNC_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_BLSYNC_VERSION:-alltools-v1.15.11}
     ports:
       - 19286:19286
       - 19286:19286/udp

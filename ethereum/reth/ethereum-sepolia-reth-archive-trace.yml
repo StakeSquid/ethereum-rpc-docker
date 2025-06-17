@@ -107,7 +107,7 @@ services:
     shm_size: 2gb
 
   ethereum-sepolia-reth-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v6.0.0-rc.3}
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v6.0.4}
     ports:
       - 19330:19330
       - 19330:19330/udp

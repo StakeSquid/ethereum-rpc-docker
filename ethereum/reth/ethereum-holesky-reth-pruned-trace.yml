@@ -108,7 +108,7 @@ services:
     shm_size: 2gb
 
   ethereum-holesky-reth-pruned-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v6.0.0-rc.3}
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v6.0.4}
     ports:
       - 16849:16849
       - 16849:16849/udp

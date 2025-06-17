@@ -168,7 +168,7 @@ services:
       - traefik.http.routers.ethereum-mainnet-geth-pruned-leveldb-hash-events.middlewares=ipallowlist
 
   ethereum-mainnet-geth-node:
-    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-amd64-v25.5.0}
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-amd64-v25.6.0}
     user: root
     ports:
       - 15455:15455
