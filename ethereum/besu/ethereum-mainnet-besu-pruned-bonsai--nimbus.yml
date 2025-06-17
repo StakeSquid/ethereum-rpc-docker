@@ -142,7 +142,7 @@ services:
       - --rest-port=3500
       - --tcp-port=18205
       - --udp-port=18205
-      - --web3-url=http://ethereum-mainnet-besu:8551
+      - --web3-url=http://ethereum-mainnet-besu-client:8551
     restart: unless-stopped
     depends_on:
       - ethereum-mainnet-besu-client
