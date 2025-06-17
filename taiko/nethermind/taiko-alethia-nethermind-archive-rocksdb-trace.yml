@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   taiko-alethia-nethermind-archive:
-    image: ${TAIKO_NETHERMIND_IMAGE:-nethermind/nethermind}:${TAIKO_ALETHIA_NETHERMIND_VERSION:-v1.31.11}
+    image: ${TAIKO_NETHERMIND_IMAGE:-nethermind/nethermind}:${TAIKO_ALETHIA_NETHERMIND_VERSION:-1.31.11}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
