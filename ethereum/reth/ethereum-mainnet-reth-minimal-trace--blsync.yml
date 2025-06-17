@@ -148,7 +148,6 @@ services:
 
 volumes:
   ethereum-mainnet-reth-minimal-trace:
-  ethereum-mainnet-reth-minimal-trace_blsync:
 
 x-upstreams:
   - id: $${ID}

@@ -213,6 +213,7 @@ services:
 
 volumes:
   ethereum-mainnet-geth-pruned-leveldb-hash:
+  ethereum-mainnet-geth-pruned-leveldb-hash_fireeth:
   ethereum-mainnet-geth-pruned-leveldb-hash_nimbus:
 
 x-upstreams:
