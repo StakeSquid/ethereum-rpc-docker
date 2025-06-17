@@ -1,0 +1,128 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:avalanche/go/avalanche-mainnet-go-pruned-leveldb.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/avalanche-mainnet \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  avalanche-mainnet-client:
+    image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_MAINNET_GO_VERSION:-v1.13.0}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12757:12757
+      - 12757:12757/udp
+    expose:
+      - 9650
+      - 9650
+    entrypoint: [/avalanchego/build/avalanchego]
+    command:
+      - --chain-config-dir=/config/pruned
+      - --db-type=leveldb
+      - --http-allowed-hosts=*
+      - --http-host=
+      - --network-id=mainnet
+      - --public-ip=${IP}
+      - --staking-port=12757
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${AVALANCHE_MAINNET_GO_PRUNED_LEVELDB_DATA:-avalanche-mainnet-go-pruned-leveldb}:/root/.avalanchego
+      - ./avalanche/mainnet:/config
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+
+  avalanche-mainnet:
+    image: nginx
+    expose:
+      - '80'
+    environment:
+      PROXY_HOST: avalanche-mainnet-client
+      RPC_PATH: /ext/bc/C/rpc
+      RPC_PORT: 9650
+      WS_PATH: /ext/bc/C/ws
+      WS_PORT: 9650
+    restart: unless-stopped
+    depends_on:
+      - avalanche-mainnet-client
+    networks:
+      - chains
+    volumes:
+      - ./nginx-proxy:/etc/nginx/templates
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+      - traefik.enable=true
+      - traefik.http.middlewares.avalanche-mainnet-go-pruned-leveldb-stripprefix.stripprefix.prefixes=/avalanche-mainnet
+      - traefik.http.services.avalanche-mainnet-go-pruned-leveldb.loadbalancer.server.port=80
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.rule=Host(`$DOMAIN`) && (Path(`/avalanche-mainnet`) || Path(`/avalanche-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.rule=Path(`/avalanche-mainnet`) || Path(`/avalanche-mainnet/`)}
+      - traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.middlewares=avalanche-mainnet-go-pruned-leveldb-stripprefix, ipallowlist
+
+volumes:
+  avalanche-mainnet-go-pruned-leveldb:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: avalanche
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
