@@ -79,6 +79,7 @@ services:
       - chains
     volumes:
       - ${TAIKO_ALETHIA_NETHERMIND_PRUNED_ROCKSDB_TRACE_DATA:-taiko-alethia-nethermind-pruned-rocksdb-trace}:/data
+      - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:

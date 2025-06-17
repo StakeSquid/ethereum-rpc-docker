@@ -79,6 +79,7 @@ services:
       - chains
     volumes:
       - ${TAIKO_HEKLA_NETHERMIND_PRUNED_ROCKSDB_TRACE_DATA:-taiko-hekla-nethermind-pruned-rocksdb-trace}:/data
+      - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
