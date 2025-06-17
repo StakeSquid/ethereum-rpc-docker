@@ -115,7 +115,6 @@ services:
       - 3500
     entrypoint: [lighthouse, beacon_node]
     command:
-      - --allow-insecure-genesis-sync
       - --checkpoint-sync-url=https://mainnet.beaconstate.info
       - --datadir=/data
       - --debug-level=info
