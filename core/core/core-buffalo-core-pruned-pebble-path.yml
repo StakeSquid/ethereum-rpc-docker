@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   core-buffalo:
-    image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_BUFFALO_CORE_VERSION:-1.0.15}
+    image: ${CORE_CORE_IMAGE:-ghcr.io/coredao-org/core-chain}:${CORE_BUFFALO_CORE_VERSION:-1.0.17}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
