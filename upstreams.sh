@@ -47,7 +47,11 @@ for part in "${parts[@]}"; do
 	    path_include=true
 	    for word in "${path_blacklist[@]}"; do
 		if echo "$path" | grep -qE "$word"; then
-		    path_include=false
+		    if echo "$path" | grep -q "viction"; then
+			path_include=true
+		    else
+			path_include=false
+		    fi
 		fi
 	    done
 	    
