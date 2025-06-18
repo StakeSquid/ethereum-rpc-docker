@@ -176,7 +176,7 @@ services:
       - traefik.http.routers.celo-mainnet-op-geth-pruned-pebble-hash-node.middlewares=celo-mainnet-op-geth-pruned-pebble-hash-node-stripprefix, ipallowlist
 
   celo-mainnet-relay:
-    image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_MAINNET_EIGENDA_PROXY_VERSION:-v1.6.4}
+    image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_MAINNET_EIGENDA_PROXY_VERSION:-v1.8.2}
     environment:
       - EIGENDA_PROXY_ADDR=0.0.0.0
       - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
