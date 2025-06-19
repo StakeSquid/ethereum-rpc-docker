@@ -89,10 +89,6 @@ x-upstreams:
       generic:
         rpc:
           url: $${RPC_URL}
-        ws:
-          frameSize: 20Mb
-          msgSize: 50Mb
-          url: $${WS_URL}
     chain: hyperliquid-testnet
     method-groups:
       enabled:
