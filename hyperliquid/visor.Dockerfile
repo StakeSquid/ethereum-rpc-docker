@@ -9,9 +9,9 @@ ARG HL_VISOR_URL_MAINNET=https://binaries.hyperliquid.xyz/Mainnet/hl-visor
 
 WORKDIR /root
 
-# Install required tools
+# Install required tools including tini
 RUN apt-get update && \
-    apt-get install -y curl gnupg gawk && \
+    apt-get install -y curl gnupg gawk tini && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -o /root/pub_key.asc $PUB_KEY_URL \
@@ -42,5 +42,5 @@ VOLUME /root/hl/data
 # Expose gossip ports
 EXPOSE 4000-4010
 
-# Run a non-validating node
-ENTRYPOINT ["/root/entrypoint.sh"]
+# Run a non-validating node with tini as init
+ENTRYPOINT ["tini", "--", "/root/entrypoint.sh"]
