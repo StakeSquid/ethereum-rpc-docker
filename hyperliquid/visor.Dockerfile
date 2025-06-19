@@ -8,6 +8,11 @@ ARG HL_VISOR_URL_MAINNET=https://binaries.hyperliquid.xyz/Mainnet/hl-visor
 
 WORKDIR /root
 
+# Install curl
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
+
 # Configure chain to testnet
 RUN echo "{\"chain\": \"${CHAIN_NAME}\"}" > /root/visor.json
 
