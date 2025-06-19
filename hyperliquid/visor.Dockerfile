@@ -3,6 +3,7 @@ FROM ubuntu:24.04
 ARG CHAIN_NAME=Testnet
 
 # Define URLs as environment variables
+ARG PUB_KEY_URL=https://raw.githubusercontent.com/hyperliquid-dex/node/refs/heads/main/pub_key.asc
 ARG HL_VISOR_URL_TESTNET=https://binaries.hyperliquid-testnet.xyz/Testnet/hl-visor
 ARG HL_VISOR_URL_MAINNET=https://binaries.hyperliquid.xyz/Mainnet/hl-visor
 
