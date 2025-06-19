@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   zircuit-mainnet-archive:
-    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_MAINNET_GETH_VERSION:-46d6be94120deeb7369d0ae151b7bf2e6fe23888}
+    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_MAINNET_GETH_VERSION:-v1.26.5}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -109,7 +109,7 @@ services:
       - traefik.http.routers.zircuit-mainnet-op-geth-archive-leveldb-hash.middlewares=zircuit-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   zircuit-mainnet-archive-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${MAINNET_NODE_VERSION:-46d6be94120deeb7369d0ae151b7bf2e6fe23888}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${MAINNET_NODE_VERSION:-v1.26.5}
     ports:
       - 19463:19463
       - 19463:19463/udp
