@@ -10,8 +10,11 @@ WORKDIR /root
 
 # Install curl
 RUN apt-get update && \
-    apt-get install -y curl && \
+    apt-get install -y curl gnupg && \
     rm -rf /var/lib/apt/lists/*
+
+RUN curl -o /root/pub_key.asc $PUB_KEY_URL \
+    && gpg --import /root/pub_key.asc
 
 # Configure chain to testnet
 RUN echo "{\"chain\": \"${CHAIN_NAME}\"}" > /root/visor.json
