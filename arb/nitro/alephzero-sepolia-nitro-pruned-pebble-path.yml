@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   alephzero-sepolia:
-    image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_SEPOLIA_NITRO_VERSION:-v3.6.6-a1deae2}
+    image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_SEPOLIA_NITRO_VERSION:-v3.6.7-a7c9f1e}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

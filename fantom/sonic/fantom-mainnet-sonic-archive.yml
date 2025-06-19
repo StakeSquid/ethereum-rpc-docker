@@ -7,7 +7,7 @@ x-logging-defaults: &logging-defaults
 #    To fix the database after corruption through restart run
 #
 #    docker compose stop fantom-mainnet
-#    docker compose run -it --rm --entrypoint sonictool fantom-mainnet --datadir heal /var/sonic
+#    docker compose run -it --rm --entrypoint sonictool fantom-mainnet --datadir /var/sonic heal
 #    docker compose start fantom-mainnet
 #
 
