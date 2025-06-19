@@ -60,6 +60,7 @@ services:
       - --http.port=8545
       - --http.vhosts=*
       - --init.download-path=/tmp
+      - --init.prune=full
       - --metrics
       - --metrics-server.addr=0.0.0.0
       - --metrics-server.port=6070

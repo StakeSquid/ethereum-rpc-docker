@@ -4,6 +4,12 @@ x-logging-defaults: &logging-defaults
   options:
     max-size: "10m"
     max-file: "3"
+#    Beware that the port range is fixed to 4000-4010.
+#    effectively only 4001,4002 are used
+#    the actual source of truth seems to be running in Tokio
+#    everyone else may be a slave to the truth
+#
+#    the client should actually be named "node" but I'm going to fix the naming later... or not.
 
 # Usage:
 #

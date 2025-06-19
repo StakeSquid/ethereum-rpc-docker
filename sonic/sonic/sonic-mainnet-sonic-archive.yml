@@ -4,6 +4,12 @@ x-logging-defaults: &logging-defaults
   options:
     max-size: "10m"
     max-file: "3"
+#    To fix the database after corruption through restart run
+#
+#    docker compose stop sonic-mainnet
+#    docker compose run -it --rm --entrypoint sonictool sonic-mainnet --datadir heal /var/sonic
+#    docker compose start sonic-mainnet
+#
 
 # Usage:
 #
