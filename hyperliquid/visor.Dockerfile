@@ -9,9 +9,9 @@ ARG HL_VISOR_URL_MAINNET=https://binaries.hyperliquid.xyz/Mainnet/hl-visor
 
 WORKDIR /root
 
-# Install curl
+# Install required tools
 RUN apt-get update && \
-    apt-get install -y curl gnupg && \
+    apt-get install -y curl gnupg gawk && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -o /root/pub_key.asc $PUB_KEY_URL \
@@ -19,6 +19,14 @@ RUN curl -o /root/pub_key.asc $PUB_KEY_URL \
 
 # Configure chain to testnet
 RUN echo "{\"chain\": \"${CHAIN_NAME}\"}" > /root/visor.json
+
+RUN echo '#!/bin/bash\n\
+IPS=$(echo "$ROOT_NODE_IPS" | tr "," "\n" | awk \047{print "{\"Ip\": \""$1"\"}"}\047 | paste -sd,)\n\
+cat > /root/override_gossip_config.json << EOF\n\
+{"root_node_ips": [$IPS], "try_new_peers": false, "chain": "'${CHAIN_NAME}'"}\n\
+EOF\n\
+exec /root/hl-visor run-non-validator --replica-cmds-style recent-actions --serve-evm-rpc' > /root/entrypoint.sh && \
+chmod +x /root/entrypoint.sh
 
 # Download and verify hl-visor binary
 RUN if [ "$CHAIN_NAME" = "Testnet" ]; then \
@@ -35,4 +43,4 @@ VOLUME /root/hl/data
 EXPOSE 4000-4010
 
 # Run a non-validating node
-ENTRYPOINT ["/root/hl-visor", "run-non-validator", "--replica-cmds-style", "recent-actions", "--serve-evm-rpc"]
+ENTRYPOINT ["/root/entrypoint.sh"]
