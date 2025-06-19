@@ -71,7 +71,7 @@ services:
       - traefik.enable=true
       - traefik.http.middlewares.hyperliquid-mainnet-visor-pruned-set-path.replacepath.path=/evm
       - traefik.http.middlewares.hyperliquid-mainnet-visor-pruned-stripprefix.stripprefix.prefixes=/hyperliquid-mainnet-pruned
-      - traefik.http.services.hyperliquid-mainnet-visor-pruned.loadbalancer.server.port=8545
+      - traefik.http.services.hyperliquid-mainnet-visor-pruned.loadbalancer.server.port=3001
       - ${NO_SSL:-traefik.http.routers.hyperliquid-mainnet-visor-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.hyperliquid-mainnet-visor-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.hyperliquid-mainnet-visor-pruned.rule=Host(`$DOMAIN`) && (Path(`/hyperliquid-mainnet-pruned`) || Path(`/hyperliquid-mainnet-pruned/`))}

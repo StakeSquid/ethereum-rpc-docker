@@ -71,7 +71,7 @@ services:
       - traefik.enable=true
       - traefik.http.middlewares.hyperliquid-testnet-visor-pruned-set-path.replacepath.path=/evm
       - traefik.http.middlewares.hyperliquid-testnet-visor-pruned-stripprefix.stripprefix.prefixes=/hyperliquid-testnet-pruned
-      - traefik.http.services.hyperliquid-testnet-visor-pruned.loadbalancer.server.port=8545
+      - traefik.http.services.hyperliquid-testnet-visor-pruned.loadbalancer.server.port=3001
       - ${NO_SSL:-traefik.http.routers.hyperliquid-testnet-visor-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.hyperliquid-testnet-visor-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.hyperliquid-testnet-visor-pruned.rule=Host(`$DOMAIN`) && (Path(`/hyperliquid-testnet-pruned`) || Path(`/hyperliquid-testnet-pruned/`))}
