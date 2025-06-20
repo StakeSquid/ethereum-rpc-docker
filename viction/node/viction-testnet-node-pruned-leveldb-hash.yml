@@ -52,21 +52,17 @@ services:
       - 8545
       - 8546
     environment:
+      BOOTNODES: enode://ce1191bf9a634e7939676d136816ad84941b079c03d6a96e64cca35852363012169055c6879c644e821dc236a01d0499a1b7ff39e9518dbc00da87c7f1898604@13.251.101.216:30301,enode://cf2d05f71f143d85dce45dae6f74fae0ba56fc5ea1d1c548a095e29a5becb3a1fb93eb33e7b1dec43946dcfe608fd1495a02740af710bc615b90ad60fcc04d14@13.250.94.232:30301
       EXTIP: ${IP}
+      NETWORK_ID: 89
       P2P_PORT: 12254
-    command:
-      - --gcmode=full
-      - --rpcapi=eth,debug,net,db,admin,web3
-      - --syncmode=full
-      - --tomox
-      - --tomox.datadir=/tomochain/data/tomox
+    command: --tomox --tomox.datadir /tomochain/data/tomox --gcmode full --rpcapi eth,debug,net,db,admin,web3
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
       - chains
     volumes:
       - ${VICTION_TESTNET_NODE_PRUNED_LEVELDB_HASH_DATA:-viction-testnet-node-pruned-leveldb-hash}:/tomochain/data
-      - ./viction/testnet:/config
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
