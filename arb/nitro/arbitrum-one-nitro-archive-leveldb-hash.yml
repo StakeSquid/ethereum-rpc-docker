@@ -51,7 +51,7 @@ services:
       - --chain.id=42161
       - --execution.caching.archive=true
       - --execution.rpc.classic-redirect=http://arbitrum-one-arbnode-archive:8545
-      - --execution.rpc.gas-cap=600000000
+      - --execution.rpc.gas-cap=5500000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,arb,txpool,debug

@@ -50,8 +50,8 @@ services:
     entrypoint: [sh, -c, exec fireeth start reader-node --log-to-file=false --reader-node-arguments "$*", _]
     command:
       - --chain.id=42161
-      - --execution.caching.archive=false
-      - --execution.rpc.gas-cap=600000000
+      - --execution.caching.archive=${ARBITRUM_ONE_ARCHIVE_DB:-false}
+      - --execution.rpc.gas-cap=5500000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,arb,txpool,debug

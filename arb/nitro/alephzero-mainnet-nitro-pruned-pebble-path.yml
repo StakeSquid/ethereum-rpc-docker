@@ -49,10 +49,10 @@ services:
       - 8545
     command:
       - --conf.file=/config/baseConfig.json
-      - --execution.caching.archive=false
+      - --execution.caching.archive=${ALEPHZERO_MAINNET_ARCHIVE_DB:-false}
       - --execution.caching.state-scheme=path
       - --execution.forwarding-target=https://rpc.alephzero.raas.gelato.cloud
-      - --execution.rpc.gas-cap=600000000
+      - --execution.rpc.gas-cap=5500000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,arb,txpool,debug
