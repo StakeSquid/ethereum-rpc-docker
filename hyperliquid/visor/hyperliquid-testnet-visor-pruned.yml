@@ -98,7 +98,6 @@ x-upstreams:
     chain: hyperliquid-testnet
     method-groups:
       enabled:
-        - debug
         - filter
     methods:
       disabled:
