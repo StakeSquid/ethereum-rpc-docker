@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  metis-andromeda-mainnet-archive-client:
+  metis-andromeda-mainnet-archive:
     image: ${METIS_ANDROMEDA_L2GETH_IMAGE:-metisdao/l2geth}:${METIS_ANDROMEDA_MAINNET_L2GETH_VERSION:-v0.3.5}
     sysctls:
       # TCP Performance
@@ -106,35 +106,24 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  metis-andromeda-mainnet-archive:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: metis-andromeda-mainnet-archive-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - metis-andromeda-mainnet-archive-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/metis-andromeda-mainnet-archive
-      - traefik.http.services.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=80
+      - traefik.http.services.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/metis-andromeda-mainnet-archive`) || Path(`/metis-andromeda-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.rule=Path(`/metis-andromeda-mainnet-archive`) || Path(`/metis-andromeda-mainnet-archive/`)}
       - traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.middlewares=metis-andromeda-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipallowlist
+      - traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws.priority=100   # answers GET requests first
+      - traefik.http.services.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws.service=metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws
+      - traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash.service=metis-andromeda-mainnet-l2geth-archive-leveldb-hash
+      - ${NO_SSL:-traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws.rule=Host(`$DOMAIN`) && (Path(`/metis-andromeda-mainnet-archive`) || Path(`/metis-andromeda-mainnet-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws.rule=(Path(`/metis-andromeda-mainnet-archive`) || Path(`/metis-andromeda-mainnet-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws.middlewares=metis-andromeda-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   metis-andromeda-mainnet-archive-node:
     image: ${METIS_ANDROMEDA_DTL_IMAGE:-metisdao/dtl}:${METIS_ANDROMEDA_MAINNET_DTL_VERSION:-v0.1.3}
@@ -175,7 +164,7 @@ services:
       - URL=https://metisprotocol.github.io/metis-networks/andromeda-mainnet/addresses.json
     restart: unless-stopped
     depends_on:
-      - metis-andromeda-mainnet-archive-client
+      - metis-andromeda-mainnet-archive
     networks:
       - chains
     volumes:

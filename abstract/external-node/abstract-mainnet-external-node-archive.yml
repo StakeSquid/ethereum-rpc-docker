@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  abstract-mainnet-archive-client:
+  abstract-mainnet-archive:
     image: ${ABSTRACT_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ABSTRACT_MAINNET_EXTERNAL_NODE_VERSION:-v28.6.0}
     sysctls:
       # TCP Performance
@@ -83,35 +83,24 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  abstract-mainnet-archive:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: abstract-mainnet-archive-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - abstract-mainnet-archive-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.abstract-mainnet-external-node-archive-stripprefix.stripprefix.prefixes=/abstract-mainnet-archive
-      - traefik.http.services.abstract-mainnet-external-node-archive.loadbalancer.server.port=80
+      - traefik.http.services.abstract-mainnet-external-node-archive.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.abstract-mainnet-external-node-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.abstract-mainnet-external-node-archive.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.abstract-mainnet-external-node-archive.rule=Host(`$DOMAIN`) && (Path(`/abstract-mainnet-archive`) || Path(`/abstract-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.abstract-mainnet-external-node-archive.rule=Path(`/abstract-mainnet-archive`) || Path(`/abstract-mainnet-archive/`)}
       - traefik.http.routers.abstract-mainnet-external-node-archive.middlewares=abstract-mainnet-external-node-archive-stripprefix, ipallowlist
+      - traefik.http.routers.abstract-mainnet-external-node-archive.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.abstract-mainnet-external-node-archive-ws.priority=100   # answers GET requests first
+      - traefik.http.services.abstract-mainnet-external-node-archive-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.abstract-mainnet-external-node-archive-ws.service=abstract-mainnet-external-node-archive-ws
+      - traefik.http.routers.abstract-mainnet-external-node-archive.service=abstract-mainnet-external-node-archive
+      - ${NO_SSL:-traefik.http.routers.abstract-mainnet-external-node-archive-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.abstract-mainnet-external-node-archive-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.abstract-mainnet-external-node-archive-ws.rule=Host(`$DOMAIN`) && (Path(`/abstract-mainnet-archive`) || Path(`/abstract-mainnet-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.abstract-mainnet-external-node-archive-ws.rule=(Path(`/abstract-mainnet-archive`) || Path(`/abstract-mainnet-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.abstract-mainnet-external-node-archive-ws.middlewares=abstract-mainnet-external-node-archive-stripprefix, ipallowlist
 
   abstract-mainnet-archive-db:
     image: postgres:14

@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  linea-mainnet-client:
+  linea-mainnet:
     image: ${LINEA_BESU_IMAGE:-consensys/linea-besu-package}:${LINEA_MAINNET_BESU_VERSION:-mainnet-latest}
     sysctls:
       # TCP Performance
@@ -89,35 +89,24 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=9545
       - prometheus-scrape.path=/metrics
-
-  linea-mainnet:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: linea-mainnet-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - linea-mainnet-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.linea-mainnet-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/linea-mainnet
-      - traefik.http.services.linea-mainnet-besu-pruned-bonsai.loadbalancer.server.port=80
+      - traefik.http.services.linea-mainnet-besu-pruned-bonsai.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-besu-pruned-bonsai.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-besu-pruned-bonsai.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.linea-mainnet-besu-pruned-bonsai.rule=Host(`$DOMAIN`) && (Path(`/linea-mainnet`) || Path(`/linea-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.linea-mainnet-besu-pruned-bonsai.rule=Path(`/linea-mainnet`) || Path(`/linea-mainnet/`)}
       - traefik.http.routers.linea-mainnet-besu-pruned-bonsai.middlewares=linea-mainnet-besu-pruned-bonsai-stripprefix, ipallowlist
+      - traefik.http.routers.linea-mainnet-besu-pruned-bonsai.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.linea-mainnet-besu-pruned-bonsai-ws.priority=100   # answers GET requests first
+      - traefik.http.services.linea-mainnet-besu-pruned-bonsai-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.linea-mainnet-besu-pruned-bonsai-ws.service=linea-mainnet-besu-pruned-bonsai-ws
+      - traefik.http.routers.linea-mainnet-besu-pruned-bonsai.service=linea-mainnet-besu-pruned-bonsai
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-besu-pruned-bonsai-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-besu-pruned-bonsai-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.linea-mainnet-besu-pruned-bonsai-ws.rule=Host(`$DOMAIN`) && (Path(`/linea-mainnet`) || Path(`/linea-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.linea-mainnet-besu-pruned-bonsai-ws.rule=(Path(`/linea-mainnet`) || Path(`/linea-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.linea-mainnet-besu-pruned-bonsai-ws.middlewares=linea-mainnet-besu-pruned-bonsai-stripprefix, ipallowlist
 
 volumes:
   linea-mainnet-besu-pruned-bonsai:

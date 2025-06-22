@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  solana-testnet-client:
+  solana-testnet:
     image: ${SOLANA_FIRESOL_IMAGE:-ghcr.io/streamingfast/firehose-solana}:${SOLANA_TESTNET_FIRESOL_VERSION:-v1.1.3}
     sysctls:
       # TCP Performance
@@ -90,30 +90,9 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=12344
       - prometheus-scrape.path=/metrics
-
-  solana-testnet:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: solana-testnet-client
-      RPC_PATH: ''
-      RPC_PORT: 8899
-      WS_PATH: ''
-      WS_PORT: 8899
-    restart: unless-stopped
-    depends_on:
-      - solana-testnet-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.solana-testnet-agave-pruned-rocksdb-stripprefix.stripprefix.prefixes=/solana-testnet
-      - traefik.http.services.solana-testnet-agave-pruned-rocksdb.loadbalancer.server.port=80
+      - traefik.http.services.solana-testnet-agave-pruned-rocksdb.loadbalancer.server.port=8899
       - ${NO_SSL:-traefik.http.routers.solana-testnet-agave-pruned-rocksdb.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.solana-testnet-agave-pruned-rocksdb.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.solana-testnet-agave-pruned-rocksdb.rule=Host(`$DOMAIN`) && (Path(`/solana-testnet`) || Path(`/solana-testnet/`))}
@@ -132,7 +111,7 @@ services:
       - --firehose-rate-limit-bucket-fill-rate=${SOLANA_TESTNET_FIREHOSE_RATE_LIMIT_BUCKET_FILL_RATE:-1s}
       - --firehose-rate-limit-bucket-size=${SOLANA_TESTNET_FIREHOSE_RATE_LIMIT_BUCKET_SIZE:-200}
       - --log-to-file=false
-      - --relayer-source=solana-testnet-client:10010
+      - --relayer-source=solana-testnet:10010
     restart: unless-stopped
     depends_on:
       - solana-testnet

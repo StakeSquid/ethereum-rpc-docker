@@ -32,7 +32,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  cronos-zkevm-mainnet-client:
+  cronos-zkevm-mainnet:
     image: ${CRONOS_ZKEVM_EXTERNAL_NODE_IMAGE:-ghcr.io/cronos-labs/external-node}:${CRONOS_ZKEVM_MAINNET_EXTERNAL_NODE_VERSION:-v27.5.3-patch}
     sysctls:
       # TCP Performance
@@ -87,35 +87,24 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  cronos-zkevm-mainnet:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: cronos-zkevm-mainnet-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - cronos-zkevm-mainnet-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.cronos-zkevm-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/cronos-zkevm-mainnet
-      - traefik.http.services.cronos-zkevm-mainnet-external-node-pruned.loadbalancer.server.port=80
+      - traefik.http.services.cronos-zkevm-mainnet-external-node-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.rule=Host(`$DOMAIN`) && (Path(`/cronos-zkevm-mainnet`) || Path(`/cronos-zkevm-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.rule=Path(`/cronos-zkevm-mainnet`) || Path(`/cronos-zkevm-mainnet/`)}
       - traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.middlewares=cronos-zkevm-mainnet-external-node-pruned-stripprefix, ipallowlist
+      - traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned-ws.priority=100   # answers GET requests first
+      - traefik.http.services.cronos-zkevm-mainnet-external-node-pruned-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned-ws.service=cronos-zkevm-mainnet-external-node-pruned-ws
+      - traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned.service=cronos-zkevm-mainnet-external-node-pruned
+      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned-ws.rule=Host(`$DOMAIN`) && (Path(`/cronos-zkevm-mainnet`) || Path(`/cronos-zkevm-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned-ws.rule=(Path(`/cronos-zkevm-mainnet`) || Path(`/cronos-zkevm-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.cronos-zkevm-mainnet-external-node-pruned-ws.middlewares=cronos-zkevm-mainnet-external-node-pruned-stripprefix, ipallowlist
 
   cronos-zkevm-mainnet-db:
     image: postgres:14

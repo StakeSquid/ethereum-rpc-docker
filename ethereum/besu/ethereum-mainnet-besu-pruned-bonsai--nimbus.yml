@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  ethereum-mainnet-besu-client:
+  ethereum-mainnet-besu:
     image: ${ETHEREUM_BESU_IMAGE:-hyperledger/besu}:${ETHEREUM_MAINNET_BESU_VERSION:-25.6.0}
     sysctls:
       # TCP Performance
@@ -91,35 +91,24 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=9545
       - prometheus-scrape.path=/metrics
-
-  ethereum-mainnet-besu:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: ethereum-mainnet-besu-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - ethereum-mainnet-besu-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.ethereum-mainnet-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/ethereum-mainnet-besu
-      - traefik.http.services.ethereum-mainnet-besu-pruned-bonsai.loadbalancer.server.port=80
+      - traefik.http.services.ethereum-mainnet-besu-pruned-bonsai.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-besu`) || Path(`/ethereum-mainnet-besu/`))}
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai.rule=Path(`/ethereum-mainnet-besu`) || Path(`/ethereum-mainnet-besu/`)}
       - traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai.middlewares=ethereum-mainnet-besu-pruned-bonsai-stripprefix, ipallowlist
+      - traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai-ws.priority=100   # answers GET requests first
+      - traefik.http.services.ethereum-mainnet-besu-pruned-bonsai-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai-ws.service=ethereum-mainnet-besu-pruned-bonsai-ws
+      - traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai.service=ethereum-mainnet-besu-pruned-bonsai
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai-ws.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-besu`) || Path(`/ethereum-mainnet-besu/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai-ws.rule=(Path(`/ethereum-mainnet-besu`) || Path(`/ethereum-mainnet-besu/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.ethereum-mainnet-besu-pruned-bonsai-ws.middlewares=ethereum-mainnet-besu-pruned-bonsai-stripprefix, ipallowlist
 
   ethereum-mainnet-besu-node:
     image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-amd64-v25.6.0}
@@ -142,10 +131,10 @@ services:
       - --rest-port=3500
       - --tcp-port=18205
       - --udp-port=18205
-      - --web3-url=http://ethereum-mainnet-besu-client:8551
+      - --web3-url=http://ethereum-mainnet-besu:8551
     restart: unless-stopped
     depends_on:
-      - ethereum-mainnet-besu-client
+      - ethereum-mainnet-besu
     networks:
       - chains
     volumes:

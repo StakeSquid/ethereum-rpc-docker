@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  zksync-era-mainnet-client:
+  zksync-era-mainnet:
     image: ${ZKSYNC_ERA_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ZKSYNC_ERA_MAINNET_EXTERNAL_NODE_VERSION:-v28.6.0}
     sysctls:
       # TCP Performance
@@ -83,35 +83,24 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  zksync-era-mainnet:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: zksync-era-mainnet-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - zksync-era-mainnet-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.zksync-era-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/zksync-era-mainnet
-      - traefik.http.services.zksync-era-mainnet-external-node-pruned.loadbalancer.server.port=80
+      - traefik.http.services.zksync-era-mainnet-external-node-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-pruned.rule=Host(`$DOMAIN`) && (Path(`/zksync-era-mainnet`) || Path(`/zksync-era-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.zksync-era-mainnet-external-node-pruned.rule=Path(`/zksync-era-mainnet`) || Path(`/zksync-era-mainnet/`)}
       - traefik.http.routers.zksync-era-mainnet-external-node-pruned.middlewares=zksync-era-mainnet-external-node-pruned-stripprefix, ipallowlist
+      - traefik.http.routers.zksync-era-mainnet-external-node-pruned.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.zksync-era-mainnet-external-node-pruned-ws.priority=100   # answers GET requests first
+      - traefik.http.services.zksync-era-mainnet-external-node-pruned-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.zksync-era-mainnet-external-node-pruned-ws.service=zksync-era-mainnet-external-node-pruned-ws
+      - traefik.http.routers.zksync-era-mainnet-external-node-pruned.service=zksync-era-mainnet-external-node-pruned
+      - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-pruned-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-pruned-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.zksync-era-mainnet-external-node-pruned-ws.rule=Host(`$DOMAIN`) && (Path(`/zksync-era-mainnet`) || Path(`/zksync-era-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.zksync-era-mainnet-external-node-pruned-ws.rule=(Path(`/zksync-era-mainnet`) || Path(`/zksync-era-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.zksync-era-mainnet-external-node-pruned-ws.middlewares=zksync-era-mainnet-external-node-pruned-stripprefix, ipallowlist
 
   zksync-era-mainnet-db:
     image: postgres:14

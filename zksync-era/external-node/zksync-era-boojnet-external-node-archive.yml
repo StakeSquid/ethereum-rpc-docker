@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  zksync-era-boojnet-archive-client:
+  zksync-era-boojnet-archive:
     image: ${ZKSYNC_ERA_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ZKSYNC_ERA_BOOJNET_EXTERNAL_NODE_VERSION:-v28.6.0}
     sysctls:
       # TCP Performance
@@ -81,35 +81,24 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  zksync-era-boojnet-archive:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: zksync-era-boojnet-archive-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - zksync-era-boojnet-archive-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.zksync-era-boojnet-external-node-archive-stripprefix.stripprefix.prefixes=/zksync-era-boojnet-archive
-      - traefik.http.services.zksync-era-boojnet-external-node-archive.loadbalancer.server.port=80
+      - traefik.http.services.zksync-era-boojnet-external-node-archive.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-archive.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-archive.rule=Host(`$DOMAIN`) && (Path(`/zksync-era-boojnet-archive`) || Path(`/zksync-era-boojnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.zksync-era-boojnet-external-node-archive.rule=Path(`/zksync-era-boojnet-archive`) || Path(`/zksync-era-boojnet-archive/`)}
       - traefik.http.routers.zksync-era-boojnet-external-node-archive.middlewares=zksync-era-boojnet-external-node-archive-stripprefix, ipallowlist
+      - traefik.http.routers.zksync-era-boojnet-external-node-archive.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.zksync-era-boojnet-external-node-archive-ws.priority=100   # answers GET requests first
+      - traefik.http.services.zksync-era-boojnet-external-node-archive-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.zksync-era-boojnet-external-node-archive-ws.service=zksync-era-boojnet-external-node-archive-ws
+      - traefik.http.routers.zksync-era-boojnet-external-node-archive.service=zksync-era-boojnet-external-node-archive
+      - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-archive-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-archive-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.zksync-era-boojnet-external-node-archive-ws.rule=Host(`$DOMAIN`) && (Path(`/zksync-era-boojnet-archive`) || Path(`/zksync-era-boojnet-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.zksync-era-boojnet-external-node-archive-ws.rule=(Path(`/zksync-era-boojnet-archive`) || Path(`/zksync-era-boojnet-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.zksync-era-boojnet-external-node-archive-ws.middlewares=zksync-era-boojnet-external-node-archive-stripprefix, ipallowlist
 
   zksync-era-boojnet-archive-db:
     image: postgres:14

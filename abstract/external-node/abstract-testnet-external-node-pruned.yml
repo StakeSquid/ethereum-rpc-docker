@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  abstract-testnet-client:
+  abstract-testnet:
     image: ${ABSTRACT_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ABSTRACT_TESTNET_EXTERNAL_NODE_VERSION:-v28.6.0}
     sysctls:
       # TCP Performance
@@ -83,35 +83,24 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  abstract-testnet:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: abstract-testnet-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - abstract-testnet-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.abstract-testnet-external-node-pruned-stripprefix.stripprefix.prefixes=/abstract-testnet
-      - traefik.http.services.abstract-testnet-external-node-pruned.loadbalancer.server.port=80
+      - traefik.http.services.abstract-testnet-external-node-pruned.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.abstract-testnet-external-node-pruned.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.abstract-testnet-external-node-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.abstract-testnet-external-node-pruned.rule=Host(`$DOMAIN`) && (Path(`/abstract-testnet`) || Path(`/abstract-testnet/`))}
       - ${NO_SSL:+traefik.http.routers.abstract-testnet-external-node-pruned.rule=Path(`/abstract-testnet`) || Path(`/abstract-testnet/`)}
       - traefik.http.routers.abstract-testnet-external-node-pruned.middlewares=abstract-testnet-external-node-pruned-stripprefix, ipallowlist
+      - traefik.http.routers.abstract-testnet-external-node-pruned.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.abstract-testnet-external-node-pruned-ws.priority=100   # answers GET requests first
+      - traefik.http.services.abstract-testnet-external-node-pruned-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.abstract-testnet-external-node-pruned-ws.service=abstract-testnet-external-node-pruned-ws
+      - traefik.http.routers.abstract-testnet-external-node-pruned.service=abstract-testnet-external-node-pruned
+      - ${NO_SSL:-traefik.http.routers.abstract-testnet-external-node-pruned-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.abstract-testnet-external-node-pruned-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.abstract-testnet-external-node-pruned-ws.rule=Host(`$DOMAIN`) && (Path(`/abstract-testnet`) || Path(`/abstract-testnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.abstract-testnet-external-node-pruned-ws.rule=(Path(`/abstract-testnet`) || Path(`/abstract-testnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.abstract-testnet-external-node-pruned-ws.middlewares=abstract-testnet-external-node-pruned-stripprefix, ipallowlist
 
   abstract-testnet-db:
     image: postgres:14

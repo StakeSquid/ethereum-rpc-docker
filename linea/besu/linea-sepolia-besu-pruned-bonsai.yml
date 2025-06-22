@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  linea-sepolia-client:
+  linea-sepolia:
     image: ${LINEA_BESU_IMAGE:-consensys/linea-besu-package}:${LINEA_SEPOLIA_BESU_VERSION:-sepolia-latest}
     sysctls:
       # TCP Performance
@@ -89,35 +89,24 @@ services:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=9545
       - prometheus-scrape.path=/metrics
-
-  linea-sepolia:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: linea-sepolia-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - linea-sepolia-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.linea-sepolia-besu-pruned-bonsai-stripprefix.stripprefix.prefixes=/linea-sepolia
-      - traefik.http.services.linea-sepolia-besu-pruned-bonsai.loadbalancer.server.port=80
+      - traefik.http.services.linea-sepolia-besu-pruned-bonsai.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-besu-pruned-bonsai.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-besu-pruned-bonsai.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.linea-sepolia-besu-pruned-bonsai.rule=Host(`$DOMAIN`) && (Path(`/linea-sepolia`) || Path(`/linea-sepolia/`))}
       - ${NO_SSL:+traefik.http.routers.linea-sepolia-besu-pruned-bonsai.rule=Path(`/linea-sepolia`) || Path(`/linea-sepolia/`)}
       - traefik.http.routers.linea-sepolia-besu-pruned-bonsai.middlewares=linea-sepolia-besu-pruned-bonsai-stripprefix, ipallowlist
+      - traefik.http.routers.linea-sepolia-besu-pruned-bonsai.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.linea-sepolia-besu-pruned-bonsai-ws.priority=100   # answers GET requests first
+      - traefik.http.services.linea-sepolia-besu-pruned-bonsai-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.linea-sepolia-besu-pruned-bonsai-ws.service=linea-sepolia-besu-pruned-bonsai-ws
+      - traefik.http.routers.linea-sepolia-besu-pruned-bonsai.service=linea-sepolia-besu-pruned-bonsai
+      - ${NO_SSL:-traefik.http.routers.linea-sepolia-besu-pruned-bonsai-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.linea-sepolia-besu-pruned-bonsai-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.linea-sepolia-besu-pruned-bonsai-ws.rule=Host(`$DOMAIN`) && (Path(`/linea-sepolia`) || Path(`/linea-sepolia/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.linea-sepolia-besu-pruned-bonsai-ws.rule=(Path(`/linea-sepolia`) || Path(`/linea-sepolia/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.linea-sepolia-besu-pruned-bonsai-ws.middlewares=linea-sepolia-besu-pruned-bonsai-stripprefix, ipallowlist
 
 volumes:
   linea-sepolia-besu-pruned-bonsai:
