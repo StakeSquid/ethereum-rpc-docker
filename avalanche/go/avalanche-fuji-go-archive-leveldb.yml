@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  avalanche-fuji-archive-client:
+  avalanche-fuji-archive:
     image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_FUJI_GO_VERSION:-v1.13.0-fuji}
     sysctls:
       # TCP Performance
@@ -49,7 +49,6 @@ services:
       - 10046:10046
       - 10046:10046/udp
     expose:
-      - 9650
       - 9650
     entrypoint: [/avalanchego/build/avalanchego]
     command:
@@ -71,35 +70,26 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  avalanche-fuji-archive:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: avalanche-fuji-archive-client
-      RPC_PATH: /ext/bc/C/rpc
-      RPC_PORT: 9650
-      WS_PATH: /ext/bc/C/ws
-      WS_PORT: 9650
-    restart: unless-stopped
-    depends_on:
-      - avalanche-fuji-archive-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
+      - traefik.http.middlewares.avalanche-fuji-go-archive-leveldb-set-path.replacepath.path=/ext/bc/C/rpc
       - traefik.http.middlewares.avalanche-fuji-go-archive-leveldb-stripprefix.stripprefix.prefixes=/avalanche-fuji-archive
-      - traefik.http.services.avalanche-fuji-go-archive-leveldb.loadbalancer.server.port=80
+      - traefik.http.services.avalanche-fuji-go-archive-leveldb.loadbalancer.server.port=9650
       - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb.rule=Host(`$DOMAIN`) && (Path(`/avalanche-fuji-archive`) || Path(`/avalanche-fuji-archive/`))}
       - ${NO_SSL:+traefik.http.routers.avalanche-fuji-go-archive-leveldb.rule=Path(`/avalanche-fuji-archive`) || Path(`/avalanche-fuji-archive/`)}
-      - traefik.http.routers.avalanche-fuji-go-archive-leveldb.middlewares=avalanche-fuji-go-archive-leveldb-stripprefix, ipallowlist
+      - traefik.http.routers.avalanche-fuji-go-archive-leveldb.middlewares=avalanche-fuji-go-archive-leveldb-stripprefix, avalanche-fuji-go-archive-leveldb-set-path, ipallowlist
+      - traefik.http.routers.avalanche-fuji-go-archive-leveldb.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.avalanche-fuji-go-archive-leveldb-ws.priority=100   # answers GET requests first
+      - traefik.http.middlewares.avalanche-fuji-go-archive-leveldb-set-ws-path.replacepath.path=/ext/bc/C/ws
+      - traefik.http.services.avalanche-fuji-go-archive-leveldb-ws.loadbalancer.server.port=9650
+      - traefik.http.routers.avalanche-fuji-go-archive-leveldb-ws.service=avalanche-fuji-go-archive-leveldb-ws
+      - traefik.http.routers.avalanche-fuji-go-archive-leveldb.service=avalanche-fuji-go-archive-leveldb
+      - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.avalanche-fuji-go-archive-leveldb-ws.rule=Host(`$DOMAIN`) && (Path(`/avalanche-fuji-archive`) || Path(`/avalanche-fuji-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.avalanche-fuji-go-archive-leveldb-ws.rule=(Path(`/avalanche-fuji-archive`) || Path(`/avalanche-fuji-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.avalanche-fuji-go-archive-leveldb-ws.middlewares=avalanche-fuji-go-archive-leveldb-stripprefix, avalanche-fuji-go-archive-leveldb-set-ws-path, ipallowlist
 
 volumes:
   avalanche-fuji-go-archive-leveldb:

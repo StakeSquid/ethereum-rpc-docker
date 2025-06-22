@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  viction-testnet-node-client:
+  viction-testnet-node:
     image: ${VICTION_NODE_IMAGE:-buildonviction/node}:${VICTION_TESTNET_NODE_VERSION:-v2.4.7}
     sysctls:
       # TCP Performance
@@ -67,35 +67,24 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  viction-testnet-node:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: viction-testnet-node-client
-      RPC_PATH: ''
-      RPC_PORT: 8545
-      WS_PATH: ''
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - viction-testnet-node-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
       - traefik.http.middlewares.viction-testnet-node-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/viction-testnet-node
-      - traefik.http.services.viction-testnet-node-pruned-leveldb-hash.loadbalancer.server.port=80
+      - traefik.http.services.viction-testnet-node-pruned-leveldb-hash.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/viction-testnet-node`) || Path(`/viction-testnet-node/`))}
       - ${NO_SSL:+traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.rule=Path(`/viction-testnet-node`) || Path(`/viction-testnet-node/`)}
       - traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.middlewares=viction-testnet-node-pruned-leveldb-hash-stripprefix, ipallowlist
+      - traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.viction-testnet-node-pruned-leveldb-hash-ws.priority=100   # answers GET requests first
+      - traefik.http.services.viction-testnet-node-pruned-leveldb-hash-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.viction-testnet-node-pruned-leveldb-hash-ws.service=viction-testnet-node-pruned-leveldb-hash-ws
+      - traefik.http.routers.viction-testnet-node-pruned-leveldb-hash.service=viction-testnet-node-pruned-leveldb-hash
+      - ${NO_SSL:-traefik.http.routers.viction-testnet-node-pruned-leveldb-hash-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.viction-testnet-node-pruned-leveldb-hash-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.viction-testnet-node-pruned-leveldb-hash-ws.rule=Host(`$DOMAIN`) && (Path(`/viction-testnet-node`) || Path(`/viction-testnet-node/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.viction-testnet-node-pruned-leveldb-hash-ws.rule=(Path(`/viction-testnet-node`) || Path(`/viction-testnet-node/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.viction-testnet-node-pruned-leveldb-hash-ws.middlewares=viction-testnet-node-pruned-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
   viction-testnet-node-pruned-leveldb-hash:

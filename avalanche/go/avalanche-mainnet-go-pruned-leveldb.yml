@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  avalanche-mainnet-client:
+  avalanche-mainnet:
     image: ${AVALANCHE_GO_IMAGE:-avaplatform/avalanchego}:${AVALANCHE_MAINNET_GO_VERSION:-v1.13.0}
     sysctls:
       # TCP Performance
@@ -49,7 +49,6 @@ services:
       - 12757:12757
       - 12757:12757/udp
     expose:
-      - 9650
       - 9650
     entrypoint: [/avalanchego/build/avalanchego]
     command:
@@ -71,35 +70,26 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  avalanche-mainnet:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: avalanche-mainnet-client
-      RPC_PATH: /ext/bc/C/rpc
-      RPC_PORT: 9650
-      WS_PATH: /ext/bc/C/ws
-      WS_PORT: 9650
-    restart: unless-stopped
-    depends_on:
-      - avalanche-mainnet-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
+      - traefik.http.middlewares.avalanche-mainnet-go-pruned-leveldb-set-path.replacepath.path=/ext/bc/C/rpc
       - traefik.http.middlewares.avalanche-mainnet-go-pruned-leveldb-stripprefix.stripprefix.prefixes=/avalanche-mainnet
-      - traefik.http.services.avalanche-mainnet-go-pruned-leveldb.loadbalancer.server.port=80
+      - traefik.http.services.avalanche-mainnet-go-pruned-leveldb.loadbalancer.server.port=9650
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.rule=Host(`$DOMAIN`) && (Path(`/avalanche-mainnet`) || Path(`/avalanche-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.rule=Path(`/avalanche-mainnet`) || Path(`/avalanche-mainnet/`)}
-      - traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.middlewares=avalanche-mainnet-go-pruned-leveldb-stripprefix, ipallowlist
+      - traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.middlewares=avalanche-mainnet-go-pruned-leveldb-stripprefix, avalanche-mainnet-go-pruned-leveldb-set-path, ipallowlist
+      - traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.avalanche-mainnet-go-pruned-leveldb-ws.priority=100   # answers GET requests first
+      - traefik.http.middlewares.avalanche-mainnet-go-pruned-leveldb-set-ws-path.replacepath.path=/ext/bc/C/ws
+      - traefik.http.services.avalanche-mainnet-go-pruned-leveldb-ws.loadbalancer.server.port=9650
+      - traefik.http.routers.avalanche-mainnet-go-pruned-leveldb-ws.service=avalanche-mainnet-go-pruned-leveldb-ws
+      - traefik.http.routers.avalanche-mainnet-go-pruned-leveldb.service=avalanche-mainnet-go-pruned-leveldb
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-leveldb-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-leveldb-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.avalanche-mainnet-go-pruned-leveldb-ws.rule=Host(`$DOMAIN`) && (Path(`/avalanche-mainnet`) || Path(`/avalanche-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.avalanche-mainnet-go-pruned-leveldb-ws.rule=(Path(`/avalanche-mainnet`) || Path(`/avalanche-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.avalanche-mainnet-go-pruned-leveldb-ws.middlewares=avalanche-mainnet-go-pruned-leveldb-stripprefix, avalanche-mainnet-go-pruned-leveldb-set-ws-path, ipallowlist
 
 volumes:
   avalanche-mainnet-go-pruned-leveldb:
