@@ -130,6 +130,7 @@ x-upstreams:
         - trace
     methods:
       disabled:
+        - name: eth_getLogs # this returns result [] on ethereum mainnet when it shouldn't so it's probably buggy on al networks
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth and erigon

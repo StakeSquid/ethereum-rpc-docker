@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash.middlewares=zora-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   zora-mainnet-archive-node:
-    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.3}
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.4}
     ports:
       - 17066:17066
       - 17066:17066/udp

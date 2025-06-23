@@ -103,7 +103,7 @@ services:
       - traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.middlewares=metal-sepolia-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   metal-sepolia-node:
-    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_SEPOLIA_NODE_VERSION:-v1.13.3}
+    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_SEPOLIA_NODE_VERSION:-v1.13.4}
     ports:
       - 19701:19701
       - 19701:19701/udp

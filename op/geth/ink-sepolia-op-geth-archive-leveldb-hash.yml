@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.ink-sepolia-op-geth-archive-leveldb-hash.middlewares=ink-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   ink-sepolia-archive-node:
-    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_SEPOLIA_NODE_VERSION:-v1.13.3}
+    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_SEPOLIA_NODE_VERSION:-v1.13.4}
     ports:
       - 16659:16659
       - 16659:16659/udp

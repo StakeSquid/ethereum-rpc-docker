@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.op-sepolia-op-geth-archive-leveldb-hash.middlewares=op-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   op-sepolia-archive-node:
-    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_SEPOLIA_NODE_VERSION:-v1.13.3}
+    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_SEPOLIA_NODE_VERSION:-v1.13.4}
     ports:
       - 18257:18257
       - 18257:18257/udp

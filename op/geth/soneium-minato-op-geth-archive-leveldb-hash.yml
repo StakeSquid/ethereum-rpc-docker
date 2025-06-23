@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.soneium-minato-op-geth-archive-leveldb-hash.middlewares=soneium-minato-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   soneium-minato-archive-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.3}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.4}
     ports:
       - 16589:16589
       - 16589:16589/udp
