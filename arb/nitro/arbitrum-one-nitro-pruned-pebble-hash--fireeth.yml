@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   arbitrum-one:
-    image: ${ARBITRUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ARBITRUM_ONE_FIREETH_VERSION:-v2.11.13-nitro-nitro-v3.6.5-fh3.0}
+    image: ${ARBITRUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ARBITRUM_ONE_FIREETH_VERSION:-v2.11.13-nitro}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -97,7 +97,7 @@ services:
       - traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash.middlewares=arbitrum-one-nitro-pruned-pebble-hash-stripprefix, ipallowlist
 
   arbitrum-one-firehose:
-    image: ${ARBITRUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ARBITRUM_ONE_FIREETH_VERSION:-v2.11.13-nitro-nitro-v3.6.5-fh3.0}
+    image: ${ARBITRUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ARBITRUM_ONE_FIREETH_VERSION:-v2.11.13-nitro}
     expose:
       - 10015
       - 10014
@@ -129,7 +129,7 @@ services:
       - traefik.http.routers.arbitrum-one-nitro-pruned-pebble-hash-firehose.middlewares=ipallowlist
 
   arbitrum-one-events:
-    image: ${ARBITRUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ARBITRUM_ONE_FIREETH_VERSION:-v2.11.13-nitro-nitro-v3.6.5-fh3.0}
+    image: ${ARBITRUM_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${ARBITRUM_ONE_FIREETH_VERSION:-v2.11.13-nitro}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]
