@@ -103,7 +103,7 @@ services:
       - 17245:17245/udp
     expose:
       - 3500
-    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=gnosis --trusted-node-url=https://checkpoint.gnosischain.com --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
+    entrypoint: /bin/sh -c '/home/user/nimbus_beacon_node trustedNodeSync --network=gnosis --trusted-node-url=https://checkpoint.gnosischain.com --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
     command:
       - --history=prune
       - --jwt-secret=/jwtsecret
