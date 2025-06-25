@@ -82,7 +82,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.hyperliquid-mainnet-visor-pruned.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.hyperliquid-mainnet-visor-pruned.rule=Host(`$DOMAIN`) && (Path(`/hyperliquid-mainnet-pruned`) || Path(`/hyperliquid-mainnet-pruned/`))}
       - ${NO_SSL:+traefik.http.routers.hyperliquid-mainnet-visor-pruned.rule=Path(`/hyperliquid-mainnet-pruned`) || Path(`/hyperliquid-mainnet-pruned/`)}
-      - traefik.http.routers.hyperliquid-mainnet-visor-pruned.middlewares=hyperliquid-mainnet-visor-pruned-stripprefix, hyperliquid-mainnet-visor-pruned-set-path, ipallowlist
+      - traefik.http.routers.hyperliquid-mainnet-visor-pruned.middlewares=hyperliquid-mainnet-visor-pruned-stripprefix, hyperliquid-mainnet-visor-pruned-set-path
 
 volumes:
   hyperliquid-mainnet-visor-pruned:
