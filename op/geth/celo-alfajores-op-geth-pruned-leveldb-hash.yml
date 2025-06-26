@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   celo-alfajores:
-    image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_ALFAJORES_GETH_VERSION:-celo-v2.0.0}
+    image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_ALFAJORES_GETH_VERSION:-celo-v2.1.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -114,7 +114,7 @@ services:
       - traefik.http.routers.celo-alfajores-op-geth-pruned-leveldb-hash.middlewares=celo-alfajores-op-geth-pruned-leveldb-hash-stripprefix, ipallowlist
 
   celo-alfajores-node:
-    image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.0.0}
+    image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_ALFAJORES_NODE_VERSION:-celo-v2.1.0}
     ports:
       - 16649:16649
       - 16649:16649/udp
