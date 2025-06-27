@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   gnosis-mainnet-erigon3-archive:
-    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.8}
+    image: ${GNOSIS_ERIGON3_IMAGE:-erigontech/erigon}:${GNOSIS_MAINNET_ERIGON3_VERSION:-v3.0.9}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -86,6 +86,7 @@ services:
       - --prune.mode=archive
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
+      - --torrent.download.rate=${GNOSIS_MAINNET_ERIGON3_ARCHIVE_TRACE_MAX_DOWNLOAD_RATE:-1000mb}
       - --torrent.port=27974
       - --ws
       - --ws.port=8545

@@ -82,6 +82,7 @@ services:
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1100000
       - --sync.loop.block.limit=10000
+      - --torrent.download.rate=${BSC_CHAPEL_ERIGON3_MINIMAL_TRACE_MAX_DOWNLOAD_RATE:-1000mb}
       - --ws
       - --ws.port=8545
     restart: unless-stopped
