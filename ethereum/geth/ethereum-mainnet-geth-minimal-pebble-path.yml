@@ -51,6 +51,7 @@ services:
     expose:
       - 8545
       - 6060
+      - 8551
     command:
       - --datadir=/root/.ethereum
       - --db.engine=pebble
@@ -59,11 +60,6 @@ services:
       - --history.logs=90000
       - --history.state=90000
       - --history.transactions=90000
-      - --http
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
-      - --http.port=8545
-      - --http.vhosts=*
       - --mainnet
       - --maxpeers=50
       - --metrics
@@ -75,17 +71,26 @@ services:
       - --rpc.txfeecap=0
       - --state.scheme=path
       - --syncmode=snap
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
       - --ws.origins=*
       - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
       - chains
     volumes:
       - ${ETHEREUM_MAINNET_GETH_MINIMAL_PEBBLE_PATH_DATA:-ethereum-mainnet-geth-minimal-pebble-path}:/root/.ethereum
+      - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
@@ -101,8 +106,54 @@ services:
       - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-geth-minimal-pebble-path.rule=Path(`/ethereum-mainnet-geth-minimal`) || Path(`/ethereum-mainnet-geth-minimal/`)}
       - traefik.http.routers.ethereum-mainnet-geth-minimal-pebble-path.middlewares=ethereum-mainnet-geth-minimal-pebble-path-stripprefix, ipallowlist
 
+  ethereum-mainnet-geth-minimal-node:
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v6.0.4}
+    ports:
+      - 19551:19551
+      - 19551:19551/udp
+    expose:
+      - 3500
+    command:
+      - --accept-terms-of-use
+      - --beacon-db-pruning
+      - --checkpoint-sync-url=https://mainnet.beaconstate.info
+      - --datadir=/data
+      - --enable-historical-state-representation=false
+      - --execution-endpoint=http://ethereum-mainnet-geth-minimal:8551
+      - --grpc-gateway-host=0.0.0.0
+      - --jwt-secret=/jwtsecret
+      - --mainnet
+      - --monitoring-host=0.0.0.0
+      - --monitoring-host=0.0.0.0
+      - --monitoring-port=8080
+      - --p2p-tcp-port=19551
+      - --p2p-udp-port=19551
+      - --rpc-host=0.0.0.0
+    restart: unless-stopped
+    depends_on:
+      - ethereum-mainnet-geth-minimal
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_MAINNET_GETH_MINIMAL_PEBBLE_PATH__PRYSM_DATA:-ethereum-mainnet-geth-minimal-pebble-path_prysm}:/data
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=8080
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-mainnet-geth-minimal-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-geth-minimal
+      - traefik.http.services.ethereum-mainnet-geth-minimal-pebble-path-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-minimal-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-minimal-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-minimal-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-geth-minimal/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-geth-minimal-pebble-path-node.rule=PathPrefix(`/ethereum-mainnet-geth-minimal/eth`)}
+      - traefik.http.routers.ethereum-mainnet-geth-minimal-pebble-path-node.middlewares=ethereum-mainnet-geth-minimal-pebble-path-node-stripprefix, ipallowlist
+
 volumes:
   ethereum-mainnet-geth-minimal-pebble-path:
+  ethereum-mainnet-geth-minimal-pebble-path_prysm:
 
 x-upstreams:
   - id: $${ID}
@@ -143,4 +194,12 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
 ...
