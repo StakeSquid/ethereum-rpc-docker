@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   abstract-testnet-archive:
-    image: ${ABSTRACT_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ABSTRACT_TESTNET_EXTERNAL_NODE_VERSION:-v28.9.0}
+    image: ${ABSTRACT_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${ABSTRACT_TESTNET_EXTERNAL_NODE_VERSION:-v28.6.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
