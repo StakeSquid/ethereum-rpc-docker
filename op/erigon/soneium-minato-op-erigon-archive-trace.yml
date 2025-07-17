@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   soneium-minato-op-erigon-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.4}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.5}
     ports:
       - 18314:18314
       - 18314:18314/udp

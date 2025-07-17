@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   snax-mainnet:
-    image: ${SNAX_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SNAX_MAINNET_GETH_VERSION:-v1.101511.0}
+    image: ${SNAX_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SNAX_MAINNET_GETH_VERSION:-v1.101511.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.middlewares=snax-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   snax-mainnet-node:
-    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.4}
+    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.5}
     ports:
       - 16332:16332
       - 16332:16332/udp

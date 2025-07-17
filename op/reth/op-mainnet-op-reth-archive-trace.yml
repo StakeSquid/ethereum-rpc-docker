@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   op-mainnet-op-reth:
-    image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_MAINNET_RETH_VERSION:-v1.5.0}
+    image: ${OP_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${OP_MAINNET_RETH_VERSION:-v1.5.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -108,7 +108,7 @@ services:
     shm_size: 2gb
 
   op-mainnet-op-reth-node:
-    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.4}
+    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.13.5}
     ports:
       - 16114:16114
       - 16114:16114/udp
