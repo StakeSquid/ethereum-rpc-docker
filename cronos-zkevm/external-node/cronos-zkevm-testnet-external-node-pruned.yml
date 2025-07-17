@@ -33,7 +33,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   cronos-zkevm-testnet:
-    image: ${CRONOS_ZKEVM_EXTERNAL_NODE_IMAGE:-ghcr.io/cronos-labs/external-node}:${CRONOS_ZKEVM_TESTNET_EXTERNAL_NODE_VERSION:-v27.5.3-patch}
+    image: ${CRONOS_ZKEVM_EXTERNAL_NODE_IMAGE:-ghcr.io/cronos-labs/external-node}:${CRONOS_ZKEVM_TESTNET_EXTERNAL_NODE_VERSION:-v28.6.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
