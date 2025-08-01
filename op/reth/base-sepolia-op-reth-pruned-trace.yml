@@ -53,7 +53,7 @@ services:
       - 8545
       - 9001
       - 8551
-    entrypoint: [base-reth-node, node]
+    entrypoint: [op-reth, node]
     command:
       - --chain=base-sepolia
       - --datadir=/root/.local/share/reth
