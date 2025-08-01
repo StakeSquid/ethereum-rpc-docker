@@ -255,6 +255,10 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         echo "Building op-reth with optimism feature" && \
         cargo build --profile $PROFILE --locked --bin op-reth --features jemalloc,asm-keccak --manifest-path crates/optimism/bin/Cargo.toml && \
         cp target/$PROFILE/op-reth /usr/local/bin/op-reth; \
+    elif [ "$BUILD_BASE_RETH" = "true" ]; then \
+        echo "Building base-reth-node with flashbots feature" && \
+        cargo build --profile $PROFILE --bin base-reth-node --release && \
+        cp target/$PROFILE/op-reth /usr/local/bin/base-reth-node; \
     else \
         echo "Building standard reth" && \
         cargo build --profile $PROFILE --locked --bin reth --features jemalloc,asm-keccak && \
