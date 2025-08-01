@@ -259,7 +259,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     elif [ "$BUILD_BASE_RETH" = "true" ]; then \
         echo "Building base-reth-node with flashbots feature" && \
         cargo build --bin base-reth-node --release && \
-        cp target/$PROFILE/op-reth /usr/local/bin/base-reth-node; \
+        cp target/release/base-reth-node /usr/local/bin/base-reth-node; \
     else \
         echo "Building standard reth" && \
         cargo build --profile $PROFILE --locked --bin reth --features jemalloc,asm-keccak && \
