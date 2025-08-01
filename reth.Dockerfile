@@ -280,7 +280,7 @@ RUN apt-get update && apt-get install -y \
 # Use wildcards to avoid errors when copying non-existent files
 COPY --from=builder /usr/local/bin/reth* /usr/local/bin/
 COPY --from=builder /usr/local/bin/op-reth* /usr/local/bin/
-COPY --from=builder /usr/local/bin/base-reth-node* /usr/local/bin/; \
+COPY --from=builder /usr/local/bin/base-reth-node* /usr/local/bin/
 
 # Create non-root user
 RUN useradd -m -u 1000 -s /bin/bash reth
