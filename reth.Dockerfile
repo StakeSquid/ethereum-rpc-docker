@@ -258,7 +258,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         cp target/$PROFILE/op-reth /usr/local/bin/op-reth; \
     elif [ "$BUILD_BASE_RETH" = "true" ]; then \
         echo "Building base-reth-node with flashbots feature" && \
-        cargo build --profile $PROFILE --bin base-reth-node --release && \
+        cargo build --bin base-reth-node --release && \
         cp target/$PROFILE/op-reth /usr/local/bin/base-reth-node; \
     else \
         echo "Building standard reth" && \
