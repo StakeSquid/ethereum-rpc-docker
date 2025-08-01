@@ -71,6 +71,7 @@ services:
       - --rpc.max-blocks-per-filter=0
       - --rpc.max-connections=50000
       - --rpc.max-logs-per-response=0
+      - --websocket-url=wss://sepolia.flashblocks.base.org/ws
       - --http
       - --http.addr=0.0.0.0
       - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
