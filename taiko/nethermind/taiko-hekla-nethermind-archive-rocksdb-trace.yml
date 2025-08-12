@@ -98,7 +98,7 @@ services:
       - traefik.http.routers.taiko-hekla-nethermind-archive-rocksdb-trace.middlewares=taiko-hekla-nethermind-archive-rocksdb-trace-stripprefix, ipallowlist
 
   taiko-hekla-nethermind-archive-node:
-    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.6.2}
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.10.1}
     ports:
       - 19108:19108
       - 19108:19108/udp
@@ -113,6 +113,13 @@ services:
       - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
       - P2P_CHECK_POINT_SYNC_URL=https://rpc.hekla.taiko.xyz
       - P2P_SYNC=true
+      - PRECONFIRMATION_P2P_ADVERTISE_IP=${IP}
+      - PRECONFIRMATION_P2P_ADVERTISE_TCP_PORT=19108
+      - PRECONFIRMATION_P2P_ADVERTISE_UDP_PORT=19108
+      - PRECONFIRMATION_P2P_BOOTNODES=enode://ea5b8a797985f500afa37ba03ce47b0039792a942f0ac9bee9fa19a7a5410273fe43b4e8a9a28fa42cdec1b6435deb809fcb79479c55cc2ddbaf02de7a83f456@34.46.28.99:4001?discport=30304,enode://404e9493066107431bdf3f47bbb360a353244a6069903c76928fca3067575f2adf62ef396b0a8a74696669ef53cab8373e38ddd9b3d3d2d76f356d2cd2708951@34.30.143.124:4001?discport=30304,enode://b2d094ade1ce68990878b197bf818bd41d5b32e4019d42dc63d91d7020f531532f063833e44e84f78792969f69fd5553370216703c40fcc0cb835f17177fbe07@34.56.54.8:4001?discport=30304
+      - PRECONFIRMATION_P2P_LISTEN_TCP_PORT=19108
+      - PRECONFIRMATION_P2P_LISTEN_UDP_PORT=19108
+      - PRECONFIRMATION_SERVER_PORT=9871
     entrypoint: [taiko-client, driver]
     restart: unless-stopped
     depends_on:
