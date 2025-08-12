@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ronin-mainnet-archive:
-    image: ${RONIN_RONIN_IMAGE:-ghcr.io/ronin-chain/ronin}:${RONIN_MAINNET_RONIN_VERSION:-v1.1.0-0c4fdfb}
+    image: ${RONIN_RONIN_IMAGE:-ghcr.io/ronin-chain/ronin}:${RONIN_MAINNET_RONIN_VERSION:-v1.1.1-cd7da76}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

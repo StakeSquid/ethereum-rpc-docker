@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   fraxtal-testnet:
-    image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-geth}:${FRAXTAL_TESTNET_GETH_VERSION:-v1.101503.1-frax-1.2.1}
+    image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-geth}:${FRAXTAL_TESTNET_GETH_VERSION:-v1.101511.1-frax-1.3.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -110,7 +110,7 @@ services:
       - traefik.http.routers.fraxtal-testnet-op-geth-pruned-pebble-path.middlewares=fraxtal-testnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   fraxtal-testnet-node:
-    image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-node}:${FRAXTAL_TESTNET_NODE_VERSION:-v1.12.2-frax-1.1.0}
+    image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-node}:${FRAXTAL_TESTNET_NODE_VERSION:-v1.13.5-frax-1.2.0}
     ports:
       - 16370:16370
       - 16370:16370/udp
