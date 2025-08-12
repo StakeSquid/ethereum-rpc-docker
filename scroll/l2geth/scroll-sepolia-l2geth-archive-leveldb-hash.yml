@@ -59,7 +59,6 @@ services:
       - --da.blob.blobscan=https://api.sepolia.blobscan.com/blobs/
       - --datadir=/root/.ethereum
       - --gcmode=archive
-      - --gpo.congestionthreshold=1000
       - --gpo.ignoreprice=1
       - --gpo.maxprice=500000000
       - --http

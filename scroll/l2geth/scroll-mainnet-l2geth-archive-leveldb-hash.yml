@@ -60,7 +60,6 @@ services:
       - --da.blob.blocknative=https://api.ethernow.xyz/v1/blob/
       - --datadir=/root/.ethereum
       - --gcmode=archive
-      - --gpo.congestionthreshold=1000
       - --gpo.ignoreprice=1
       - --gpo.maxprice=500000000
       - --http
