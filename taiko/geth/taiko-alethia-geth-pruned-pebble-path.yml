@@ -54,6 +54,7 @@ services:
       - 8551
     env_file:
       - ./taiko/alethia.env
+      - ./taiko/geth.env
     environment:
       - GETH_GPO_DEFAULTPRICE=10000000
       - GETH_NETWORKID=167000

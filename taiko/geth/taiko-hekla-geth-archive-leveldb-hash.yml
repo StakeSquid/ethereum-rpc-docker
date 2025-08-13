@@ -53,6 +53,7 @@ services:
       - 6060
       - 8551
     env_file:
+      - ./taiko/geth.env
       - ./taiko/hekla.env
     environment:
       - GETH_GPO_DEFAULTPRICE=10000000
