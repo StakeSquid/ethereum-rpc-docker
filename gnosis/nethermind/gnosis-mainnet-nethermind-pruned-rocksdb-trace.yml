@@ -94,7 +94,7 @@ services:
       - traefik.http.routers.gnosis-mainnet-nethermind-pruned-rocksdb-trace.middlewares=gnosis-mainnet-nethermind-pruned-rocksdb-trace-stripprefix, ipallowlist
 
   gnosis-mainnet-nethermind-node:
-    image: ${GNOSIS_NIMBUS_IMAGE:-ghcr.io/gnosischain/gnosis-nimbus-eth2}:${GNOSIS_MAINNET_NIMBUS_VERSION:-v25.6.0}
+    image: ${GNOSIS_NIMBUS_IMAGE:-ghcr.io/gnosischain/gnosis-nimbus-eth2}:${GNOSIS_MAINNET_NIMBUS_VERSION:-v25.7.1}
     user: root
     ports:
       - 17565:17565

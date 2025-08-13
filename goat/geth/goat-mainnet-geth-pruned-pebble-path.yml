@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   goat-mainnet:
-    image: ${GOAT_GETH_IMAGE:-ghcr.io/goatnetwork/goat-geth}:${GOAT_MAINNET_GETH_VERSION:-v0.3.1}
+    image: ${GOAT_GETH_IMAGE:-ghcr.io/goatnetwork/goat-geth}:${GOAT_MAINNET_GETH_VERSION:-v0.3.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -102,7 +102,7 @@ services:
       - traefik.http.routers.goat-mainnet-geth-pruned-pebble-path.middlewares=goat-mainnet-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   goat-mainnet-node:
-    image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_MAINNET_NODE_VERSION:-v0.2.4}
+    image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_MAINNET_NODE_VERSION:-v0.3.3}
     ports:
       - 15640:15640
       - 15640:15640/udp

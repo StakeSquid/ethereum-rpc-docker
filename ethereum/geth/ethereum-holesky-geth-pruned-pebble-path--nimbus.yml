@@ -103,7 +103,7 @@ services:
       - traefik.http.routers.ethereum-holesky-geth-pruned-pebble-path.middlewares=ethereum-holesky-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   ethereum-holesky-geth-node:
-    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_HOLESKY_NIMBUS_VERSION:-amd64-v25.6.0}
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_HOLESKY_NIMBUS_VERSION:-amd64-v25.7.1}
     user: root
     ports:
       - 16993:16993

@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   bsc-mainnet:
-    image: ${BSC_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BSC_MAINNET_FIREETH_VERSION:-v2.11.13-bnb-v1.5.16-fh3.0}
+    image: ${BSC_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BSC_MAINNET_FIREETH_VERSION:-v2.12.4-bnb-v1.5.19-fh3.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -104,7 +104,7 @@ services:
       - traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path.middlewares=bsc-mainnet-bsc-pruned-pebble-path-stripprefix, ipallowlist
 
   bsc-mainnet-firehose:
-    image: ${BSC_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BSC_MAINNET_FIREETH_VERSION:-v2.11.13-bnb-v1.5.16-fh3.0}
+    image: ${BSC_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BSC_MAINNET_FIREETH_VERSION:-v2.12.4-bnb-v1.5.19-fh3.0}
     expose:
       - 10015
       - 10014
@@ -136,7 +136,7 @@ services:
       - traefik.http.routers.bsc-mainnet-bsc-pruned-pebble-path-firehose.middlewares=ipallowlist
 
   bsc-mainnet-events:
-    image: ${BSC_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BSC_MAINNET_FIREETH_VERSION:-v2.11.13-bnb-v1.5.16-fh3.0}
+    image: ${BSC_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BSC_MAINNET_FIREETH_VERSION:-v2.12.4-bnb-v1.5.19-fh3.0}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]

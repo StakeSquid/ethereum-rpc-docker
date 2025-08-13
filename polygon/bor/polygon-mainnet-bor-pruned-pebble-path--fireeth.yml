@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   polygon-mainnet:
-    image: ${POLYGON_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${POLYGON_MAINNET_FIREETH_VERSION:-v2.11.13-polygon-v1.4.1-fh2.4-3}
+    image: ${POLYGON_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${POLYGON_MAINNET_FIREETH_VERSION:-v2.12.4-polygon-v1.4.1-fh2.4-3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -104,7 +104,7 @@ services:
       - traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path.middlewares=polygon-mainnet-bor-pruned-pebble-path-stripprefix, ipallowlist
 
   polygon-mainnet-firehose:
-    image: ${POLYGON_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${POLYGON_MAINNET_FIREETH_VERSION:-v2.11.13-polygon-v1.4.1-fh2.4-3}
+    image: ${POLYGON_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${POLYGON_MAINNET_FIREETH_VERSION:-v2.12.4-polygon-v1.4.1-fh2.4-3}
     expose:
       - 10015
       - 10014
@@ -136,7 +136,7 @@ services:
       - traefik.http.routers.polygon-mainnet-bor-pruned-pebble-path-firehose.middlewares=ipallowlist
 
   polygon-mainnet-events:
-    image: ${POLYGON_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${POLYGON_MAINNET_FIREETH_VERSION:-v2.11.13-polygon-v1.4.1-fh2.4-3}
+    image: ${POLYGON_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${POLYGON_MAINNET_FIREETH_VERSION:-v2.12.4-polygon-v1.4.1-fh2.4-3}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]

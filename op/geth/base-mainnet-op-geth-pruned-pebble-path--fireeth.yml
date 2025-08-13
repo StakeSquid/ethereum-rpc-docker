@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   base-mainnet:
-    image: ${BASE_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BASE_MAINNET_FIREETH_VERSION:-v2.11.13-optimism-v1.101511.0-op-node.v1.13.3-1}
+    image: ${BASE_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BASE_MAINNET_FIREETH_VERSION:-v2.12.4-optimism-v1.101511.0-op-node.v1.13.3-1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -110,7 +110,7 @@ services:
       - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path.middlewares=base-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   base-mainnet-firehose:
-    image: ${BASE_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BASE_MAINNET_FIREETH_VERSION:-v2.11.13-optimism-v1.101511.0-op-node.v1.13.3-1}
+    image: ${BASE_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BASE_MAINNET_FIREETH_VERSION:-v2.12.4-optimism-v1.101511.0-op-node.v1.13.3-1}
     expose:
       - 10015
       - 10014
@@ -142,7 +142,7 @@ services:
       - traefik.http.routers.base-mainnet-op-geth-pruned-pebble-path-firehose.middlewares=ipallowlist
 
   base-mainnet-events:
-    image: ${BASE_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BASE_MAINNET_FIREETH_VERSION:-v2.11.13-optimism-v1.101511.0-op-node.v1.13.3-1}
+    image: ${BASE_FIREETH_IMAGE:-ghcr.io/streamingfast/firehose-ethereum}:${BASE_MAINNET_FIREETH_VERSION:-v2.12.4-optimism-v1.101511.0-op-node.v1.13.3-1}
     expose:
       - 10016
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start substreams-tier1 substreams-tier2 $@, _]

@@ -40,7 +40,7 @@ services:
       context: ./fantom
       dockerfile: sonic.Dockerfile
       args:
-        VERSION: v1.2.1-h
+        VERSION: v1.2.1-i
         REPO: https://github.com/Fantom-foundation/sonic.git
         COMMIT: ''
         PATCH: ''

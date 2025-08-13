@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   lens-testnet-archive:
-    image: ${LENS_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${LENS_TESTNET_EXTERNAL_NODE_VERSION:-v28.6.0}
+    image: ${LENS_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${LENS_TESTNET_EXTERNAL_NODE_VERSION:-v29.0.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

@@ -99,7 +99,7 @@ services:
       - traefik.http.routers.gnosis-chiado-nethermind-minimal-rocksdb-trace.middlewares=gnosis-chiado-nethermind-minimal-rocksdb-trace-stripprefix, ipallowlist
 
   gnosis-chiado-nethermind-minimal-node:
-    image: ${GNOSIS_NIMBUS_IMAGE:-ghcr.io/gnosischain/gnosis-nimbus-eth2}:${GNOSIS_CHIADO_NIMBUS_VERSION:-v25.6.0}
+    image: ${GNOSIS_NIMBUS_IMAGE:-ghcr.io/gnosischain/gnosis-nimbus-eth2}:${GNOSIS_CHIADO_NIMBUS_VERSION:-v25.7.1}
     user: root
     ports:
       - 16758:16758

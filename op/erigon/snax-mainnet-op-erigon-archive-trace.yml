@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   snax-mainnet-op-erigon:
-    image: ${SNAX_ERIGON_IMAGE:-testinprod/op-erigon}:${SNAX_MAINNET_ERIGON_VERSION:-v2.61.3-0.9.4}
+    image: ${SNAX_ERIGON_IMAGE:-testinprod/op-erigon}:${SNAX_MAINNET_ERIGON_VERSION:-v2.61.3-0.9.5}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

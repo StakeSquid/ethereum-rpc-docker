@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   celo-alfajores-archive:
-    image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_ALFAJORES_GETH_VERSION:-celo-v2.1.0}
+    image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_ALFAJORES_GETH_VERSION:-celo-v2.1.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
