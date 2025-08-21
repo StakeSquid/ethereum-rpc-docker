@@ -58,6 +58,7 @@ services:
       - GETH_OVERRIDE_FJORD=1733947201
       - GETH_OVERRIDE_GRANITE=1738958401
       - GETH_OVERRIDE_HOLOCENE=1744052401
+      - GETH_OVERRIDE_ISTHMUS=1755716401
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.mainnet.frax.com
     entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
