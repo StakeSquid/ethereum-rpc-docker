@@ -32,7 +32,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   mantle-mainnet-archive:
-    image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-op-geth}:${MANTLE_MAINNET_GETH_VERSION:-v1.3.1}
+    image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-op-geth}:${MANTLE_MAINNET_GETH_VERSION:-v1.3.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.mantle-mainnet-op-geth-archive-leveldb-hash.middlewares=mantle-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   mantle-mainnet-archive-node:
-    image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-op-node}:${MANTLE_MAINNET_NODE_VERSION:-v1.3.1}
+    image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-op-node}:${MANTLE_MAINNET_NODE_VERSION:-v1.3.2}
     ports:
       - 16055:16055
       - 16055:16055/udp
