@@ -85,7 +85,10 @@ services:
       - --p2p.allowed-ports=38947
       - --port=13947
       - --prune.mode=archive
+      - --rpc.evmtimeout=${ETHEREUM_HOLESKY_ERIGON3_ARCHIVE_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${ETHEREUM_HOLESKY_ERIGON3_ARCHIVE_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${ETHEREUM_HOLESKY_ERIGON3_ARCHIVE_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=1100000
       - --torrent.download.rate=${ETHEREUM_HOLESKY_ERIGON3_ARCHIVE_TRACE_MAX_DOWNLOAD_RATE:-1000mb}
       - --torrent.port=28947

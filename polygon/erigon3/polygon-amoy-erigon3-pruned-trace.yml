@@ -74,7 +74,10 @@ services:
       - --p2p.allowed-ports=38583
       - --port=13583
       - --prune.mode=full
+      - --rpc.evmtimeout=${POLYGON_AMOY_ERIGON3_PRUNED_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${POLYGON_AMOY_ERIGON3_PRUNED_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${POLYGON_AMOY_ERIGON3_PRUNED_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=1100000
       - --torrent.download.rate=${POLYGON_AMOY_ERIGON3_PRUNED_TRACE_MAX_DOWNLOAD_RATE:-1000mb}
       - --torrent.port=28583

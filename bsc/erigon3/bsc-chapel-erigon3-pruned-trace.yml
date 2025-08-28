@@ -73,7 +73,10 @@ services:
       - --p2p.allowed-ports=35589
       - --port=10589
       - --prune.mode=full
+      - --rpc.evmtimeout=${BSC_CHAPEL_ERIGON3_PRUNED_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${BSC_CHAPEL_ERIGON3_PRUNED_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${BSC_CHAPEL_ERIGON3_PRUNED_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=1100000
       - --sync.loop.block.limit=10000
       - --torrent.download.rate=${BSC_CHAPEL_ERIGON3_PRUNED_TRACE_MAX_DOWNLOAD_RATE:-1000mb}

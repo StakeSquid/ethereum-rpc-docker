@@ -84,7 +84,10 @@ services:
       - --p2p.allowed-ports=37147
       - --port=12147
       - --prune.mode=full
+      - --rpc.evmtimeout=${GNOSIS_MAINNET_ERIGON3_PRUNED_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${GNOSIS_MAINNET_ERIGON3_PRUNED_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${GNOSIS_MAINNET_ERIGON3_PRUNED_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=1100000
       - --torrent.download.rate=${GNOSIS_MAINNET_ERIGON3_PRUNED_TRACE_MAX_DOWNLOAD_RATE:-1000mb}
       - --torrent.port=27147

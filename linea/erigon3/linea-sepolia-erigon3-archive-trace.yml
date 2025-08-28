@@ -76,7 +76,10 @@ services:
       - --p2p.allowed-ports=37235
       - --port=12235
       - --prune.mode=archive
+      - --rpc.evmtimeout=${LINEA_SEPOLIA_ERIGON3_ARCHIVE_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${LINEA_SEPOLIA_ERIGON3_ARCHIVE_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${LINEA_SEPOLIA_ERIGON3_ARCHIVE_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=1100000
       - --ws
       - --ws.port=8545

@@ -79,7 +79,10 @@ services:
       - --p2p.allowed-ports=36565
       - --port=11565
       - --prune.mode=full
+      - --rpc.evmtimeout=${ARBITRUM_ONE_ERIGON3_PRUNED_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${ARBITRUM_ONE_ERIGON3_PRUNED_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${ARBITRUM_ONE_ERIGON3_PRUNED_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=1100000
       - --ws
       - --ws.port=8545

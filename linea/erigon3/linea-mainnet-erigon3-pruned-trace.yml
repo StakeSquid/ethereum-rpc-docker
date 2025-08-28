@@ -76,7 +76,10 @@ services:
       - --p2p.allowed-ports=37622
       - --port=12622
       - --prune.mode=full
+      - --rpc.evmtimeout=${LINEA_MAINNET_ERIGON3_PRUNED_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${LINEA_MAINNET_ERIGON3_PRUNED_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${LINEA_MAINNET_ERIGON3_PRUNED_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=1100000
       - --ws
       - --ws.port=8545

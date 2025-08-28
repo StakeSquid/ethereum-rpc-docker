@@ -73,7 +73,10 @@ services:
       - --p2p.allowed-ports=36327
       - --port=11327
       - --prune.mode=archive
+      - --rpc.evmtimeout=${BSC_MAINNET_ERIGON3_ARCHIVE_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${BSC_MAINNET_ERIGON3_ARCHIVE_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${BSC_MAINNET_ERIGON3_ARCHIVE_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=1100000
       - --sync.loop.block.limit=10000
       - --torrent.download.rate=${BSC_MAINNET_ERIGON3_ARCHIVE_TRACE_MAX_DOWNLOAD_RATE:-1000mb}

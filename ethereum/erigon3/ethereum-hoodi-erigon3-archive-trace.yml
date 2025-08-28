@@ -85,7 +85,10 @@ services:
       - --p2p.allowed-ports=39715
       - --port=14715
       - --prune.mode=archive
+      - --rpc.evmtimeout=${ETHEREUM_HOODI_ERIGON3_ARCHIVE_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${ETHEREUM_HOODI_ERIGON3_ARCHIVE_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${ETHEREUM_HOODI_ERIGON3_ARCHIVE_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=1100000
       - --torrent.download.rate=${ETHEREUM_HOODI_ERIGON3_ARCHIVE_TRACE_MAX_DOWNLOAD_RATE:-1000mb}
       - --torrent.port=29715
