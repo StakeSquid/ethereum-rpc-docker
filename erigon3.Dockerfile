@@ -23,24 +23,24 @@ RUN --mount=type=cache,target=/root/.cache \
     make BUILD_TAGS=nosqlite,noboltdb,nosilkworm all
 
 
-FROM docker.io/library/golang:1.24.1-alpine3.20 AS tools-builder
+# FROM docker.io/library/golang:1.24.1-alpine3.20 AS tools-builder
 
-ARG REPO
-ARG COMMIT
+# ARG REPO
+# ARG COMMIT
 
-RUN apk --no-cache add build-base linux-headers git bash ca-certificates libstdc++
+# RUN apk --no-cache add build-base linux-headers git bash ca-certificates libstdc++
 
-WORKDIR /app
+# WORKDIR /app
 
-RUN git clone --recursive ${REPO} . && \
-    git checkout ${COMMIT}
+# RUN git clone --recursive ${REPO} . && \
+#     git checkout ${COMMIT}
 
-RUN mkdir -p /app/build/bin
+# RUN mkdir -p /app/build/bin
 
-RUN --mount=type=cache,target=/root/.cache \
-    --mount=type=cache,target=/tmp/go-build \
-    --mount=type=cache,target=/go/pkg/mod \
-    make db-tools
+# RUN --mount=type=cache,target=/root/.cache \
+#     --mount=type=cache,target=/tmp/go-build \
+#     --mount=type=cache,target=/go/pkg/mod \
+#     make db-tools
 
 
 FROM docker.io/library/alpine:3.19
@@ -55,7 +55,7 @@ USER erigon
 RUN mkdir -p ~/.local/share/erigon
 
 # Copy MDBX tools
-COPY --from=tools-builder /app/build/bin/mdbx_* /usr/local/bin/
+# COPY --from=tools-builder /app/build/bin/mdbx_* /usr/local/bin/
 
 # Copy Erigon binaries
 COPY --from=builder /app/build/bin/devnet /usr/local/bin/devnet
