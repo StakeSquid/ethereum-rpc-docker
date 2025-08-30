@@ -34,9 +34,9 @@ services:
       context: .
       dockerfile: erigon3.Dockerfile
       args:
-        VERSION: v3.0.9
+        VERSION: v3.0.15
         REPO: https://github.com/erigontech/erigon
-        COMMIT: 41326e33312422e3ed89d89413d46786b7e1bbe3
+        COMMIT: 61b6a2e9b2ac94caddee1c8d7229c87e7ca54304
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
