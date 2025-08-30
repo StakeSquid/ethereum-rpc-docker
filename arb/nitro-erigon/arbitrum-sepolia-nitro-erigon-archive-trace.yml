@@ -1,0 +1,138 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:arb/nitro-erigon/arbitrum-sepolia-nitro-erigon-archive-trace.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/arbitrum-sepolia-nitro-erigon-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  arbitrum-sepolia-nitro-erigon-archive:
+    image: ${ARBITRUM_NITRO_ERIGON_IMAGE:-erigontech/nitro-erigon}:${ARBITRUM_SEPOLIA_NITRO_ERIGON_VERSION:-main-e98e834}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 11387:11387
+      - 11387:11387/udp
+      - 31387:31387
+      - 31387:31387/udp
+      - 36387:36387
+      - 36387:36387/udp
+    expose:
+      - 8545
+    entrypoint: [erigon]
+    command:
+      - --chain="arb-sepolia"
+      - --datadir=/root/.local/share/erigon
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,ots
+      - --http.port=8545
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --nat=extip:${IP}
+      - --p2p.allowed-ports=31387
+      - --p2p.allowed-ports=36387
+      - --port=11387
+      - --prune.mode=archive
+      - --rpc.evmtimeout=${ARBITRUM_SEPOLIA_NITRO_ERIGON_ARCHIVE_TRACE_EVMTIMEOUT:-5m0s}
+      - --rpc.gascap=6000000000
+      - --rpc.overlay.getlogstimeout=${ARBITRUM_SEPOLIA_NITRO_ERIGON_ARCHIVE_TRACE_GETLOGSTIMEOUT:-5m0s}
+      - --rpc.overlay.replayblocktimeout=${ARBITRUM_SEPOLIA_NITRO_ERIGON_ARCHIVE_TRACE_REPLAYBLOCKTIMEOUT:-10s}
+      - --rpc.returndata.limit=1100000
+      - --torrent.port=26387
+      - --ws
+      - --ws.port=8545
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ARBITRUM_SEPOLIA_NITRO_ERIGON_ARCHIVE_TRACE_DATA:-arbitrum-sepolia-nitro-erigon-archive-trace}:/root/.local/share/erigon
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.arbitrum-sepolia-nitro-erigon-archive-trace-stripprefix.stripprefix.prefixes=/arbitrum-sepolia-nitro-erigon-archive
+      - traefik.http.services.arbitrum-sepolia-nitro-erigon-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-erigon-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-erigon-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-sepolia-nitro-erigon-archive`) || Path(`/arbitrum-sepolia-nitro-erigon-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.arbitrum-sepolia-nitro-erigon-archive-trace.rule=Path(`/arbitrum-sepolia-nitro-erigon-archive`) || Path(`/arbitrum-sepolia-nitro-erigon-archive/`)}
+      - traefik.http.routers.arbitrum-sepolia-nitro-erigon-archive-trace.middlewares=arbitrum-sepolia-nitro-erigon-archive-trace-stripprefix, ipallowlist
+
+volumes:
+  arbitrum-sepolia-nitro-erigon-archive-trace:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: arbitrum-sepolia
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        - name: ots_getInternalOperations
+        - name: ots_hasCode
+        - name: ots_getTransactionError
+        - name: ots_traceTransaction
+        - name: ots_getBlockDetails
+        - name: ots_getBlockDetailsByHash
+        - name: ots_getBlockTransactions
+        - name: ots_searchTransactionsBefore
+        - name: ots_searchTransactionsAfter
+        - name: ots_getTransactionBySenderAndNonce
+        - name: ots_getContractCreator
+...
