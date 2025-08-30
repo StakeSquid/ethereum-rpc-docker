@@ -56,7 +56,7 @@ services:
       - 8545
     entrypoint: [erigon]
     command:
-      - --chain="arb-sepolia"
+      - --chain=arb-sepolia
       - --datadir=/root/.local/share/erigon
       - --http
       - --http.addr=0.0.0.0
