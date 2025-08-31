@@ -44,6 +44,7 @@ services:
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
       - 12072:12072
@@ -62,7 +63,9 @@ services:
       - --http.addr=0.0.0.0
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,ots
       - --http.port=8545
+      - --http.vhosts=*
       - --l2rpc=${ARBITRUM_SEPOLIA_EXECUTION_RPC}
+      - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
@@ -99,6 +102,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.arbitrum-sepolia-nitro-erigon-minimal-trace.rule=Host(`$DOMAIN`) && (Path(`/arbitrum-sepolia-nitro-erigon-minimal`) || Path(`/arbitrum-sepolia-nitro-erigon-minimal/`))}
       - ${NO_SSL:+traefik.http.routers.arbitrum-sepolia-nitro-erigon-minimal-trace.rule=Path(`/arbitrum-sepolia-nitro-erigon-minimal`) || Path(`/arbitrum-sepolia-nitro-erigon-minimal/`)}
       - traefik.http.routers.arbitrum-sepolia-nitro-erigon-minimal-trace.middlewares=arbitrum-sepolia-nitro-erigon-minimal-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   arbitrum-sepolia-nitro-erigon-minimal-trace:
@@ -125,6 +129,28 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+        # non standard erigon only
+        - name: eth_getBlockReceipts
+        - name: eth_protocolVersion
+        - name: eth_callMany
+        - name: eth_callBundle
+        - name: debug_accountAt
+        - name: debug_traceCallMany
+        - name: erigon_getHeaderByHash
+        - name: erigon_getBlockReceiptsByBlockHash
+        - name: erigon_getHeaderByNumber
+        - name: erigon_getLogsByHash
+        - name: erigon_forks
+        - name: erigon_getBlockByTimestamp
+        - name: erigon_BlockNumber
+        - name: erigon_getLatestLogs
         - name: ots_getInternalOperations
         - name: ots_hasCode
         - name: ots_getTransactionError
