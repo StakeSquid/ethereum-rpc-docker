@@ -53,6 +53,7 @@ services:
       - --execution.caching.state-scheme=path
       - --execution.forwarding-target=https://rpc.connext-sepolia.gelato.digital
       - --execution.rpc.gas-cap=5500000000
+      - --execution.rpc.state-scheme=path
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,arb,txpool,debug
