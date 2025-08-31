@@ -62,6 +62,7 @@ services:
       - --http.addr=0.0.0.0
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,ots
       - --http.port=8545
+      - --l2rpc=${ARBITRUM_SEPOLIA_EXECUTION_RPC}
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
