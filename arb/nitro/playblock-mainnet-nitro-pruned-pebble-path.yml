@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   playblock-mainnet:
-    image: ${PLAYBLOCK_NITRO_IMAGE:-offchainlabs/nitro-node}:${PLAYBLOCK_MAINNET_NITRO_VERSION:-v3.6.7-a7c9f1e}
+    image: ${PLAYBLOCK_NITRO_IMAGE:-offchainlabs/nitro-node}:${PLAYBLOCK_MAINNET_NITRO_VERSION:-v3.7.1-926f1ab}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
