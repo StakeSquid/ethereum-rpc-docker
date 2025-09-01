@@ -52,6 +52,11 @@ services:
       - 8545
     entrypoint: [geth]
     command:
+      - --cache.database=${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_CACHE_DB:-40}
+      - --cache.gc=${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_CACHE_GC:-25}
+      - --cache.snapshot=${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_CACHE_SNAPSHOT:-20}
+      - --cache.trie=${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_CACHE_TRIE:-15}
+      - --cache=${CORE_MAINNET_CORE_ARCHIVE_LEVELDB_HASH_CACHE:-1024}
       - --config=/config/config.toml
       - --datadir=/core/.ethereum
       - --db.engine=leveldb

@@ -54,6 +54,11 @@ services:
       - 10010
     entrypoint: [sh, -c, exec fireeth --config-file="" --log-to-file=false start reader-node --log-to-file=false --reader-node-arguments "$*", _]
     command:
+      - --cache.database=${BSC_MAINNET_BSC_PRUNED_PEBBLE_PATH_CACHE_DB:-40}
+      - --cache.gc=${BSC_MAINNET_BSC_PRUNED_PEBBLE_PATH_CACHE_GC:-25}
+      - --cache.snapshot=${BSC_MAINNET_BSC_PRUNED_PEBBLE_PATH_CACHE_SNAPSHOT:-20}
+      - --cache.trie=${BSC_MAINNET_BSC_PRUNED_PEBBLE_PATH_CACHE_TRIE:-15}
+      - --cache=${BSC_MAINNET_BSC_PRUNED_PEBBLE_PATH_CACHE:-1024}
       - --config=/config/config.toml
       - --datadir=/bsc/.ethereum
       - --db.engine=pebble

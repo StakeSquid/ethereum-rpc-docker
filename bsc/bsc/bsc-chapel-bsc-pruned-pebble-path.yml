@@ -53,6 +53,11 @@ services:
       - 6060
     entrypoint: [geth]
     command:
+      - --cache.database=${BSC_CHAPEL_BSC_PRUNED_PEBBLE_PATH_CACHE_DB:-40}
+      - --cache.gc=${BSC_CHAPEL_BSC_PRUNED_PEBBLE_PATH_CACHE_GC:-25}
+      - --cache.snapshot=${BSC_CHAPEL_BSC_PRUNED_PEBBLE_PATH_CACHE_SNAPSHOT:-20}
+      - --cache.trie=${BSC_CHAPEL_BSC_PRUNED_PEBBLE_PATH_CACHE_TRIE:-15}
+      - --cache=${BSC_CHAPEL_BSC_PRUNED_PEBBLE_PATH_CACHE:-1024}
       - --chapel
       - --config=/config/config.toml
       - --datadir=/bsc/.ethereum
