@@ -55,7 +55,7 @@ services:
       - --cache.noprefetch
       - --cache.snapshot=0
       - --cache=8192
-      - --da.blob.awss3 https://scroll-mainnet-blob-data.s3.us-west-2.amazonaws.com
+      - --da.blob.awss3=https://scroll-mainnet-blob-data.s3.us-west-2.amazonaws.com
       - --da.blob.beaconnode=${ETHEREUM_MAINNET_BEACON_REST}
       - --da.blob.blobscan=https://api.blobscan.com/blobs/
       - --da.blob.blocknative=https://api.ethernow.xyz/v1/blob/
