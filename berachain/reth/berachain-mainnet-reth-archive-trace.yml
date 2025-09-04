@@ -85,6 +85,7 @@ services:
       - --chain=/config/eth-genesis.json
       - --datadir=/root/.local/share/reth
       - --discovery.port=12881
+      - --engine.cross-block-cache-size=${BERACHAIN_MAINNET_RETH_STATE_CACHE:-4096}
       - --engine.memory-block-buffer-target=0
       - --engine.persistence-threshold=0
       - --max-inbound-peers=50
