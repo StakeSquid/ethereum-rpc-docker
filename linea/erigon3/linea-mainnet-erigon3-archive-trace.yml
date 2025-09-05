@@ -80,7 +80,7 @@ services:
       - --rpc.gascap=6000000000
       - --rpc.overlay.getlogstimeout=${LINEA_MAINNET_ERIGON3_ARCHIVE_TRACE_GETLOGSTIMEOUT:-5m0s}
       - --rpc.overlay.replayblocktimeout=${LINEA_MAINNET_ERIGON3_ARCHIVE_TRACE_REPLAYBLOCKTIMEOUT:-10s}
-      - --rpc.returndata.limit=1100000
+      - --rpc.returndata.limit=10000000
       - --ws
       - --ws.port=8545
     restart: unless-stopped

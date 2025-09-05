@@ -89,7 +89,7 @@ services:
       - --rpc.gascap=6000000000
       - --rpc.overlay.getlogstimeout=${ETHEREUM_MAINNET_ERIGON3_ARCHIVE_TRACE_GETLOGSTIMEOUT:-5m0s}
       - --rpc.overlay.replayblocktimeout=${ETHEREUM_MAINNET_ERIGON3_ARCHIVE_TRACE_REPLAYBLOCKTIMEOUT:-10s}
-      - --rpc.returndata.limit=1100000
+      - --rpc.returndata.limit=10000000
       - --torrent.download.rate=${ETHEREUM_MAINNET_ERIGON3_ARCHIVE_TRACE_MAX_DOWNLOAD_RATE:-1000mb}
       - --torrent.port=26675
       - --ws

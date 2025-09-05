@@ -78,7 +78,7 @@ services:
       - --rpc.gascap=6000000000
       - --rpc.overlay.getlogstimeout=${ARBITRUM_SEPOLIA_NITRO_ERIGON_PRUNED_TRACE_GETLOGSTIMEOUT:-5m0s}
       - --rpc.overlay.replayblocktimeout=${ARBITRUM_SEPOLIA_NITRO_ERIGON_PRUNED_TRACE_REPLAYBLOCKTIMEOUT:-10s}
-      - --rpc.returndata.limit=1100000
+      - --rpc.returndata.limit=10000000
       - --torrent.port=28369
       - --ws
       - --ws.port=8545
