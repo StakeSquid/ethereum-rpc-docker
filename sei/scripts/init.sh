@@ -18,7 +18,7 @@ env
 apk add curl jq
 if [ $? -ne 0 ]; then exit 1; fi
 
-if seid init ${MONIKER} --chain-id ${CHAIN_SPEC:-pacific} --home $HOME_DIR/; then
+if seid init ${MONIKER} --chain-id ${CHAIN_SPEC:-pacific-1} --home $HOME_DIR/; then
    
     # somehow it's better to make home static to /root
     sed -i 's|~/|/root/|g' "$CONFIG_DIR/config.toml"
@@ -60,4 +60,4 @@ if [ ! -e $HOME_DIR/data/priv_validator_state.json ]; then
 fi
 fi
 
-exec seid start --chain-id ${CHAIN_SPEC:-pacific} --home $HOME_DIR $@
+exec seid start --chain-id ${CHAIN_SPEC:-pacific-1} --home $HOME_DIR --migrate-iavl --tracing $@
