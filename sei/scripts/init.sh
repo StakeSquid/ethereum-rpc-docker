@@ -15,6 +15,9 @@ NAT_STRING="${IP}:${P2P_PORT:-55696}"
 
 env
 
+apk add curl jq
+if [ $? -ne 0 ]; then exit 1; fi
+
 if seid init ${MONIKER} --chain-id ${CHAIN_SPEC:-pacific} --home $HOME_DIR/; then
    
     # somehow it's better to make home static to /root
