@@ -35,18 +35,22 @@ env
 apk add curl
 if [ $? -ne 0 ]; then exit 1; fi
 
+# sometimes the genesis has to be updated and is a parameter to the reth node
+# because of the following force-recreate on chain fork would do the trick I guess...
+ETH_GENESIS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/eth-genesis.json"
+curl -sL "$ETH_GENESIS_URL" -o "$CONFIG_DIR/eth-genesis.json"
+
+
 if $BEACOND init ${MONIKER} --beacon-kit.chain-spec ${CHAIN_SPEC:-mainnet} --chain-id ${CHAINNAME}-beacon-${CHAINID} --home /root/.beacond/; then
     # Define variables
     CONFIG_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/config.toml"
     APP_TOML_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/app.toml"
     # SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
     KZG_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/kzg-trusted-setup.json"
-    ETH_GENESIS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/eth-genesis.json"
     GENESIS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/genesis.json"    
     
     # Download config files
     curl -sL "$GENESIS_URL" -o "$CONFIG_DIR/genesis.json"    
-    curl -sL "$ETH_GENESIS_URL" -o "$CONFIG_DIR/eth-genesis.json"
     curl -sL "$KZG_URL" -o "$CONFIG_DIR/kzg-trusted-setup.json"
     curl -sL "$CONFIG_TOML_URL" -o "$CONFIG_DIR/config.toml"
     curl -sL "$APP_TOML_URL" -o "$CONFIG_DIR/app.toml"
