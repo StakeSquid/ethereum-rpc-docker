@@ -42,4 +42,4 @@ if [ ! -e $HOME_DIR/data/priv_validator_state.json ]; then
 fi
 fi
 
-exec seid start --chain-id ${CHAIN_SPEC:-sei-testnet-1} --home $HOME_DIR --db_dir $HOME_DIR/data $@
+exec seid start --chain-id ${CHAIN_SPEC:-sei-testnet-1} --home $HOME_DIR $@
