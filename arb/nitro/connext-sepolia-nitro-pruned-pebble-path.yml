@@ -50,7 +50,11 @@ services:
     command:
       - --conf.file=/config/baseConfig.json
       - --execution.caching.archive=${CONNEXT_SEPOLIA_ARCHIVE_DB:-false}
+      - --execution.caching.database-cache=${CONNEXT_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_DATABASE_CACHE:-2048}
+      - --execution.caching.snapshot-cache=${CONNEXT_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_SNAPSHOT_CACHE:-400}
       - --execution.caching.state-scheme=path
+      - --execution.caching.trie-clean-cache=${CONNEXT_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_TRIE_CLEAN_CACHE:-600}
+      - --execution.caching.trie-dirty-cache=${CONNEXT_SEPOLIA_NITRO_PRUNED_PEBBLE_PATH_TRIE_DIRTY_CACHE:-1024}
       - --execution.forwarding-target=https://rpc.connext-sepolia.gelato.digital
       - --execution.rpc.gas-cap=5500000000
       - --execution.rpc.state-scheme=path

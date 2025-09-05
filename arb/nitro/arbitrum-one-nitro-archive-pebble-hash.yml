@@ -50,6 +50,10 @@ services:
     command:
       - --chain.id=42161
       - --execution.caching.archive=true
+      - --execution.caching.database-cache=${ARBITRUM_ONE_NITRO_ARCHIVE_PEBBLE_HASH_DATABASE_CACHE:-2048}
+      - --execution.caching.snapshot-cache=${ARBITRUM_ONE_NITRO_ARCHIVE_PEBBLE_HASH_SNAPSHOT_CACHE:-400}
+      - --execution.caching.trie-clean-cache=${ARBITRUM_ONE_NITRO_ARCHIVE_PEBBLE_HASH_TRIE_CLEAN_CACHE:-600}
+      - --execution.caching.trie-dirty-cache=${ARBITRUM_ONE_NITRO_ARCHIVE_PEBBLE_HASH_TRIE_DIRTY_CACHE:-1024}
       - --execution.rpc.classic-redirect=http://arbitrum-one-arbnode-archive:8545
       - --execution.rpc.gas-cap=5500000000
       - --execution.sequencer.enable=false

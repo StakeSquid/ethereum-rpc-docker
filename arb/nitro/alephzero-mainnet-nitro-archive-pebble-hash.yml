@@ -50,6 +50,10 @@ services:
     command:
       - --conf.file=/config/baseConfig.json
       - --execution.caching.archive=true
+      - --execution.caching.database-cache=${ALEPHZERO_MAINNET_NITRO_ARCHIVE_PEBBLE_HASH_DATABASE_CACHE:-2048}
+      - --execution.caching.snapshot-cache=${ALEPHZERO_MAINNET_NITRO_ARCHIVE_PEBBLE_HASH_SNAPSHOT_CACHE:-400}
+      - --execution.caching.trie-clean-cache=${ALEPHZERO_MAINNET_NITRO_ARCHIVE_PEBBLE_HASH_TRIE_CLEAN_CACHE:-600}
+      - --execution.caching.trie-dirty-cache=${ALEPHZERO_MAINNET_NITRO_ARCHIVE_PEBBLE_HASH_TRIE_DIRTY_CACHE:-1024}
       - --execution.forwarding-target=https://rpc.alephzero.raas.gelato.cloud
       - --execution.rpc.gas-cap=5500000000
       - --execution.sequencer.enable=false

@@ -50,6 +50,10 @@ services:
     command:
       - --chain.id=42170
       - --execution.caching.archive=true
+      - --execution.caching.database-cache=${ARBITRUM_NOVA_NITRO_ARCHIVE_LEVELDB_HASH_DATABASE_CACHE:-2048}
+      - --execution.caching.snapshot-cache=${ARBITRUM_NOVA_NITRO_ARCHIVE_LEVELDB_HASH_SNAPSHOT_CACHE:-400}
+      - --execution.caching.trie-clean-cache=${ARBITRUM_NOVA_NITRO_ARCHIVE_LEVELDB_HASH_TRIE_CLEAN_CACHE:-600}
+      - --execution.caching.trie-dirty-cache=${ARBITRUM_NOVA_NITRO_ARCHIVE_LEVELDB_HASH_TRIE_DIRTY_CACHE:-1024}
       - --execution.rpc.gas-cap=5500000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
