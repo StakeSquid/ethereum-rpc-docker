@@ -1,0 +1,187 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:taiko/geth/taiko-hekla-geth-archive-pebble-hash.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/taiko-hekla-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  taiko-hekla-archive:
+    image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HEKLA_GETH_VERSION:-v1.17.0}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12851:12851
+      - 12851:12851/udp
+    expose:
+      - 8545
+      - 6060
+      - 8551
+    env_file:
+      - ./taiko/geth.env
+      - ./taiko/hekla.env
+    environment:
+      - GETH_GPO_DEFAULTPRICE=10000000
+      - GETH_NETWORKID=167009
+      - GETH_TAIKO=true
+    command:
+      - --bootnodes=enode://1733a899719c64edc8ad6818598b6b9aa41889297a7ee7b9cbf3e610d4df2e207b0e04fd40060a36f020116ab5ad451201e448fc224cd38b0a0d5fcbb1d2c812@34.126.109.163:30303,enode://3c7e00eff6a98f5d49084db988b9bee9cab3338ee809d88e41318dc7ea7fb67ab8e8a923e4a9f193fecd7698ef92c0977e07ac850e10777bdd11cc25045d63bf@35.198.236.33:30303,enode://eb5079aae185d5d8afa01bfd2d349da5b476609aced2b57c90142556cf0ee4a152bcdd724627a7de97adfc2a68af5742a8f58781366e6a857d4bde98de6fe986@34.66.210.65:30303,enode://2294f526cbb7faa778192289c252307420532191438ce821d3c50232e019a797bda8c8f8541de0847e953bb03096123856935e32294de9814d15d120131499ba@34.72.186.213:30303
+      - --datadir=/root/.ethereum
+      - --db.engine=pebble
+      - --gcmode=archive
+      - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --nat=extip:${IP}
+      - --port=12851
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=hash
+      - --syncmode=full
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine,taiko
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine,taiko
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${TAIKO_HEKLA_GETH_ARCHIVE_PEBBLE_HASH_DATA:-taiko-hekla-geth-archive-pebble-hash}:/root/.ethereum
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.taiko-hekla-geth-archive-pebble-hash-stripprefix.stripprefix.prefixes=/taiko-hekla-archive
+      - traefik.http.services.taiko-hekla-geth-archive-pebble-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-pebble-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-pebble-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.taiko-hekla-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/taiko-hekla-archive`) || Path(`/taiko-hekla-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.taiko-hekla-geth-archive-pebble-hash.rule=Path(`/taiko-hekla-archive`) || Path(`/taiko-hekla-archive/`)}
+      - traefik.http.routers.taiko-hekla-geth-archive-pebble-hash.middlewares=taiko-hekla-geth-archive-pebble-hash-stripprefix, ipallowlist
+
+  taiko-hekla-archive-node:
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HEKLA_DRIVER_VERSION:-taiko-alethia-client-v1.10.1}
+    ports:
+      - 17851:17851
+      - 17851:17851/udp
+    env_file:
+      - ./taiko/hekla.env
+    environment:
+      - JWT_SECRET=/jwtsecret
+      - L1_BEACON=${ETHEREUM_HOLESKY_BEACON_REST}
+      - L1_WS=${ETHEREUM_HOLESKY_EXECUTION_WS}
+      - L2_AUTH=http://taiko-hekla-archive:8551
+      - L2_WS=ws://taiko-hekla-archive:8545
+      - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
+      - P2P_CHECK_POINT_SYNC_URL=https://rpc.hekla.taiko.xyz
+      - P2P_SYNC=true
+      - PRECONFIRMATION_P2P_ADVERTISE_IP=${IP}
+      - PRECONFIRMATION_P2P_ADVERTISE_TCP_PORT=17851
+      - PRECONFIRMATION_P2P_ADVERTISE_UDP_PORT=17851
+      - PRECONFIRMATION_P2P_BOOTNODES=enode://ea5b8a797985f500afa37ba03ce47b0039792a942f0ac9bee9fa19a7a5410273fe43b4e8a9a28fa42cdec1b6435deb809fcb79479c55cc2ddbaf02de7a83f456@34.46.28.99:4001?discport=30304,enode://404e9493066107431bdf3f47bbb360a353244a6069903c76928fca3067575f2adf62ef396b0a8a74696669ef53cab8373e38ddd9b3d3d2d76f356d2cd2708951@34.30.143.124:4001?discport=30304,enode://b2d094ade1ce68990878b197bf818bd41d5b32e4019d42dc63d91d7020f531532f063833e44e84f78792969f69fd5553370216703c40fcc0cb835f17177fbe07@34.56.54.8:4001?discport=30304
+      - PRECONFIRMATION_P2P_LISTEN_TCP_PORT=17851
+      - PRECONFIRMATION_P2P_LISTEN_UDP_PORT=17851
+      - PRECONFIRMATION_SERVER_PORT=9871
+    entrypoint: [taiko-client, driver]
+    restart: unless-stopped
+    depends_on:
+      - taiko-hekla-archive
+    networks:
+      - chains
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+
+volumes:
+  taiko-hekla-geth-archive-pebble-hash:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: taiko-hekla
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
