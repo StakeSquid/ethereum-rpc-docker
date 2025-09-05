@@ -60,4 +60,4 @@ if [ ! -e $HOME_DIR/data/priv_validator_state.json ]; then
 fi
 fi
 
-exec seid start --chain-id ${CHAIN_SPEC:-pacific-1} --home $HOME_DIR --migrate-iavl --tracing $@
+exec seid start --chain-id ${CHAIN_SPEC:-pacific-1} --home $HOME_DIR $@
