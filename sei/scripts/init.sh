@@ -30,10 +30,10 @@ if seid init ${MONIKER} --chain-id ${CHAIN_SPEC:-pacific-1} --home $HOME_DIR/; t
     sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"19\"/" $CONFIG_DIR/app.toml
     sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $CONFIG_DIR/config.toml
 else
-    echo "Already initialized, continuing!" >&2
+    echo "Already initialized, resetting!" >&2
+    seid tendermint unsafe-reset-all --home $HOME_DIR
 fi
 
-seid tendermint unsafe-reset-all --home $HOME_DIR
 STATYSYNC_RPC=https://sei-rpc.stakeme.pro:443
 LATEST_HEIGHT=$(curl -s $STATYSYNC_RPC/block | jq -r .block.header.height)
 BLOCK_HEIGHT=$((LATEST_HEIGHT - 10000))
