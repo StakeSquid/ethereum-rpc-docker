@@ -35,11 +35,11 @@ env
 
 apk add curl jq
 if [ $? -ne 0 ]; then exit 1; fi
-
-curl -sL "$GENESIS_URL" -o "$CONFIG_DIR/genesis.json"
-
+    
 if seid init ${MONIKER} --chain-id ${CHAIN_SPEC} --home $HOME_DIR/; then
-   
+    # replace the genesis with the one from the url
+    curl -sL "$GENESIS_URL" -o "$CONFIG_DIR/genesis.json"
+
     # somehow it's better to make home static to /root
     sed -i 's|~/|/root/|g' "$CONFIG_DIR/config.toml"
     sed -i 's|~/|/root/|g' "$CONFIG_DIR/app.toml"
