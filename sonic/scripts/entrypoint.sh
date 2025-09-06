@@ -19,7 +19,7 @@ if [ ! -f "$datadir/initialized" ]; then
 else
     echo "Sonic is already initialized."
     # just in case because after every shutdown this shit is corrupted by default
-    GOMEMLIMIT=28GiB sonictool --datadir "$datadir" --cache 12000 heal
+    # GOMEMLIMIT=28GiB sonictool --datadir "$datadir" --cache 12000 heal
 fi
 
 echo "Generating new Geth node key..."

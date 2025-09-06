@@ -6,9 +6,9 @@ x-logging-defaults: &logging-defaults
     max-file: "3"
 #    To fix the database after corruption through restart run
 #
-#    docker compose stop sonic-mainnet
-#    docker compose run -it --rm --entrypoint sonictool sonic-mainnet --datadir /var/sonic heal
-#    docker compose start sonic-mainnet
+#    docker compose stop sonic-mainnet-pruned
+#    docker compose run -it --rm --entrypoint sonictool sonic-mainnet-pruned --datadir /var/sonic heal
+#    docker compose start sonic-mainnet-pruned
 #
 
 # Usage:
@@ -26,16 +26,16 @@ x-logging-defaults: &logging-defaults
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:sonic/sonic/sonic-mainnet-sonic-archive.yml
+# COMPOSE_FILE=base.yml:rpc.yml:sonic/sonic/sonic-mainnet-sonic-pruned.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/sonic-mainnet \
+# curl -X POST https://${IP}.traefik.me/sonic-mainnet-pruned \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  sonic-mainnet:
+  sonic-mainnet-pruned:
     build:
       context: ./sonic
       dockerfile: sonic.Dockerfile
@@ -59,8 +59,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10658:10658
-      - 10658:10658/udp
+      - 11614:11614
+      - 11614:11614/udp
     expose:
       - 8545
       - 6060
@@ -70,7 +70,7 @@ services:
       - IP=${IP}
       - SONIC_HOME=/var/sonic
     command:
-      - --cache=${SONIC_MAINNET_SONIC_ARCHIVE_CACHE_MB:-16000}
+      - --cache=${SONIC_MAINNET_SONIC_PRUNED_CACHE_MB:-16000}
       - --http
       - --http.addr=0.0.0.0
       - --http.api=admin,debug,web3,eth,dag,txpool,personal,abft,net,trace,ftm
@@ -81,7 +81,7 @@ services:
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --port=10658
+      - --port=11614
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --ws
@@ -94,7 +94,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${SONIC_MAINNET_SONIC_ARCHIVE_DATA:-sonic-mainnet-sonic-archive}:/var/sonic
+      - ${SONIC_MAINNET_SONIC_PRUNED_DATA:-sonic-mainnet-sonic-pruned}:/var/sonic
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
@@ -102,16 +102,16 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.sonic-mainnet-sonic-archive-stripprefix.stripprefix.prefixes=/sonic-mainnet
-      - traefik.http.services.sonic-mainnet-sonic-archive.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-archive.rule=Host(`$DOMAIN`) && (Path(`/sonic-mainnet`) || Path(`/sonic-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.sonic-mainnet-sonic-archive.rule=Path(`/sonic-mainnet`) || Path(`/sonic-mainnet/`)}
-      - traefik.http.routers.sonic-mainnet-sonic-archive.middlewares=sonic-mainnet-sonic-archive-stripprefix, ipallowlist
+      - traefik.http.middlewares.sonic-mainnet-sonic-pruned-stripprefix.stripprefix.prefixes=/sonic-mainnet-pruned
+      - traefik.http.services.sonic-mainnet-sonic-pruned.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-pruned.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-pruned.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.sonic-mainnet-sonic-pruned.rule=Host(`$DOMAIN`) && (Path(`/sonic-mainnet-pruned`) || Path(`/sonic-mainnet-pruned/`))}
+      - ${NO_SSL:+traefik.http.routers.sonic-mainnet-sonic-pruned.rule=Path(`/sonic-mainnet-pruned`) || Path(`/sonic-mainnet-pruned/`)}
+      - traefik.http.routers.sonic-mainnet-sonic-pruned.middlewares=sonic-mainnet-sonic-pruned-stripprefix, ipallowlist
 
 volumes:
-  sonic-mainnet-sonic-archive:
+  sonic-mainnet-sonic-pruned:
 
 x-upstreams:
   - id: $${ID}
