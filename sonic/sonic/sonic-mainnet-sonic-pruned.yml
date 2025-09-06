@@ -66,7 +66,7 @@ services:
       - 6060
     environment:
       - CACHE_GB=${SONIC_CACHE_GB:-28}
-      - GENESIS=https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic-39800-full.g
+      - GENESIS=https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic-39800-pruned.g
       - IP=${IP}
       - SONIC_HOME=/var/sonic
     command:

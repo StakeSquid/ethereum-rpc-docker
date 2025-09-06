@@ -8,9 +8,9 @@ if [ ! -f "$datadir/initialized" ]; then
     url="${GENESIS:-https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic.g}"
     filename=$(basename "$url")
     
-    wget -P "$datadir" "$url"
+    exec wget -P "$datadir" "$url"
 
-    GOMEMLIMIT="${CACHE_GB}GiB" sonictool --datadir "$datadir" --cache "${CACHE_GB}000" genesis "$datadir/$filename"
+    GOMEMLIMIT="${CACHE_GB}GiB" exec sonictool --datadir "$datadir" --cache "${CACHE_GB}000" genesis "$datadir/$filename"
     rm "$datadir/$filename"
     
     touch "$datadir/initialized"
@@ -19,7 +19,7 @@ if [ ! -f "$datadir/initialized" ]; then
 else
     echo "Sonic is already initialized."
     # just in case because after every shutdown this shit is corrupted by default
-    # GOMEMLIMIT=28GiB sonictool --datadir "$datadir" --cache 12000 heal
+    # GOMEMLIMIT=28GiB exec sonictool --datadir "$datadir" --cache 12000 heal
 fi
 
 echo "Generating new Geth node key..."
