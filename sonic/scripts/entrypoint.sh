@@ -8,9 +8,9 @@ if [ ! -f "$datadir/initialized" ]; then
     url="${GENESIS:-https://genesis.soniclabs.com/sonic-mainnet/genesis/sonic.g}"
     filename=$(basename "$url")
     
-    exec wget -P "$datadir" "$url"
+    wget -P "$datadir" "$url"
 
-    GOMEMLIMIT="${CACHE_GB}GiB" exec sonictool --datadir "$datadir" --cache "${CACHE_GB}000" genesis "$datadir/$filename"
+    GOMEMLIMIT="${CACHE_GB}GiB" sonictool --datadir "$datadir" --cache "${CACHE_GB}000" genesis "$datadir/$filename"
     rm "$datadir/$filename"
     
     touch "$datadir/initialized"
@@ -22,7 +22,7 @@ else
     # GOMEMLIMIT=28GiB exec sonictool --datadir "$datadir" --cache 12000 heal
 fi
 
-echo "Generating new Geth node key..."
+#echo "Generating new Geth node key..."
 #openssl rand 32 | xxd -p -c 32 | tr -d '\n' > "$datadir/nodekey"
 
 #exec sonicd --nodekey "$datadir/nodekey" --cache "${CACHE_GB}000" --datadir "$datadir" "$@"
