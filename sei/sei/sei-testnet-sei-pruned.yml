@@ -20,22 +20,22 @@ x-logging-defaults: &logging-defaults
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:sei/sei/sei-mainnet-sei-pruned.yml
+# COMPOSE_FILE=base.yml:rpc.yml:sei/sei/sei-testnet-sei-pruned.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/sei-mainnet-sei-pruned \
+# curl -X POST https://${IP}.traefik.me/sei-testnet-sei-pruned \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  sei-mainnet-sei-pruned:
+  sei-testnet-sei-pruned:
     build:
       context: ./sei
       dockerfile: sei.Dockerfile
       args:
-        SEI_VERSION: ${SEI_MAINNET_SEI_VERSION:-v6.1.9}
-        SEI_IMAGE: ${SEI_MAINNET_SEI_IMAGE:-ghcr.io/sei-protocol/sei}
+        SEI_VERSION: ${SEI_TESTNET_SEI_VERSION:-v6.1.9}
+        SEI_IMAGE: ${SEI_TESTNET_SEI_IMAGE:-ghcr.io/sei-protocol/sei}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -51,38 +51,38 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10019:10019
-      - 10019:10019/udp
+      - 10889:10889
+      - 10889:10889/udp
     expose:
       - 8545
     env_file:
-      - ./sei/mainnet.env
+      - ./sei/testnet.env
     environment:
       - IP=${IP}
       - MONIKER=d${DOMAIN:-local}
-      - P2P_PORT=10019
-      - PEERS=${SEI_MAINNET_SEI_PEERS:-3be6b24cf86a5938cce7d48f44fb6598465a9924@p2p.state-sync-0.pacific-1.seinetwork.io:26656,b21279d7092fde2e41770832a1cacc7d0051e9dc@p2p.state-sync-1.pacific-1.seinetwork.io:26656,616c05e9ba24acc89c0de630b5e3adbedaebb478@p2p.state-sync-2.pacific-1.seinetwork.io:26656}
+      - P2P_PORT=10889
+      - PEERS=${SEI_TESTNET_SEI_PEERS:-b2664ccaa84a04b67683093fefb802b172ead6d1@sei-a2-rpc.p2p.brocha.in:30612,babc3f3f7804933265ec9c40ad94f4da8e9e0017@testnet-seed.rhinostake.com:11956}
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
       - chains
     volumes:
-      - ${SEI_MAINNET_SEI_PRUNED_DATA:-sei-mainnet-sei-pruned}:/root/.sei
+      - ${SEI_TESTNET_SEI_PRUNED_DATA:-sei-testnet-sei-pruned}:/root/.sei
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.sei-mainnet-sei-pruned-stripprefix.stripprefix.prefixes=/sei-mainnet-sei-pruned
-      - traefik.http.services.sei-mainnet-sei-pruned.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.sei-mainnet-sei-pruned.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.sei-mainnet-sei-pruned.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.sei-mainnet-sei-pruned.rule=Host(`$DOMAIN`) && (Path(`/sei-mainnet-sei-pruned`) || Path(`/sei-mainnet-sei-pruned/`))}
-      - ${NO_SSL:+traefik.http.routers.sei-mainnet-sei-pruned.rule=Path(`/sei-mainnet-sei-pruned`) || Path(`/sei-mainnet-sei-pruned/`)}
-      - traefik.http.routers.sei-mainnet-sei-pruned.middlewares=sei-mainnet-sei-pruned-stripprefix, ipallowlist
+      - traefik.http.middlewares.sei-testnet-sei-pruned-stripprefix.stripprefix.prefixes=/sei-testnet-sei-pruned
+      - traefik.http.services.sei-testnet-sei-pruned.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.sei-testnet-sei-pruned.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.sei-testnet-sei-pruned.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.sei-testnet-sei-pruned.rule=Host(`$DOMAIN`) && (Path(`/sei-testnet-sei-pruned`) || Path(`/sei-testnet-sei-pruned/`))}
+      - ${NO_SSL:+traefik.http.routers.sei-testnet-sei-pruned.rule=Path(`/sei-testnet-sei-pruned`) || Path(`/sei-testnet-sei-pruned/`)}
+      - traefik.http.routers.sei-testnet-sei-pruned.middlewares=sei-testnet-sei-pruned-stripprefix, ipallowlist
 
 volumes:
-  sei-mainnet-sei-pruned:
+  sei-testnet-sei-pruned:
 
 x-upstreams:
   - id: $${ID}
@@ -96,7 +96,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: sei
+    chain: sei-testnet
     method-groups:
       enabled:
         - debug

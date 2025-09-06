@@ -4,6 +4,24 @@ set -e  # Exit on failure
 
 echo "MONIKER: $MONIKER"
 
+# needs CHAIN_SPEC to be set
+if [ -z "$CHAIN_SPEC" ]; then
+    echo "CHAIN_SPEC is not set"
+    exit 1
+fi
+
+# needs GENESIS_URL to be set
+if [ -z "$GENESIS_URL" ]; then
+    echo "GENESIS_URL is not set"
+    exit 1
+fi
+
+# needs PEERS to be set
+if [ -z "$PEERS" ]; then
+    echo "PEERS is not set"
+    exit 1
+fi
+
 HOME_DIR="/root/.sei"
 CONFIG_DIR="$HOME_DIR/config"
 
@@ -18,22 +36,28 @@ env
 apk add curl jq
 if [ $? -ne 0 ]; then exit 1; fi
 
-if seid init ${MONIKER} --chain-id ${CHAIN_SPEC:-pacific-1} --home $HOME_DIR/; then
+curl -sL "$GENESIS_URL" -o "$CONFIG_DIR/genesis.json"
+
+if seid init ${MONIKER} --chain-id ${CHAIN_SPEC} --home $HOME_DIR/; then
    
     # somehow it's better to make home static to /root
     sed -i 's|~/|/root/|g' "$CONFIG_DIR/config.toml"
     sed -i 's|~/|/root/|g' "$CONFIG_DIR/app.toml"
 
     sed -i 's/minimum-gas-prices = ""/minimum-gas-prices = "0.01usei"/g' $CONFIG_DIR/app.toml
+
+    sed -i -e "s/^#concurrency-workers *=.*/concurrency-workers = 500/" $CONFIG_DIR/app.toml
+    sed -i -e "s/^occ-enabled *=.*/occ-enabled = true/" $CONFIG_DIR/app.toml
+
     sed -i -e "s/^pruning *=.*/pruning = \"custom\"/" $CONFIG_DIR/app.toml
     sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $CONFIG_DIR/app.toml
     sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"19\"/" $CONFIG_DIR/app.toml
     sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $CONFIG_DIR/config.toml
 else
     echo "Already initialized, resetting!" >&2
-    seid tendermint unsafe-reset-all --home $HOME_DIR
 fi
 
+seid tendermint unsafe-reset-all --home $HOME_DIR
 STATYSYNC_RPC=https://sei-rpc.stakeme.pro:443
 LATEST_HEIGHT=$(curl -s $STATYSYNC_RPC/block | jq -r .block.header.height)
 BLOCK_HEIGHT=$((LATEST_HEIGHT - 10000))
@@ -43,6 +67,9 @@ s|^(rpc-servers[[:space:]]+=[[:space:]]+).*$|\1\"$STATYSYNC_RPC,$STATYSYNC_RPC\"
 s|^(trust-height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
 s|^(trust-hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
 s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" $CONFIG_DIR/config.toml
+
+# add peers to the config
+sed -i 's/persistent-peers = .*/persistent-peers = "'$PEERS'"/' $CONFIG_DIR/config.toml
 
 # apply a port change to the config
 sed -i "/^\[p2p\]/,/^\[/{s|^laddr = .*|laddr = \"$P2P_STRING\"|}" "$CONFIG_DIR/config.toml"
@@ -60,4 +87,4 @@ if [ ! -e $HOME_DIR/data/priv_validator_state.json ]; then
 fi
 fi
 
-exec seid start --chain-id ${CHAIN_SPEC:-pacific-1} --home $HOME_DIR $@
+exec seid start --chain-id ${CHAIN_SPEC} --home $HOME_DIR $@
