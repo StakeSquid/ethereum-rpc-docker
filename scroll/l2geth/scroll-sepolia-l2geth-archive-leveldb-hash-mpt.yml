@@ -1,0 +1,150 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:scroll/l2geth/scroll-sepolia-l2geth-archive-leveldb-hash-mpt.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/scroll-sepolia-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  scroll-sepolia-archive:
+    image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_SEPOLIA_L2GETH_VERSION:-scroll-v5.9.4}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12610:12610
+      - 12610:12610/udp
+    expose:
+      - 8545
+      - 6060
+    command:
+      - --cache.noprefetch
+      - --cache.snapshot=0
+      - --cache=8192
+      - --da.blob.awss3=https://scroll-sepolia-blob-data.s3.us-west-2.amazonaws.com
+      - --da.blob.beaconnode=${ETHEREUM_SEPOLIA_BEACON_REST}
+      - --da.blob.blobscan=https://api.sepolia.blobscan.com/blobs/
+      - --datadir=/root/.ethereum
+      - --gcmode=archive
+      - --gossip.sequencerhttp=https://sepolia-sequencer-proxy.scroll.io
+      - --gpo.ignoreprice=1
+      - --gpo.maxprice=500000000
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,admin,debug
+      - --http.port=8545
+      - --http.vhosts=*
+      - --l1.endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --nat=extip:${IP}
+      - --port=12610
+      - --rollup.verify
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --scroll-sepolia
+      - --snapshot=false
+      - --syncmode=full
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,admin,debug
+      - --ws.origins=*
+      - --ws.port=8545
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${SCROLL_SEPOLIA_L2GETH_ARCHIVE_LEVELDB_HASH_MPT_DATA:-scroll-sepolia-l2geth-archive-leveldb-hash-mpt}:/root/.ethereum
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.scroll-sepolia-l2geth-archive-leveldb-hash-mpt-stripprefix.stripprefix.prefixes=/scroll-sepolia-archive
+      - traefik.http.services.scroll-sepolia-l2geth-archive-leveldb-hash-mpt.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash-mpt.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash-mpt.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash-mpt.rule=Host(`$DOMAIN`) && (Path(`/scroll-sepolia-archive`) || Path(`/scroll-sepolia-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash-mpt.rule=Path(`/scroll-sepolia-archive`) || Path(`/scroll-sepolia-archive/`)}
+      - traefik.http.routers.scroll-sepolia-l2geth-archive-leveldb-hash-mpt.middlewares=scroll-sepolia-l2geth-archive-leveldb-hash-mpt-stripprefix, ipallowlist
+
+volumes:
+  scroll-sepolia-l2geth-archive-leveldb-hash-mpt:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: scroll-sepolia
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
