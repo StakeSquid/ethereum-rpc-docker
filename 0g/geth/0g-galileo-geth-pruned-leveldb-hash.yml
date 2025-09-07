@@ -30,7 +30,11 @@ x-logging-defaults: &logging-defaults
 
 services:
   0g-galileo-geth:
-    image: ${0G_GETH_IMAGE:-ethereum/client-go}:${0G_GALILEO_GETH_VERSION:-v1.15.11}
+    build:
+      context: ./0g
+      dockerfile: 0g.Dockerfile
+      args:
+        0G_VERSION: ${0G_GALILEO_0G_VERSION:-v2.0.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -54,6 +58,7 @@ services:
       - 8551
     entrypoint: [/usr/local/bin/init.sh, geth]
     command:
+      - --bootnodes=enode://de7b86d8ac452b1413983049c20eafa2ea0851a3219c2cc12649b971c1677bd83fe24c5331e078471e52a94d95e8cde84cb9d866574fec957124e57ac6056699@8.218.88.60:30303
       - --datadir=/root/.ethereum
       - --db.engine=leveldb
       - --gcmode=full
@@ -62,12 +67,12 @@ services:
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --networkid=
+      - --networkid=16601
       - --port=11779
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
-      - --syncmode=snap
+      - --syncmode=full
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,debug,admin,txpool,engine
@@ -104,7 +109,11 @@ services:
       - traefik.http.routers.0g-galileo-geth-pruned-leveldb-hash.middlewares=0g-galileo-geth-pruned-leveldb-hash-stripprefix, ipallowlist
 
   0g-galileo-geth-node:
-    image: ${0G_0G_IMAGE:-}:${0G_GALILEO_0G_VERSION:-v2.0.3}
+    build:
+      context: ./0g
+      dockerfile: 0g.Dockerfile
+      args:
+        0G_VERSION: ${0G_GALILEO_0G_VERSION:-v2.0.3}
     ports:
       - 16779:16779
       - 16779:16779/udp
@@ -123,17 +132,16 @@ services:
       - --chaincfg.node-api.logging
       - --home=/root/.0g
       - --p2p.external_address=${IP}:16779
-      - --p2p.seeds=${0G_GALILEO_0G_SEEDS:-}
+      - --p2p.seeds=${0G_GALILEO_0G_SEEDS:-85a9b9a1b7fa0969704db2bc37f7c100855a75d9@8.218.88.60:26656}
       - --pruning=default
       - --rpc.laddr=tcp://0.0.0.0:16779
       - 0gchaind
       - start
     restart: unless-stopped
-    depends_on:
-      - 0g-galileo-geth
     networks:
       - chains
     volumes:
+      - ${0G_GALILEO_GETH_PRUNED_LEVELDB_HASH__0G_DATA:-0g-galileo-geth-pruned-leveldb-hash_0g}:/root/.0g/data
       - .jwtsecret:/jwtsecret:ro
       - 0g-galileo-geth-pruned-leveldb-hash_config:/root/.0g/config
     logging: *logging-defaults
@@ -142,6 +150,7 @@ services:
 
 volumes:
   0g-galileo-geth-pruned-leveldb-hash:
+  0g-galileo-geth-pruned-leveldb-hash_0g:
   0g-galileo-geth-pruned-leveldb-hash_config:
 
 x-upstreams:

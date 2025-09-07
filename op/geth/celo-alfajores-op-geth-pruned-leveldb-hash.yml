@@ -74,7 +74,7 @@ services:
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
-      - --syncmode=snap
+      - --syncmode=full
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,debug,admin,txpool,engine

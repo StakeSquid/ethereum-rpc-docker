@@ -73,7 +73,7 @@ services:
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
-      - --syncmode=snap
+      - --syncmode=full
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=eth,net,web3,txpool,debug,admin,satoshi
