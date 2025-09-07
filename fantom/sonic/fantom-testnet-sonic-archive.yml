@@ -4,6 +4,7 @@ x-logging-defaults: &logging-defaults
   options:
     max-size: "10m"
     max-file: "3"
+#    you should update the links to the latest genesis files from https://genesis.soniclabs.com
 #    To fix the database after corruption through restart run
 #
 #    docker compose stop fantom-testnet
