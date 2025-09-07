@@ -55,6 +55,7 @@ services:
       - 10889:10889/udp
     expose:
       - 8545
+      - 8546
     env_file:
       - ./sei/testnet.env
     environment:
@@ -80,6 +81,16 @@ services:
       - ${NO_SSL:-traefik.http.routers.sei-testnet-sei-pruned.rule=Host(`$DOMAIN`) && (Path(`/sei-testnet-sei-pruned`) || Path(`/sei-testnet-sei-pruned/`))}
       - ${NO_SSL:+traefik.http.routers.sei-testnet-sei-pruned.rule=Path(`/sei-testnet-sei-pruned`) || Path(`/sei-testnet-sei-pruned/`)}
       - traefik.http.routers.sei-testnet-sei-pruned.middlewares=sei-testnet-sei-pruned-stripprefix, ipallowlist
+      - traefik.http.routers.sei-testnet-sei-pruned.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.sei-testnet-sei-pruned-ws.priority=100   # answers GET requests first
+      - traefik.http.services.sei-testnet-sei-pruned-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.sei-testnet-sei-pruned-ws.service=sei-testnet-sei-pruned-ws
+      - traefik.http.routers.sei-testnet-sei-pruned.service=sei-testnet-sei-pruned
+      - ${NO_SSL:-traefik.http.routers.sei-testnet-sei-pruned-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.sei-testnet-sei-pruned-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.sei-testnet-sei-pruned-ws.rule=Host(`$DOMAIN`) && (Path(`/sei-testnet-sei-pruned`) || Path(`/sei-testnet-sei-pruned/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.sei-testnet-sei-pruned-ws.rule=(Path(`/sei-testnet-sei-pruned`) || Path(`/sei-testnet-sei-pruned/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.sei-testnet-sei-pruned-ws.middlewares=sei-testnet-sei-pruned-stripprefix, ipallowlist
 
 volumes:
   sei-testnet-sei-pruned:
