@@ -53,20 +53,20 @@ if seid init ${MONIKER} --chain-id ${CHAIN_SPEC} --home $HOME_DIR/; then
     sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $CONFIG_DIR/app.toml
     sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"19\"/" $CONFIG_DIR/app.toml
     sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $CONFIG_DIR/config.toml
-else
-    echo "Already initialized, resetting!" >&2
-fi
 
-seid tendermint unsafe-reset-all --home $HOME_DIR
-STATYSYNC_RPC=https://sei-rpc.stakeme.pro:443
-LATEST_HEIGHT=$(curl -s $STATYSYNC_RPC/block | jq -r .block.header.height)
-BLOCK_HEIGHT=$((LATEST_HEIGHT - 10000))
-TRUST_HASH=$(curl -s "$STATYSYNC_RPC/block?height=$BLOCK_HEIGHT" | jq -r .block_id.hash)
-sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-s|^(rpc-servers[[:space:]]+=[[:space:]]+).*$|\1\"$STATYSYNC_RPC,$STATYSYNC_RPC\"| ; \
-s|^(trust-height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
-s|^(trust-hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
-s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" $CONFIG_DIR/config.toml
+    seid tendermint unsafe-reset-all --home $HOME_DIR
+    STATYSYNC_RPC=https://sei-rpc.stakeme.pro:443
+    LATEST_HEIGHT=$(curl -s $STATYSYNC_RPC/block | jq -r .block.header.height)
+    BLOCK_HEIGHT=$((LATEST_HEIGHT - 10000))
+    TRUST_HASH=$(curl -s "$STATYSYNC_RPC/block?height=$BLOCK_HEIGHT" | jq -r .block_id.hash)
+    sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+    s|^(rpc-servers[[:space:]]+=[[:space:]]+).*$|\1\"$STATYSYNC_RPC,$STATYSYNC_RPC\"| ; \
+    s|^(trust-height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
+    s|^(trust-hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"| ; \
+    s|^(seeds[[:space:]]+=[[:space:]]+).*$|\1\"\"|" $CONFIG_DIR/config.toml
+else
+    echo "Already initialized" >&2
+fi
 
 # add peers to the config
 sed -i 's/persistent-peers = .*/persistent-peers = "'$PEERS'"/' $CONFIG_DIR/config.toml
