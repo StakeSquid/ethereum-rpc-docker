@@ -25,6 +25,16 @@ x-logging-defaults: &logging-defaults
 #
 # this is honestly the most flaky constructs of all of the chains in this repository. they expect you to run their refrence setup
 # and git pull to update and if something doesn't work to get a new chaindata snapshot.
+#
+# sometimes the genesis has to be updated and is a parameter to the reth node
+# force-recreate on chain fork would do the trick I guess...
+#
+# don't forget to docker compose build from time to time...
+#
+# ETH_GENESIS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/eth-genesis.json"
+# curl -sL "$ETH_GENESIS_URL" -o "$CONFIG_DIR/eth-genesis.json"
+#
+# something like this needs to be done sometimes when there is a fork of the chain somehow. may or may not be automated.
 
 # Usage:
 #

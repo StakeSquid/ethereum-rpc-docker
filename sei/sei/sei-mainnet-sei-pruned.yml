@@ -4,6 +4,9 @@ x-logging-defaults: &logging-defaults
   options:
     max-size: "10m"
     max-file: "3"
+# statesync is great. if you are too far behind after a restart then you can just delete the volume and start again.
+# statesync will need a few hours to complete tho.
+# if you want to test the current lag you could try it under the RPC endpoint, for example XXXX:26657/lag_status
 
 # Usage:
 #
