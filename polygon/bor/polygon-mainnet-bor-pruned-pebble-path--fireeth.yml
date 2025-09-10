@@ -56,7 +56,7 @@ services:
     command:
       - --bor.heimdall=https://polygon-heimdall-rest.publicnode.com
       - --chain=mainnet
-      - --datadir=/root.bor/
+      - --datadir=/root/.bor/
       - --db.engine=pebble
       - --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.polygon-peers.io
       - --gcmode=full
@@ -86,7 +86,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${POLYGON_MAINNET_BOR_PRUNED_PEBBLE_PATH_DATA:-polygon-mainnet-bor-pruned-pebble-path}:/root.bor/
+      - ${POLYGON_MAINNET_BOR_PRUNED_PEBBLE_PATH_DATA:-polygon-mainnet-bor-pruned-pebble-path}:/root/.bor/
       - ${POLYGON_MAINNET_FIREETH_DATA:-polygon-mainnet-fireeth}:/app/firehose-data
       - /slowdisk:/slowdisk
     logging: *logging-defaults
