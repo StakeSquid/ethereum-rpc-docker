@@ -127,7 +127,7 @@ services:
       - 17511:17511
       - 17511:17511/udp
     environment:
-      - OP_NODE_BSS_WS="http://bss:8081/v1/ws"
+      - OP_NODE_BSS_WS="http://hemi-mainnet-relay:8081/v1/ws"
       - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
       - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
       - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
