@@ -1,0 +1,241 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/hemi-mainnet-op-geth-pruned-pebble-hash.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/hemi-mainnet \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  hemi-mainnet:
+    image: ${HEMI_GETH_IMAGE:-ghcr.io/hemilabs/op-geth}:${HEMI_MAINNET_GETH_VERSION:-e79d992@sha256:dbe292e013345a8a41c9dc8ee09088853410b17c06ef779258d251f55356c501}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12511:12511
+      - 12511:12511/udp
+    expose:
+      - 8545
+      - 6060
+      - 8551
+    environment:
+      - GETH_OVERRIDE_CANCUN=1725868497
+      - GETH_OVERRIDE_CANYON=1725868497
+      - GETH_OVERRIDE_ECOTONE=1725868497
+      - GETH_OVERRIDE_FJORD=1751554801
+      - GETH_OVERRIDE_GRANITE=1751554801
+      - GETH_OVERRIDE_HOLOCENE=1751554801
+      - GETH_OVERRIDE_HVM0=1739286001
+      - GETH_OVERRIDE_ISTHMUS=1751554801
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.hemi.network/rpc
+      - OP_GETH_L2_READINESS_RPC=http://localhost:8545
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
+    command:
+      - --bootnodes=enode://e7970a29d89f8b158371a8d4aca909ee8c1c759e711547b797a6a6f01513c1e7c85121dd2600397ca20cebf3cea21025001be7c0f577b496caf32ea0433a1cfd@34.90.21.246:30303,enode://70877d3aa6c4ccc09d960c269846215d5dcc8bf47013ac532c1ccc3d9cfe61434c96b9d6cad88a96c3f91187fb00214d903a6be6d8e93140ac4a3c099684ce34@34.13.162.152:30303,enode://27f75e68a8c14cae2f4e12f060477c150767e98149e16a448baddc25d800c008edf8b1fefd13b206c27e5473ac9234ba1958a8267fe5272e9de3819ac080bf22@34.13.171.139:30303,enode://588ffb65f841aede8d8f69a3175f9cfed1b79d20d40a7feb8a70e574b5610fb4049bf02f3170f1ae25bff806b2c823653b28af711e1962ea3f45d99d58608191@34.91.216.121:30303,enode://ba86a76186268948bc34b7fa1c2f08c24ed60cda61346cf1a1cca278b0ef1de49e567039952e06e4887a0252974401a6d6729bfc12945c6d8c65eacbf3b11ca7@34.141.148.19:30303
+      - --datadir=/data
+      - --db.engine=pebble
+      - --gcmode=full
+      - --hvm.genesisheader=0000003efaaa2ba65de684c512bb67ef115298d1d16bcb49b16c02000000000000000000ed31a56788c4488afc4ee69e0791ad6aeeb9ea05f069e0fdde6159068765ad3f4128a96726770217e7f41c86 \
+      - --hvm.genesisheight=883092
+      - --hvm.headerdatadir=/data/tbc/headers
+      - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --nat=extip:${IP}
+      - --port=12511
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=hash
+      - --syncmode=full
+      - --tbc.leveldbhome=/data/tbc \
+      - --tbc.network=mainnet
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${HEMI_MAINNET_OP_GETH_PRUNED_PEBBLE_HASH_DATA:-hemi-mainnet-op-geth-pruned-pebble-hash}:/data
+      - ./op/hemi/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.hemi-mainnet-op-geth-pruned-pebble-hash-stripprefix.stripprefix.prefixes=/hemi-mainnet
+      - traefik.http.services.hemi-mainnet-op-geth-pruned-pebble-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/hemi-mainnet`) || Path(`/hemi-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash.rule=Path(`/hemi-mainnet`) || Path(`/hemi-mainnet/`)}
+      - traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash.middlewares=hemi-mainnet-op-geth-pruned-pebble-hash-stripprefix, ipallowlist
+
+  hemi-mainnet-node:
+    image: ${HEMI_NODE_IMAGE:-ghcr.io/hemilabs/op-node}:${HEMI_MAINNET_NODE_VERSION:-ea9fe7b@sha256:7110e3c4c61e495ea0a6621d7ec211ceb7e948e25c648b05bd51fcc557ad06bc}
+    ports:
+      - 17511:17511
+      - 17511:17511/udp
+    environment:
+      - OP_NODE_BSS_WS="http://bss:8081/v1/ws"
+      - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://hemi-mainnet:8551
+      - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
+      - OP_NODE_OVERRIDE_FJORD=1751554801
+      - OP_NODE_OVERRIDE_GRANITE=1751554801
+      - OP_NODE_OVERRIDE_HOLOCENE=1751554801
+      - OP_NODE_OVERRIDE_ISTHMUS=1751554801
+      - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1751554801
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_BOOTNODES=enr:-J64QACnJ0giPmPXowNCHP-FDleMMbDqYg5nuLABYfJeYbP9OA6_fZtvCsTbAwvlPD8_C6ZSXEk1-XPabDBwD8UTyNCGAZMxdy4tgmlkgnY0gmlwhCINopiHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaED22EOmUryrNnFOwq6Ve1Hpw5CMFz_TnhIkVS4Sq8JhkmDdGNwgiMrg3VkcIKjLg,enr:-J64QA20VNMfLMtbSuHYmQH2I-xaqT4-9g7lqO-VHr0fFvtSB7QybJ_7W5fuEjLAa6kh82fGLjRUdZE0hW0pfVBcxP6GAZMxdwfngmlkgnY0gmlwhCJaFfaHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaEDjt3C-gv87B5rWa5M52WUFGy16mjQvFsC7OgPkqu-rn-DdGNwgiMrg3VkcIKRXQ,enr:-J64QLQyh3lXjQLzfCbfNw0DUb4A0OEcTLmVGexMbK-2jjCtHOIlRnDqLuedQ0orNHt7zmsILELYi4ozg-0bQzc34F-GAZMxdxNogmlkgnY0gmlwhCINq4uHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaED1NV9w0EmnMXBNRnDWj6kdqzE6_4HigHopeu3ewQTwouDdGNwgiMrg3VkcIK1Iw,enr:-J64QNPfOEViWkN7U_ul5Zhw_mc5_Hta92eUufrgu6oTqSMzRsqCje-P0vPrOQ9XjVIk4VP7mmFVP6qoTrtkIwvwUV2GAZMxdv4zgmlkgnY0gmlwhCJb2HmHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaEDYAidV8rzABKrKAL9jwP1aoi3wj-GtuML4FKtUDOgzCGDdGNwgiMrg3VkcILijg,enr:-J64QFalFr9Y4r9v8Svh7XFwerJeLTRnfTixfCy_NZw3OTMVZL_dSAvcZ6JIeK0JAZf6-PU3YknV9m9Jd5V5WlnqHKWGAZMxdxT4gmlkgnY0gmlwhCKNlBOHb3BzdGFja4Tn0AIAiXNlY3AyNTZrMaECI1jqAzkQ0JRkwL-UBP2TBUfUdLyTaqAXtey82CTysdCDdGNwgiMrg3VkcILOyg
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=17511
+      - OP_NODE_P2P_LISTEN_UDP_PORT=17511
+      - OP_NODE_P2P_STATIC=/ip4/34.90.21.246/tcp/9003/p2p/16Uiu2HAmNGgNTgiFBAqH58aCT3iXWMnetYMtQgH21Ydjq2R7QRbt,/ip4/34.13.162.152/tcp/9003/p2p/16Uiu2HAm33YRmCya94zRXddxaWj25QAXW5MhuJkaEvfMLXkB4GCK,/ip4/34.13.171.139/tcp/9003/p2p/16Uiu2HAm5d71wTbQPkBA3VW9suge2afCKtrGdk7UapRHR4va8jTY,/ip4/34.91.216.121/tcp/9003/p2p/16Uiu2HAmK7s7F1ALmtXKH3LxeEENstqw8jiDzUtifasS4LkUKGVE,/ip4/34.141.148.19/tcp/9003/p2p/16Uiu2HAkwoetK83q3WNRQ4t4eV8B3DosnwcFqd9VHxz24ZZzzEgo
+      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
+      - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    restart: unless-stopped
+    depends_on:
+      - hemi-mainnet
+      - hemi-mainnet-relay
+    networks:
+      - chains
+    volumes:
+      - ./op/hemi/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.hemi-mainnet-op-geth-pruned-pebble-hash-node-stripprefix.stripprefix.prefixes=/hemi-mainnet/node
+      - traefik.http.services.hemi-mainnet-op-geth-pruned-pebble-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`hemi-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash-node.rule=PathPrefix(`hemi-mainnet/node`)}
+      - traefik.http.routers.hemi-mainnet-op-geth-pruned-pebble-hash-node.middlewares=hemi-mainnet-op-geth-pruned-pebble-hash-node-stripprefix, ipallowlist
+
+  hemi-mainnet-relay:
+    image: ${HEMI_BSS_IMAGE:-hemilabs/bssd}:${HEMI_MAINNET_BSS_VERSION:-1.6.3}
+    ports:
+      - 22511:22511
+      - 22511:22511/udp
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ./op/hemi/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+
+volumes:
+  hemi-mainnet-op-geth-pruned-pebble-hash:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: hemi
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
