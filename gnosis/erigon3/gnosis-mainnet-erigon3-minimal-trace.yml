@@ -174,4 +174,12 @@ x-upstreams:
         - name: ots_searchTransactionsAfter
         - name: ots_getTransactionBySenderAndNonce
         - name: ots_getContractCreator
+  - id: $${ID}-beacon-chain
+    chain: gnosis-beacon-chain-gnosis
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
 ...
