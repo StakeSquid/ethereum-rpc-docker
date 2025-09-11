@@ -46,8 +46,6 @@ DATA_DIR="$HOME_DIR/data"
 mkdir $CONFIG_DIR
 mkdir $DATA_DIR
 
-SEEDS_URL="https://raw.githubusercontent.com/berachain/beacon-kit/main/testing/networks/$CHAINID/cl-seeds.txt"
-
 env
 
 if /0g/bin/0gchaind init ${MONIKER} --home $HOME_DIR; then
