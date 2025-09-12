@@ -1,0 +1,188 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/reth/ethereum-sepolia-reth-archive-trace--nimbus.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/ethereum-sepolia-reth \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  ethereum-sepolia-reth:
+    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_SEPOLIA_RETH_VERSION:-v1.7.0}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    user: root
+    ports:
+      - 14330:14330
+      - 14330:14330/udp
+    expose:
+      - 8545
+      - 9001
+      - 8551
+    entrypoint: [reth, node]
+    command:
+      - --chain=sepolia
+      - --datadir=/root/.local/share/reth
+      - --discovery.port=14330
+      - --engine.cross-block-cache-size=${ETHEREUM_SEPOLIA_RETH_STATE_CACHE:-4096}
+      - --engine.memory-block-buffer-target=0
+      - --engine.persistence-threshold=0
+      - --max-inbound-peers=50
+      - --max-outbound-peers=50
+      - --metrics=0.0.0.0:9001
+      - --nat=extip:${IP}
+      - --port=14330
+      - --rpc-cache.max-blocks=10000
+      - --rpc-cache.max-concurrent-db-requests=2048
+      - --rpc.gascap=600000000
+      - --rpc.max-blocks-per-filter=0
+      - --rpc.max-connections=50000
+      - --rpc.max-logs-per-response=0
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --http.corsdomain=*
+      - --http.port=8545
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_SEPOLIA_RETH_ARCHIVE_TRACE_DATA:-ethereum-sepolia-reth-archive-trace}:/root/.local/share/reth
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9001
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-sepolia-reth-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-sepolia-reth
+      - traefik.http.services.ethereum-sepolia-reth-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-sepolia-reth`) || Path(`/ethereum-sepolia-reth/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-reth-archive-trace.rule=Path(`/ethereum-sepolia-reth`) || Path(`/ethereum-sepolia-reth/`)}
+      - traefik.http.routers.ethereum-sepolia-reth-archive-trace.middlewares=ethereum-sepolia-reth-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
+
+  ethereum-sepolia-reth-node:
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_SEPOLIA_NIMBUS_VERSION:-amd64-v25.7.1}
+    user: root
+    ports:
+      - 19330:19330
+      - 19330:19330/udp
+    expose:
+      - 3500
+    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=sepolia --trusted-node-url=https://sepolia.beaconstate.info --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
+    command:
+      - --history=prune
+      - --jwt-secret=/jwtsecret
+      - --metrics-address=0.0.0.0
+      - --metrics-port=8008
+      - --nat=extip:${IP}
+      - --network=sepolia
+      - --rest
+      - --rest-address=0.0.0.0
+      - --rest-port=3500
+      - --tcp-port=19330
+      - --udp-port=19330
+      - --web3-url=http://ethereum-sepolia-reth:8551
+    restart: unless-stopped
+    depends_on:
+      - ethereum-sepolia-reth
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_SEPOLIA_RETH_ARCHIVE_TRACE__NIMBUS_DATA:-ethereum-sepolia-reth-archive-trace_nimbus}:/root/.cache/nimbus/BeaconNode
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=8008
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-sepolia-reth-archive-trace-node-stripprefix.stripprefix.prefixes=/ethereum-sepolia-reth
+      - traefik.http.services.ethereum-sepolia-reth-archive-trace-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-sepolia-reth/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.rule=PathPrefix(`/ethereum-sepolia-reth/eth`)}
+      - traefik.http.routers.ethereum-sepolia-reth-archive-trace-node.middlewares=ethereum-sepolia-reth-archive-trace-node-stripprefix, ipallowlist
+
+volumes:
+  ethereum-sepolia-reth-archive-trace:
+  ethereum-sepolia-reth-archive-trace_nimbus:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: sepolia
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain-sepolia
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+...
