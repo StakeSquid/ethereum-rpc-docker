@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   arbitrum-sepolia-archive:
-    image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_SEPOLIA_NITRO_VERSION:-v3.7.1-926f1ab}
+    image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_SEPOLIA_NITRO_VERSION:-v3.7.2-42be4fe}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -55,6 +55,7 @@ services:
       - --execution.caching.trie-clean-cache=${ARBITRUM_SEPOLIA_NITRO_ARCHIVE_PEBBLE_HASH_TRIE_CLEAN_CACHE:-600}
       - --execution.caching.trie-dirty-cache=${ARBITRUM_SEPOLIA_NITRO_ARCHIVE_PEBBLE_HASH_TRIE_DIRTY_CACHE:-1024}
       - --execution.rpc.gas-cap=5500000000
+      - --execution.rpc.log-history=0
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,arb,txpool,debug
