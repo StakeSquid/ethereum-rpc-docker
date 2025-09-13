@@ -253,20 +253,26 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     fi && \
     export RUSTFLAGS CFLAGS CXXFLAGS && \
     echo "Building with RUSTFLAGS: $RUSTFLAGS" && \
+    echo "DEBUG: BUILD_OP_RETH=[$BUILD_OP_RETH]" && \
+    echo "DEBUG: BUILD_BASE_RETH=[$BUILD_BASE_RETH]" && \
+    echo "DEBUG: BUILD_BSC_RETH=[$BUILD_BSC_RETH]" && \
     if [ "$BUILD_OP_RETH" = "true" ]; then \
+        echo "DEBUG: Taking OP_RETH branch" && \
         echo "Building op-reth with optimism feature" && \
         cargo build --profile $PROFILE --locked --bin op-reth --features jemalloc,asm-keccak --manifest-path crates/optimism/bin/Cargo.toml && \
         cp target/$PROFILE/op-reth /usr/local/bin/op-reth; \
     elif [ "$BUILD_BASE_RETH" = "true" ]; then \
+        echo "DEBUG: Taking BASE_RETH branch" && \
         echo "Building base-reth-node with flashbots feature" && \
         cargo build --bin base-reth-node --release && \
         cp target/release/base-reth-node /usr/local/bin/base-reth-node; \
     elif [ "$BUILD_BSC_RETH" = "true" ]; then \
+        echo "DEBUG: Taking BSC_RETH branch" && \
         echo "Building bsc-reth" && \
         cargo build --profile $PROFILE --locked --bin bsc-reth --features jemalloc,asm-keccak && \
         cp target/$PROFILE/bsc-reth /usr/local/bin/reth; \
-
     else \
+        echo "DEBUG: Taking DEFAULT branch" && \
         echo "Building standard reth" && \
         cargo build --profile $PROFILE --locked --bin reth --features jemalloc,asm-keccak && \
         cp target/$PROFILE/reth /usr/local/bin/reth; \

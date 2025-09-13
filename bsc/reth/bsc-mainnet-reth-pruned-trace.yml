@@ -54,6 +54,7 @@ services:
         ARCH_TARGET: ${ARCH_TARGET:-native}
         PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
         BUILD_OP_RETH: false
+        BUILD_BASE_RETH: false
         BUILD_BSC_RETH: true
     sysctls:
       # TCP Performance
