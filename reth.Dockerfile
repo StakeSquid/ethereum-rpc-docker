@@ -268,9 +268,9 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         cp target/release/base-reth-node /usr/local/bin/base-reth-node; \
     elif [ "$BUILD_BSC_RETH" = "true" ]; then \
         echo "DEBUG: Taking BSC_RETH branch" && \
-        echo "Building bsc-reth" && \
-        cargo build --profile $PROFILE --locked --bin bsc-reth --features jemalloc,asm-keccak && \
-        cp target/$PROFILE/bsc-reth /usr/local/bin/reth; \
+        echo "Building reth-bsc" && \
+        cargo build --profile $PROFILE --locked --bin reth-bsc --features jemalloc,asm-keccak && \
+        cp target/$PROFILE/reth-bsc /usr/local/bin/reth; \
     else \
         echo "DEBUG: Taking DEFAULT branch" && \
         echo "Building standard reth" && \
