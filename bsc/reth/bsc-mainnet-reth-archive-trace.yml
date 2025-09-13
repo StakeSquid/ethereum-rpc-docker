@@ -4,6 +4,19 @@ x-logging-defaults: &logging-defaults
   options:
     max-size: "10m"
     max-file: "3"
+# This node is built from source with architecture-specific optimizations
+# Build command: docker compose build --build-arg ARCH_TARGET=${ARCH_TARGET:-native} bsc-mainnet-reth
+#
+# IMPORTANT: Cache optimization considerations
+
+# If running multiple nodes on the same machine, be aware that:
+# - L3 cache is shared across all cores, causing cache contention
+# - Multiple nodes compete for cache space, reducing optimization effectiveness
+
+# - Consider CPU pinning to minimize cache conflicts:
+#   docker run --cpuset-cpus="0-7" bsc-mainnet-reth  # Pin to specific cores
+# - For AMD X3D CPUs, CCD0 (cores 0-7) has the 3D V-Cache
+# - For multi-node setups, generic builds may perform better than cache-optimized ones
 
 # Usage:
 #
@@ -30,7 +43,17 @@ x-logging-defaults: &logging-defaults
 
 services:
   bsc-mainnet-reth:
-    image: ${BSC_RETH_IMAGE:-ghcr.io/bnb-chain/reth}:${BSC_MAINNET_RETH_VERSION:-nightly}
+    build:
+      context: ./
+      dockerfile: reth.Dockerfile
+      args:
+        LLVM_IMAGE: ${LLVM_IMAGE:-snowstep/llvm}
+        LLVM_VERSION: ${LLVM_VERSION:-20250912105042}
+        RETH_VERSION: ${BSC_MAINNET_RETH_VERSION:-1.6.0}
+        RETH_REPO: ${BSC_MAINNET_RETH_REPO:-https://github.com/loocapro/reth-bsc.git}
+        ARCH_TARGET: ${ARCH_TARGET:-native}
+        PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
+        BUILD_OP_RETH: false
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
