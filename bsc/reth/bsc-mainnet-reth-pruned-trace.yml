@@ -49,7 +49,7 @@ services:
       args:
         LLVM_IMAGE: ${LLVM_IMAGE:-snowstep/llvm}
         LLVM_VERSION: ${LLVM_VERSION:-20250912105042}
-        RETH_VERSION: ${BSC_MAINNET_RETH_VERSION:-1.6.0}
+        RETH_VERSION: ${BSC_MAINNET_RETH_VERSION:-6c209e1ca94673e039c84df3575d5e4366af7d4a}
         RETH_REPO: ${BSC_MAINNET_RETH_REPO:-https://github.com/loocapro/reth-bsc.git}
         ARCH_TARGET: ${ARCH_TARGET:-native}
         PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
