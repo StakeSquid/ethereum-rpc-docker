@@ -50,6 +50,7 @@ ARG ENABLE_LTO=true
 ARG PROFILE=maxperf
 ARG BUILD_OP_RETH=false
 ARG BUILD_BASE_RETH=false
+ARG BUILD_BSC_RETH=false
 
 # Set up cargo for maximum performance with aggressive optimizations
 RUN mkdir -p /root/.cargo && \
