@@ -262,7 +262,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
         cargo build --bin base-reth-node --release && \
         cp target/release/base-reth-node /usr/local/bin/base-reth-node; \
     elif [ "$BUILD_BSC_RETH" = "true" ]; then \
-        echo "Building bsc-reth-node with flashbots feature" && \
+        echo "Building bsc-reth" && \
         cargo build --profile $PROFILE --locked --bin bsc-reth --features jemalloc,asm-keccak && \
         cp target/$PROFILE/bsc-reth /usr/local/bin/reth; \
 
