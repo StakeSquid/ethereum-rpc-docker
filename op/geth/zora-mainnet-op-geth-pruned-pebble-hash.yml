@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   zora-mainnet:
-    image: ${ZORA_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${ZORA_MAINNET_GETH_VERSION:-v1.101511.1}
+    image: ${ZORA_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${ZORA_MAINNET_GETH_VERSION:-v1.101602.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.zora-mainnet-op-geth-pruned-pebble-hash.middlewares=zora-mainnet-op-geth-pruned-pebble-hash-stripprefix, ipallowlist
 
   zora-mainnet-node:
-    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.5}
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.6}
     ports:
       - 18237:18237
       - 18237:18237/udp

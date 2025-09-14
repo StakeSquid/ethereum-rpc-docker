@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   soneium-minato-archive:
-    image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MINATO_GETH_VERSION:-v1.101511.1}
+    image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MINATO_GETH_VERSION:-v1.101602.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.soneium-minato-op-geth-archive-leveldb-hash.middlewares=soneium-minato-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   soneium-minato-archive-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.5}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.6}
     ports:
       - 16589:16589
       - 16589:16589/udp

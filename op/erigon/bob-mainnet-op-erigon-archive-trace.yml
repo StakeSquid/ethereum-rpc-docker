@@ -107,7 +107,7 @@ services:
     shm_size: 2gb
 
   bob-mainnet-op-erigon-node:
-    image: ${BOB_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BOB_MAINNET_NODE_VERSION:-v1.13.5}
+    image: ${BOB_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BOB_MAINNET_NODE_VERSION:-v1.13.6}
     ports:
       - 16071:16071
       - 16071:16071/udp

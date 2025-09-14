@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   ink-sepolia-op-erigon-node:
-    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_SEPOLIA_NODE_VERSION:-v1.13.5}
+    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_SEPOLIA_NODE_VERSION:-v1.13.6}
     ports:
       - 19826:19826
       - 19826:19826/udp

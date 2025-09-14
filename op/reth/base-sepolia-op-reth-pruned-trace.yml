@@ -107,7 +107,7 @@ services:
     shm_size: 2gb
 
   base-sepolia-op-reth-pruned-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.5}
+    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.13.6}
     ports:
       - 16147:16147
       - 16147:16147/udp

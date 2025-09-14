@@ -107,7 +107,7 @@ services:
     shm_size: 2gb
 
   zora-mainnet-op-erigon-node:
-    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.5}
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_MAINNET_NODE_VERSION:-v1.13.6}
     ports:
       - 19360:19360
       - 19360:19360/udp
