@@ -31,8 +31,8 @@ x-logging-defaults: &logging-defaults
 services:
   zero-gravity-galileo-geth:
     build:
-      context: ./0g
-      dockerfile: 0g.Dockerfile
+      context: ./zero-gravity
+      dockerfile: zerog.Dockerfile
       args:
         ZERO_GRAVITY_VERSION: ${ZERO_GRAVITY_GALILEO_ZEROG_VERSION:-2.0.3}
         ZERO_GRAVITY_CHAIN_SPEC: galileo
@@ -111,8 +111,8 @@ services:
 
   zero-gravity-galileo-geth-node:
     build:
-      context: ./0g
-      dockerfile: 0g.Dockerfile
+      context: ./zero-gravity
+      dockerfile: zerog.Dockerfile
       args:
         ZERO_GRAVITY_VERSION: ${ZERO_GRAVITY_GALILEO_ZEROG_VERSION:-2.0.3}
         ZERO_GRAVITY_CHAIN_SPEC: galileo
