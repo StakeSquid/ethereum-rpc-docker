@@ -45,13 +45,16 @@ DATA_DIR="$HOME_DIR/data"
 mkdir -p $CONFIG_DIR
 mkdir -p $DATA_DIR
 
+CHAIN_SPEC=devnet
 env
+
+# seems to be the same for all the 0g chains
 
 if [ ! -f "$DATA_DIR/priv_validator_state.json" ]; then
     echo "priv_validator_state.json not found in $HOME_DIR. Proceeding with initialization steps..."
     TMP_DIR=$(mktemp -d)
     # You can add any additional initialization logic here if needed
-    if /0g/bin/0gchaind init ${MONIKER} --home $TMP_DIR; then
+    if /0g/bin/0gchaind init ${MONIKER} --chaincfg.chain-spec ${CHAIN_SPEC} --home $TMP_DIR; then
         cp -r /0g/0g-home/0gchaind-home/config/* $CONFIG_DIR
         cp $TMP_DIR/data/priv_validator_state.json $DATA_DIR
         cp $TMP_DIR/config/node_key.json $CONFIG_DIR
