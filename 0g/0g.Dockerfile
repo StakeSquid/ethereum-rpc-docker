@@ -4,7 +4,7 @@ FROM rockylinux:9
 COPY ./scripts/init.sh /usr/local/bin/init.sh
 RUN chmod +x /usr/local/bin/init.sh
 
-RUN yum install -y curl tar gzip && yum clean all
+#RUN yum install -y curl tar gzip && yum clean all
 
 ARG OG_VERSION
 ARG OG_CHAIN_SPEC
