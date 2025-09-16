@@ -42,8 +42,8 @@ mkdir -p $HOME_DIR
 CONFIG_DIR="$HOME_DIR/config"
 DATA_DIR="$HOME_DIR/data"
 
-mkdir $CONFIG_DIR
-mkdir $DATA_DIR
+mkdir -p $CONFIG_DIR
+mkdir -p $DATA_DIR
 
 env
 
