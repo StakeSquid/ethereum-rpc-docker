@@ -47,9 +47,9 @@ mkdir $DATA_DIR
 
 env
 
-if [ ! -f "$HOME_DIR/priv_validator_state.json" ]; then
-    TMP_DIR=$(mktemp -d)
+if [ ! -f "$DATA_DIR/priv_validator_state.json" ]; then
     echo "priv_validator_state.json not found in $HOME_DIR. Proceeding with initialization steps..."
+    TMP_DIR=$(mktemp -d)
     # You can add any additional initialization logic here if needed
     if /0g/bin/0gchaind init ${MONIKER} --home $TMP_DIR; then
         cp -r /0g/0g-home/0gchaind-home/config/* $CONFIG_DIR
@@ -62,6 +62,7 @@ if [ ! -f "$HOME_DIR/priv_validator_state.json" ]; then
     rm -rf $TMP_DIR # delete tmp dir
 
 else
+    echo "priv_validator_state.json found in $HOME_DIR. Continuing!" >&2
     echo "Already initialized, continuing!" >&2
 fi
 
