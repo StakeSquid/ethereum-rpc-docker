@@ -56,9 +56,6 @@ services:
         RETH_REPO: ${ETHEREUM_MAINNET_RETH_REPO:-https://github.com/paradigmxyz/reth}
         ARCH_TARGET: ${ARCH_TARGET:-native}
         PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
-        BUILD_OP_RETH: 'false'
-        BUILD_BASE_RETH: 'false'
-        BUILD_BSC_RETH: 'false'
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
