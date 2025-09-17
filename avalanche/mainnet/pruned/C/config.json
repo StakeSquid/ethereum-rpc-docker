@@ -1,0 +1,20 @@
+{
+    "snowman-api-enabled": false,
+    "coreth-admin-api-enabled": false,
+    "net-api-enabled": true,
+    "rpc-gas-cap": 2500000000,
+    "rpc-tx-fee-cap": 100,
+    "eth-api-enabled": true,
+    "personal-api-enabled": false,
+    "tx-pool-api-enabled": false,
+    "debug-api-enabled": false,
+    "web3-api-enabled": true,
+    "local-txs-enabled": false,
+    "pruning-enabled": true,
+    "api-max-duration": 0,
+    "api-max-blocks-per-request": 0,
+    "allow-unfinalized-queries": false,
+    "log-level": "info",
+    "state-sync-enabled": false,
+    "state-sync-skip-resume": true
+}
