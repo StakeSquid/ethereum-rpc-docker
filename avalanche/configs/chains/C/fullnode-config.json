@@ -1,7 +1,0 @@
-{
-    "state-sync-enabled": true,
-    "pruning-enabled": true,
-    "offline-pruning-enabled": false,
-    "offline-pruning-data-directory": "/root/.avalanchego/offline-pruning",
-    "rpc-gas-cap": 600000000
-}
