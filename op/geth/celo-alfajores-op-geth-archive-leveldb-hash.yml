@@ -179,6 +179,8 @@ services:
 
   celo-alfajores-archive-relay:
     image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_ALFAJORES_EIGENDA_PROXY_VERSION:-v1.8.2}
+    expose:
+      - 4242
     environment:
       - EIGENDA_PROXY_ADDR=0.0.0.0
       - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
