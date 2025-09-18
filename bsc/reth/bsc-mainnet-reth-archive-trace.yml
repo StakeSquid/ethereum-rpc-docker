@@ -53,6 +53,7 @@ services:
         RETH_REPO: ${BSC_MAINNET_RETH_REPO:-https://github.com/loocapro/reth-bsc.git}
         ARCH_TARGET: ${ARCH_TARGET:-native}
         PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
+        BUILD_OP_RETH: false
         BUILD_BSC_RETH: true
     sysctls:
       # TCP Performance
