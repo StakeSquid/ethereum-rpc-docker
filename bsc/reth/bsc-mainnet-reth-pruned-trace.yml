@@ -54,6 +54,8 @@ services:
         ARCH_TARGET: ${ARCH_TARGET:-native}
         PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
         BUILD_BSC_RETH: true
+        RETH_BSC_REPO: ${BSC_MAINNET_RETH_REPO:-https://github.com/loocapro/reth-bsc}
+        RETH_BSC_VERSION: ${BSC_MAINNET_RETH_VERSION:-main}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
