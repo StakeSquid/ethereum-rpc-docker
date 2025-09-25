@@ -61,7 +61,7 @@ services:
       - EN_L1_CHAIN_ID=1
       - EN_L2_CHAIN_ID=2741
       - EN_MAIN_NODE_URL=https://api.mainnet.abs.xyz
-      - EN_MAX_RESPONSE_BODY_SIZE_MB=30
+      - EN_MAX_RESPONSE_BODY_SIZE_MB=25
       - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
       - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
       - EN_PROMETHEUS_PORT=3322
