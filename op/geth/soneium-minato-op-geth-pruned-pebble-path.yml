@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.middlewares=soneium-minato-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   soneium-minato-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.6}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.7}
     ports:
       - 15702:15702
       - 15702:15702/udp

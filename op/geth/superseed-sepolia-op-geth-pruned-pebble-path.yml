@@ -111,7 +111,7 @@ services:
       - traefik.http.routers.superseed-sepolia-op-geth-pruned-pebble-path.middlewares=superseed-sepolia-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   superseed-sepolia-node:
-    image: ${SUPERSEED_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SUPERSEED_SEPOLIA_NODE_VERSION:-v1.13.6}
+    image: ${SUPERSEED_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SUPERSEED_SEPOLIA_NODE_VERSION:-v1.13.7}
     ports:
       - 17522:17522
       - 17522:17522/udp

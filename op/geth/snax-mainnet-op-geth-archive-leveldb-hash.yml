@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.snax-mainnet-op-geth-archive-leveldb-hash.middlewares=snax-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   snax-mainnet-archive-node:
-    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.6}
+    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.13.7}
     ports:
       - 16249:16249
       - 16249:16249/udp

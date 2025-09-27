@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.zora-sepolia-op-geth-pruned-pebble-path.middlewares=zora-sepolia-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   zora-sepolia-node:
-    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_SEPOLIA_NODE_VERSION:-v1.13.6}
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_SEPOLIA_NODE_VERSION:-v1.13.7}
     ports:
       - 19083:19083
       - 19083:19083/udp
