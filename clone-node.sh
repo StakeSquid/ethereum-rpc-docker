@@ -290,6 +290,8 @@ main() {
     
     setup_ssh_multiplex
     
+    # the following sysctls are critical for high-latency networks
+
     ssh "$DEST_HOST" "
         sudo sysctl -w net.core.rmem_max=67108864
         sudo sysctl -w net.core.wmem_max=67108864
@@ -298,6 +300,22 @@ main() {
         sudo sysctl -w net.ipv4.tcp_congestion_control=bbr
         sudo sysctl -w net.core.default_qdisc=fq
     "
+    sudo sysctl -w net.ipv4.tcp_slow_start_after_idle=0
+    sudo sysctl -w net.ipv4.tcp_congestion_control=bbr
+    sudo sysctl -w net.core.default_qdisc=fq
+    sudo sysctl -w net.ipv4.tcp_window_scaling=1
+    sudo sysctl -w net.ipv4.tcp_syncookies=1
+
+    # CRITICAL CHANGES - Increase buffers for 154ms RTT
+    # Need at least 20MB for 1Gbps at 154ms, using 64MB for headroom
+    sudo sysctl -w net.core.rmem_max=67108864          # Was 8MB, now 64MB
+    sudo sysctl -w net.core.wmem_max=67108864          # Was 8MB, now 64MB
+    sudo sysctl -w net.ipv4.tcp_rmem=4096 87380 67108864    # Was 8MB max, now 64MB
+    sudo sysctl -w net.ipv4.tcp_wmem=4096 87380 67108864    # Was 8MB max, now 64MB
+
+    # Optional but helpful for high-latency
+    sudo sysctl -w net.ipv4.tcp_mtu_probing=1
+    sudo sysctl -w net.ipv4.tcp_no_metrics_save=1
 
     echo "Reading volume configuration from $1.yml..."
     keys=$(cat /root/rpc/$1.yml | yaml2json - | jq '.volumes' | jq -r 'keys[]')
