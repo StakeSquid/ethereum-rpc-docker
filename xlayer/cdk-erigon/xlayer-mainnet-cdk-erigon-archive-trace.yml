@@ -64,6 +64,7 @@ services:
       - --rpc.returndata.limit=1500000
       - --ws
       - --ws.port=8545
+      - --zkevm.l1-rpc-url=${ETHEREUM__EXECUTION_RPC}
     restart: unless-stopped
     stop_grace_period: 5m
     networks:

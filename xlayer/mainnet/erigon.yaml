@@ -1,7 +1,6 @@
 zkevm.l2-chain-id: 196
 zkevm.l2-sequencer-rpc-url: https://rpc.xlayer.tech
 zkevm.l2-datastreamer-url: stream.xlayer.tech:8800
-zkevm.l1-rpc-url: ${your-l1-rpc-url}
 zkevm.l1-chain-id: 1
 
 zkevm.address-sequencer: "0xAF9d27ffe4d51eD54AC8eEc78f2785D7E11E5ab1"
