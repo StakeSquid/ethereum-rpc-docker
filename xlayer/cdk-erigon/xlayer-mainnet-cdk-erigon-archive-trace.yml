@@ -62,6 +62,7 @@ services:
       - --http.vhosts=*
       - --maxpeers=50
       - --nat=extip:${IP}
+      - --networkid=196
       - --port=11358
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1500000
