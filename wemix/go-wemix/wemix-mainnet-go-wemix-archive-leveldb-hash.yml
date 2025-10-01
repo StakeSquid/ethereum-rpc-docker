@@ -52,7 +52,6 @@ services:
       - 8545
     command:
       - --datadir=/root/.wemix
-      - --db.engine=
       - --gcmode=archive
       - --http
       - --http.addr=0.0.0.0
@@ -62,8 +61,6 @@ services:
       - --port=11897
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-      - --state.scheme=
-      - --syncmode=full
       - --ws
       - --ws.port=8545
     restart: unless-stopped
