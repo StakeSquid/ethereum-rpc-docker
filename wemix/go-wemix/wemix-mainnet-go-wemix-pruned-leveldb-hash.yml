@@ -58,6 +58,7 @@ services:
       - --http.api=eth,net,web3,debug,admin,txpool
       - --http.port=8545
       - --http.vhosts=*
+      - --mainnet
       - --maxpeers=50
       - --nat=extip:${IP}
       - --port=11952
