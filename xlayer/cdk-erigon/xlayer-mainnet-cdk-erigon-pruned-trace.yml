@@ -44,6 +44,7 @@ services:
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
       - 12399:12399
@@ -58,6 +59,8 @@ services:
       - --http.addr=0.0.0.0
       - --http.api=
       - --http.port=8545
+      - --http.vhosts=*
+      - --maxpeers=50
       - --nat=extip:${IP}
       - --port=12399
       - --rpc.gascap=6000000000
@@ -84,6 +87,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-cdk-erigon-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/xlayer-mainnet-pruned`) || Path(`/xlayer-mainnet-pruned/`))}
       - ${NO_SSL:+traefik.http.routers.xlayer-mainnet-cdk-erigon-pruned-trace.rule=Path(`/xlayer-mainnet-pruned`) || Path(`/xlayer-mainnet-pruned/`)}
       - traefik.http.routers.xlayer-mainnet-cdk-erigon-pruned-trace.middlewares=xlayer-mainnet-cdk-erigon-pruned-trace-stripprefix, ipallowlist
+    shm_size: 2gb
 
 volumes:
   xlayer-mainnet-cdk-erigon-pruned-trace:
@@ -110,4 +114,26 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+        # non standard erigon only
+        - name: eth_getBlockReceipts
+        - name: eth_protocolVersion
+        - name: eth_callMany
+        - name: eth_callBundle
+        - name: debug_accountAt
+        - name: debug_traceCallMany
+        - name: erigon_getHeaderByHash
+        - name: erigon_getBlockReceiptsByBlockHash
+        - name: erigon_getHeaderByNumber
+        - name: erigon_getLogsByHash
+        - name: erigon_forks
+        - name: erigon_getBlockByTimestamp
+        - name: erigon_BlockNumber
+        - name: erigon_getLatestLogs
 ...
