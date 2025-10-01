@@ -291,7 +291,14 @@ main() {
     setup_ssh_multiplex
     
     # the following sysctls are critical for high-latency networks
-
+    # they are not persistent and should not influence low latency connections.
+    # but what do I know its what the bot told me...
+    # the issue was that on high bandwidth connections with high latency the buffers 
+    # where so small that a roundtrip to confirm the packet was necessary every few ms.
+    # so that the theoretical bandwidth was limited to 200 MBit/s 
+    # also it seems to be important to match the remote buffers to the local buffers.
+    # feel free to remove the whole section. maybe it does nothing really.
+    
     ssh "$DEST_HOST" "
         sudo sysctl -w net.core.rmem_max=67108864
         sudo sysctl -w net.core.wmem_max=67108864
