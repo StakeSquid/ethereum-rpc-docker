@@ -16,6 +16,6 @@ for key in $keys; do
 
     source_folder="/var/lib/docker/volumes/rpc_$key/_data"
     if [[ -n $2 ]]; then
-        tar -cf - --dereference "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd | ssh root@"$2.stakesquid.eu" "zstd -d | tar -xf - -C /"
+        tar -cf - --dereference "$source_folder" | pv -pterb -s $(du -sb "$source_folder" | awk '{print $1}') | zstd | ssh -o Compression=no -c=chacha20-poly1305@openssh.com "$2.stakesquid.eu" "zstd -d | tar -xf - -C /"
     fi
 done
