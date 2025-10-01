@@ -54,8 +54,6 @@ services:
     command:
       - --config=/config/erigon.yaml
       - --datadir=/root/.erigon
-      - --db.engine=
-      - --gcmode=full
       - --http
       - --http.addr=0.0.0.0
       - --http.api=
@@ -64,8 +62,6 @@ services:
       - --port=12399
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1500000
-      - --state.scheme=
-      - --syncmode=full
       - --ws
       - --ws.port=8545
     restart: unless-stopped
