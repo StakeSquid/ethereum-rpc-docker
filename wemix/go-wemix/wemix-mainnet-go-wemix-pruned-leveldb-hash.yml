@@ -20,7 +20,7 @@ x-logging-defaults: &logging-defaults
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:wemix/go-wemix/wemix-mainnet-go-wemix-pruned-pebble-path.yml
+# COMPOSE_FILE=base.yml:rpc.yml:wemix/go-wemix/wemix-mainnet-go-wemix-pruned-leveldb-hash.yml
 #
 # docker compose up -d
 #
@@ -46,8 +46,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 11908:11908
-      - 11908:11908/udp
+      - 11952:11952
+      - 11952:11952/udp
     expose:
       - 8545
     command:
@@ -57,33 +57,38 @@ services:
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,debug,admin,txpool
       - --http.port=8545
+      - --http.vhosts=*
+      - --maxpeers=50
       - --nat=extip:${IP}
-      - --port=11908
+      - --port=11952
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool
+      - --ws.origins=*
       - --ws.port=8545
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
       - chains
     volumes:
-      - ${WEMIX_MAINNET_GO_WEMIX_PRUNED_PEBBLE_PATH_DATA:-wemix-mainnet-go-wemix-pruned-pebble-path}:/root/.wemix
+      - ${WEMIX_MAINNET_GO_WEMIX_PRUNED_LEVELDB_HASH_DATA:-wemix-mainnet-go-wemix-pruned-leveldb-hash}:/root/.wemix
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.wemix-mainnet-go-wemix-pruned-pebble-path-stripprefix.stripprefix.prefixes=/wemix-mainnet
-      - traefik.http.services.wemix-mainnet-go-wemix-pruned-pebble-path.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.wemix-mainnet-go-wemix-pruned-pebble-path.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.wemix-mainnet-go-wemix-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.wemix-mainnet-go-wemix-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/wemix-mainnet`) || Path(`/wemix-mainnet/`))}
-      - ${NO_SSL:+traefik.http.routers.wemix-mainnet-go-wemix-pruned-pebble-path.rule=Path(`/wemix-mainnet`) || Path(`/wemix-mainnet/`)}
-      - traefik.http.routers.wemix-mainnet-go-wemix-pruned-pebble-path.middlewares=wemix-mainnet-go-wemix-pruned-pebble-path-stripprefix, ipallowlist
+      - traefik.http.middlewares.wemix-mainnet-go-wemix-pruned-leveldb-hash-stripprefix.stripprefix.prefixes=/wemix-mainnet
+      - traefik.http.services.wemix-mainnet-go-wemix-pruned-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.wemix-mainnet-go-wemix-pruned-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.wemix-mainnet-go-wemix-pruned-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.wemix-mainnet-go-wemix-pruned-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/wemix-mainnet`) || Path(`/wemix-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.wemix-mainnet-go-wemix-pruned-leveldb-hash.rule=Path(`/wemix-mainnet`) || Path(`/wemix-mainnet/`)}
+      - traefik.http.routers.wemix-mainnet-go-wemix-pruned-leveldb-hash.middlewares=wemix-mainnet-go-wemix-pruned-leveldb-hash-stripprefix, ipallowlist
 
 volumes:
-  wemix-mainnet-go-wemix-pruned-pebble-path:
+  wemix-mainnet-go-wemix-pruned-leveldb-hash:
 
 x-upstreams:
   - id: $${ID}
@@ -106,4 +111,20 @@ x-upstreams:
       disabled:
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
 ...
