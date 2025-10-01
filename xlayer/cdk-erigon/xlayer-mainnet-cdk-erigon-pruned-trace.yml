@@ -57,7 +57,7 @@ services:
       - --datadir=/root/.erigon
       - --http
       - --http.addr=0.0.0.0
-      - --http.api=
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin
       - --http.port=8545
       - --http.vhosts=*
       - --maxpeers=50
