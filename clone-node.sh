@@ -12,6 +12,11 @@ fi
 
 # Configuration
 BASE_PORT=9000
+PORT_RANGE_START=9000
+PORT_RANGE_END=9100
+
+# Global array to track used ports
+declare -a USED_PORTS=()
 
 # Setup SSH multiplexing
 setup_ssh_multiplex() {
@@ -51,6 +56,61 @@ check_port_listening() {
     return $?
 }
 
+# Find an available port in the range
+find_available_port() {
+    local port=$PORT_RANGE_START
+    
+    while [[ $port -le $PORT_RANGE_END ]]; do
+        # Check if port is already used by this script
+        local already_used=false
+        for used_port in "${USED_PORTS[@]}"; do
+            if [[ $port -eq $used_port ]]; then
+                already_used=true
+                break
+            fi
+        done
+        
+        # Check if port is listening on remote host
+        if [[ "$already_used" == "false" ]] && ! check_port_listening $port; then
+            # Add to used ports array
+            USED_PORTS+=($port)
+            echo $port
+            return 0
+        fi
+        port=$((port + 1))
+    done
+    
+    echo "Error: No available ports in range $PORT_RANGE_START-$PORT_RANGE_END" >&2
+    return 1
+}
+
+# Remove port from used ports array
+release_port() {
+    local port=$1
+    local new_array=()
+    
+    for used_port in "${USED_PORTS[@]}"; do
+        if [[ $used_port -ne $port ]]; then
+            new_array+=($used_port)
+        fi
+    done
+    
+    USED_PORTS=("${new_array[@]}")
+}
+
+# Cleanup all used ports on exit
+cleanup_all_ports() {
+    echo "Cleaning up all used ports..."
+    for port in "${USED_PORTS[@]}"; do
+        echo "Releasing port $port"
+        $SSH_CMD "$DEST_HOST" "
+            # Kill any processes on this port
+            lsof -i :$port 2>/dev/null | grep LISTEN | awk '{print \$2}' | xargs -r kill 2>/dev/null
+        " 2>/dev/null
+    done
+    USED_PORTS=()
+}
+
 # Transfer using screen method with better error handling
 transfer_volume() {
     local key=$1
@@ -62,17 +122,21 @@ transfer_volume() {
     fi
     
     local folder_size=$(du -sb "$source_folder" 2>/dev/null | awk '{print $1}')
-    local port=$BASE_PORT
     
-    echo "Transferring volume $key (size: $((folder_size / 1048576))MB)"
+    # Find an available port
+    local port=$(find_available_port)
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Could not find available port for $key"
+        return 1
+    fi
     
-    # Kill any existing listener on this port
+    echo "Transferring volume $key (size: $((folder_size / 1048576))MB) on port $port"
+    
+    # Clean up any existing transfer for this specific key only
     $SSH_CMD "$DEST_HOST" "
-        # Try to kill any existing nc on this port
-        lsof -i :$port 2>/dev/null | grep LISTEN | awk '{print \$2}' | xargs -r kill 2>/dev/null
-        # Kill any existing screen session for this transfer
+        # Kill any existing screen session for this specific transfer
         screen -S transfer_${key} -X quit 2>/dev/null
-        # Clean up old files
+        # Clean up old files for this specific transfer
         rm -f /tmp/transfer_${key}.* 2>/dev/null
     "
     
@@ -149,17 +213,22 @@ transfer_volume() {
                 if [[ "$remote_status" == "0" ]]; then
                     echo "✓ Volume $key transferred and extracted successfully"
                     
-                    # Cleanup
+                    # Cleanup - only for this specific transfer
                     $SSH_CMD "$DEST_HOST" "
                         rm -f /tmp/transfer_${key}.* 2>/dev/null
                         screen -S transfer_${key} -X quit 2>/dev/null
                         [[ -f /tmp/transfer_${key}.pid ]] && kill \$(cat /tmp/transfer_${key}.pid) 2>/dev/null
                     "
+                    
+                    # Release the port for reuse
+                    release_port $port
                     return 0
                 else
                     echo "✗ Extraction failed with status $remote_status"
                     echo "Error log:"
                     $SSH_CMD "$DEST_HOST" "cat /tmp/transfer_${key}.err 2>/dev/null || echo 'No error log'"
+                    # Release the port even on failure
+                    release_port $port
                     return 1
                 fi
             fi
@@ -174,9 +243,13 @@ transfer_volume() {
         done
         
         echo "⚠ Timeout waiting for extraction to complete"
+        # Release the port on timeout
+        release_port $port
         return 1
     else
         echo "✗ Transfer failed with status $transfer_status"
+        # Release the port on transfer failure
+        release_port $port
         return 1
     fi
 }
@@ -212,6 +285,9 @@ transfer_volume_ssh() {
 
 # Main execution
 main() {
+    # Set up cleanup trap
+    trap cleanup_all_ports EXIT INT TERM
+    
     setup_ssh_multiplex
     
     ssh "$DEST_HOST" "
@@ -265,6 +341,7 @@ main() {
     
     $SSH_CMD -O exit "$DEST_HOST" 2>/dev/null
     
+    # Exit with appropriate status (cleanup will be handled by trap)
     [[ $success_count -eq $volume_count ]] && exit 0 || exit 1
 }
 
