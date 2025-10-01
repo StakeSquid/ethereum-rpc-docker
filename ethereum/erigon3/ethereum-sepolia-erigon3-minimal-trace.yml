@@ -83,6 +83,7 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=31087
       - --p2p.allowed-ports=36087
+      - --persist.receipts=false
       - --port=11087
       - --prune.mode=minimal
       - --rpc.evmtimeout=${ETHEREUM_SEPOLIA_ERIGON3_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}

@@ -83,6 +83,7 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=34614
       - --p2p.allowed-ports=39614
+      - --persist.receipts=false
       - --port=14614
       - --prune.mode=minimal
       - --rpc.evmtimeout=${ETHEREUM_MAINNET_ERIGON3_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}

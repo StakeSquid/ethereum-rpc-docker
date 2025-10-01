@@ -83,6 +83,7 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=32832
       - --p2p.allowed-ports=37832
+      - --persist.receipts=false
       - --port=12832
       - --prune.mode=minimal
       - --rpc.evmtimeout=${ETHEREUM_HOODI_ERIGON3_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}

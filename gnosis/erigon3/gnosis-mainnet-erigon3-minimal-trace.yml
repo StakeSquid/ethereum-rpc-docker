@@ -82,6 +82,7 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=33429
       - --p2p.allowed-ports=38429
+      - --persist.receipts=false
       - --port=13429
       - --prune.mode=minimal
       - --rpc.evmtimeout=${GNOSIS_MAINNET_ERIGON3_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}

@@ -82,6 +82,7 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=31010
       - --p2p.allowed-ports=36010
+      - --persist.receipts=false
       - --port=11010
       - --prune.mode=minimal
       - --rpc.evmtimeout=${GNOSIS_CHIADO_ERIGON3_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}

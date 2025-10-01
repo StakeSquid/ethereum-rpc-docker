@@ -72,6 +72,7 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=32072
       - --p2p.allowed-ports=37072
+      - --persist.receipts=false
       - --port=12072
       - --prune.mode=minimal
       - --rpc.evmtimeout=${ARBITRUM_SEPOLIA_NITRO_ERIGON_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}

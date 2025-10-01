@@ -74,6 +74,7 @@ services:
       - --networkid=59141
       - --p2p.allowed-ports=32410
       - --p2p.allowed-ports=37410
+      - --persist.receipts=false
       - --port=12410
       - --prune.mode=minimal
       - --rpc.evmtimeout=${LINEA_SEPOLIA_ERIGON3_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}

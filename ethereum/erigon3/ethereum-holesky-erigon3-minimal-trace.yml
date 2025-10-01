@@ -83,6 +83,7 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=32582
       - --p2p.allowed-ports=37582
+      - --persist.receipts=false
       - --port=12582
       - --prune.mode=minimal
       - --rpc.evmtimeout=${ETHEREUM_HOLESKY_ERIGON3_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}

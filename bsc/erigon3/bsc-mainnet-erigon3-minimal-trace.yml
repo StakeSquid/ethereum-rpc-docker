@@ -71,6 +71,7 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=30987
       - --p2p.allowed-ports=35987
+      - --persist.receipts=false
       - --port=10987
       - --prune.mode=minimal
       - --rpc.evmtimeout=${BSC_MAINNET_ERIGON3_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}
