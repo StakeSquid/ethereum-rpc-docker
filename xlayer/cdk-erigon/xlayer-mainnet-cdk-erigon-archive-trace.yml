@@ -1,0 +1,116 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:xlayer/cdk-erigon/xlayer-mainnet-cdk-erigon-archive-trace.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/xlayer-mainnet-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  xlayer-mainnet-archive:
+    image: ${XLAYER_CDK_ERIGON_IMAGE:-xlayer/xlayer-erigon}:${XLAYER_MAINNET_CDK_ERIGON_VERSION:-v0.8.7.1}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 11358:11358
+      - 11358:11358/udp
+    expose:
+      - 8545
+    entrypoint: [cdk-erigon]
+    command:
+      - --config=/config/erigon.yaml
+      - --datadir=/root/.erigon
+      - --db.engine=
+      - --gcmode=archive
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=
+      - --http.port=8545
+      - --nat=extip:${IP}
+      - --port=11358
+      - --rpc.gascap=6000000000
+      - --rpc.returndata.limit=1500000
+      - --state.scheme=
+      - --syncmode=full
+      - --ws
+      - --ws.port=8545
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${XLAYER_MAINNET_CDK_ERIGON_ARCHIVE_TRACE_DATA:-xlayer-mainnet-cdk-erigon-archive-trace}:/root/.erigon
+      - ./xlayer/mainnet:/config
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+      - traefik.enable=true
+      - traefik.http.middlewares.xlayer-mainnet-cdk-erigon-archive-trace-stripprefix.stripprefix.prefixes=/xlayer-mainnet-archive
+      - traefik.http.services.xlayer-mainnet-cdk-erigon-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-cdk-erigon-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-cdk-erigon-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-cdk-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/xlayer-mainnet-archive`) || Path(`/xlayer-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.xlayer-mainnet-cdk-erigon-archive-trace.rule=Path(`/xlayer-mainnet-archive`) || Path(`/xlayer-mainnet-archive/`)}
+      - traefik.http.routers.xlayer-mainnet-cdk-erigon-archive-trace.middlewares=xlayer-mainnet-cdk-erigon-archive-trace-stripprefix, ipallowlist
+
+volumes:
+  xlayer-mainnet-cdk-erigon-archive-trace:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: xlayer
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...

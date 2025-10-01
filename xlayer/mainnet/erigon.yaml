@@ -1,0 +1,22 @@
+zkevm.l2-chain-id: 196
+zkevm.l2-sequencer-rpc-url: https://rpc.xlayer.tech
+zkevm.l2-datastreamer-url: stream.xlayer.tech:8800
+zkevm.l1-rpc-url: ${your-l1-rpc-url}
+zkevm.l1-chain-id: 1
+
+zkevm.address-sequencer: "0xAF9d27ffe4d51eD54AC8eEc78f2785D7E11E5ab1"
+zkevm.address-zkevm: "0x2B0ee28D4D51bC9aDde5E58E295873F61F4a0507"
+zkevm.address-rollup: "0x5132A183E9F3CB7C848b0AAC5Ae0c4f0491B7aB2"
+zkevm.address-ger-manager: "0x580bda1e7A0CFAe92Fa7F6c20A3794F169CE3CFb"
+
+zkevm.l1-rollup-id: 3
+zkevm.l1-first-block: 19218658
+zkevm.l1-block-range: 2000
+zkevm.l1-query-delay: 1000
+zkevm.datastream-version: 3
+
+zkevm.increment-tree-always: false
+zkevm.rebuild-tree-after: 10000000
+
+zkevm.get-logs-timeout: 86400s
+zkevm.get-logs-retries: 72
