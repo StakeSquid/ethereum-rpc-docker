@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   wemix-mainnet:
-    image: ${WEMIX_GO_WEMIX_IMAGE:-darindoang/go-wemix}:${WEMIX_MAINNET_GO_WEMIX_VERSION:-v0.10.10}
+    image: ${WEMIX_GO_WEMIX_IMAGE:-chainstack/wemix}:${WEMIX_MAINNET_GO_WEMIX_VERSION:-0.10.10}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
