@@ -4,6 +4,7 @@ x-logging-defaults: &logging-defaults
   options:
     max-size: "10m"
     max-file: "3"
+# this snapshots works https://services.shachopra.com/zero-gravity-galileo-testnet/0g-validator-snapshot
 
 # Usage:
 #
