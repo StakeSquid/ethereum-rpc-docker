@@ -317,8 +317,8 @@ main() {
     # Need at least 20MB for 1Gbps at 154ms, using 64MB for headroom
     sudo sysctl -w net.core.rmem_max=67108864          # Was 8MB, now 64MB
     sudo sysctl -w net.core.wmem_max=67108864          # Was 8MB, now 64MB
-    sudo sysctl -w net.ipv4.tcp_rmem=4096 87380 67108864    # Was 8MB max, now 64MB
-    sudo sysctl -w net.ipv4.tcp_wmem=4096 87380 67108864    # Was 8MB max, now 64MB
+    sudo sysctl -w net.ipv4.tcp_rmem='4096 87380 67108864'    # Was 8MB max, now 64MB
+    sudo sysctl -w net.ipv4.tcp_wmem='4096 87380 67108864'    # Was 8MB max, now 64MB
 
     # Optional but helpful for high-latency
     sudo sysctl -w net.ipv4.tcp_mtu_probing=1
