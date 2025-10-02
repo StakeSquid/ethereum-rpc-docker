@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ethereum-holesky-erigon3-archive:
-    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOLESKY_ERIGON3_VERSION:-v3.2.0-rc1}
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOLESKY_ERIGON3_VERSION:-v3.2.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
