@@ -49,8 +49,8 @@ services:
       args:
         LLVM_IMAGE: ${LLVM_IMAGE:-snowstep/llvm}
         LLVM_VERSION: ${LLVM_VERSION:-20250912105042}
-        RETH_VERSION: ${BSC_MAINNET_RETH_VERSION:-6c209e1ca94673e039c84df3575d5e4366af7d4a}
-        RETH_REPO: ${BSC_MAINNET_RETH_REPO:-https://github.com/loocapro/reth-bsc.git}
+        RETH_VERSION: ${BSC_MAINNET_RETH_VERSION:-v0.0.3}
+        RETH_REPO: ${BSC_MAINNET_RETH_REPO:-https://github.com/bnb-chain/reth-bsc.git}
         ARCH_TARGET: ${ARCH_TARGET:-native}
         PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
         BUILD_BSC_RETH: true
@@ -84,6 +84,7 @@ services:
       - --discovery.port=12863
       - --engine.cross-block-cache-size=${BSC_MAINNET_RETH_STATE_CACHE:-4096}
       - --engine.memory-block-buffer-target=0
+      - --engine.parallel-sparse-trie
       - --engine.persistence-threshold=0
       - --full
       - --http
