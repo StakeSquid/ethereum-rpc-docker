@@ -138,7 +138,7 @@ services:
     command:
       - --das-server.addr=0.0.0.0
       - --das-server.data-availability.enable
-      - --das-server.data-availability.parent-chain-node-url=${PLUME_PLUME_MAINNET_ARCHIVE_EXECUTION_RPC}
+      - --das-server.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --das-server.data-availability.rest-aggregator.enable
       - --das-server.data-availability.rest-aggregator.urls=https://das-plume-mainnet-1.t.conduit.xyz
       - --das-server.data-availability.sequencer-inbox-address=0x85eC1b9138a8b9659A51e2b51bb0861901040b59
