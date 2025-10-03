@@ -67,6 +67,9 @@ services:
       - --metrics-server.addr=0.0.0.0
       - --metrics-server.port=6070
       - --node.batch-poster.enable=false
+      - --node.da-provider.enable=true
+      - --node.da-provider.rpc.url=http://plume-mainnet-archive-relay
+      - --node.da-provider.with-writer=true
       - --node.data-availability.enable=true
       - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true
@@ -105,6 +108,8 @@ services:
 
   plume-mainnet-archive-relay:
     image: ${PLUME_CELESTIA_IMAGE:-ghcr.io/celestiaorg/nitro-das-celestia}:${PLUME_MAINNET_CELESTIA_VERSION:-v0.5.4}
+    expose:
+      - 80
     entrypoint: [/bin/celestia-server]
     command:
       - --celestia.namespace-id=00000d048007a33abfeb
@@ -114,7 +119,7 @@ services:
       - --fallback-enabled
       - --log-level=INFO
       - --rpc-addr=0.0.0.0
-      - --rpc-port=26657
+      - --rpc-port=80
     restart: unless-stopped
     networks:
       - chains
