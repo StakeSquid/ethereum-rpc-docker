@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   plume-mainnet-archive:
-    image: ${PLUME_NITRO_IMAGE:-offchainlabs/nitro-node}:${PLUME_MAINNET_NITRO_VERSION:-v3.7.4-9244576}
+    image: ${PLUME_NITRO_IMAGE:-ghcr.io/celestiaorg/nitro}:${PLUME_MAINNET_NITRO_VERSION:-v3.6.8}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -105,10 +105,7 @@ services:
       - traefik.http.routers.plume-mainnet-nitro-archive-leveldb-hash.middlewares=plume-mainnet-nitro-archive-leveldb-hash-stripprefix, ipallowlist
 
   plume-mainnet-archive-relay:
-    image: ${PLUME_CELESTIA_IMAGE:-}:${PLUME_MAINNET_CELESTIA_VERSION:-}
-    ports:
-      - 21272:21272
-      - 21272:21272/udp
+    image: ${PLUME_CELESTIA_IMAGE:-ghcr.io/celestiaorg/nitro-das-celestia}:${PLUME_MAINNET_CELESTIA_VERSION:-v0.5.4}
     entrypoint: [/bin/celestia-server]
     command:
       - --celestia.namespace-id="00000d048007a33abfeb"
@@ -131,7 +128,7 @@ services:
 
   plume-mainnet-archive-provider:
     # same image as the client
-    image: ${PLUME_NITRO_IMAGE:-offchainlabs/nitro-node}:${PLUME_MAINNET_NITRO_VERSION:-v3.7.4-9244576}
+    image: ${PLUME_NITRO_IMAGE:-ghcr.io/celestiaorg/nitro}:${PLUME_MAINNET_NITRO_VERSION:-v3.6.8}
     expose:
       - 9880
     entrypoint: /usr/local/bin/daprovider
