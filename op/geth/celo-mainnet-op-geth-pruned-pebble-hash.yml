@@ -195,7 +195,6 @@ services:
     volumes:
       - ${CELO_MAINNET_OP_GETH_PRUNED_PEBBLE_HASH__EIGENDA_PROXY_DATA:-celo-mainnet-op-geth-pruned-pebble-hash_eigenda-proxy}:/data
       - ./op/celo/mainnet:/config
-      - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false

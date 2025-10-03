@@ -198,7 +198,6 @@ services:
       - chains
     volumes:
       - ./op/hemi/mainnet:/config
-      - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
