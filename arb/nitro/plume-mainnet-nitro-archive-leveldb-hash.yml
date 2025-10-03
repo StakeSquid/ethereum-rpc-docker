@@ -54,7 +54,7 @@ services:
       - --execution.caching.snapshot-cache=${PLUME_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_SNAPSHOT_CACHE:-400}
       - --execution.caching.trie-clean-cache=${PLUME_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_TRIE_CLEAN_CACHE:-600}
       - --execution.caching.trie-dirty-cache=${PLUME_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_TRIE_DIRTY_CACHE:-1024}
-      - --execution.forwarding-target=https://rpc-plume-mainnet-1.t.conduit.xyz
+      - --execution.forwarding-target=https://rpc.plume.org
       - --execution.rpc.gas-cap=5500000000
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
@@ -73,7 +73,7 @@ services:
       - --node.data-availability.enable=false
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das-plume-mainnet-1.t.conduit.xyz
-      - --node.feed.input.url=wss://feed-plume-mainnet-1.t.conduit.xyz
+      - --node.feed.input.url=wss://relay-plume-mainnet-1.t.conduit.xyz
       - --node.sequencer=false
       - --node.staker.enable=false
       - --parent-chain.blob-client.beacon-url=${ETHEREUM_MAINNET_BEACON_REST}
