@@ -109,14 +109,14 @@ services:
     image: ${PLUME_CELESTIA_IMAGE:-ghcr.io/celestiaorg/nitro-das-celestia}:${PLUME_MAINNET_CELESTIA_VERSION:-v0.5.4}
     entrypoint: [/bin/celestia-server]
     command:
-      - --celestia.namespace-id="00000d048007a33abfeb"
-      - --celestia.rpc="${CELESTIA_MAINNET_RPC}"
+      - --celestia.namespace-id=00000d048007a33abfeb
+      - --celestia.rpc=${CELESTIA_MAINNET_RPC}
       - --das.enable
-      - --das.rpc.url="http://plume-mainnet-provider:9880"
+      - --das.rpc.url=http://plume-mainnet-provider:9880
       - --fallback-enabled
-      - --log-level="INFO"
-      - --rpc-addr="0.0.0.0"
-      - --rpc-port="26657"
+      - --log-level=INFO
+      - --rpc-addr=0.0.0.0
+      - --rpc-port=26657
     restart: unless-stopped
     networks:
       - chains
@@ -133,13 +133,13 @@ services:
       - 9880
     entrypoint: /usr/local/bin/daprovider
     command:
-      - --das-server.addr="0.0.0.0"
+      - --das-server.addr=0.0.0.0
       - --das-server.data-availability.enable
       - --das-server.data-availability.parent-chain-node-url=${PLUME_PLUME_MAINNET_EXECUTION_RPC}
       - --das-server.data-availability.rest-aggregator.enable
       - --das-server.data-availability.rest-aggregator.urls=https://das-plume-mainnet-1.t.conduit.xyz
       - --das-server.data-availability.sequencer-inbox-address=0x85eC1b9138a8b9659A51e2b51bb0861901040b59
-      - --das-server.port="9880"
+      - --das-server.port=9880
     logging: *logging-defaults
 
 volumes:
