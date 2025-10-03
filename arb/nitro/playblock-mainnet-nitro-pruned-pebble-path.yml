@@ -69,6 +69,7 @@ services:
       - --metrics-server.addr=0.0.0.0
       - --metrics-server.port=6070
       - --node.batch-poster.enable=false
+      - --node.da-provider.enable=false
       - --node.data-availability.enable=true
       - --node.data-availability.parent-chain-node-url=${ARBITRUM_NOVA_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true

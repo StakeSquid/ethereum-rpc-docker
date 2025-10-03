@@ -71,11 +71,9 @@ services:
       - --node.da-provider.enable=true
       - --node.da-provider.rpc.url=http://plume-mainnet-relay
       - --node.da-provider.with-writer=true
-      - --node.data-availability.enable=true
-      - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - --node.data-availability.enable=false
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das-plume-mainnet-1.t.conduit.xyz
-      - --node.data-availability.sequencer-inbox-address=0x85eC1b9138a8b9659A51e2b51bb0861901040b59
       - --node.feed.input.url=wss://feed-plume-mainnet-1.t.conduit.xyz
       - --node.sequencer=false
       - --node.staker.enable=false
