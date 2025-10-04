@@ -1,0 +1,122 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:starknet/juno/starknet-mainnet-juno-archive.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/starknet-mainnet-juno-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  starknet-mainnet-juno-archive:
+    image: ${STARKNET_JUNO_IMAGE:-nethermind/juno}:${STARKNET_MAINNET_JUNO_VERSION:-v0.15.7}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 13985:13985
+      - 13985:13985/udp
+    expose:
+      - 6060
+      - 6061
+      - 9090
+    command:
+      - --eth-node=${ETHEREUM_MAINNET_EXECUTION_WS}
+      - --http
+      - --http-host=0.0.0.0
+      - --metrics
+      - --metrics-host=0.0.0.0
+      - --network=mainnet
+      - --p2p
+      - --p2p-addr=/ip4/0.0.0.0/tcp/13985
+      - --p2p-public-addr=/ip4/${IP}/tcp/13985
+      - --ws
+      - --ws-host=0.0.0.0
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${STARKNET_MAINNET_JUNO_ARCHIVE_DATA:-starknet-mainnet-juno-archive}:/juno
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9090
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.starknet-mainnet-juno-archive-stripprefix.stripprefix.prefixes=/starknet-mainnet-juno-archive
+      - traefik.http.services.starknet-mainnet-juno-archive.loadbalancer.server.port=6060
+      - ${NO_SSL:-traefik.http.routers.starknet-mainnet-juno-archive.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.starknet-mainnet-juno-archive.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.starknet-mainnet-juno-archive.rule=Host(`$DOMAIN`) && (Path(`/starknet-mainnet-juno-archive`) || Path(`/starknet-mainnet-juno-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.starknet-mainnet-juno-archive.rule=Path(`/starknet-mainnet-juno-archive`) || Path(`/starknet-mainnet-juno-archive/`)}
+      - traefik.http.routers.starknet-mainnet-juno-archive.middlewares=starknet-mainnet-juno-archive-stripprefix, ipallowlist
+      - traefik.http.routers.starknet-mainnet-juno-archive.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.starknet-mainnet-juno-archive-ws.priority=100   # answers GET requests first
+      - traefik.http.services.starknet-mainnet-juno-archive-ws.loadbalancer.server.port=6061
+      - traefik.http.routers.starknet-mainnet-juno-archive-ws.service=starknet-mainnet-juno-archive-ws
+      - traefik.http.routers.starknet-mainnet-juno-archive.service=starknet-mainnet-juno-archive
+      - ${NO_SSL:-traefik.http.routers.starknet-mainnet-juno-archive-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.starknet-mainnet-juno-archive-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.starknet-mainnet-juno-archive-ws.rule=Host(`$DOMAIN`) && (Path(`/starknet-mainnet-juno-archive`) || Path(`/starknet-mainnet-juno-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.starknet-mainnet-juno-archive-ws.rule=(Path(`/starknet-mainnet-juno-archive`) || Path(`/starknet-mainnet-juno-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.starknet-mainnet-juno-archive-ws.middlewares=starknet-mainnet-juno-archive-stripprefix, ipallowlist
+
+volumes:
+  starknet-mainnet-juno-archive:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: starknet
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
