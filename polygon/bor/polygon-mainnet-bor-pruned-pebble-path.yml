@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   polygon-mainnet:
-    image: ${POLYGON_BOR_IMAGE:-0xpolygon/bor}:${POLYGON_MAINNET_BOR_VERSION:-2.3.0}
+    image: ${POLYGON_BOR_IMAGE:-0xpolygon/bor}:${POLYGON_MAINNET_BOR_VERSION:-2.3.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
