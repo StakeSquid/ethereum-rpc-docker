@@ -46,8 +46,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 11993:11993
-      - 11993:11993/udp
+      - 11994:11994
+      - 11994:11994/udp
     expose:
       - 8545
       - 6060
@@ -62,7 +62,7 @@ services:
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --port=11993
+      - --port=11994
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
@@ -105,8 +105,8 @@ services:
   ethereum-holesky-geth-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v6.0.4}
     ports:
-      - 16993:16993
-      - 16993:16993/udp
+      - 16994:16994
+      - 16994:16994/udp
     expose:
       - 3500
     command:
@@ -122,8 +122,8 @@ services:
       - --monitoring-host=0.0.0.0
       - --monitoring-host=0.0.0.0
       - --monitoring-port=8080
-      - --p2p-tcp-port=16993
-      - --p2p-udp-port=16993
+      - --p2p-tcp-port=16994
+      - --p2p-udp-port=16994
       - --rpc-host=0.0.0.0
     restart: unless-stopped
     depends_on:

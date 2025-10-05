@@ -46,8 +46,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 11993:11993
-      - 11993:11993/udp
+      - 11994:11994
+      - 11994:11994/udp
     expose:
       - 8545
       - 6060
@@ -62,7 +62,7 @@ services:
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --port=11993
+      - --port=11994
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
@@ -106,8 +106,8 @@ services:
     image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_HOLESKY_NIMBUS_VERSION:-amd64-v25.7.1}
     user: root
     ports:
-      - 16993:16993
-      - 16993:16993/udp
+      - 16994:16994
+      - 16994:16994/udp
     expose:
       - 3500
     entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=holesky --trusted-node-url=https://holesky.beaconstate.info --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
@@ -121,8 +121,8 @@ services:
       - --rest
       - --rest-address=0.0.0.0
       - --rest-port=3500
-      - --tcp-port=16993
-      - --udp-port=16993
+      - --tcp-port=16994
+      - --udp-port=16994
       - --web3-url=http://ethereum-holesky-geth:8551
     restart: unless-stopped
     depends_on:

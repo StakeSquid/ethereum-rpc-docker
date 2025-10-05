@@ -47,16 +47,16 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 12582:12582
-      - 12582:12582/udp
-      - 17582:17582
-      - 17582:17582/udp
-      - 27582:27582
-      - 27582:27582/udp
-      - 32582:32582
-      - 32582:32582/udp
-      - 37582:37582
-      - 37582:37582/udp
+      - 12583:12583
+      - 12583:12583/udp
+      - 17583:17583
+      - 17583:17583/udp
+      - 27583:27583
+      - 27583:27583/udp
+      - 32583:32583
+      - 32583:32583/udp
+      - 37583:37583
+      - 37583:37583/udp
     expose:
       - 8545
       - 5555
@@ -67,8 +67,8 @@ services:
       - --beacon.api.port=5555
       - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
       - --caplin.discovery.addr=0.0.0.0
-      - --caplin.discovery.port=17582
-      - --caplin.discovery.tcpport=17582
+      - --caplin.discovery.port=17583
+      - --caplin.discovery.tcpport=17583
       - --chain=holesky
       - --datadir=/root/.local/share/erigon
       - --http
@@ -81,10 +81,10 @@ services:
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=32582
-      - --p2p.allowed-ports=37582
+      - --p2p.allowed-ports=32583
+      - --p2p.allowed-ports=37583
       - --persist.receipts=false
-      - --port=12582
+      - --port=12583
       - --prune.mode=minimal
       - --rpc.evmtimeout=${ETHEREUM_HOLESKY_ERIGON3_MINIMAL_TRACE_EVMTIMEOUT:-5m0s}
       - --rpc.gascap=6000000000
@@ -92,7 +92,7 @@ services:
       - --rpc.overlay.replayblocktimeout=${ETHEREUM_HOLESKY_ERIGON3_MINIMAL_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=10000000
       - --torrent.download.rate=${ETHEREUM_HOLESKY_ERIGON3_MINIMAL_TRACE_MAX_DOWNLOAD_RATE:-1000mb}
-      - --torrent.port=27582
+      - --torrent.port=27583
       - --ws
       - --ws.port=8545
     restart: unless-stopped

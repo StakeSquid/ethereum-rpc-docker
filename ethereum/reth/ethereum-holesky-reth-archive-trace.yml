@@ -47,8 +47,8 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 13752:13752
-      - 13752:13752/udp
+      - 13753:13753
+      - 13753:13753/udp
     expose:
       - 8545
       - 9001
@@ -57,7 +57,7 @@ services:
     command:
       - --chain=holesky
       - --datadir=/root/.local/share/reth
-      - --discovery.port=13752
+      - --discovery.port=13753
       - --engine.cross-block-cache-size=${ETHEREUM_HOLESKY_RETH_STATE_CACHE:-4096}
       - --engine.memory-block-buffer-target=0
       - --engine.persistence-threshold=0
@@ -65,7 +65,7 @@ services:
       - --max-outbound-peers=50
       - --metrics=0.0.0.0:9001
       - --nat=extip:${IP}
-      - --port=13752
+      - --port=13753
       - --rpc-cache.max-blocks=10000
       - --rpc-cache.max-concurrent-db-requests=2048
       - --rpc.gascap=600000000
@@ -110,8 +110,8 @@ services:
   ethereum-holesky-reth-node:
     image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOLESKY_PRYSM_VERSION:-v6.0.4}
     ports:
-      - 18752:18752
-      - 18752:18752/udp
+      - 18753:18753
+      - 18753:18753/udp
     expose:
       - 3500
     command:
@@ -127,8 +127,8 @@ services:
       - --monitoring-host=0.0.0.0
       - --monitoring-host=0.0.0.0
       - --monitoring-port=8080
-      - --p2p-tcp-port=18752
-      - --p2p-udp-port=18752
+      - --p2p-tcp-port=18753
+      - --p2p-udp-port=18753
       - --rpc-host=0.0.0.0
     restart: unless-stopped
     depends_on:
