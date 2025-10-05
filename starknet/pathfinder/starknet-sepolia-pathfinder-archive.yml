@@ -1,0 +1,98 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:starknet/pathfinder/starknet-sepolia-pathfinder-archive.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/starknet-sepolia-pathfinder-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  starknet-sepolia-pathfinder-archive:
+    image: ${STARKNET_PATHFINDER_IMAGE:-eqlabs/pathfinder}:${STARKNET_SEPOLIA_PATHFINDER_VERSION:-v0.20.4}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    expose:
+      - 9545
+    command:
+      - --ethereum.url=${ETHEREUM_SEPOLIA_EXECUTION_WS}
+      - --http-rpc=0.0.0.0:9545
+      - --network=sepolia-testnet
+      - --rpc.cors-domains=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${STARKNET_SEPOLIA_PATHFINDER_ARCHIVE_DATA:-starknet-sepolia-pathfinder-archive}:/usr/share/pathfinder/data
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+      - traefik.enable=true
+      - traefik.http.middlewares.starknet-sepolia-pathfinder-archive-stripprefix.stripprefix.prefixes=/starknet-sepolia-pathfinder-archive
+      - traefik.http.services.starknet-sepolia-pathfinder-archive.loadbalancer.server.port=9545
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-pathfinder-archive.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-pathfinder-archive.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-pathfinder-archive.rule=Host(`$DOMAIN`) && (Path(`/starknet-sepolia-pathfinder-archive`) || Path(`/starknet-sepolia-pathfinder-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.starknet-sepolia-pathfinder-archive.rule=Path(`/starknet-sepolia-pathfinder-archive`) || Path(`/starknet-sepolia-pathfinder-archive/`)}
+      - traefik.http.routers.starknet-sepolia-pathfinder-archive.middlewares=starknet-sepolia-pathfinder-archive-stripprefix, ipallowlist
+
+volumes:
+  starknet-sepolia-pathfinder-archive:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: starknet-sepolia
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
