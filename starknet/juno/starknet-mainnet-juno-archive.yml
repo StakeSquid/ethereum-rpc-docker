@@ -86,6 +86,7 @@ services:
       - traefik.http.routers.starknet-mainnet-juno-archive.middlewares=starknet-mainnet-juno-archive-stripprefix, ipallowlist
       - traefik.http.routers.starknet-mainnet-juno-archive.priority=50   # gets any request that is not GET with UPGRADE header
       - traefik.http.routers.starknet-mainnet-juno-archive-ws.priority=100   # answers GET requests first
+      - traefik.http.middlewares.starknet-mainnet-juno-archive-set-ws-path.replacepath.path=/ws
       - traefik.http.services.starknet-mainnet-juno-archive-ws.loadbalancer.server.port=6061
       - traefik.http.routers.starknet-mainnet-juno-archive-ws.service=starknet-mainnet-juno-archive-ws
       - traefik.http.routers.starknet-mainnet-juno-archive.service=starknet-mainnet-juno-archive
@@ -93,7 +94,7 @@ services:
       - ${NO_SSL:-traefik.http.routers.starknet-mainnet-juno-archive-ws.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.starknet-mainnet-juno-archive-ws.rule=Host(`$DOMAIN`) && (Path(`/starknet-mainnet-juno-archive`) || Path(`/starknet-mainnet-juno-archive/`)) && Headers(`Upgrade`, `websocket`)}
       - ${NO_SSL:+traefik.http.routers.starknet-mainnet-juno-archive-ws.rule=(Path(`/starknet-mainnet-juno-archive`) || Path(`/starknet-mainnet-juno-archive/`)) && Headers(`Upgrade`, `websocket`)}
-      - traefik.http.routers.starknet-mainnet-juno-archive-ws.middlewares=starknet-mainnet-juno-archive-stripprefix, ipallowlist
+      - traefik.http.routers.starknet-mainnet-juno-archive-ws.middlewares=starknet-mainnet-juno-archive-stripprefix, starknet-mainnet-juno-archive-set-ws-path, ipallowlist
 
 volumes:
   starknet-mainnet-juno-archive:

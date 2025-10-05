@@ -70,6 +70,17 @@ services:
       - ${NO_SSL:-traefik.http.routers.starknet-sepolia-madara-archive.rule=Host(`$DOMAIN`) && (Path(`/starknet-sepolia-madara-archive`) || Path(`/starknet-sepolia-madara-archive/`))}
       - ${NO_SSL:+traefik.http.routers.starknet-sepolia-madara-archive.rule=Path(`/starknet-sepolia-madara-archive`) || Path(`/starknet-sepolia-madara-archive/`)}
       - traefik.http.routers.starknet-sepolia-madara-archive.middlewares=starknet-sepolia-madara-archive-stripprefix, ipallowlist
+      - traefik.http.routers.starknet-sepolia-madara-archive.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.starknet-sepolia-madara-archive-ws.priority=100   # answers GET requests first
+      - traefik.http.middlewares.starknet-sepolia-madara-archive-set-ws-path.replacepath.path=/ws
+      - traefik.http.services.starknet-sepolia-madara-archive-ws.loadbalancer.server.port=9944
+      - traefik.http.routers.starknet-sepolia-madara-archive-ws.service=starknet-sepolia-madara-archive-ws
+      - traefik.http.routers.starknet-sepolia-madara-archive.service=starknet-sepolia-madara-archive
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-madara-archive-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-madara-archive-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-madara-archive-ws.rule=Host(`$DOMAIN`) && (Path(`/starknet-sepolia-madara-archive`) || Path(`/starknet-sepolia-madara-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.starknet-sepolia-madara-archive-ws.rule=(Path(`/starknet-sepolia-madara-archive`) || Path(`/starknet-sepolia-madara-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.starknet-sepolia-madara-archive-ws.middlewares=starknet-sepolia-madara-archive-stripprefix, starknet-sepolia-madara-archive-set-ws-path, ipallowlist
 
 volumes:
   starknet-sepolia-madara-archive:

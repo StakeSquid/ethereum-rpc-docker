@@ -70,6 +70,17 @@ services:
       - ${NO_SSL:-traefik.http.routers.starknet-mainnet-pathfinder-archive.rule=Host(`$DOMAIN`) && (Path(`/starknet-mainnet-pathfinder-archive`) || Path(`/starknet-mainnet-pathfinder-archive/`))}
       - ${NO_SSL:+traefik.http.routers.starknet-mainnet-pathfinder-archive.rule=Path(`/starknet-mainnet-pathfinder-archive`) || Path(`/starknet-mainnet-pathfinder-archive/`)}
       - traefik.http.routers.starknet-mainnet-pathfinder-archive.middlewares=starknet-mainnet-pathfinder-archive-stripprefix, ipallowlist
+      - traefik.http.routers.starknet-mainnet-pathfinder-archive.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.starknet-mainnet-pathfinder-archive-ws.priority=100   # answers GET requests first
+      - traefik.http.middlewares.starknet-mainnet-pathfinder-archive-set-ws-path.replacepath.path=/ws
+      - traefik.http.services.starknet-mainnet-pathfinder-archive-ws.loadbalancer.server.port=9545
+      - traefik.http.routers.starknet-mainnet-pathfinder-archive-ws.service=starknet-mainnet-pathfinder-archive-ws
+      - traefik.http.routers.starknet-mainnet-pathfinder-archive.service=starknet-mainnet-pathfinder-archive
+      - ${NO_SSL:-traefik.http.routers.starknet-mainnet-pathfinder-archive-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.starknet-mainnet-pathfinder-archive-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.starknet-mainnet-pathfinder-archive-ws.rule=Host(`$DOMAIN`) && (Path(`/starknet-mainnet-pathfinder-archive`) || Path(`/starknet-mainnet-pathfinder-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.starknet-mainnet-pathfinder-archive-ws.rule=(Path(`/starknet-mainnet-pathfinder-archive`) || Path(`/starknet-mainnet-pathfinder-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.starknet-mainnet-pathfinder-archive-ws.middlewares=starknet-mainnet-pathfinder-archive-stripprefix, starknet-mainnet-pathfinder-archive-set-ws-path, ipallowlist
 
 volumes:
   starknet-mainnet-pathfinder-archive:
