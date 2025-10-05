@@ -1,0 +1,201 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/soneium-minato-sepolia-op-geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/soneium-minato-sepolia-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  soneium-minato-sepolia-archive:
+    image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MINATO_SEPOLIA_GETH_VERSION:-v1.101602.3}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 11279:11279
+      - 11279:11279/udp
+    expose:
+      - 8545
+      - 6060
+      - 8551
+    environment:
+      - GETH_OP_NETWORK=soneium-minato-sepolia
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.soneium.org
+    entrypoint: /bin/sh -c 'exec geth "$@"' --
+    command:
+      - --datadir=/data
+      - --db.engine=leveldb
+      - --gcmode=archive
+      - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --nat=extip:${IP}
+      - --port=11279
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=hash
+      - --syncmode=full
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${SONEIUM_MINATO_SEPOLIA_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-soneium-minato-sepolia-op-geth-archive-leveldb-hash}:/data
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.soneium-minato-sepolia-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/soneium-minato-sepolia-archive
+      - traefik.http.services.soneium-minato-sepolia-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/soneium-minato-sepolia-archive`) || Path(`/soneium-minato-sepolia-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash.rule=Path(`/soneium-minato-sepolia-archive`) || Path(`/soneium-minato-sepolia-archive/`)}
+      - traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash.middlewares=soneium-minato-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
+
+  soneium-minato-sepolia-archive-node:
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_SEPOLIA_NODE_VERSION:-v1.13.7}
+    ports:
+      - 16279:16279
+      - 16279:16279/udp
+    environment:
+      - OP_NODE_L1_BEACON=${ETHEREUM_MINATO-SEPOLIA_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MINATO-SEPOLIA_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MINATO-SEPOLIA_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MINATO-SEPOLIA_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MINATO-SEPOLIA_EXECUTION_TRUST:-false}
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://soneium-minato-sepolia-archive:8551
+      - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
+      - OP_NODE_NETWORK=soneium-minato-sepolia
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=16279
+      - OP_NODE_P2P_LISTEN_UDP_PORT=16279
+      - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    restart: unless-stopped
+    depends_on:
+      - soneium-minato-sepolia-archive
+    networks:
+      - chains
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node-stripprefix.stripprefix.prefixes=/soneium-minato-sepolia-archive/node
+      - traefik.http.services.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`soneium-minato-sepolia-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`soneium-minato-sepolia-archive/node`)}
+      - traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.middlewares=soneium-minato-sepolia-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
+
+volumes:
+  soneium-minato-sepolia-op-geth-archive-leveldb-hash:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: soneium
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...

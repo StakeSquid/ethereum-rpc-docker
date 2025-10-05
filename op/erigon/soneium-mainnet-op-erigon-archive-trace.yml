@@ -1,0 +1,208 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:op/erigon/soneium-mainnet-op-erigon-archive-trace.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/soneium-mainnet-op-erigon \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  soneium-mainnet-op-erigon:
+    image: ${SONEIUM_ERIGON_IMAGE:-testinprod/op-erigon}:${SONEIUM_MAINNET_ERIGON_VERSION:-v2.61.3-0.9.5}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    user: root
+    ports:
+      - 13689:13689
+      - 13689:13689/udp
+      - 33689:33689
+      - 33689:33689/udp
+      - 38689:38689
+      - 38689:38689/udp
+    expose:
+      - 8545
+      - 6060
+      - 8551
+    entrypoint: [erigon]
+    command:
+      - --chain=soneium-mainnet
+      - --datadir=/root/.local/share/erigon
+      - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --nat=extip:${IP}
+      - --p2p.allowed-ports=33689
+      - --p2p.allowed-ports=38689
+      - --port=13689
+      - --rollup.sequencerhttp=https://rpc.soneium.org
+      - --rpc.gascap=6000000000
+      - --rpc.returndata.limit=1500000
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${SONEIUM_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-soneium-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.soneium-mainnet-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/soneium-mainnet-op-erigon
+      - traefik.http.services.soneium-mainnet-op-erigon-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-erigon-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-erigon-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/soneium-mainnet-op-erigon`) || Path(`/soneium-mainnet-op-erigon/`))}
+      - ${NO_SSL:+traefik.http.routers.soneium-mainnet-op-erigon-archive-trace.rule=Path(`/soneium-mainnet-op-erigon`) || Path(`/soneium-mainnet-op-erigon/`)}
+      - traefik.http.routers.soneium-mainnet-op-erigon-archive-trace.middlewares=soneium-mainnet-op-erigon-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
+
+  soneium-mainnet-op-erigon-node:
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.13.7}
+    ports:
+      - 18689:18689
+      - 18689:18689/udp
+    environment:
+      - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_KIND=erigon
+      - OP_NODE_L2_ENGINE_RPC=http://soneium-mainnet-op-erigon:8551
+      - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
+      - OP_NODE_NETWORK=soneium-mainnet
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18689
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18689
+      - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    restart: unless-stopped
+    depends_on:
+      - soneium-mainnet-op-erigon
+    networks:
+      - chains
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.soneium-mainnet-op-erigon-archive-trace-node-stripprefix.stripprefix.prefixes=/soneium-mainnet-op-erigon/node
+      - traefik.http.services.soneium-mainnet-op-erigon-archive-trace-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-erigon-archive-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-erigon-archive-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`soneium-mainnet-op-erigon/node`)}
+      - ${NO_SSL:+traefik.http.routers.soneium-mainnet-op-erigon-archive-trace-node.rule=PathPrefix(`soneium-mainnet-op-erigon/node`)}
+      - traefik.http.routers.soneium-mainnet-op-erigon-archive-trace-node.middlewares=soneium-mainnet-op-erigon-archive-trace-node-stripprefix, ipallowlist
+
+volumes:
+  soneium-mainnet-op-erigon-archive-trace:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: soneium
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+        # non standard erigon only
+        - name: eth_getBlockReceipts
+        - name: eth_protocolVersion
+        - name: eth_callMany
+        - name: eth_callBundle
+        - name: debug_accountAt
+        - name: debug_traceCallMany
+        - name: erigon_getHeaderByHash
+        - name: erigon_getBlockReceiptsByBlockHash
+        - name: erigon_getHeaderByNumber
+        - name: erigon_getLogsByHash
+        - name: erigon_forks
+        - name: erigon_getBlockByTimestamp
+        - name: erigon_BlockNumber
+        - name: erigon_getLatestLogs
+...

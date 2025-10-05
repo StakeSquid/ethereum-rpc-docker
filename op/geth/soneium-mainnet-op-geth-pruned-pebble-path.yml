@@ -20,17 +20,17 @@ x-logging-defaults: &logging-defaults
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:op/geth/soneium-minato-op-geth-pruned-pebble-path.yml
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/soneium-mainnet-op-geth-pruned-pebble-path.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/soneium-minato \
+# curl -X POST https://${IP}.traefik.me/soneium-mainnet \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  soneium-minato:
-    image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MINATO_GETH_VERSION:-v1.101602.3}
+  soneium-mainnet:
+    image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MAINNET_GETH_VERSION:-v1.101602.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -46,16 +46,16 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 10702:10702
-      - 10702:10702/udp
+      - 14145:14145
+      - 14145:14145/udp
     expose:
       - 8545
       - 6060
       - 8551
     environment:
-      - GETH_OP_NETWORK=soneium-minato
+      - GETH_OP_NETWORK=soneium-mainnet
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
-      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.minato.soneium.org
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.soneium.org
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data
@@ -66,7 +66,7 @@ services:
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --port=10702
+      - --port=14145
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
@@ -89,7 +89,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${SONEIUM_MINATO_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-soneium-minato-op-geth-pruned-pebble-path}:/data
+      - ${SONEIUM_MAINNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-soneium-mainnet-op-geth-pruned-pebble-path}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -98,39 +98,38 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.soneium-minato-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/soneium-minato
-      - traefik.http.services.soneium-minato-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/soneium-minato`) || Path(`/soneium-minato/`))}
-      - ${NO_SSL:+traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.rule=Path(`/soneium-minato`) || Path(`/soneium-minato/`)}
-      - traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path.middlewares=soneium-minato-op-geth-pruned-pebble-path-stripprefix, ipallowlist
+      - traefik.http.middlewares.soneium-mainnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/soneium-mainnet
+      - traefik.http.services.soneium-mainnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/soneium-mainnet`) || Path(`/soneium-mainnet/`))}
+      - ${NO_SSL:+traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path.rule=Path(`/soneium-mainnet`) || Path(`/soneium-mainnet/`)}
+      - traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path.middlewares=soneium-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
-  soneium-minato-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.7}
+  soneium-mainnet-node:
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.13.7}
     ports:
-      - 15702:15702
-      - 15702:15702/udp
+      - 19145:19145
+      - 19145:19145/udp
     environment:
-      - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
-      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
-      - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
-      - OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}
+      - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://soneium-minato:8551
+      - OP_NODE_L2_ENGINE_RPC=http://soneium-mainnet:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_METRIC_ENABLED=true
-      - OP_NODE_NETWORK=soneium-minato
-      - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
+      - OP_NODE_NETWORK=soneium-mainnet
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=15702
-      - OP_NODE_P2P_LISTEN_UDP_PORT=15702
+      - OP_NODE_P2P_LISTEN_TCP_PORT=19145
+      - OP_NODE_P2P_LISTEN_UDP_PORT=19145
       - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
@@ -140,7 +139,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - soneium-minato
+      - soneium-mainnet
     networks:
       - chains
     volumes:
@@ -151,16 +150,16 @@ services:
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.soneium-minato-op-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/soneium-minato/node
-      - traefik.http.services.soneium-minato-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path-node.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`soneium-minato/node`)}
-      - ${NO_SSL:+traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path-node.rule=PathPrefix(`soneium-minato/node`)}
-      - traefik.http.routers.soneium-minato-op-geth-pruned-pebble-path-node.middlewares=soneium-minato-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
+      - traefik.http.middlewares.soneium-mainnet-op-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/soneium-mainnet/node
+      - traefik.http.services.soneium-mainnet-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`soneium-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path-node.rule=PathPrefix(`soneium-mainnet/node`)}
+      - traefik.http.routers.soneium-mainnet-op-geth-pruned-pebble-path-node.middlewares=soneium-mainnet-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:
-  soneium-minato-op-geth-pruned-pebble-path:
+  soneium-mainnet-op-geth-pruned-pebble-path:
 
 x-upstreams:
   - id: $${ID}
@@ -174,7 +173,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: soneium-minato
+    chain: soneium
     method-groups:
       enabled:
         - debug

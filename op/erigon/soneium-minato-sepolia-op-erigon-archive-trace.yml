@@ -20,17 +20,17 @@ x-logging-defaults: &logging-defaults
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:op/erigon/soneium-minato-op-erigon-archive-trace.yml
+# COMPOSE_FILE=base.yml:rpc.yml:op/erigon/soneium-minato-sepolia-op-erigon-archive-trace.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/soneium-minato-op-erigon \
+# curl -X POST https://${IP}.traefik.me/soneium-minato-sepolia-op-erigon \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  soneium-minato-op-erigon:
-    image: ${SONEIUM_ERIGON_IMAGE:-testinprod/op-erigon}:${SONEIUM_MINATO_ERIGON_VERSION:-v2.61.3-0.9.5}
+  soneium-minato-sepolia-op-erigon:
+    image: ${SONEIUM_ERIGON_IMAGE:-testinprod/op-erigon}:${SONEIUM_MINATO_SEPOLIA_ERIGON_VERSION:-v2.61.3-0.9.5}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -47,29 +47,29 @@ services:
       memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 13314:13314
-      - 13314:13314/udp
-      - 33314:33314
-      - 33314:33314/udp
-      - 38314:38314
-      - 38314:38314/udp
+      - 12283:12283
+      - 12283:12283/udp
+      - 32283:32283
+      - 32283:32283/udp
+      - 37283:37283
+      - 37283:37283/udp
     expose:
       - 8545
       - 6060
       - 8551
     entrypoint: [erigon]
     command:
-      - --chain=soneium-minato
+      - --chain=soneium-minato-sepolia
       - --datadir=/root/.local/share/erigon
       - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --p2p.allowed-ports=33314
-      - --p2p.allowed-ports=38314
-      - --port=13314
-      - --rollup.sequencerhttp=https://rpc.minato.soneium.org
+      - --p2p.allowed-ports=32283
+      - --p2p.allowed-ports=37283
+      - --port=12283
+      - --rollup.sequencerhttp=https://rpc.soneium.org
       - --rpc.gascap=6000000000
       - --rpc.returndata.limit=1500000
       - --http
@@ -87,7 +87,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${SONEIUM_MINATO_OP_ERIGON_ARCHIVE_TRACE_DATA:-soneium-minato-op-erigon-archive-trace}:/root/.local/share/erigon
+      - ${SONEIUM_MINATO_SEPOLIA_OP_ERIGON_ARCHIVE_TRACE_DATA:-soneium-minato-sepolia-op-erigon-archive-trace}:/root/.local/share/erigon
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -96,41 +96,40 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.soneium-minato-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/soneium-minato-op-erigon
-      - traefik.http.services.soneium-minato-op-erigon-archive-trace.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/soneium-minato-op-erigon`) || Path(`/soneium-minato-op-erigon/`))}
-      - ${NO_SSL:+traefik.http.routers.soneium-minato-op-erigon-archive-trace.rule=Path(`/soneium-minato-op-erigon`) || Path(`/soneium-minato-op-erigon/`)}
-      - traefik.http.routers.soneium-minato-op-erigon-archive-trace.middlewares=soneium-minato-op-erigon-archive-trace-stripprefix, ipallowlist
+      - traefik.http.middlewares.soneium-minato-sepolia-op-erigon-archive-trace-stripprefix.stripprefix.prefixes=/soneium-minato-sepolia-op-erigon
+      - traefik.http.services.soneium-minato-sepolia-op-erigon-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/soneium-minato-sepolia-op-erigon`) || Path(`/soneium-minato-sepolia-op-erigon/`))}
+      - ${NO_SSL:+traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace.rule=Path(`/soneium-minato-sepolia-op-erigon`) || Path(`/soneium-minato-sepolia-op-erigon/`)}
+      - traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace.middlewares=soneium-minato-sepolia-op-erigon-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
 
-  soneium-minato-op-erigon-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_NODE_VERSION:-v1.13.7}
+  soneium-minato-sepolia-op-erigon-node:
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MINATO_SEPOLIA_NODE_VERSION:-v1.13.7}
     ports:
-      - 18314:18314
-      - 18314:18314/udp
+      - 17283:17283
+      - 17283:17283/udp
     environment:
-      - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
-      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
-      - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
-      - OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}
+      - OP_NODE_L1_BEACON=${ETHEREUM_MINATO-SEPOLIA_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MINATO-SEPOLIA_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MINATO-SEPOLIA_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MINATO-SEPOLIA_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MINATO-SEPOLIA_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
       - OP_NODE_L2_ENGINE_KIND=erigon
-      - OP_NODE_L2_ENGINE_RPC=http://soneium-minato-op-erigon:8551
+      - OP_NODE_L2_ENGINE_RPC=http://soneium-minato-sepolia-op-erigon:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
       - OP_NODE_METRICS_ENABLED=true
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_METRIC_ENABLED=true
-      - OP_NODE_NETWORK=soneium-minato
-      - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
+      - OP_NODE_NETWORK=soneium-minato-sepolia
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=18314
-      - OP_NODE_P2P_LISTEN_UDP_PORT=18314
+      - OP_NODE_P2P_LISTEN_TCP_PORT=17283
+      - OP_NODE_P2P_LISTEN_UDP_PORT=17283
       - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
@@ -140,7 +139,7 @@ services:
     entrypoint: [op-node]
     restart: unless-stopped
     depends_on:
-      - soneium-minato-op-erigon
+      - soneium-minato-sepolia-op-erigon
     networks:
       - chains
     volumes:
@@ -151,16 +150,16 @@ services:
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.soneium-minato-op-erigon-archive-trace-node-stripprefix.stripprefix.prefixes=/soneium-minato-op-erigon/node
-      - traefik.http.services.soneium-minato-op-erigon-archive-trace-node.loadbalancer.server.port=8547
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace-node.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`soneium-minato-op-erigon/node`)}
-      - ${NO_SSL:+traefik.http.routers.soneium-minato-op-erigon-archive-trace-node.rule=PathPrefix(`soneium-minato-op-erigon/node`)}
-      - traefik.http.routers.soneium-minato-op-erigon-archive-trace-node.middlewares=soneium-minato-op-erigon-archive-trace-node-stripprefix, ipallowlist
+      - traefik.http.middlewares.soneium-minato-sepolia-op-erigon-archive-trace-node-stripprefix.stripprefix.prefixes=/soneium-minato-sepolia-op-erigon/node
+      - traefik.http.services.soneium-minato-sepolia-op-erigon-archive-trace-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`soneium-minato-sepolia-op-erigon/node`)}
+      - ${NO_SSL:+traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace-node.rule=PathPrefix(`soneium-minato-sepolia-op-erigon/node`)}
+      - traefik.http.routers.soneium-minato-sepolia-op-erigon-archive-trace-node.middlewares=soneium-minato-sepolia-op-erigon-archive-trace-node-stripprefix, ipallowlist
 
 volumes:
-  soneium-minato-op-erigon-archive-trace:
+  soneium-minato-sepolia-op-erigon-archive-trace:
 
 x-upstreams:
   - id: $${ID}
@@ -174,7 +173,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: soneium-minato
+    chain: soneium
     method-groups:
       enabled:
         - debug
