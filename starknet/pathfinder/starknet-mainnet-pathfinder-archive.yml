@@ -52,6 +52,7 @@ services:
       - --http-rpc=0.0.0.0:9545
       - --network=mainnet
       - --rpc.cors-domains=*
+      - --rpc.websocket.enabled
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
