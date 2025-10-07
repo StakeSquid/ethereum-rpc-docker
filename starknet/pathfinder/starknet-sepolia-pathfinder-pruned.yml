@@ -1,0 +1,112 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:starknet/pathfinder/starknet-sepolia-pathfinder-pruned.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/starknet-sepolia-pathfinder-pruned \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  starknet-sepolia-pathfinder-pruned:
+    image: ${STARKNET_PATHFINDER_IMAGE:-eqlabs/pathfinder}:${STARKNET_SEPOLIA_PATHFINDER_VERSION:-v0.20.4}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    expose:
+      - 9545
+    command:
+      - --ethereum.url=${ETHEREUM_SEPOLIA_EXECUTION_WS}
+      - --http-rpc=0.0.0.0:9545
+      - --network=sepolia-testnet
+      - --rpc.cors-domains=*
+      - --rpc.websocket.enabled
+      - --storage.blockchain-history=100
+      - --storage.state-tries=100
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${STARKNET_SEPOLIA_PATHFINDER_PRUNED_DATA:-starknet-sepolia-pathfinder-pruned}:/usr/share/pathfinder/data
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+      - traefik.enable=true
+      - traefik.http.middlewares.starknet-sepolia-pathfinder-pruned-stripprefix.stripprefix.prefixes=/starknet-sepolia-pathfinder-pruned
+      - traefik.http.services.starknet-sepolia-pathfinder-pruned.loadbalancer.server.port=9545
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-pathfinder-pruned.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-pathfinder-pruned.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-pathfinder-pruned.rule=Host(`$DOMAIN`) && (Path(`/starknet-sepolia-pathfinder-pruned`) || Path(`/starknet-sepolia-pathfinder-pruned/`))}
+      - ${NO_SSL:+traefik.http.routers.starknet-sepolia-pathfinder-pruned.rule=Path(`/starknet-sepolia-pathfinder-pruned`) || Path(`/starknet-sepolia-pathfinder-pruned/`)}
+      - traefik.http.routers.starknet-sepolia-pathfinder-pruned.middlewares=starknet-sepolia-pathfinder-pruned-stripprefix, ipallowlist
+      - traefik.http.routers.starknet-sepolia-pathfinder-pruned.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.starknet-sepolia-pathfinder-pruned-ws.priority=100   # answers GET requests first
+      - traefik.http.middlewares.starknet-sepolia-pathfinder-pruned-set-ws-path.replacepath.path=/ws
+      - traefik.http.services.starknet-sepolia-pathfinder-pruned-ws.loadbalancer.server.port=9545
+      - traefik.http.routers.starknet-sepolia-pathfinder-pruned-ws.service=starknet-sepolia-pathfinder-pruned-ws
+      - traefik.http.routers.starknet-sepolia-pathfinder-pruned.service=starknet-sepolia-pathfinder-pruned
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-pathfinder-pruned-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-pathfinder-pruned-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.starknet-sepolia-pathfinder-pruned-ws.rule=Host(`$DOMAIN`) && (Path(`/starknet-sepolia-pathfinder-pruned`) || Path(`/starknet-sepolia-pathfinder-pruned/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.starknet-sepolia-pathfinder-pruned-ws.rule=(Path(`/starknet-sepolia-pathfinder-pruned`) || Path(`/starknet-sepolia-pathfinder-pruned/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.starknet-sepolia-pathfinder-pruned-ws.middlewares=starknet-sepolia-pathfinder-pruned-stripprefix, starknet-sepolia-pathfinder-pruned-set-ws-path, ipallowlist
+
+volumes:
+  starknet-sepolia-pathfinder-pruned:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: starknet-sepolia
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...

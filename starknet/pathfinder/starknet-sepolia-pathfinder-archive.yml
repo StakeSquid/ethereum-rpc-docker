@@ -53,6 +53,8 @@ services:
       - --network=sepolia-testnet
       - --rpc.cors-domains=*
       - --rpc.websocket.enabled
+      - --storage.blockchain-history=archive
+      - --storage.state-tries=archive
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
