@@ -159,8 +159,8 @@ services:
       - traefik.http.services.lisk-sepolia-op-geth-pruned-pebble-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`lisk-sepolia/node`)}
-      - ${NO_SSL:+traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash-node.rule=PathPrefix(`lisk-sepolia/node`)}
+      - ${NO_SSL:-traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/lisk-sepolia/node`)}
+      - ${NO_SSL:+traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash-node.rule=PathPrefix(`/lisk-sepolia/node`)}
       - traefik.http.routers.lisk-sepolia-op-geth-pruned-pebble-hash-node.middlewares=lisk-sepolia-op-geth-pruned-pebble-hash-node-stripprefix, ipallowlist
 
 volumes:

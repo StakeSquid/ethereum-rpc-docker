@@ -173,8 +173,8 @@ services:
       - traefik.http.services.celo-mainnet-op-geth-pruned-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`celo-mainnet/node`)}
-      - ${NO_SSL:+traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash-node.rule=PathPrefix(`celo-mainnet/node`)}
+      - ${NO_SSL:-traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash-node.rule=PathPrefix(`/celo-mainnet/node`)}
       - traefik.http.routers.celo-mainnet-op-geth-pruned-leveldb-hash-node.middlewares=celo-mainnet-op-geth-pruned-leveldb-hash-node-stripprefix, ipallowlist
 
   celo-mainnet-relay:

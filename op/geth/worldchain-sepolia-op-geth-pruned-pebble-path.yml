@@ -155,8 +155,8 @@ services:
       - traefik.http.services.worldchain-sepolia-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`worldchain-sepolia/node`)}
-      - ${NO_SSL:+traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path-node.rule=PathPrefix(`worldchain-sepolia/node`)}
+      - ${NO_SSL:-traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/worldchain-sepolia/node`)}
+      - ${NO_SSL:+traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path-node.rule=PathPrefix(`/worldchain-sepolia/node`)}
       - traefik.http.routers.worldchain-sepolia-op-geth-pruned-pebble-path-node.middlewares=worldchain-sepolia-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:

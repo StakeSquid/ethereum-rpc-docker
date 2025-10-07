@@ -155,8 +155,8 @@ services:
       - traefik.http.services.mode-sepolia-op-erigon-archive-trace-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-erigon-archive-trace-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-erigon-archive-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`mode-sepolia-op-erigon/node`)}
-      - ${NO_SSL:+traefik.http.routers.mode-sepolia-op-erigon-archive-trace-node.rule=PathPrefix(`mode-sepolia-op-erigon/node`)}
+      - ${NO_SSL:-traefik.http.routers.mode-sepolia-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/mode-sepolia-op-erigon/node`)}
+      - ${NO_SSL:+traefik.http.routers.mode-sepolia-op-erigon-archive-trace-node.rule=PathPrefix(`/mode-sepolia-op-erigon/node`)}
       - traefik.http.routers.mode-sepolia-op-erigon-archive-trace-node.middlewares=mode-sepolia-op-erigon-archive-trace-node-stripprefix, ipallowlist
 
 volumes:

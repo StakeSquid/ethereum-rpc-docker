@@ -161,8 +161,8 @@ services:
       - traefik.http.services.fraxtal-testnet-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`fraxtal-testnet-archive/node`)}
-      - ${NO_SSL:+traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`fraxtal-testnet-archive/node`)}
+      - ${NO_SSL:-traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/fraxtal-testnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`/fraxtal-testnet-archive/node`)}
       - traefik.http.routers.fraxtal-testnet-op-geth-archive-leveldb-hash-node.middlewares=fraxtal-testnet-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:

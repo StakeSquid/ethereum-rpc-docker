@@ -161,8 +161,8 @@ services:
       - traefik.http.services.manta-pacific-mainnet-op-geth-archive-pebble-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`manta-pacific-mainnet-archive/node`)}
-      - ${NO_SSL:+traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash-node.rule=PathPrefix(`manta-pacific-mainnet-archive/node`)}
+      - ${NO_SSL:-traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/manta-pacific-mainnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash-node.rule=PathPrefix(`/manta-pacific-mainnet-archive/node`)}
       - traefik.http.routers.manta-pacific-mainnet-op-geth-archive-pebble-hash-node.middlewares=manta-pacific-mainnet-op-geth-archive-pebble-hash-node-stripprefix, ipallowlist
 
 volumes:

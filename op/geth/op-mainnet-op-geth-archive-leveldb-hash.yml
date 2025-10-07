@@ -159,8 +159,8 @@ services:
       - traefik.http.services.op-mainnet-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`op-mainnet-archive/node`)}
-      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`op-mainnet-archive/node`)}
+      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/op-mainnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`/op-mainnet-archive/node`)}
       - traefik.http.routers.op-mainnet-op-geth-archive-leveldb-hash-node.middlewares=op-mainnet-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
   op-mainnet-l2geth-archive:

@@ -161,8 +161,8 @@ services:
       - traefik.http.services.zircuit-garfield-op-geth-pruned-pebble-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`zircuit-garfield/node`)}
-      - ${NO_SSL:+traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.rule=PathPrefix(`zircuit-garfield/node`)}
+      - ${NO_SSL:-traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-garfield/node`)}
+      - ${NO_SSL:+traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.rule=PathPrefix(`/zircuit-garfield/node`)}
       - traefik.http.routers.zircuit-garfield-op-geth-pruned-pebble-hash-node.middlewares=zircuit-garfield-op-geth-pruned-pebble-hash-node-stripprefix, ipallowlist
 
 volumes:

@@ -49,6 +49,7 @@ services:
       - 9545
     command:
       - --ethereum.url=${ETHEREUM_SEPOLIA_EXECUTION_WS}
+      - --feeder-gateway-url=https://feeder.alpha-sepolia.starknet.io/feeder_gateway
       - --http-rpc=0.0.0.0:9545
       - --network=sepolia-testnet
       - --rpc.cors-domains=*

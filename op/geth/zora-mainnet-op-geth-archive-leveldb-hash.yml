@@ -156,8 +156,8 @@ services:
       - traefik.http.services.zora-mainnet-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`zora-mainnet-archive/node`)}
-      - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`zora-mainnet-archive/node`)}
+      - ${NO_SSL:-traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-mainnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`/zora-mainnet-archive/node`)}
       - traefik.http.routers.zora-mainnet-op-geth-archive-leveldb-hash-node.middlewares=zora-mainnet-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:

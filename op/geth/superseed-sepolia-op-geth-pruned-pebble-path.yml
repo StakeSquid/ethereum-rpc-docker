@@ -164,8 +164,8 @@ services:
       - traefik.http.services.superseed-sepolia-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.superseed-sepolia-op-geth-pruned-pebble-path-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.superseed-sepolia-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.superseed-sepolia-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`superseed-sepolia/node`)}
-      - ${NO_SSL:+traefik.http.routers.superseed-sepolia-op-geth-pruned-pebble-path-node.rule=PathPrefix(`superseed-sepolia/node`)}
+      - ${NO_SSL:-traefik.http.routers.superseed-sepolia-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/superseed-sepolia/node`)}
+      - ${NO_SSL:+traefik.http.routers.superseed-sepolia-op-geth-pruned-pebble-path-node.rule=PathPrefix(`/superseed-sepolia/node`)}
       - traefik.http.routers.superseed-sepolia-op-geth-pruned-pebble-path-node.middlewares=superseed-sepolia-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:

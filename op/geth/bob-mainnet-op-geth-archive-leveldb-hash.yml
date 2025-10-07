@@ -156,8 +156,8 @@ services:
       - traefik.http.services.bob-mainnet-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`bob-mainnet-archive/node`)}
-      - ${NO_SSL:+traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`bob-mainnet-archive/node`)}
+      - ${NO_SSL:-traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/bob-mainnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`/bob-mainnet-archive/node`)}
       - traefik.http.routers.bob-mainnet-op-geth-archive-leveldb-hash-node.middlewares=bob-mainnet-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:

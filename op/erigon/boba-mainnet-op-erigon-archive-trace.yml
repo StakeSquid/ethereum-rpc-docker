@@ -154,8 +154,8 @@ services:
       - traefik.http.services.boba-mainnet-op-erigon-archive-trace-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`boba-mainnet-op-erigon/node`)}
-      - ${NO_SSL:+traefik.http.routers.boba-mainnet-op-erigon-archive-trace-node.rule=PathPrefix(`boba-mainnet-op-erigon/node`)}
+      - ${NO_SSL:-traefik.http.routers.boba-mainnet-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/boba-mainnet-op-erigon/node`)}
+      - ${NO_SSL:+traefik.http.routers.boba-mainnet-op-erigon-archive-trace-node.rule=PathPrefix(`/boba-mainnet-op-erigon/node`)}
       - traefik.http.routers.boba-mainnet-op-erigon-archive-trace-node.middlewares=boba-mainnet-op-erigon-archive-trace-node-stripprefix, ipallowlist
 
 volumes:

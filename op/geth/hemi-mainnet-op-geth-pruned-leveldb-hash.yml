@@ -180,8 +180,8 @@ services:
       - traefik.http.services.hemi-mainnet-op-geth-pruned-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`hemi-mainnet/node`)}
-      - ${NO_SSL:+traefik.http.routers.hemi-mainnet-op-geth-pruned-leveldb-hash-node.rule=PathPrefix(`hemi-mainnet/node`)}
+      - ${NO_SSL:-traefik.http.routers.hemi-mainnet-op-geth-pruned-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/hemi-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.hemi-mainnet-op-geth-pruned-leveldb-hash-node.rule=PathPrefix(`/hemi-mainnet/node`)}
       - traefik.http.routers.hemi-mainnet-op-geth-pruned-leveldb-hash-node.middlewares=hemi-mainnet-op-geth-pruned-leveldb-hash-node-stripprefix, ipallowlist
 
   hemi-mainnet-relay:

@@ -157,8 +157,8 @@ services:
       - traefik.http.services.zora-sepolia-op-erigon-archive-trace-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-erigon-archive-trace-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-erigon-archive-trace-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`zora-sepolia-op-erigon/node`)}
-      - ${NO_SSL:+traefik.http.routers.zora-sepolia-op-erigon-archive-trace-node.rule=PathPrefix(`zora-sepolia-op-erigon/node`)}
+      - ${NO_SSL:-traefik.http.routers.zora-sepolia-op-erigon-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/zora-sepolia-op-erigon/node`)}
+      - ${NO_SSL:+traefik.http.routers.zora-sepolia-op-erigon-archive-trace-node.rule=PathPrefix(`/zora-sepolia-op-erigon/node`)}
       - traefik.http.routers.zora-sepolia-op-erigon-archive-trace-node.middlewares=zora-sepolia-op-erigon-archive-trace-node-stripprefix, ipallowlist
 
 volumes:

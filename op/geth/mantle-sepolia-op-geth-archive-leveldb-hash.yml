@@ -155,8 +155,8 @@ services:
       - traefik.http.services.mantle-sepolia-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`mantle-sepolia-archive/node`)}
-      - ${NO_SSL:+traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`mantle-sepolia-archive/node`)}
+      - ${NO_SSL:-traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle-sepolia-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`/mantle-sepolia-archive/node`)}
       - traefik.http.routers.mantle-sepolia-op-geth-archive-leveldb-hash-node.middlewares=mantle-sepolia-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:

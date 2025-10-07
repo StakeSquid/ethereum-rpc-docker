@@ -173,8 +173,8 @@ services:
       - traefik.http.services.celo-alfajores-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`celo-alfajores-archive/node`)}
-      - ${NO_SSL:+traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`celo-alfajores-archive/node`)}
+      - ${NO_SSL:-traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-alfajores-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`/celo-alfajores-archive/node`)}
       - traefik.http.routers.celo-alfajores-op-geth-archive-leveldb-hash-node.middlewares=celo-alfajores-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
   celo-alfajores-archive-relay:

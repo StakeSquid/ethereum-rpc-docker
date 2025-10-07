@@ -160,8 +160,8 @@ services:
       - traefik.http.services.mantle-mainnet-op-geth-pruned-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`mantle-mainnet/node`)}
-      - ${NO_SSL:+traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash-node.rule=PathPrefix(`mantle-mainnet/node`)}
+      - ${NO_SSL:-traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/mantle-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash-node.rule=PathPrefix(`/mantle-mainnet/node`)}
       - traefik.http.routers.mantle-mainnet-op-geth-pruned-leveldb-hash-node.middlewares=mantle-mainnet-op-geth-pruned-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:

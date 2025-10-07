@@ -154,8 +154,8 @@ services:
       - traefik.http.services.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`soneium-minato-sepolia-archive/node`)}
-      - ${NO_SSL:+traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`soneium-minato-sepolia-archive/node`)}
+      - ${NO_SSL:-traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/soneium-minato-sepolia-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`/soneium-minato-sepolia-archive/node`)}
       - traefik.http.routers.soneium-minato-sepolia-op-geth-archive-leveldb-hash-node.middlewares=soneium-minato-sepolia-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:

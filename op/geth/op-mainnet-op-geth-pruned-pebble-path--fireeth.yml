@@ -220,8 +220,8 @@ services:
       - traefik.http.services.op-mainnet-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`op-mainnet/node`)}
-      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path-node.rule=PathPrefix(`op-mainnet/node`)}
+      - ${NO_SSL:-traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/op-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path-node.rule=PathPrefix(`/op-mainnet/node`)}
       - traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path-node.middlewares=op-mainnet-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:

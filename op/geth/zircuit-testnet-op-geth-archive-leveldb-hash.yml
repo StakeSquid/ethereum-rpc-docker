@@ -162,8 +162,8 @@ services:
       - traefik.http.services.zircuit-testnet-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`zircuit-testnet-archive/node`)}
-      - ${NO_SSL:+traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`zircuit-testnet-archive/node`)}
+      - ${NO_SSL:-traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/zircuit-testnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`/zircuit-testnet-archive/node`)}
       - traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash-node.middlewares=zircuit-testnet-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
 
 volumes:

@@ -156,8 +156,8 @@ services:
       - traefik.http.services.mode-mainnet-op-geth-pruned-pebble-hash-node.loadbalancer.server.port=8547
       - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-hash-node.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-hash-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`mode-mainnet/node`)}
-      - ${NO_SSL:+traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-hash-node.rule=PathPrefix(`mode-mainnet/node`)}
+      - ${NO_SSL:-traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/mode-mainnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-hash-node.rule=PathPrefix(`/mode-mainnet/node`)}
       - traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-hash-node.middlewares=mode-mainnet-op-geth-pruned-pebble-hash-node-stripprefix, ipallowlist
 
 volumes:
