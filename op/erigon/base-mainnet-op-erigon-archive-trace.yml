@@ -89,7 +89,6 @@ services:
       - chains
     volumes:
       - ${BASE_MAINNET_OP_ERIGON_ARCHIVE_TRACE_DATA:-base-mainnet-op-erigon-archive-trace}:/root/.local/share/erigon
-      - ./op/base/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -145,7 +144,6 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/base/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:

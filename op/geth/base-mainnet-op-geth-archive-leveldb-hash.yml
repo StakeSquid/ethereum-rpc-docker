@@ -90,7 +90,6 @@ services:
       - chains
     volumes:
       - ${BASE_MAINNET_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-base-mainnet-op-geth-archive-leveldb-hash}:/data
-      - ./op/base/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -144,7 +143,6 @@ services:
     networks:
       - chains
     volumes:
-      - ./op/base/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
