@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   gnosis-mainnet-reth-pruned:
-    image: ${GNOSIS_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${GNOSIS_MAINNET_RETH_VERSION:-v1.8.2}
+    image: ${GNOSIS_RETH_IMAGE:-ghcr.io/gnosischain/reth_gnosis}:${GNOSIS_MAINNET_RETH_VERSION:-v0.1.7}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
