@@ -4,6 +4,8 @@ x-logging-defaults: &logging-defaults
   options:
     max-size: "10m"
     max-file: "3"
+# Snapshot for minial datadir here
+# https://github.com/48Club/bsc-snapshots?tab=readme-ov-file
 
 # Usage:
 #
@@ -62,7 +64,6 @@ services:
       - --datadir=/bsc/.ethereum
       - --db.engine=pebble
       - --gcmode=full
-      - --history.logs.disable=true
       - --history.state=360000
       - --history.transactions=360000
       - --http
