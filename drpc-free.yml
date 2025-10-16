@@ -1,6 +1,6 @@
 services:
   dshackle-free:
-    image: drpcorg/dshackle:0.70.12
+    image: drpcorg/dshackle:0.70.15
     restart: unless-stopped
     volumes:
       - ./free_configs:/etc/dshackle
