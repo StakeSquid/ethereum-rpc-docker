@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   connext-sepolia-archive:
-    image: ${CONNEXT_NITRO_IMAGE:-offchainlabs/nitro-node}:${CONNEXT_SEPOLIA_NITRO_VERSION:-v3.7.4-9244576}
+    image: ${CONNEXT_NITRO_IMAGE:-offchainlabs/nitro-node}:${CONNEXT_SEPOLIA_NITRO_VERSION:-v3.7.6-c0fe95e}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
