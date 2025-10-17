@@ -72,7 +72,6 @@ services:
       - --nat=extip:${IP}
       - --p2p.allowed-ports=32377
       - --p2p.allowed-ports=37377
-      - --polygon.logindex
       - --port=12377
       - --prune.mode=archive
       - --rpc.evmtimeout=${POLYGON_AMOY_ERIGON3_ARCHIVE_TRACE_EVMTIMEOUT:-5m0s}
