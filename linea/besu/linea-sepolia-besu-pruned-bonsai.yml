@@ -57,6 +57,10 @@ services:
       - --Xeth-capability-max=67
       - --data-path=/opt/besu/database
       - --data-storage-format=BONSAI
+      - --engine-host-allowlist=*
+      - --engine-jwt-secret=/jwtsecret
+      - --engine-rpc-enabled=true
+      - --engine-rpc-port=8551
       - --fast-sync-min-peers=1
       - --host-allowlist=*
       - --metrics-enabled=true
@@ -83,6 +87,7 @@ services:
     volumes:
       - ${LINEA_SEPOLIA_BESU_PRUNED_BONSAI_DATA:-linea-sepolia-besu-pruned-bonsai}:/opt/besu/database
       - ./linea/sepolia:/config
+      - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
@@ -108,8 +113,44 @@ services:
       - ${NO_SSL:+traefik.http.routers.linea-sepolia-besu-pruned-bonsai-ws.rule=(Path(`/linea-sepolia`) || Path(`/linea-sepolia/`)) && Headers(`Upgrade`, `websocket`)}
       - traefik.http.routers.linea-sepolia-besu-pruned-bonsai-ws.middlewares=linea-sepolia-besu-pruned-bonsai-stripprefix, ipallowlist
 
+  linea-sepolia-node:
+    build:
+      context: ./linea
+      dockerfile: maru.Dockerfile
+      args:
+        MARU_IMAGE: ${LINEA_SEPOLIA_MARU_IMAGE:-consensys/maru}
+        MARU_VERSION: ${LINEA_SEPOLIA_MARU_VERSION:-bcfdb43}
+    ports:
+      - 19691:19691
+      - 19691:19691/udp
+    expose:
+      - 8080
+    environment:
+      - EL_HOST=linea-sepolia
+      - IP=${IP}
+      - L1_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - P2P_PORT=19691
+    entrypoint: [/bin/bash, -c]
+    command:
+      - |
+        envsubst < /config/maru/config.toml.template > /config.toml
+        exec java -Dlog4j2.configurationFile=/config/maru/log4j.xml -jar /opt/consensys/maru/maru.jar --config=/config.toml --maru-genesis-file=/config/maru/genesis.json "$@"
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ${LINEA_SEPOLIA_BESU_PRUNED_BONSAI__MARU_DATA:-linea-sepolia-besu-pruned-bonsai_maru}:/opt/maru/data
+      - ./linea/sepolia:/config
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9090
+      - prometheus-scrape.path=/debug/metrics/prometheus
+
 volumes:
   linea-sepolia-besu-pruned-bonsai:
+  linea-sepolia-besu-pruned-bonsai_maru:
 
 x-upstreams:
   - id: $${ID}
