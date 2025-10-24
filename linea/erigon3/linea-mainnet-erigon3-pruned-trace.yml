@@ -75,6 +75,7 @@ services:
       - --networkid=59144
       - --p2p.allowed-ports=32622
       - --p2p.allowed-ports=37622
+      - --persist.receipts=false
       - --port=12622
       - --prune.mode=full
       - --rpc.evmtimeout=${LINEA_MAINNET_ERIGON3_PRUNED_TRACE_EVMTIMEOUT:-5m0s}

@@ -21,6 +21,7 @@ reconnect-delay = "500ms"
 [p2p.discovery]
 port = ${P2P_PORT}
 advertise-ip = ${IP}
+bootnodes = []
 refresh-interval = "3s"
 
 [payload-validator]

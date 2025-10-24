@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   blast-sepolia:
-    image: ${BLAST_GETH_IMAGE:-blastio/blast-geth}:${BLAST_SEPOLIA_GETH_VERSION:-sepolia-v1.3.0}
+    image: ${BLAST_GETH_IMAGE:-blastio/blast-geth}:${BLAST_SEPOLIA_GETH_VERSION:-sepolia-v1.4.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -106,7 +106,7 @@ services:
       - traefik.http.routers.blast-sepolia-op-geth-pruned-pebble-hash.middlewares=blast-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipallowlist
 
   blast-sepolia-node:
-    image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_SEPOLIA_NODE_VERSION:-sepolia-v1.3.0}
+    image: ${BLAST_NODE_IMAGE:-blastio/blast-optimism}:${BLAST_SEPOLIA_NODE_VERSION:-sepolia-v1.4.0}
     ports:
       - 16591:16591
       - 16591:16591/udp

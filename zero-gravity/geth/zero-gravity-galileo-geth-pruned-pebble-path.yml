@@ -35,7 +35,7 @@ services:
       context: ./zero-gravity
       dockerfile: zerog.Dockerfile
       args:
-        ZERO_GRAVITY_VERSION: ${ZERO_GRAVITY_GALILEO_ZEROG_VERSION:-3.0.0}
+        ZERO_GRAVITY_VERSION: ${ZERO_GRAVITY_GALILEO_ZEROG_VERSION:-3.0.2}
         ZERO_GRAVITY_CHAIN_SPEC: galileo
     sysctls:
       # TCP Performance
@@ -115,7 +115,7 @@ services:
       context: ./zero-gravity
       dockerfile: zerog.Dockerfile
       args:
-        ZERO_GRAVITY_VERSION: ${ZERO_GRAVITY_GALILEO_ZEROG_VERSION:-3.0.0}
+        ZERO_GRAVITY_VERSION: ${ZERO_GRAVITY_GALILEO_ZEROG_VERSION:-3.0.2}
         ZERO_GRAVITY_CHAIN_SPEC: galileo
     ports:
       - 16172:16172
