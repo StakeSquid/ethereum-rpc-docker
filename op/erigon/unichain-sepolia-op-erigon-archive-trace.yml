@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   unichain-sepolia-op-erigon-node:
-    image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_SEPOLIA_NODE_VERSION:-v1.13.7}
+    image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_SEPOLIA_NODE_VERSION:-v1.14.3}
     ports:
       - 18196:18196
       - 18196:18196/udp

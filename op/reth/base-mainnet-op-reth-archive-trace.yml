@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   base-mainnet-op-reth-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.13.7}
+    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.14.3}
     ports:
       - 19221:19221
       - 19221:19221/udp

@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   soneium-mainnet-op-erigon-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.13.7}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.14.3}
     ports:
       - 18689:18689
       - 18689:18689/udp

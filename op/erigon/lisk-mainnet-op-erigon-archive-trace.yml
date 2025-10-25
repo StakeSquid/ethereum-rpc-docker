@@ -109,7 +109,7 @@ services:
     shm_size: 2gb
 
   lisk-mainnet-op-erigon-node:
-    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.13.7}
+    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.14.3}
     ports:
       - 19831:19831
       - 19831:19831/udp
