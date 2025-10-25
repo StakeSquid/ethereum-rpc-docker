@@ -49,7 +49,7 @@ services:
       args:
         LLVM_IMAGE: ${LLVM_IMAGE:-snowstep/llvm}
         LLVM_VERSION: ${LLVM_VERSION:-20250912105042}
-        RETH_VERSION: ${BSC_MAINNET_RETH_VERSION:-v0.0.4}
+        RETH_VERSION: ${BSC_MAINNET_RETH_VERSION:-v0.0.4-archivenode-alpha}
         RETH_REPO: ${BSC_MAINNET_RETH_REPO:-https://github.com/bnb-chain/reth-bsc.git}
         ARCH_TARGET: ${ARCH_TARGET:-native}
         PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
@@ -86,6 +86,7 @@ services:
       - --engine.memory-block-buffer-target=128
       - --engine.parallel-sparse-trie
       - --engine.persistence-threshold=0
+      - --gpomaxprice=1000000
       - --http
       - --http.addr=0.0.0.0
       - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
@@ -95,6 +96,7 @@ services:
       - --max-outbound-peers=50
       - --metrics=0.0.0.0:9001
       - --nat=extip:${IP}
+      - --pooled-tx-response-soft-limit=20971520
       - --port=13454
       - --rpc-cache.max-blocks=10000
       - --rpc-cache.max-concurrent-db-requests=2048
