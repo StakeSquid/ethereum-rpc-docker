@@ -87,5 +87,41 @@ services:
       - traefik.http.routers.linea-mainnet-erigon-archive-trace.middlewares=linea-mainnet-erigon-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
     
+linea-erigon-node:
+    build:
+      context: ./linea
+      dockerfile: maru.Dockerfile
+      args:
+        MARU_IMAGE: ${LINEA_MAINNET_MARU_IMAGE:-consensys/maru}
+        MARU_VERSION: ${LINEA_MAINNET_MARU_VERSION:-bcfdb43}
+    ports:
+      - 15060:15060
+      - 15060:15060/udp
+    expose:
+      - 8080
+    environment:
+      - EL_HOST=linea-erigon
+      - IP=${IP}
+      - L1_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - P2P_PORT=15060
+    entrypoint: [/bin/bash, -c]
+    command:
+      - |
+        envsubst < /config/maru/config.toml.template > /config.toml
+        exec java -Dlog4j2.configurationFile=/config/maru/log4j.xml -jar /opt/consensys/maru/maru.jar --config=/config.toml --maru-genesis-file=/config/maru/genesis.json "$@"
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ${LINEA_MAINNET_ERIGON_ARCHIVE_TRACE__MARU_DATA:-linea-mainnet-erigon-archive-trace_maru}:/opt/maru/data
+      - ./linea/mainnet:/config
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9090
+      - prometheus-scrape.path=/debug/metrics/prometheus
+
 volumes:
-    linea-mainnet-erigon-archive-trace:
+  linea-mainnet-erigon-archive-trace:
+  linea-mainnet-erigon-archive-trace_maru:
