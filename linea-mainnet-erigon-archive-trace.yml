@@ -116,7 +116,6 @@ services:
       - ${LINEA_MAINNET_ERIGON_ARCHIVE_TRACE__MARU_DATA:-linea-mainnet-erigon-archive-trace_maru}:/opt/maru/data
       - ./linea/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
-    logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=true
       - prometheus-scrape.port=9090
