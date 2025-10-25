@@ -5,12 +5,9 @@ set -e
 
 ERIGON_HOME=/root/.local/share/erigon
 
-if [ ! -f "${ERIGON_HOME}/bootstrapped" ];
-then
-  echo "write the custom genesis block"
-  mkdir -p ${ERIGON_HOME:-/root/.local/share/erigon}
-  erigon init --datadir ${ERIGON_HOME:-/root/.local/share/erigon} /configs/mainnet/shared/genesis.json
-  touch "${ERIGON_HOME}/bootstrapped"
-fi
+# only needed once but doesn't hurt every time we start the container
+echo "write the custom genesis block"
+mkdir -p ${ERIGON_HOME:-/root/.local/share/erigon}
+erigon init --datadir ${ERIGON_HOME:-/root/.local/share/erigon} /configs/mainnet/shared/genesis.json
 
 exec erigon $@
