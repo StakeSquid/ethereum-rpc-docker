@@ -38,6 +38,7 @@ services:
       - ${LINEA_MAINNET_ERIGON_ARCHIVE_TRACE_DATA:-linea-mainnet-erigon-archive-trace}:/root/.local/share/erigon
       - ./linea/mainnet:/configs/mainnet/shared
       - ./linea/scripts/entrypoint.erigon.sh:/entrypoint.sh
+      - .jwtsecret:/jwtsecret:ro
     networks:
       - chains
     entrypoint: /entrypoint.sh
