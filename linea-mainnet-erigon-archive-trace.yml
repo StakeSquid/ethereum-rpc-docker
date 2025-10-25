@@ -87,7 +87,7 @@ services:
       - traefik.http.routers.linea-mainnet-erigon-archive-trace.middlewares=linea-mainnet-erigon-archive-trace-stripprefix, ipallowlist
     shm_size: 2gb
     
-linea-erigon-node:
+  linea-erigon-node:
     build:
       context: ./linea
       dockerfile: maru.Dockerfile
