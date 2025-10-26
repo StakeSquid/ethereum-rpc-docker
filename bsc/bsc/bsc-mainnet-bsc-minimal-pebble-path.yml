@@ -76,6 +76,7 @@ services:
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
+      - --multidatabase=true
       - --nat=extip:${IP}
       - --port=14596
       - --rpc.gascap=600000000
