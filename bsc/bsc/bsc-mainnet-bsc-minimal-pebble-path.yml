@@ -64,6 +64,7 @@ services:
       - --datadir=/bsc/.ethereum
       - --db.engine=pebble
       - --gcmode=full
+      - --history.logs=0
       - --history.state=360000
       - --history.transactions=360000
       - --http
