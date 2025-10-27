@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ethereum-holesky-geth:
-    image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_HOLESKY_GETH_VERSION:-v1.15.11}
+    image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_HOLESKY_GETH_VERSION:-v1.16.5}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
