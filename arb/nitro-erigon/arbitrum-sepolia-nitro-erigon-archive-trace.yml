@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   arbitrum-sepolia-nitro-erigon-archive:
-    image: ${ARBITRUM_NITRO_ERIGON_IMAGE:-erigontech/nitro-erigon}:${ARBITRUM_SEPOLIA_NITRO_ERIGON_VERSION:-main-e98e834}
+    image: ${ARBITRUM_NITRO_ERIGON_IMAGE:-erigontech/nitro-erigon}:${ARBITRUM_SEPOLIA_NITRO_ERIGON_VERSION:-main-86d8b56}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -79,6 +79,7 @@ services:
       - --rpc.overlay.getlogstimeout=${ARBITRUM_SEPOLIA_NITRO_ERIGON_ARCHIVE_TRACE_GETLOGSTIMEOUT:-5m0s}
       - --rpc.overlay.replayblocktimeout=${ARBITRUM_SEPOLIA_NITRO_ERIGON_ARCHIVE_TRACE_REPLAYBLOCKTIMEOUT:-10s}
       - --rpc.returndata.limit=10000000
+      - --sync.loop.block.limit=100000
       - --torrent.port=26387
       - --ws
       - --ws.port=8545
