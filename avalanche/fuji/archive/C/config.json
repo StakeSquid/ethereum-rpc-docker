@@ -1,4 +1,6 @@
 {
     "state-sync-enabled": false,
-    "pruning-enabled": false
+    "pruning-enabled": false,
+    "rpc-gas-cap": 2500000000,
+    "eth-rpc-gas-limit": 2500000000
 }

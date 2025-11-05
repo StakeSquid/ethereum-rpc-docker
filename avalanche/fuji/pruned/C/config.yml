@@ -1,0 +1,4 @@
+{
+    "rpc-gas-cap": 2500000000,
+    "eth-rpc-gas-limit": 2500000000
+}
