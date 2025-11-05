@@ -4,6 +4,7 @@
     "net-api-enabled": true,
     "rpc-gas-cap": 2500000000,
     "rpc-tx-fee-cap": 100,
+    "eth-rpc-gas-limit": 2500000000,
     "eth-api-enabled": true,
     "personal-api-enabled": false,
     "tx-pool-api-enabled": false,
