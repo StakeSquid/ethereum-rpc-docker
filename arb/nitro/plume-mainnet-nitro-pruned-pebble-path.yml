@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.plume-mainnet-nitro-pruned-pebble-path.middlewares=plume-mainnet-nitro-pruned-pebble-path-stripprefix, ipallowlist
 
   plume-mainnet-relay:
-    image: ${PLUME_CELESTIA_IMAGE:-ghcr.io/celestiaorg/nitro-das-celestia}:${PLUME_MAINNET_CELESTIA_VERSION:-v0.5.4}
+    image: ${PLUME_CELESTIA_IMAGE:-ghcr.io/celestiaorg/nitro-das-celestia}:${PLUME_MAINNET_CELESTIA_VERSION:-v0.5.6}
     expose:
       - 80
     entrypoint: [/bin/celestia-server]

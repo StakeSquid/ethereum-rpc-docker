@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   metal-mainnet-op-erigon-node:
-    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_MAINNET_NODE_VERSION:-v1.14.3}
+    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_MAINNET_NODE_VERSION:-v1.16.0}
     ports:
       - 15543:15543
       - 15543:15543/udp

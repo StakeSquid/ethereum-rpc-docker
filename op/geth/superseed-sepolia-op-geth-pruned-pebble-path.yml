@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   superseed-sepolia:
-    image: ${SUPERSEED_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SUPERSEED_SEPOLIA_GETH_VERSION:-v1.101603.2}
+    image: ${SUPERSEED_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SUPERSEED_SEPOLIA_GETH_VERSION:-v1.101603.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -111,7 +111,7 @@ services:
       - traefik.http.routers.superseed-sepolia-op-geth-pruned-pebble-path.middlewares=superseed-sepolia-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   superseed-sepolia-node:
-    image: ${SUPERSEED_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SUPERSEED_SEPOLIA_NODE_VERSION:-v1.14.3}
+    image: ${SUPERSEED_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SUPERSEED_SEPOLIA_NODE_VERSION:-v1.16.0}
     ports:
       - 17522:17522
       - 17522:17522/udp

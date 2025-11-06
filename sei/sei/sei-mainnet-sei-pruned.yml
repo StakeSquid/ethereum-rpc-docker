@@ -37,7 +37,7 @@ services:
       context: ./sei
       dockerfile: sei.Dockerfile
       args:
-        SEI_VERSION: ${SEI_MAINNET_SEI_VERSION:-v6.2.3}
+        SEI_VERSION: ${SEI_MAINNET_SEI_VERSION:-v6.2.4}
         SEI_IMAGE: ${SEI_MAINNET_SEI_IMAGE:-ghcr.io/sei-protocol/sei}
     sysctls:
       # TCP Performance

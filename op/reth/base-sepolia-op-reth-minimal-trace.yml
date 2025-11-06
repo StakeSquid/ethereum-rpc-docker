@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   base-sepolia-op-reth-minimal:
-    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_SEPOLIA_RETH_VERSION:-v1.8.2}
+    image: ${BASE_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${BASE_SEPOLIA_RETH_VERSION:-v1.9.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   base-sepolia-op-reth-minimal-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.14.3}
+    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.16.0}
     ports:
       - 17165:17165
       - 17165:17165/udp

@@ -32,7 +32,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   bsc-mainnet-minimal:
-    image: ${BSC_BSC_IMAGE:-ghcr.io/bnb-chain/bsc}:${BSC_MAINNET_BSC_VERSION:-1.6.1-beta}
+    image: ${BSC_BSC_IMAGE:-ghcr.io/bnb-chain/bsc}:${BSC_MAINNET_BSC_VERSION:-1.6.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
