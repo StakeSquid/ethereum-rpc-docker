@@ -1,0 +1,183 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:berachain/geth/berachain-mainnet-geth-pruned-pebble-path.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/berachain-mainnet-geth \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  berachain-mainnet-geth:
+    image: ${BERACHAIN_GETH_IMAGE:-ghcr.io/berachain/bera-geth}:${BERACHAIN_MAINNET_GETH_VERSION:-v1.011602.7}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 11562:11562
+      - 11562:11562/udp
+    expose:
+      - 8545
+      - 6060
+      - 8551
+    environment:
+      - CHAINID=80094
+      - CHAINNAME=mainnet
+      - CHAIN_SPEC=mainnet
+      - GETH_BOOTNODES=enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303,enode://b6a3137d3a36ef37c4d31843775a9dc293f41bcbde33b6309c80b1771b6634827cd188285136a57474427bd8845adc2f6fe2e0b106bd58d14795b08910b9c326@34.64.181.70:30303,enode://0b6633300614bc2b9749aee0cace7a091ec5348762aee7b1d195f7616d03a9409019d9bef336624bab72e0d069cd4cf0b0de6fbbf53f04f6b6e4c5b39c6bdca6@34.64.39.31:30303,enode://552b001abebb5805fcd734ad367cd05d9078d18f23ec598d7165460fadcfc51116ad95c418f7ea9a141aa8cbc496c8bea3322b67a5de0d3380f11aab1a797513@34.64.183.158:30303,enode://5b037f66099d5ded86eb7e1619f6d06ceb15609e8cc345ced22a4772b06178004e1490a3cd32fd1222789de4c6e4021c2d648a3d750f6d5323e64b771bbd8de7@34.87.142.180:30303,enode://846db253c53753d3ea1197aec296306dc84c25f3afdf142b65cb0fe0f984de55072daa3bbf05a9aea046a38a2292403137b6eafefd5646fcf62120b74e3b898d@34.142.170.110:30303,enode://64b7f6ee9bcd942ad4949c70f2077627f078a057dfd930e6e904e12643d8952f5ae87c91e24559765393f244a72c9d5c011d7d5176e59191d38f315db85a20f5@34.126.161.16:30303,enode://cf4d19bfb8ec507427ec882bac0bac85a0c8c9ddaa0ec91b773bb614e5e09d107cd9fbe323b96f62f31c493f8f42cc5495c18b87c08560c5dea1dfd25256dcf6@35.247.162.2:30303,enode://bb7e44178543431feac8f0ee3827056b7b84d8235b802a8bdbbcd4939dab7f7dd2579ff577a38b002bb0139792af67abd2dd5c9f4f85b8da6e914fa76dca82bc@35.198.150.35:30303,enode://8fef1f5df45e7b31be00a21e1da5665d5a5f5bf4c379086b843f03eade941bdd157f08c95b31880c492577edb9a9b185df7191eaebf54ab06d5bd683b289f3af@34.107.7.241:30303,enode://ce9c87cfe089f6811d26c96913fa3ec10b938d9017fc6246684c74a33679ee34ceca9447180fb509e37bf2b706c2877a82085d34bfd83b5b520ee1288b0fc32f@35.198.109.49:30303,enode://713657eb6a53feadcbc47e634ad557326a51eb6818a3e19a00a8111492f50a666ccbf2f5d334d247ecf941e68d242ef5c3b812b63c44d381ef11f79c2cdb45c7@34.141.15.100:30303,enode://d071fa740e063ce1bb9cdc2b7937baeff6dc4000f91588d730a731c38a6ff0d4015814812c160fab8695e46f74b9b618735368ea2f16db4d785f16d29b3fb7b0@35.203.2.210:30303,enode://ffc452fe451a2e5f89fe634744aea334d92dcd30d881b76209d2db7dbf4b7ee047e7c69a5bb1633764d987a7441d9c4bc57ccdbfd6442a2f860bf953bc89a9b9@34.152.50.224:30303,enode://da94328302a1d1422209d1916744e90b6095a48b2340dcec39b22002c098bb4d58a880dab98eb26edf03fa4705d1b62f99a8c5c14e6666e4726b6d3066d8a4d7@34.95.61.106:30303,enode://19c7671a4844699b481e81a5bcfe7bafc7fefa953c16ebbe1951b1046371e73839e9058de6b7d3c934318fe7e7233dde3621c1c1018eb8b294ea3d4516147150@35.203.82.137:30303
+    command:
+      - --bootnodes=enode://0c5a4a3c0e81fce2974e4d317d88df783731183d534325e32e0fdf8f4b119d7889fa254d3a38890606ec300d744e2aa9c87099a4a032f5c94efe53f3fcdfecfe@34.64.176.79:30303,enode://b6a3137d3a36ef37c4d31843775a9dc293f41bcbde33b6309c80b1771b6634827cd188285136a57474427bd8845adc2f6fe2e0b106bd58d14795b08910b9c326@34.64.181.70:30303,enode://0b6633300614bc2b9749aee0cace7a091ec5348762aee7b1d195f7616d03a9409019d9bef336624bab72e0d069cd4cf0b0de6fbbf53f04f6b6e4c5b39c6bdca6@34.64.39.31:30303,enode://552b001abebb5805fcd734ad367cd05d9078d18f23ec598d7165460fadcfc51116ad95c418f7ea9a141aa8cbc496c8bea3322b67a5de0d3380f11aab1a797513@34.64.183.158:30303,enode://5b037f66099d5ded86eb7e1619f6d06ceb15609e8cc345ced22a4772b06178004e1490a3cd32fd1222789de4c6e4021c2d648a3d750f6d5323e64b771bbd8de7@34.87.142.180:30303,enode://846db253c53753d3ea1197aec296306dc84c25f3afdf142b65cb0fe0f984de55072daa3bbf05a9aea046a38a2292403137b6eafefd5646fcf62120b74e3b898d@34.142.170.110:30303,enode://64b7f6ee9bcd942ad4949c70f2077627f078a057dfd930e6e904e12643d8952f5ae87c91e24559765393f244a72c9d5c011d7d5176e59191d38f315db85a20f5@34.126.161.16:30303,enode://cf4d19bfb8ec507427ec882bac0bac85a0c8c9ddaa0ec91b773bb614e5e09d107cd9fbe323b96f62f31c493f8f42cc5495c18b87c08560c5dea1dfd25256dcf6@35.247.162.2:30303,enode://bb7e44178543431feac8f0ee3827056b7b84d8235b802a8bdbbcd4939dab7f7dd2579ff577a38b002bb0139792af67abd2dd5c9f4f85b8da6e914fa76dca82bc@35.198.150.35:30303,enode://8fef1f5df45e7b31be00a21e1da5665d5a5f5bf4c379086b843f03eade941bdd157f08c95b31880c492577edb9a9b185df7191eaebf54ab06d5bd683b289f3af@34.107.7.241:30303,enode://ce9c87cfe089f6811d26c96913fa3ec10b938d9017fc6246684c74a33679ee34ceca9447180fb509e37bf2b706c2877a82085d34bfd83b5b520ee1288b0fc32f@35.198.109.49:30303,enode://713657eb6a53feadcbc47e634ad557326a51eb6818a3e19a00a8111492f50a666ccbf2f5d334d247ecf941e68d242ef5c3b812b63c44d381ef11f79c2cdb45c7@34.141.15.100:30303,enode://d071fa740e063ce1bb9cdc2b7937baeff6dc4000f91588d730a731c38a6ff0d4015814812c160fab8695e46f74b9b618735368ea2f16db4d785f16d29b3fb7b0@35.203.2.210:30303,enode://ffc452fe451a2e5f89fe634744aea334d92dcd30d881b76209d2db7dbf4b7ee047e7c69a5bb1633764d987a7441d9c4bc57ccdbfd6442a2f860bf953bc89a9b9@34.152.50.224:30303,enode://da94328302a1d1422209d1916744e90b6095a48b2340dcec39b22002c098bb4d58a880dab98eb26edf03fa4705d1b62f99a8c5c14e6666e4726b6d3066d8a4d7@34.95.61.106:30303,enode://19c7671a4844699b481e81a5bcfe7bafc7fefa953c16ebbe1951b1046371e73839e9058de6b7d3c934318fe7e7233dde3621c1c1018eb8b294ea3d4516147150@35.203.82.137:30303
+      - --datadir=/root/.ethereum
+      - --db.engine=pebble
+      - --gcmode=full
+      - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --nat=extip:${IP}
+      - --port=11562
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=path
+      - --syncmode=snap
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${BERACHAIN_MAINNET_GETH_PRUNED_PEBBLE_PATH_DATA:-berachain-mainnet-geth-pruned-pebble-path}:/root/.ethereum
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.berachain-mainnet-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/berachain-mainnet-geth
+      - traefik.http.services.berachain-mainnet-geth-pruned-pebble-path.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.berachain-mainnet-geth-pruned-pebble-path.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.berachain-mainnet-geth-pruned-pebble-path.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.berachain-mainnet-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/berachain-mainnet-geth`) || Path(`/berachain-mainnet-geth/`))}
+      - ${NO_SSL:+traefik.http.routers.berachain-mainnet-geth-pruned-pebble-path.rule=Path(`/berachain-mainnet-geth`) || Path(`/berachain-mainnet-geth/`)}
+      - traefik.http.routers.berachain-mainnet-geth-pruned-pebble-path.middlewares=berachain-mainnet-geth-pruned-pebble-path-stripprefix, ipallowlist
+
+  berachain-mainnet-geth-node:
+    build:
+      context: ./berachain
+      dockerfile: beacon-kit.Dockerfile
+      args:
+        BEACONKIT_VERSION: ${BERACHAIN_MAINNET_BEACON_KIT_VERSION:-v1.3.3}
+        BEACONKIT_IMAGE: ${BERACHAIN_MAINNET_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}
+    ports:
+      - 16562:16562
+      - 16562:16562/udp
+    environment:
+      - AUTH_RPC=http://berachain-mainnet-geth:8551
+      - CHAINID=80094
+      - CHAINNAME=mainnet
+      - CHAIN_SPEC=mainnet
+      - IP=${IP}
+      - MONIKER=d${DOMAIN:-local}
+      - P2P_PORT=16562
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ${BERACHAIN_MAINNET_GETH_PRUNED_PEBBLE_PATH__BEACON_KIT_DATA:-berachain-mainnet-geth-pruned-pebble-path_beacon-kit}:/root/.beacond/data
+      - .jwtsecret:/jwtsecret:ro
+      - berachain-mainnet-geth-pruned-pebble-path_config:/root/.beacond/config
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+
+volumes:
+  berachain-mainnet-geth-pruned-pebble-path:
+  berachain-mainnet-geth-pruned-pebble-path_beacon-kit:
+  berachain-mainnet-geth-pruned-pebble-path_config:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: berachain
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+        # not compatible with path state scheme
+        - name: debug_traceBlockByHash
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
