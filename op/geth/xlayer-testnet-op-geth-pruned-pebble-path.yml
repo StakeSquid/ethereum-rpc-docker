@@ -51,35 +51,42 @@ services:
     expose:
       - 8545
       - 6060
+      - 8551
     environment:
       - GENESIS_URL=https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.tar.gz
+      - GETH_NETWORKID=1952
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://testrpc.xlayer.tech
     entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && (mkdir -p /config/tmp && wget -qO- "https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.tar.gz" | tar -xzf - -C /config/tmp && mv /config/tmp/*.json /config/genesis.json && rm -rf /config/tmp); [ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
     command:
       - --config=/config/geth.toml
       - --datadir=/data
       - --db.engine=pebble
       - --gcmode=full
-      - --http
-      - --http.addr=0.0.0.0
-      - --http.api=eth,net,web3,debug,admin,txpool,engine
-      - --http.port=8545
-      - --http.vhosts=*
       - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
       - --port=13528
+      - --rollup.enabletxpooladmission
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
       - --syncmode=snap
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=eth,net,web3,debug,admin,txpool,engine
       - --ws.origins=*
       - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
@@ -87,6 +94,7 @@ services:
     volumes:
       - ${XLAYER_TESTNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-xlayer-testnet-op-geth-pruned-pebble-path}:/data
       - ./op/xlayer/testnet:/config
+      - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
     labels:
@@ -101,6 +109,62 @@ services:
       - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/xlayer-testnet`) || Path(`/xlayer-testnet/`))}
       - ${NO_SSL:+traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path.rule=Path(`/xlayer-testnet`) || Path(`/xlayer-testnet/`)}
       - traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path.middlewares=xlayer-testnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
+
+  xlayer-testnet-node:
+    image: ${XLAYER_NODE_IMAGE:-xlayer/op-node}:${XLAYER_TESTNET_NODE_VERSION:-0.0.9}
+    ports:
+      - 18528:18528
+      - 18528:18528/udp
+    environment:
+      - GENESIS_URL=https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.tar.gz
+      - OP_NODE_CONDUCTOR_ENABLED=false
+      - OP_NODE_L1_BEACON=${ETHEREUM_TESTNET_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_TESTNET_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_TESTNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_TESTNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_TESTNET_EXECUTION_TRUST:-false}
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://xlayer-testnet:8551
+      - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=18528
+      - OP_NODE_P2P_LISTEN_UDP_PORT=18528
+      - OP_NODE_P2P_STATIC=/ip4/47.242.219.101/tcp/9223/p2p/16Uiu2HAkwUdbn9Q7UBKQYRsfjm9SQX5Yc2e96HUz2pyR3cw1FZLv,/ip4/47.242.235.15/tcp/9223/p2p/16Uiu2HAmThDG9xMpADbyGo1oCU8fndztwNg1PH6A7yp1BhCk5jfE
+      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
+      - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [/app/op-node/bin/op-node]
+    restart: unless-stopped
+    depends_on:
+      - xlayer-testnet
+    networks:
+      - chains
+    volumes:
+      - ./op/xlayer/testnet:/config
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.xlayer-testnet-op-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/xlayer-testnet/node
+      - traefik.http.services.xlayer-testnet-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/xlayer-testnet/node`)}
+      - ${NO_SSL:+traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.rule=PathPrefix(`/xlayer-testnet/node`)}
+      - traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.middlewares=xlayer-testnet-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:
   xlayer-testnet-op-geth-pruned-pebble-path:
