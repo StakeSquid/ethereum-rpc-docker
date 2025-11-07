@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   base-sepolia-op-erigon-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.16.0}
+    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_SEPOLIA_NODE_VERSION:-v1.16.1}
     ports:
       - 18487:18487
       - 18487:18487/udp

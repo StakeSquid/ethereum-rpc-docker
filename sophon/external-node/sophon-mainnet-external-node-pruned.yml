@@ -70,7 +70,7 @@ services:
       - EN_L1_BATCH_COMMIT_DATA_GENERATOR_MODE=Validium
       - EN_L1_CHAIN_ID=1
       - EN_L2_CHAIN_ID=50104
-      - EN_MAIN_NODE_URL=https://mainnet.avail-rpc.com
+      - EN_MAIN_NODE_URL=https://rpc.sophon.xyz
       - EN_MAX_RESPONSE_BODY_SIZE_MB=30
       - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
       - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
@@ -83,6 +83,7 @@ services:
       - EN_STATE_CACHE_PATH=./db/ext-node/state_keeper
       - EN_WS_PORT=8546
       - RUST_LOG=warn,zksync=info,zksync_core::metadata_calculator=debug,zksync_state=info,zksync_utils=info,zksync_web3_decl::client=error
+    command: ['--components=all,da_fetcher']
     restart: unless-stopped
     stop_grace_period: 5m
     networks:

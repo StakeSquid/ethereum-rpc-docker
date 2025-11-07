@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ink-mainnet-archive:
-    image: ${INK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${INK_MAINNET_GETH_VERSION:-v1.101603.3}
+    image: ${INK_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${INK_MAINNET_GETH_VERSION:-v1.101603.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.ink-mainnet-op-geth-archive-leveldb-hash.middlewares=ink-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   ink-mainnet-archive-node:
-    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_MAINNET_NODE_VERSION:-v1.16.0}
+    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_MAINNET_NODE_VERSION:-v1.16.1}
     ports:
       - 15713:15713
       - 15713:15713/udp

@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   zora-sepolia-archive:
-    image: ${ZORA_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${ZORA_SEPOLIA_GETH_VERSION:-v1.101603.3}
+    image: ${ZORA_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${ZORA_SEPOLIA_GETH_VERSION:-v1.101603.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.zora-sepolia-op-geth-archive-leveldb-hash.middlewares=zora-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   zora-sepolia-archive-node:
-    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_SEPOLIA_NODE_VERSION:-v1.16.0}
+    image: ${ZORA_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${ZORA_SEPOLIA_NODE_VERSION:-v1.16.1}
     ports:
       - 15308:15308
       - 15308:15308/udp

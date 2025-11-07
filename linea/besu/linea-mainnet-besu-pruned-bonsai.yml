@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   linea-mainnet:
-    image: ${LINEA_BESU_IMAGE:-consensys/linea-besu-package}:${LINEA_MAINNET_BESU_VERSION:-beta-v4.0-rc20-20251103213749-4b05d3e}
+    image: ${LINEA_BESU_IMAGE:-consensys/linea-besu-package}:${LINEA_MAINNET_BESU_VERSION:-beta-v4.0-rc21-20251106170305-699656b}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
