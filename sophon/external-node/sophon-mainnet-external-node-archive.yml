@@ -24,12 +24,12 @@ x-logging-defaults: &logging-defaults
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/sophon-mainnet-external-node-archive \
+# curl -X POST https://${IP}.traefik.me/sophon-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  sophon-mainnet-external-node-archive:
+  sophon-mainnet-archive:
     image: ${SOPHON_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${SOPHON_MAINNET_EXTERNAL_NODE_VERSION:-v29.1.2}
     sysctls:
       # TCP Performance
@@ -53,7 +53,7 @@ services:
       - 8546
     environment:
       - DATABASE_POOL_SIZE=50
-      - DATABASE_URL=postgres://postgres:notsecurepassword@sophon-mainnet-external-node-archive-db:5430/zksync_local_ext_node
+      - DATABASE_URL=postgres://postgres:notsecurepassword@sophon-mainnet-archive-db:5430/zksync_local_ext_node
       - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
       - EN_CONSENSUS_CONFIG_PATH=/config/consensus_config.yaml
       - EN_DA_API_NODE_URL=wss://mainnet.avail-rpc.com/
@@ -63,14 +63,14 @@ services:
       - EN_DA_CLIENT=Avail
       - EN_DA_SECRETS_SEED_PHRASE=fuel index outdoor orbit pulp affair basket bus great afraid cabin also
       - EN_DA_TIMEOUT_MS=20000
-      - EN_ETH_CLIENT_URL=${ETHEREUM__EXECUTION_RPC}
+      - EN_ETH_CLIENT_URL=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - EN_EVM_EMULATOR_HASH=0x0000000000000000000000000000000000000000000000000000000000000000
       - EN_HEALTHCHECK_PORT=3081
       - EN_HTTP_PORT=8545
       - EN_L1_BATCH_COMMIT_DATA_GENERATOR_MODE=Validium
       - EN_L1_CHAIN_ID=1
       - EN_L2_CHAIN_ID=50104
-      - EN_MAIN_NODE_URL=
+      - EN_MAIN_NODE_URL=https://mainnet.avail-rpc.com
       - EN_MAX_RESPONSE_BODY_SIZE_MB=30
       - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
       - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
@@ -95,12 +95,12 @@ services:
     labels:
       - prometheus-scrape.enabled=false
       - traefik.enable=true
-      - traefik.http.middlewares.sophon-mainnet-external-node-archive-stripprefix.stripprefix.prefixes=/sophon-mainnet-external-node-archive
+      - traefik.http.middlewares.sophon-mainnet-external-node-archive-stripprefix.stripprefix.prefixes=/sophon-mainnet-archive
       - traefik.http.services.sophon-mainnet-external-node-archive.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-archive.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-archive.rule=Host(`$DOMAIN`) && (Path(`/sophon-mainnet-external-node-archive`) || Path(`/sophon-mainnet-external-node-archive/`))}
-      - ${NO_SSL:+traefik.http.routers.sophon-mainnet-external-node-archive.rule=Path(`/sophon-mainnet-external-node-archive`) || Path(`/sophon-mainnet-external-node-archive/`)}
+      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-archive.rule=Host(`$DOMAIN`) && (Path(`/sophon-mainnet-archive`) || Path(`/sophon-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.sophon-mainnet-external-node-archive.rule=Path(`/sophon-mainnet-archive`) || Path(`/sophon-mainnet-archive/`)}
       - traefik.http.routers.sophon-mainnet-external-node-archive.middlewares=sophon-mainnet-external-node-archive-stripprefix, ipallowlist
       - traefik.http.routers.sophon-mainnet-external-node-archive.priority=50   # gets any request that is not GET with UPGRADE header
       - traefik.http.routers.sophon-mainnet-external-node-archive-ws.priority=100   # answers GET requests first
@@ -109,11 +109,11 @@ services:
       - traefik.http.routers.sophon-mainnet-external-node-archive.service=sophon-mainnet-external-node-archive
       - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-archive-ws.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-archive-ws.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-archive-ws.rule=Host(`$DOMAIN`) && (Path(`/sophon-mainnet-external-node-archive`) || Path(`/sophon-mainnet-external-node-archive/`)) && Headers(`Upgrade`, `websocket`)}
-      - ${NO_SSL:+traefik.http.routers.sophon-mainnet-external-node-archive-ws.rule=(Path(`/sophon-mainnet-external-node-archive`) || Path(`/sophon-mainnet-external-node-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-archive-ws.rule=Host(`$DOMAIN`) && (Path(`/sophon-mainnet-archive`) || Path(`/sophon-mainnet-archive/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.sophon-mainnet-external-node-archive-ws.rule=(Path(`/sophon-mainnet-archive`) || Path(`/sophon-mainnet-archive/`)) && Headers(`Upgrade`, `websocket`)}
       - traefik.http.routers.sophon-mainnet-external-node-archive-ws.middlewares=sophon-mainnet-external-node-archive-stripprefix, ipallowlist
 
-  sophon-mainnet-external-node-archive-db:
+  sophon-mainnet-archive-db:
     image: postgres:14
     expose:
       - 5430
