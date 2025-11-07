@@ -33,7 +33,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ethereum-mainnet-reth-minimal:
-    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.9.0}
+    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_MAINNET_RETH_VERSION:-v1.8.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

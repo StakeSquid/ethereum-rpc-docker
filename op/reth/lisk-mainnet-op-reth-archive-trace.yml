@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   lisk-mainnet-op-reth:
-    image: ${LISK_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${LISK_MAINNET_RETH_VERSION:-v1.9.0}
+    image: ${LISK_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${LISK_MAINNET_RETH_VERSION:-v1.8.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
