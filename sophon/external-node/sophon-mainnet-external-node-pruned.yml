@@ -1,0 +1,172 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:sophon/external-node/sophon-mainnet-external-node-pruned.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/sophon-mainnet-external-node \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  sophon-mainnet-external-node:
+    image: ${SOPHON_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${SOPHON_MAINNET_EXTERNAL_NODE_VERSION:-v29.1.2}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 11288:11288
+      - 11288:11288/udp
+    expose:
+      - 8545
+      - 8546
+    environment:
+      - DATABASE_POOL_SIZE=50
+      - DATABASE_URL=postgres://postgres:notsecurepassword@sophon-mainnet-external-node-db:5430/zksync_local_ext_node
+      - EN_API_NAMESAPCES=eth,net,web3,debug,pubsub,debug,zks
+      - EN_CONSENSUS_CONFIG_PATH=/config/consensus_config.yaml
+      - EN_DA_API_NODE_URL=wss://mainnet.avail-rpc.com/
+      - EN_DA_APP_ID=102
+      - EN_DA_AVAIL_CLIENT_TYPE=FullClient
+      - EN_DA_BRIDGE_API_URL=https://bridge-api.avail.so
+      - EN_DA_CLIENT=Avail
+      - EN_DA_SECRETS_SEED_PHRASE=fuel index outdoor orbit pulp affair basket bus great afraid cabin also
+      - EN_DA_TIMEOUT_MS=20000
+      - EN_ETH_CLIENT_URL=${ETHEREUM__EXECUTION_RPC}
+      - EN_EVM_EMULATOR_HASH=0x0000000000000000000000000000000000000000000000000000000000000000
+      - EN_HEALTHCHECK_PORT=3081
+      - EN_HTTP_PORT=8545
+      - EN_L1_BATCH_COMMIT_DATA_GENERATOR_MODE=Validium
+      - EN_L1_CHAIN_ID=1
+      - EN_L2_CHAIN_ID=50104
+      - EN_MAIN_NODE_URL=
+      - EN_MAX_RESPONSE_BODY_SIZE_MB=30
+      - EN_MAX_RESPONSE_BODY_SIZE_OVERRIDES_MB=eth_getLogs=100,eth_getBlockReceipts=None
+      - EN_MERKLE_TREE_PATH=./db/ext-node/lightweight
+      - EN_PROMETHEUS_PORT=3322
+      - EN_PRUNING_ENABLED=true
+      - EN_REQ_ENTITIES_LIMIT=100000
+      - EN_SNAPSHOTS_OBJECT_STORE_BUCKET_BASE_URL=raas-sophon-mainnet-external-node-snapshots
+      - EN_SNAPSHOTS_OBJECT_STORE_MODE=GCSAnonymousReadOnly
+      - EN_SNAPSHOTS_RECOVERY_ENABLED=true
+      - EN_STATE_CACHE_PATH=./db/ext-node/state_keeper
+      - EN_WS_PORT=8546
+      - RUST_LOG=warn,zksync=info,zksync_core::metadata_calculator=debug,zksync_state=info,zksync_utils=info,zksync_web3_decl::client=error
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${SOPHON_MAINNET_EXTERNAL_NODE_PRUNED_DATA:-sophon-mainnet-external-node-pruned}:/db
+      - ./sophon/mainnet:/config
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+      - traefik.enable=true
+      - traefik.http.middlewares.sophon-mainnet-external-node-pruned-stripprefix.stripprefix.prefixes=/sophon-mainnet-external-node
+      - traefik.http.services.sophon-mainnet-external-node-pruned.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-pruned.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-pruned.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-pruned.rule=Host(`$DOMAIN`) && (Path(`/sophon-mainnet-external-node`) || Path(`/sophon-mainnet-external-node/`))}
+      - ${NO_SSL:+traefik.http.routers.sophon-mainnet-external-node-pruned.rule=Path(`/sophon-mainnet-external-node`) || Path(`/sophon-mainnet-external-node/`)}
+      - traefik.http.routers.sophon-mainnet-external-node-pruned.middlewares=sophon-mainnet-external-node-pruned-stripprefix, ipallowlist
+      - traefik.http.routers.sophon-mainnet-external-node-pruned.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.sophon-mainnet-external-node-pruned-ws.priority=100   # answers GET requests first
+      - traefik.http.services.sophon-mainnet-external-node-pruned-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.sophon-mainnet-external-node-pruned-ws.service=sophon-mainnet-external-node-pruned-ws
+      - traefik.http.routers.sophon-mainnet-external-node-pruned.service=sophon-mainnet-external-node-pruned
+      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-pruned-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-pruned-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.sophon-mainnet-external-node-pruned-ws.rule=Host(`$DOMAIN`) && (Path(`/sophon-mainnet-external-node`) || Path(`/sophon-mainnet-external-node/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.sophon-mainnet-external-node-pruned-ws.rule=(Path(`/sophon-mainnet-external-node`) || Path(`/sophon-mainnet-external-node/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.sophon-mainnet-external-node-pruned-ws.middlewares=sophon-mainnet-external-node-pruned-stripprefix, ipallowlist
+
+  sophon-mainnet-external-node-db:
+    image: postgres:14
+    expose:
+      - 5430
+    environment:
+      - PGPORT=5430
+      - POSTGRES_PASSWORD=notsecurepassword
+    command: >
+      postgres
+      -c max_connections=200
+      -c log_error_verbosity=terse
+      -c shared_buffers=2GB
+      -c effective_cache_size=4GB
+      -c maintenance_work_mem=1GB
+      -c checkpoint_completion_target=0.9
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c min_wal_size=4GB
+      -c max_wal_size=16GB
+      -c max_worker_processes=16
+      -c checkpoint_timeout=1800
+    networks:
+      - chains
+    volumes:
+      - ${SOPHON_MAINNET_EXTERNAL_NODE_PRUNED__DB_DATA:-sophon-mainnet-external-node-pruned_db}:/var/lib/postgresql/data
+    healthcheck:
+      interval: 1s
+      timeout: 3s
+      test: [CMD-SHELL, psql -U postgres -c "select exists (select * from pg_stat_activity where datname = '' and application_name = 'pg_restore')" | grep -e ".f$$"]
+    logging: *logging-defaults
+
+volumes:
+  sophon-mainnet-external-node-pruned:
+  sophon-mainnet-external-node-pruned_db:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: sophon
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...
