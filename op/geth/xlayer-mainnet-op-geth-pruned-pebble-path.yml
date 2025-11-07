@@ -54,7 +54,7 @@ services:
     environment:
       - GENESIS_URL=https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
-    entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && (wget -qO- "$GENESIS_URL" | tar -xzf - -C /config && mv /config/*.json /config/genesis.json); [ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c "[ ! -f /config/genesis.json ] && (wget -qO- \"$GENESIS_URL\" | tar -xzf - -C /config && mv /config/*.json /config/genesis.json); [ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth \"\$@\"" --
     command:
       - --config=/config/geth.toml
       - --datadir=/data
