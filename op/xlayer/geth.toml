@@ -1,0 +1,24 @@
+[Node.P2P]
+DiscoveryV5 = true
+
+[Eth.GPO]
+Blocks = 20
+Percentile = 60
+MaxHeaderHistory = 1024
+MaxBlockHistory = 1024
+MaxPrice = "5000000000000000000000"
+IgnorePrice = "2000000000000000000"
+
+[Eth.GPO.XLayer]
+Type = "follower"
+UpdatePeriod = 100000000000
+Default = "100000000"
+KafkaURL = "localhost:9092"
+Topic = "middle_coinPrice_push"
+GroupID = "geth-consumer"
+L1CoinId = 15756
+L2CoinId = 7184
+DefaultL1CoinPrice = 2000.0
+DefaultL2CoinPrice = 0.5
+Factor = 0.1
+
