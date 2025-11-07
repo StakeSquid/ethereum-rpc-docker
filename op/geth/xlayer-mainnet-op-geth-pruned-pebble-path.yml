@@ -68,6 +68,7 @@ services:
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
+      - --networkid=196
       - --port=14389
       - --rollup.enabletxpooladmission
       - --rpc.gascap=600000000
