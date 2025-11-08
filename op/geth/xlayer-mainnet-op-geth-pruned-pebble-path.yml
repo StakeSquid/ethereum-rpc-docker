@@ -4,6 +4,8 @@ x-logging-defaults: &logging-defaults
   options:
     max-size: "10m"
     max-file: "3"
+# You should use a snapshot for Xlayer
+# if import of genesis fails the chainid will be 1 for ethereum mainnet
 
 # Usage:
 #
@@ -54,10 +56,9 @@ services:
       - 8551
     environment:
       - GENESIS_URL=https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz
-      - GETH_NETWORKID=196
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.xlayer.tech
-    entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && (mkdir -p /config/tmp && wget -qO- "https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz" | tar -xzf - -C /config/tmp && mv /config/tmp/*.json /config/genesis.json && rm -rf /config/tmp); [ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && (mkdir -p /config/tmp && wget -qO- "https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz" | tar -xzf - -C /config/tmp && mv /config/tmp/*.json /config/genesis.json && rm -rf /config/tmp); [ ! -d /data/geth ] && geth --db.engine=pebble --datadir /data init --state.scheme=hash /config/genesis.json; exec geth "$@"' --
     command:
       - --config=/config/geth.toml
       - --datadir=/data
@@ -68,7 +69,6 @@ services:
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --networkid=196
       - --port=14389
       - --rollup.enabletxpooladmission
       - --rpc.gascap=600000000
