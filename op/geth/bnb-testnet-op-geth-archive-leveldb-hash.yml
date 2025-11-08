@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   bnb-testnet-archive:
-    image: ${BNB_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${BNB_TESTNET_GETH_VERSION:-v1.101603.4}
+    image: ${BNB_GETH_IMAGE:-ghcr.io/bnb-chain/op-geth}:${BNB_TESTNET_GETH_VERSION:-v0.5.8}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -57,6 +57,7 @@ services:
       - GETH_ROLLUP_SEQUENCERHTTP=https://opbnb-testnet-rpc.bnbchain.org
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
+      - --bootnodes=enr:-KO4QKFOBDW--pF4pFwv3Al_jiLOITj_Y5mr1Ajyy2yxHpFtNcBfkZEkvWUxAKXQjWALZEFxYHooU88JClyzA00e8YeGAYtBOOZig2V0aMfGhE0ZYGqAgmlkgnY0gmlwhDREiqaJc2VjcDI1NmsxoQM8pC_6wwTr5N2Q-yXQ1KGKsgz9i9EPLk8Ata65pUyYG4RzbmFwwIN0Y3CCdl-DdWRwgnZf,enr:-KO4QFJc0KR09ye818GT2kyN9y6BAGjhz77sYimxn85jJf2hOrNqg4X0b0EsS-_ssdkzVpavqh6oMX7W5Y81xMRuEayGAYtBSiK9g2V0aMfGhE0ZYGqAgmlkgnY0gmlwhANzx96Jc2VjcDI1NmsxoQPwA1XHfWGd4umIt7j3Fc7hKq_35izIWT_9yiN_tX8lR4RzbmFwwIN0Y3CCdl-DdWRwgnZf
       - --datadir=/data
       - --db.engine=leveldb
       - --gcmode=archive
@@ -107,7 +108,7 @@ services:
       - traefik.http.routers.bnb-testnet-op-geth-archive-leveldb-hash.middlewares=bnb-testnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   bnb-testnet-archive-node:
-    image: ${BNB_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BNB_TESTNET_NODE_VERSION:-v1.16.1}
+    image: ${BNB_NODE_IMAGE:-ghcr.io/bnb-chain/op-node}:${BNB_TESTNET_NODE_VERSION:-v0.5.4}
     ports:
       - 15163:15163
       - 15163:15163/udp

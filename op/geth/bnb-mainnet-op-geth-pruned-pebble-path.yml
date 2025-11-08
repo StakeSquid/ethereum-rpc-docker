@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   bnb-mainnet:
-    image: ${BNB_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${BNB_MAINNET_GETH_VERSION:-v1.101603.4}
+    image: ${BNB_GETH_IMAGE:-ghcr.io/bnb-chain/op-geth}:${BNB_MAINNET_GETH_VERSION:-v0.5.8}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -58,6 +58,7 @@ services:
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --allow-insecure-no-tries
+      - --bootnodes=enr:-KO4QHs5qh_kPFcjMgqkuN9dbxXT4C5Cjad4SAheaUxveCbJQ3XdeMMDHeHilHyqisyYQAByfdhzyKAdUp2SvyzWeBqGAYvRDf80g2V0aMfGhHFtSjqAgmlkgnY0gmlwhDaykUmJc2VjcDI1NmsxoQJUevTL3hJwj21IT2GC6VaNqVQEsJFPtNtO-ld5QTNCfIRzbmFwwIN0Y3CCdl-DdWRwgnZf,enr:-KO4QKIByq-YMjs6IL2YCNZEmlo3dKWNOy4B6sdqE3gjOrXeKdNbwZZGK_JzT1epqCFs3mujjg2vO1lrZLzLy4Rl7PyGAYvRA8bEg2V0aMfGhHFtSjqAgmlkgnY0gmlwhDbjSM6Jc2VjcDI1NmsxoQNQhJ5pqCPnTbK92gEc2F98y-u1OgZVAI1Msx-UiHezY4RzbmFwwIN0Y3CCdl-DdWRwgnZf
       - --datadir=/data
       - --db.engine=pebble
       - --gcmode=full
@@ -108,7 +109,7 @@ services:
       - traefik.http.routers.bnb-mainnet-op-geth-pruned-pebble-path.middlewares=bnb-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   bnb-mainnet-node:
-    image: ${BNB_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BNB_MAINNET_NODE_VERSION:-v1.16.1}
+    image: ${BNB_NODE_IMAGE:-ghcr.io/bnb-chain/op-node}:${BNB_MAINNET_NODE_VERSION:-v0.5.4}
     ports:
       - 17599:17599
       - 17599:17599/udp
