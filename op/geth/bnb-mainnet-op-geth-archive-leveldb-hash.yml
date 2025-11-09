@@ -115,7 +115,7 @@ services:
     environment:
       - OP_NODE_L1_ETH_RPC=${BSC_MAINNET_EXECUTION_RPC}
       - OP_NODE_L1_RPC_KIND=${BSC_MAINNET_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${BSC_MAINNET_EXECUTION_TRUST:-false}
+      - OP_NODE_L1_TRUST_RPC=${BSC_MAINNET_EXECUTION_TRUST:-true}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
       - OP_NODE_L2_ENGINE_RPC=http://bnb-mainnet-archive:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
