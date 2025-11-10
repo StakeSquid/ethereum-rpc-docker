@@ -57,7 +57,7 @@ services:
       - GETH_OVERRIDE_HOLOCENE=1736445601
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://mainnet.superseed.xyz
-    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth --db.engine=pebble --gcmode=full --datadir /data init --state.scheme=path /config/genesis.json; exec geth "$@"' --
     command:
       - --datadir=/data
       - --db.engine=pebble

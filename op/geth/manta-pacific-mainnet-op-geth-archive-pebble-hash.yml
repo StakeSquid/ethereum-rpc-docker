@@ -52,7 +52,7 @@ services:
     environment:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://manta-pacific.calderachain.xyz/http
-    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth init --datadir /data /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth --db.engine=pebble --gcmode=archive --datadir /data init --state.scheme=hash /config/genesis.json; exec geth "$@"' --
     command:
       - --datadir=/data
       - --db.engine=pebble
