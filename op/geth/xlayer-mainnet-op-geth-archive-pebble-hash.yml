@@ -22,17 +22,17 @@ x-logging-defaults: &logging-defaults
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:op/geth/xlayer-testnet-op-geth-pruned-pebble-path.yml
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/xlayer-mainnet-op-geth-archive-pebble-hash.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/xlayer-testnet \
+# curl -X POST https://${IP}.traefik.me/xlayer-mainnet-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  xlayer-testnet:
-    image: ${XLAYER_GETH_IMAGE:-xlayer/op-geth}:${XLAYER_TESTNET_GETH_VERSION:-0.0.6}
+  xlayer-mainnet-archive:
+    image: ${XLAYER_GETH_IMAGE:-xlayer/op-geth}:${XLAYER_MAINNET_GETH_VERSION:-0.0.6}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -52,15 +52,15 @@ services:
       - 6060
       - 8551
     environment:
-      - GENESIS_URL=https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.tar.gz
+      - GENESIS_URL=https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
-      - GETH_ROLLUP_SEQUENCERHTTP=https://testrpc.xlayer.tech
-    entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && (mkdir -p /config/tmp && wget -qO- "https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.tar.gz" | tar -xzf - -C /config/tmp && mv /config/tmp/*.json /config/genesis.json && rm -rf /config/tmp); [ ! -d /data/geth ] && geth --gcmode=full --db.engine=pebble --datadir /data init --state.scheme=path /config/genesis.json; exec geth "$@"' --
+      - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.xlayer.tech
+    entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && (mkdir -p /config/tmp && wget -qO- "https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz" | tar -xzf - -C /config/tmp && mv /config/tmp/*.json /config/genesis.json && rm -rf /config/tmp); [ ! -d /data/geth ] && geth --gcmode=archive --db.engine=pebble --datadir /data init --state.scheme=hash /config/genesis.json; exec geth "$@"' --
     command:
       - --config=/config/geth.toml
       - --datadir=/data
       - --db.engine=pebble
-      - --gcmode=full
+      - --gcmode=archive
       - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
@@ -69,7 +69,7 @@ services:
       - --rollup.enabletxpooladmission
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
-      - --state.scheme=path
+      - --state.scheme=hash
       - --syncmode=full
       - --http
       - --http.addr=0.0.0.0
@@ -89,8 +89,8 @@ services:
     networks:
       - chains
     volumes:
-      - ${XLAYER_TESTNET_OP_GETH_PRUNED_PEBBLE_PATH_DATA:-xlayer-testnet-op-geth-pruned-pebble-path}:/data
-      - ./op/xlayer/testnet:/config
+      - ${XLAYER_MAINNET_OP_GETH_ARCHIVE_PEBBLE_HASH_DATA:-xlayer-mainnet-op-geth-archive-pebble-hash}:/data
+      - ./op/xlayer/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -99,29 +99,29 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.xlayer-testnet-op-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/xlayer-testnet
-      - traefik.http.services.xlayer-testnet-op-geth-pruned-pebble-path.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/xlayer-testnet`) || Path(`/xlayer-testnet/`))}
-      - ${NO_SSL:+traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path.rule=Path(`/xlayer-testnet`) || Path(`/xlayer-testnet/`)}
-      - traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path.middlewares=xlayer-testnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
+      - traefik.http.middlewares.xlayer-mainnet-op-geth-archive-pebble-hash-stripprefix.stripprefix.prefixes=/xlayer-mainnet-archive
+      - traefik.http.services.xlayer-mainnet-op-geth-archive-pebble-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash.rule=Host(`$DOMAIN`) && (Path(`/xlayer-mainnet-archive`) || Path(`/xlayer-mainnet-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash.rule=Path(`/xlayer-mainnet-archive`) || Path(`/xlayer-mainnet-archive/`)}
+      - traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash.middlewares=xlayer-mainnet-op-geth-archive-pebble-hash-stripprefix, ipallowlist
 
-  xlayer-testnet-node:
-    image: ${XLAYER_NODE_IMAGE:-xlayer/op-node}:${XLAYER_TESTNET_NODE_VERSION:-0.0.9}
+  xlayer-mainnet-archive-node:
+    image: ${XLAYER_NODE_IMAGE:-xlayer/op-node}:${XLAYER_MAINNET_NODE_VERSION:-0.0.9}
     ports:
-      - 18528:18528
-      - 18528:18528/udp
+      - 17934:17934
+      - 17934:17934/udp
     environment:
-      - GENESIS_URL=https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.tar.gz
+      - GENESIS_URL=https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz
       - OP_NODE_CONDUCTOR_ENABLED=false
-      - OP_NODE_L1_BEACON=${ETHEREUM_TESTNET_BEACON_REST}
-      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_TESTNET_BEACON_ARCHIVER}
-      - OP_NODE_L1_ETH_RPC=${ETHEREUM_TESTNET_EXECUTION_RPC}
-      - OP_NODE_L1_RPC_KIND=${ETHEREUM_TESTNET_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_TESTNET_EXECUTION_TRUST:-false}
+      - OP_NODE_L1_BEACON=${ETHEREUM_MAINNET_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_MAINNET_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_MAINNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_MAINNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
-      - OP_NODE_L2_ENGINE_RPC=http://xlayer-testnet:8551
+      - OP_NODE_L2_ENGINE_RPC=http://xlayer-mainnet-archive:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
       - OP_NODE_LOG_LEVEL=info
       - OP_NODE_METRICS_ADDR=0.0.0.0
@@ -130,9 +130,9 @@ services:
       - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
-      - OP_NODE_P2P_LISTEN_TCP_PORT=18528
-      - OP_NODE_P2P_LISTEN_UDP_PORT=18528
-      - OP_NODE_P2P_STATIC=/ip4/47.242.219.101/tcp/9223/p2p/16Uiu2HAkwUdbn9Q7UBKQYRsfjm9SQX5Yc2e96HUz2pyR3cw1FZLv,/ip4/47.242.235.15/tcp/9223/p2p/16Uiu2HAmThDG9xMpADbyGo1oCU8fndztwNg1PH6A7yp1BhCk5jfE
+      - OP_NODE_P2P_LISTEN_TCP_PORT=17934
+      - OP_NODE_P2P_LISTEN_UDP_PORT=17934
+      - OP_NODE_P2P_STATIC=/ip4/47.242.38.0/tcp/9223/p2p/16Uiu2HAmH1AVhKWR29mb5s8Cubgsbh4CH1G86A6yoVtjrLWQgiY3,/ip4/8.210.153.12/tcp/9223/p2p/16Uiu2HAkuerkmQYMZxYiQYfQcPob9H7XHPwS7pd8opPTMEm2nsAp,/ip4/8.210.117.27/tcp/9223/p2p/16Uiu2HAmQEzn2WQj4kmWVrK9aQsfyQcETgXQKjcKGrTPsKcJBv7a
       - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
       - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
       - OP_NODE_RPC_ADDR=0.0.0.0
@@ -143,11 +143,11 @@ services:
     entrypoint: [/app/op-node/bin/op-node]
     restart: unless-stopped
     depends_on:
-      - xlayer-testnet
+      - xlayer-mainnet-archive
     networks:
       - chains
     volumes:
-      - ./op/xlayer/testnet:/config
+      - ./op/xlayer/mainnet:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
@@ -155,16 +155,16 @@ services:
       - prometheus-scrape.port=7300
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.xlayer-testnet-op-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/xlayer-testnet/node
-      - traefik.http.services.xlayer-testnet-op-geth-pruned-pebble-path-node.loadbalancer.server.port=8547
-      - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/xlayer-testnet/node`)}
-      - ${NO_SSL:+traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.rule=PathPrefix(`/xlayer-testnet/node`)}
-      - traefik.http.routers.xlayer-testnet-op-geth-pruned-pebble-path-node.middlewares=xlayer-testnet-op-geth-pruned-pebble-path-node-stripprefix, ipallowlist
+      - traefik.http.middlewares.xlayer-mainnet-op-geth-archive-pebble-hash-node-stripprefix.stripprefix.prefixes=/xlayer-mainnet-archive/node
+      - traefik.http.services.xlayer-mainnet-op-geth-archive-pebble-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/xlayer-mainnet-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash-node.rule=PathPrefix(`/xlayer-mainnet-archive/node`)}
+      - traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash-node.middlewares=xlayer-mainnet-op-geth-archive-pebble-hash-node-stripprefix, ipallowlist
 
 volumes:
-  xlayer-testnet-op-geth-pruned-pebble-path:
+  xlayer-mainnet-op-geth-archive-pebble-hash:
 
 x-upstreams:
   - id: $${ID}
@@ -178,15 +178,13 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain:
+    chain: xlayer
     method-groups:
       enabled:
         - debug
         - filter
     methods:
       disabled:
-        # not compatible with path state scheme
-        - name: debug_traceBlockByHash
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
         # standard geth only
