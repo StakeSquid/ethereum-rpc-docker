@@ -47,9 +47,6 @@ services:
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
-    ports:
-      - 13528:13528
-      - 13528:13528/udp
     expose:
       - 8545
       - 6060
@@ -68,13 +65,12 @@ services:
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
-      - --nat=extip:${IP}
-      - --port=13528
+      - --nodiscover
       - --rollup.enabletxpooladmission
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
-      - --syncmode=snap
+      - --syncmode=full
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,debug,admin,txpool,engine
@@ -142,7 +138,7 @@ services:
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
-      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_SYNCMODE=consensus-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [/app/op-node/bin/op-node]
     restart: unless-stopped

@@ -79,7 +79,7 @@ services:
     command:
       - --chain=bsc
       - --datadir=/root/.local/share/reth
-      - --db.max-size=7TB
+      - --db.max-size=8TB
       - --discovery.port=13454
       - --engine.cross-block-cache-size=${BSC_MAINNET_RETH_STATE_CACHE:-4096}
       - --engine.memory-block-buffer-target=128
