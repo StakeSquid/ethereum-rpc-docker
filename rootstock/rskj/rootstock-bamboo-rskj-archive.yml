@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   rootstock-bamboo-client:
-    image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_BAMBOO_RSKJ_VERSION:-REED-8.0.0}
+    image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_BAMBOO_RSKJ_VERSION:-REED-8.1.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
