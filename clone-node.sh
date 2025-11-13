@@ -364,6 +364,30 @@ main() {
     echo "  Successful: $success_count/$volume_count"
     [[ -n "$failed_volumes" ]] && echo "  Failed:$failed_volumes"
     
+    # Restore Network buffer and congestion control settings.
+    # These are better for your 0.2-1.4ms environment
+
+    ssh "$DEST_HOST" "
+        # These are better for your 0.2-1.4ms environment
+        sudo sysctl -w net.core.rmem_max=2097152  # 2MB
+        sudo sysctl -w net.core.wmem_max=2097152
+        sudo sysctl -w net.ipv4.tcp_rmem='4096 87380 2097152'
+        sudo sysctl -w net.ipv4.tcp_wmem='4096 87380 2097152'
+        sudo sysctl -w net.ipv4.tcp_congestion_control=cubic
+        sudo sysctl -w net.core.default_qdisc=fq_codel
+        sudo sysctl -w net.ipv4.tcp_slow_start_after_idle=0
+        sudo sysctl -w net.ipv4.tcp_tw_reuse=1
+    "
+    
+    sudo sysctl -w net.core.rmem_max=2097152  # 2MB
+    sudo sysctl -w net.core.wmem_max=2097152
+    sudo sysctl -w net.ipv4.tcp_rmem='4096 87380 2097152'
+    sudo sysctl -w net.ipv4.tcp_wmem='4096 87380 2097152'
+    sudo sysctl -w net.ipv4.tcp_congestion_control=cubic
+    sudo sysctl -w net.core.default_qdisc=fq_codel
+    sudo sysctl -w net.ipv4.tcp_slow_start_after_idle=0
+    sudo sysctl -w net.ipv4.tcp_tw_reuse=1
+
     $SSH_CMD -O exit "$DEST_HOST" 2>/dev/null
     
     # Exit with appropriate status (cleanup will be handled by trap)
