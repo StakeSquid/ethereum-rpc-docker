@@ -110,7 +110,7 @@ services:
       - 16917:16917/udp
     expose:
       - 3500
-    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=hoodi --trusted-node-url=https://hoodi.beaconstate.info --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
+    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=hoodi --trusted-node-url=https://beaconstate-hoodi.chainsafe.io --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
     command:
       - --history=prune
       - --jwt-secret=/jwtsecret

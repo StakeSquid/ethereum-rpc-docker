@@ -112,7 +112,7 @@ services:
     command:
       - --accept-terms-of-use
       - --beacon-db-pruning
-      - --checkpoint-sync-url=https://hoodi.beaconstate.info
+      - --checkpoint-sync-url=https://beaconstate-hoodi.chainsafe.io
       - --datadir=/data
       - --enable-historical-state-representation=false
       - --execution-endpoint=http://ethereum-hoodi-geth:8551
