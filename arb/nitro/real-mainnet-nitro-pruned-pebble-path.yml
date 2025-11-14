@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   real-mainnet:
-    image: ${REAL_NITRO_IMAGE:-offchainlabs/nitro-node}:${REAL_MAINNET_NITRO_VERSION:-v3.8.0-62c0aa7}
+    image: ${REAL_NITRO_IMAGE:-offchainlabs/nitro-node}:${REAL_MAINNET_NITRO_VERSION:-v3.9.1-241cd93}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
