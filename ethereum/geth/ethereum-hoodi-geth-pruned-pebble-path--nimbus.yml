@@ -20,17 +20,17 @@ x-logging-defaults: &logging-defaults
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:ethereum/geth/ethereum-mainnet-geth-pruned-pebble-path.yml
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/geth/ethereum-hoodi-geth-pruned-pebble-path--nimbus.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/ethereum-mainnet-geth \
+# curl -X POST https://${IP}.traefik.me/ethereum-hoodi-geth \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  ethereum-mainnet-geth:
-    image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_MAINNET_GETH_VERSION:-v1.16.7}
+  ethereum-hoodi-geth:
+    image: ${ETHEREUM_GETH_IMAGE:-ethereum/client-go}:${ETHEREUM_HOODI_GETH_VERSION:-v1.16.7}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -46,8 +46,8 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 12023:12023
-      - 12023:12023/udp
+      - 11917:11917
+      - 11917:11917/udp
     expose:
       - 8545
       - 6060
@@ -56,13 +56,13 @@ services:
       - --datadir=/root/.ethereum
       - --db.engine=pebble
       - --gcmode=full
-      - --mainnet
+      - --hoodi
       - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --port=12023
+      - --port=11917
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=path
@@ -85,7 +85,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${ETHEREUM_MAINNET_GETH_PRUNED_PEBBLE_PATH_DATA:-ethereum-mainnet-geth-pruned-pebble-path}:/root/.ethereum
+      - ${ETHEREUM_HOODI_GETH_PRUNED_PEBBLE_PATH_DATA:-ethereum-hoodi-geth-pruned-pebble-path}:/root/.ethereum
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -94,62 +94,61 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-mainnet-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-mainnet-geth
-      - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/ethereum-mainnet-geth`) || Path(`/ethereum-mainnet-geth/`))}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.rule=Path(`/ethereum-mainnet-geth`) || Path(`/ethereum-mainnet-geth/`)}
-      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path.middlewares=ethereum-mainnet-geth-pruned-pebble-path-stripprefix, ipallowlist
+      - traefik.http.middlewares.ethereum-hoodi-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/ethereum-hoodi-geth
+      - traefik.http.services.ethereum-hoodi-geth-pruned-pebble-path.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/ethereum-hoodi-geth`) || Path(`/ethereum-hoodi-geth/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path.rule=Path(`/ethereum-hoodi-geth`) || Path(`/ethereum-hoodi-geth/`)}
+      - traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path.middlewares=ethereum-hoodi-geth-pruned-pebble-path-stripprefix, ipallowlist
 
-  ethereum-mainnet-geth-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v6.0.4}
+  ethereum-hoodi-geth-node:
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_HOODI_NIMBUS_VERSION:-amd64-v25.7.1}
+    user: root
     ports:
-      - 17023:17023
-      - 17023:17023/udp
+      - 16917:16917
+      - 16917:16917/udp
     expose:
       - 3500
+    entrypoint: /bin/sh -c '/home/user/nimbus-eth2/build/nimbus_beacon_node trustedNodeSync --network=hoodi --trusted-node-url= --backfill=false; exec /home/user/nimbus-eth2/build/nimbus_beacon_node "$@"' --
     command:
-      - --accept-terms-of-use
-      - --beacon-db-pruning
-      - --checkpoint-sync-url=https://mainnet.beaconstate.info
-      - --datadir=/data
-      - --enable-historical-state-representation=false
-      - --execution-endpoint=http://ethereum-mainnet-geth:8551
-      - --grpc-gateway-host=0.0.0.0
+      - --history=prune
       - --jwt-secret=/jwtsecret
-      - --mainnet
-      - --monitoring-host=0.0.0.0
-      - --monitoring-host=0.0.0.0
-      - --monitoring-port=8080
-      - --p2p-tcp-port=17023
-      - --p2p-udp-port=17023
-      - --rpc-host=0.0.0.0
+      - --metrics-address=0.0.0.0
+      - --metrics-port=8008
+      - --nat=extip:${IP}
+      - --network=hoodi
+      - --rest
+      - --rest-address=0.0.0.0
+      - --rest-port=3500
+      - --tcp-port=16917
+      - --udp-port=16917
+      - --web3-url=http://ethereum-hoodi-geth:8551
     restart: unless-stopped
     depends_on:
-      - ethereum-mainnet-geth
+      - ethereum-hoodi-geth
     networks:
       - chains
     volumes:
-      - ${ETHEREUM_MAINNET_GETH_PRUNED_PEBBLE_PATH__PRYSM_DATA:-ethereum-mainnet-geth-pruned-pebble-path_prysm}:/data
+      - ${ETHEREUM_HOODI_GETH_PRUNED_PEBBLE_PATH__NIMBUS_DATA:-ethereum-hoodi-geth-pruned-pebble-path_nimbus}:/root/.cache/nimbus/BeaconNode
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=true
-      - prometheus-scrape.port=8080
+      - prometheus-scrape.port=8008
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.ethereum-mainnet-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-mainnet-geth
-      - traefik.http.services.ethereum-mainnet-geth-pruned-pebble-path-node.loadbalancer.server.port=3500
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-mainnet-geth/eth`)}
-      - ${NO_SSL:+traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.rule=PathPrefix(`/ethereum-mainnet-geth/eth`)}
-      - traefik.http.routers.ethereum-mainnet-geth-pruned-pebble-path-node.middlewares=ethereum-mainnet-geth-pruned-pebble-path-node-stripprefix, ipallowlist
+      - traefik.http.middlewares.ethereum-hoodi-geth-pruned-pebble-path-node-stripprefix.stripprefix.prefixes=/ethereum-hoodi-geth
+      - traefik.http.services.ethereum-hoodi-geth-pruned-pebble-path-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-hoodi-geth/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path-node.rule=PathPrefix(`/ethereum-hoodi-geth/eth`)}
+      - traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path-node.middlewares=ethereum-hoodi-geth-pruned-pebble-path-node-stripprefix, ipallowlist
 
 volumes:
-  ethereum-mainnet-geth-pruned-pebble-path:
-  ethereum-mainnet-geth-pruned-pebble-path_prysm:
+  ethereum-hoodi-geth-pruned-pebble-path:
+  ethereum-hoodi-geth-pruned-pebble-path_nimbus:
 
 x-upstreams:
   - id: $${ID}
@@ -191,7 +190,7 @@ x-upstreams:
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
   - id: $${ID}-beacon-chain
-    chain: eth-beacon-chain
+    chain: eth-beacon-chain-hoodi
     labels:
       provider: $${PROVIDER}-beacon-chain
     connection:
