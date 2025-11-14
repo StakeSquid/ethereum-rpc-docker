@@ -1,0 +1,283 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:op/geth/celo-sepolia-op-geth-archive-leveldb-hash.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/celo-sepolia-archive \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  celo-sepolia-archive:
+    image: ${CELO_GETH_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-geth}:${CELO_SEPOLIA_GETH_VERSION:-celo-v2.1.2}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12469:12469
+      - 12469:12469/udp
+    expose:
+      - 8545
+      - 6060
+      - 8551
+    environment:
+      - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-testnet-sepolia.eigenda.xyz:443
+      - EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0x3a5acf46ba6890B8536420F4900AC9BC45Df4764
+      - EIGENDA_PROXY_EIGENDA_V2_BLS_OPERATOR_STATE_RETRIEVER_ADDR=0x22478d082E9edaDc2baE8443E4aC9473F6E047Ff
+      - EIGENDA_PROXY_EIGENDA_V2_CERT_VERIFIER_ADDR=0x73818fed0743085c4557a736a7630447fb57c662
+      - EIGENDA_PROXY_EIGENDA_V2_DISPERSER_RPC=disperser-testnet-sepolia.eigenda.xyz:443
+      - EIGENDA_PROXY_EIGENDA_V2_SERVICE_MANAGER_ADDR=00x3a5acf46ba6890B8536420F4900AC9BC45Df4764
+      - EIGENDA_PROXY_EIGENDA_V2_SIGNER_PAYMENT_KEY_HEX=0123456789012345678901234567890123456789012345678901234567890123
+      - EIGENDA_PROXY_EIGENDA_V2_SIGNER_PRIVATE_KEY_HEX=0123456789012345678901234567890123456789012345678901234567890123
+      - EIGENDA_PROXY_S3_ACCESS_KEY_ID=
+      - EIGENDA_PROXY_S3_ACCESS_KEY_SECRET=
+      - EIGENDA_PROXY_S3_BUCKET=eigenda-proxy-cache-celo-sepolia
+      - EIGENDA_PROXY_S3_CREDENTIAL_TYPE=public
+      - EIGENDA_PROXY_S3_ENDPOINT=storage.googleapis.com
+      - EIGENDA_PROXY_S3_PATH=blobs/
+      - EIGENDA_PROXY_STORAGE_BACKENDS_TO_ENABLE=V1,V2
+      - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
+      - GETH_ROLLUP_SEQUENCERHTTP=https://forno.celo-sepolia.celo-testnet.org
+    entrypoint: /bin/sh -c '[ ! -d /data/geth ] && geth --db.engine=leveldb --gcmode=archive --datadir /data init --state.scheme=hash /config/genesis.json; exec geth "$@"' --
+    command:
+      - --datadir=/data
+      - --db.engine=leveldb
+      - --gcmode=archive
+      - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --nat=extip:${IP}
+      - --networkid=11142220
+      - --port=12469
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=hash
+      - --syncmode=full
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${CELO_SEPOLIA_OP_GETH_ARCHIVE_LEVELDB_HASH_DATA:-celo-sepolia-op-geth-archive-leveldb-hash}:/data
+      - ./op/celo/sepolia:/config
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.celo-sepolia-op-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/celo-sepolia-archive
+      - traefik.http.services.celo-sepolia-op-geth-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/celo-sepolia-archive`) || Path(`/celo-sepolia-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash.rule=Path(`/celo-sepolia-archive`) || Path(`/celo-sepolia-archive/`)}
+      - traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash.middlewares=celo-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
+
+  celo-sepolia-archive-node:
+    image: ${CELO_NODE_IMAGE:-us-west1-docker.pkg.dev/devopsre/celo-blockchain-public/op-node}:${CELO_SEPOLIA_NODE_VERSION:-celo-v2.1.0}
+    ports:
+      - 17469:17469
+      - 17469:17469/udp
+    environment:
+      - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-testnet-sepolia.eigenda.xyz:443
+      - EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0x3a5acf46ba6890B8536420F4900AC9BC45Df4764
+      - EIGENDA_PROXY_EIGENDA_V2_BLS_OPERATOR_STATE_RETRIEVER_ADDR=0x22478d082E9edaDc2baE8443E4aC9473F6E047Ff
+      - EIGENDA_PROXY_EIGENDA_V2_CERT_VERIFIER_ADDR=0x73818fed0743085c4557a736a7630447fb57c662
+      - EIGENDA_PROXY_EIGENDA_V2_DISPERSER_RPC=disperser-testnet-sepolia.eigenda.xyz:443
+      - EIGENDA_PROXY_EIGENDA_V2_SERVICE_MANAGER_ADDR=00x3a5acf46ba6890B8536420F4900AC9BC45Df4764
+      - EIGENDA_PROXY_EIGENDA_V2_SIGNER_PAYMENT_KEY_HEX=0123456789012345678901234567890123456789012345678901234567890123
+      - EIGENDA_PROXY_EIGENDA_V2_SIGNER_PRIVATE_KEY_HEX=0123456789012345678901234567890123456789012345678901234567890123
+      - EIGENDA_PROXY_S3_ACCESS_KEY_ID=
+      - EIGENDA_PROXY_S3_ACCESS_KEY_SECRET=
+      - EIGENDA_PROXY_S3_BUCKET=eigenda-proxy-cache-celo-sepolia
+      - EIGENDA_PROXY_S3_CREDENTIAL_TYPE=public
+      - EIGENDA_PROXY_S3_ENDPOINT=storage.googleapis.com
+      - EIGENDA_PROXY_S3_PATH=blobs/
+      - EIGENDA_PROXY_STORAGE_BACKENDS_TO_ENABLE=V1,V2
+      - OP_NODE_ALTDA_DA_SERVER=http://celo-sepolia-archive-relay:4242
+      - OP_NODE_ALTDA_DA_SERVICE=true
+      - OP_NODE_ALTDA_ENABLED=true
+      - OP_NODE_ALTDA_VERIFY_ON_READ=false
+      - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}
+      - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
+      - OP_NODE_L2_ENGINE_RPC=http://celo-sepolia-archive:8551
+      - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
+      - OP_NODE_LOG_LEVEL=info
+      - OP_NODE_METRICS_ADDR=0.0.0.0
+      - OP_NODE_METRICS_ENABLED=true
+      - OP_NODE_METRICS_PORT=7300
+      - OP_NODE_METRIC_ENABLED=true
+      - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
+      - OP_NODE_P2P_ADVERTISE_IP=${IP}
+      - OP_NODE_P2P_LISTEN_IP=0.0.0.0
+      - OP_NODE_P2P_LISTEN_TCP_PORT=17469
+      - OP_NODE_P2P_LISTEN_UDP_PORT=17469
+      - OP_NODE_ROLLUP_CONFIG=/config/rollup.json
+      - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
+      - OP_NODE_RPC_ADDR=0.0.0.0
+      - OP_NODE_RPC_PORT=8545
+      - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
+      - OP_NODE_SYNCMODE=execution-layer
+      - OP_NODE_VERIFIER_L1_CONFS=0
+    entrypoint: [op-node]
+    command:
+      - --rollup.load-protocol-versions=true
+    restart: unless-stopped
+    depends_on:
+      - celo-sepolia-archive
+      - celo-sepolia-archive-relay
+    networks:
+      - chains
+    volumes:
+      - ./op/celo/sepolia:/config
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=7300
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.celo-sepolia-op-geth-archive-leveldb-hash-node-stripprefix.stripprefix.prefixes=/celo-sepolia-archive/node
+      - traefik.http.services.celo-sepolia-op-geth-archive-leveldb-hash-node.loadbalancer.server.port=8547
+      - ${NO_SSL:-traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash-node.rule=Host(`$DOMAIN`) && PathPrefix(`/celo-sepolia-archive/node`)}
+      - ${NO_SSL:+traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash-node.rule=PathPrefix(`/celo-sepolia-archive/node`)}
+      - traefik.http.routers.celo-sepolia-op-geth-archive-leveldb-hash-node.middlewares=celo-sepolia-op-geth-archive-leveldb-hash-node-stripprefix, ipallowlist
+
+  celo-sepolia-archive-relay:
+    image: ${CELO_EIGENDA_PROXY_IMAGE:-ghcr.io/layr-labs/eigenda-proxy}:${CELO_SEPOLIA_EIGENDA_PROXY_VERSION:-v1.8.2}
+    expose:
+      - 4242
+    environment:
+      - EIGENDA_PROXY_ADDR=0.0.0.0
+      - EIGENDA_PROXY_EIGENDA_ARCHIVE_BLOBS=0
+      - EIGENDA_PROXY_EIGENDA_CONFIRMATION_DEPTH=1
+      - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-testnet-sepolia.eigenda.xyz:443
+      - EIGENDA_PROXY_EIGENDA_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - EIGENDA_PROXY_EIGENDA_GRPC_DISABLE_TLS=false
+      - EIGENDA_PROXY_EIGENDA_MAX_BLOB_LENGTH=16MiB
+      - EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0x3a5acf46ba6890B8536420F4900AC9BC45Df4764
+      - EIGENDA_PROXY_EIGENDA_STATUS_QUERY_TIMEOUT=45m
+      - EIGENDA_PROXY_EIGENDA_V2_BLS_OPERATOR_STATE_RETRIEVER_ADDR=0x22478d082E9edaDc2baE8443E4aC9473F6E047Ff
+      - EIGENDA_PROXY_EIGENDA_V2_CERT_VERIFIER_ADDR=0x73818fed0743085c4557a736a7630447fb57c662
+      - EIGENDA_PROXY_EIGENDA_V2_DISPERSER_RPC=disperser-testnet-sepolia.eigenda.xyz:443
+      - EIGENDA_PROXY_EIGENDA_V2_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      - EIGENDA_PROXY_EIGENDA_V2_MAX_BLOB_LENGTH=16MiB
+      - EIGENDA_PROXY_EIGENDA_V2_SERVICE_MANAGER_ADDR=00x3a5acf46ba6890B8536420F4900AC9BC45Df4764
+      - EIGENDA_PROXY_EIGENDA_V2_SIGNER_PAYMENT_KEY_HEX=0123456789012345678901234567890123456789012345678901234567890123
+      - EIGENDA_PROXY_EIGENDA_V2_SIGNER_PRIVATE_KEY_HEX=0123456789012345678901234567890123456789012345678901234567890123
+      - EIGENDA_PROXY_PORT=4242
+      - EIGENDA_PROXY_S3_ACCESS_KEY_ID=
+      - EIGENDA_PROXY_S3_ACCESS_KEY_SECRET=
+      - EIGENDA_PROXY_S3_BUCKET=eigenda-proxy-cache-celo-sepolia
+      - EIGENDA_PROXY_S3_CREDENTIAL_TYPE=public
+      - EIGENDA_PROXY_S3_ENDPOINT=storage.googleapis.com
+      - EIGENDA_PROXY_S3_PATH=blobs/
+      - EIGENDA_PROXY_STORAGE_BACKENDS_TO_ENABLE=V1,V2
+      - EIGENDA_PROXY_STORAGE_FALLBACK_TARGETS=s3
+    restart: unless-stopped
+    networks:
+      - chains
+    volumes:
+      - ${CELO_SEPOLIA_OP_GETH_ARCHIVE_LEVELDB_HASH__EIGENDA_PROXY_DATA:-celo-sepolia-op-geth-archive-leveldb-hash_eigenda-proxy}:/data
+      - ./op/celo/sepolia:/config
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+
+volumes:
+  celo-sepolia-op-geth-archive-leveldb-hash:
+  celo-sepolia-op-geth-archive-leveldb-hash_eigenda-proxy:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: celo-sepolia
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
