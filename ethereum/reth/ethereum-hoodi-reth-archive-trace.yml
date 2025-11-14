@@ -1,0 +1,189 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:ethereum/reth/ethereum-hoodi-reth-archive-trace.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/ethereum-hoodi-reth \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  ethereum-hoodi-reth:
+    image: ${ETHEREUM_RETH_IMAGE:-ghcr.io/paradigmxyz/reth}:${ETHEREUM_HOODI_RETH_VERSION:-v1.8.4}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    user: root
+    ports:
+      - 10606:10606
+      - 10606:10606/udp
+    expose:
+      - 8545
+      - 9001
+      - 8551
+    entrypoint: [reth, node]
+    command:
+      - --chain=hoodi
+      - --datadir=/root/.local/share/reth
+      - --discovery.port=10606
+      - --engine.cross-block-cache-size=${ETHEREUM_HOODI_RETH_STATE_CACHE:-4096}
+      - --engine.memory-block-buffer-target=0
+      - --engine.persistence-threshold=0
+      - --max-inbound-peers=50
+      - --max-outbound-peers=50
+      - --metrics=0.0.0.0:9001
+      - --nat=extip:${IP}
+      - --port=10606
+      - --rpc-cache.max-blocks=10000
+      - --rpc-cache.max-concurrent-db-requests=2048
+      - --rpc.gascap=600000000
+      - --rpc.max-blocks-per-filter=0
+      - --rpc.max-connections=50000
+      - --rpc.max-logs-per-response=0
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --http.corsdomain=*
+      - --http.port=8545
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_HOODI_RETH_ARCHIVE_TRACE_DATA:-ethereum-hoodi-reth-archive-trace}:/root/.local/share/reth
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9001
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-hoodi-reth-archive-trace-stripprefix.stripprefix.prefixes=/ethereum-hoodi-reth
+      - traefik.http.services.ethereum-hoodi-reth-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-reth-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-reth-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/ethereum-hoodi-reth`) || Path(`/ethereum-hoodi-reth/`))}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-reth-archive-trace.rule=Path(`/ethereum-hoodi-reth`) || Path(`/ethereum-hoodi-reth/`)}
+      - traefik.http.routers.ethereum-hoodi-reth-archive-trace.middlewares=ethereum-hoodi-reth-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
+
+  ethereum-hoodi-reth-node:
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOODI_PRYSM_VERSION:-v6.0.4}
+    ports:
+      - 15606:15606
+      - 15606:15606/udp
+    expose:
+      - 3500
+    command:
+      - --accept-terms-of-use
+      - --beacon-db-pruning
+      - --checkpoint-sync-url=https://beaconstate-hoodi.chainsafe.io
+      - --datadir=/data
+      - --enable-historical-state-representation=false
+      - --execution-endpoint=http://ethereum-hoodi-reth:8551
+      - --grpc-gateway-host=0.0.0.0
+      - --hoodi
+      - --jwt-secret=/jwtsecret
+      - --monitoring-host=0.0.0.0
+      - --monitoring-host=0.0.0.0
+      - --monitoring-port=8080
+      - --p2p-tcp-port=15606
+      - --p2p-udp-port=15606
+      - --rpc-host=0.0.0.0
+    restart: unless-stopped
+    depends_on:
+      - ethereum-hoodi-reth
+    networks:
+      - chains
+    volumes:
+      - ${ETHEREUM_HOODI_RETH_ARCHIVE_TRACE__PRYSM_DATA:-ethereum-hoodi-reth-archive-trace_prysm}:/data
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=8080
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.ethereum-hoodi-reth-archive-trace-node-stripprefix.stripprefix.prefixes=/ethereum-hoodi-reth
+      - traefik.http.services.ethereum-hoodi-reth-archive-trace-node.loadbalancer.server.port=3500
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-reth-archive-trace-node.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-reth-archive-trace-node.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.ethereum-hoodi-reth-archive-trace-node.rule=Host(`$DOMAIN`) && PathPrefix(`/ethereum-hoodi-reth/eth`)}
+      - ${NO_SSL:+traefik.http.routers.ethereum-hoodi-reth-archive-trace-node.rule=PathPrefix(`/ethereum-hoodi-reth/eth`)}
+      - traefik.http.routers.ethereum-hoodi-reth-archive-trace-node.middlewares=ethereum-hoodi-reth-archive-trace-node-stripprefix, ipallowlist
+
+volumes:
+  ethereum-hoodi-reth-archive-trace:
+  ethereum-hoodi-reth-archive-trace_prysm:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: ethereum
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+  - id: $${ID}-beacon-chain
+    chain: eth-beacon-chain-hoodi
+    labels:
+      provider: $${PROVIDER}-beacon-chain
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+...
