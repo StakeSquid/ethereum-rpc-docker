@@ -94,7 +94,7 @@ services:
       - traefik.http.routers.ethereum-mainnet-nethermind-pruned-rocksdb-trace.middlewares=ethereum-mainnet-nethermind-pruned-rocksdb-trace-stripprefix, ipallowlist
 
   ethereum-mainnet-nethermind-node:
-    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-amd64-v25.7.1}
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_MAINNET_NIMBUS_VERSION:-multiarch-v25.11.0}
     user: root
     ports:
       - 17065:17065
