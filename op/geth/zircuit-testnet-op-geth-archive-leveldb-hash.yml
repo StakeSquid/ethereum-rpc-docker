@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   zircuit-testnet-archive:
-    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_TESTNET_GETH_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}
+    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_TESTNET_GETH_VERSION:-v1.109.5}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -45,6 +45,9 @@ services:
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
+    ports:
+      - 13095:13095
+      - 13095:13095/udp
     expose:
       - 8545
       - 6060
@@ -53,7 +56,7 @@ services:
       - GETH_CONFIG=/config/gethconfig.toml
       - GETH_ETHSTATS=d${DOMAIN}:${ZIRCUIT_TESTNET_WS_SECRET}@${ZIRCUIT_TESTNET_ETH_STATS_SERVER}:${ZIRCUIT_TESTNET_ETH_STATS_SERVER_PORT}
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
-      - GETH_ROLLUP_SEQUENCERHTTP=https://proxyd-ingress-us.testnet.zircuit.com/?token=Drpc6dqvgakKRmtx4EVJxA89AxCk7wxB4dZAdDrgk
+      - GETH_ROLLUP_SEQUENCERHTTP=https://testnet.zircuit.com
       - GETH_TXPOOL_GLOBALQUEUE=1024
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
@@ -65,8 +68,9 @@ services:
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
-      - --networkid=48899
-      - --nodiscover
+      - --nat=extip:${IP}
+      - --networkid=
+      - --port=13095
       - --rpc.gascap=600000000
       - --rpc.txfeecap=0
       - --state.scheme=hash
@@ -108,16 +112,16 @@ services:
       - traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash.middlewares=zircuit-testnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   zircuit-testnet-archive-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${TESTNET_NODE_VERSION:-e81568966f2a42a57b1347fb1dffdd5257dde73a}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${TESTNET_NODE_VERSION:-v1.109.5}
     ports:
       - 18095:18095
       - 18095:18095/udp
     environment:
-      - OP_NODE_L1_BEACON=${ETHEREUM_SEPOLIA_BEACON_REST}
-      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_SEPOLIA_BEACON_ARCHIVER}
-      - OP_NODE_L1_ETH_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
-      - OP_NODE_L1_RPC_KIND=${ETHEREUM_SEPOLIA_EXECUTION_KIND:-basic}
-      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_SEPOLIA_EXECUTION_TRUST:-false}
+      - OP_NODE_L1_BEACON=${ETHEREUM_TESTNET_BEACON_REST}
+      - OP_NODE_L1_BEACON_ARCHIVER=${ETHEREUM_TESTNET_BEACON_ARCHIVER}
+      - OP_NODE_L1_ETH_RPC=${ETHEREUM_TESTNET_EXECUTION_RPC}
+      - OP_NODE_L1_RPC_KIND=${ETHEREUM_TESTNET_EXECUTION_KIND:-basic}
+      - OP_NODE_L1_TRUST_RPC=${ETHEREUM_TESTNET_EXECUTION_TRUST:-false}
       - OP_NODE_L2_ENGINE_AUTH=/jwtsecret
       - OP_NODE_L2_ENGINE_RPC=http://zircuit-testnet-archive:8551
       - OP_NODE_L2_SKIP_SYNC_START_CHECK=true
@@ -127,12 +131,10 @@ services:
       - OP_NODE_METRICS_PORT=7300
       - OP_NODE_METRIC_ENABLED=true
       - OP_NODE_NETWORK=testnet
-      - OP_NODE_OVERRIDE_PECTRABLOBSCHEDULE=1742486400
       - OP_NODE_P2P_ADVERTISE_IP=${IP}
       - OP_NODE_P2P_LISTEN_IP=0.0.0.0
       - OP_NODE_P2P_LISTEN_TCP_PORT=18095
       - OP_NODE_P2P_LISTEN_UDP_PORT=18095
-      - OP_NODE_P2P_STATIC=/dns4/node1-us-p2p.testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmDP6pC6FKqkyLhar5762uV2Ycs2YNxK9p6CqqGav8DwzV,/dns4/node2-us-p2p.testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAm5ehptRkg6yUuJDpqD4RceFJUEBEPuxqBqnr5XEk9rq7t,/dns4/node3-us-p2p.testnet.zircuit.com/tcp/9003/p2p/16Uiu2HAmMRDuDmmEtFTegcuBJ7eg5DZRxohqs3KRcKss2FqNUZdh
       - OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS=true
       - OP_NODE_RPC_ADDR=0.0.0.0
       - OP_NODE_RPC_PORT=8545
@@ -141,7 +143,7 @@ services:
       - OP_NODE_SEQUENCER_MAX_SAFE_LAG=0
       - OP_NODE_SEQUENCER_STOPPED=false
       - OP_NODE_SNAPSHOT_LOG=/tmp/op-node-snapshot-log
-      - OP_NODE_SYNCMODE=consensus-layer
+      - OP_NODE_SYNCMODE=execution-layer
       - OP_NODE_VERIFIER_L1_CONFS=0
     entrypoint: [op-node]
     restart: unless-stopped
