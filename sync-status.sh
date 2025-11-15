@@ -22,7 +22,12 @@ for path in $pathlist; do
     include=true
     for word in "${blacklist[@]}"; do
         if echo "$path" | grep -qE "$word"; then
-            include=false
+            if echo "$path" | grep -qE "viction"; then
+              # excemption
+              include=$include
+            else
+              include=false
+            fi
         fi
     done
         
