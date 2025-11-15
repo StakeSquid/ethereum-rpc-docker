@@ -1,0 +1,12 @@
+# Node key file glob patterns
+# One pattern per line. Lines starting with # are ignored.
+# Patterns are matched relative to the volume data directory
+
+# geth clones and erigon
+**/nodekey
+
+# reth
+discovery-secret
+
+# avalanchego
+staking/*
