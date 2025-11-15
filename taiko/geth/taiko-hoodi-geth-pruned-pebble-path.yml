@@ -1,0 +1,182 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:taiko/geth/taiko-hoodi-geth-pruned-pebble-path.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/taiko-hoodi \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  taiko-hoodi:
+    image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HOODI_GETH_VERSION:-v1.16.7}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12953:12953
+      - 12953:12953/udp
+    expose:
+      - 8545
+      - 6060
+      - 8551
+    env_file:
+      - ./taiko/geth.env
+      - ./taiko/hoodi.env
+    environment:
+      - GETH_GPO_DEFAULTPRICE=10000000
+      - GETH_NETWORKID=167000
+      - GETH_TAIKO=true
+    command:
+      - --datadir=/root/.ethereum
+      - --db.engine=pebble
+      - --gcmode=full
+      - --maxpeers=50
+      - --metrics
+      - --metrics.addr=0.0.0.0
+      - --metrics.port=6060
+      - --nat=extip:${IP}
+      - --port=12953
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=path
+      - --syncmode=snap
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool,engine,taiko
+      - --http.port=8545
+      - --http.vhosts=*
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool,engine,taiko
+      - --ws.origins=*
+      - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${TAIKO_HOODI_GETH_PRUNED_PEBBLE_PATH_DATA:-taiko-hoodi-geth-pruned-pebble-path}:/root/.ethereum
+      - .jwtsecret:/jwtsecret:ro
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6060
+      - prometheus-scrape.path=/debug/metrics/prometheus
+      - traefik.enable=true
+      - traefik.http.middlewares.taiko-hoodi-geth-pruned-pebble-path-stripprefix.stripprefix.prefixes=/taiko-hoodi
+      - traefik.http.services.taiko-hoodi-geth-pruned-pebble-path.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.taiko-hoodi-geth-pruned-pebble-path.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.taiko-hoodi-geth-pruned-pebble-path.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.taiko-hoodi-geth-pruned-pebble-path.rule=Host(`$DOMAIN`) && (Path(`/taiko-hoodi`) || Path(`/taiko-hoodi/`))}
+      - ${NO_SSL:+traefik.http.routers.taiko-hoodi-geth-pruned-pebble-path.rule=Path(`/taiko-hoodi`) || Path(`/taiko-hoodi/`)}
+      - traefik.http.routers.taiko-hoodi-geth-pruned-pebble-path.middlewares=taiko-hoodi-geth-pruned-pebble-path-stripprefix, ipallowlist
+
+  taiko-hoodi-node:
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HOODI_DRIVER_VERSION:-}
+    ports:
+      - 17953:17953
+      - 17953:17953/udp
+    env_file:
+      - ./taiko/hoodi.env
+    environment:
+      - ENABLE_PRECONFS_P2P=false
+      - JWT_SECRET=/jwtsecret
+      - L1_BEACON=${ETHEREUM_HOODI_BEACON_REST}
+      - L1_WS=${ETHEREUM_HOODI_EXECUTION_WS}
+      - L2_AUTH=http://taiko-hoodi:8551
+      - L2_WS=ws://taiko-hoodi:8545
+      - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
+      - P2P_CHECK_POINT_SYNC_URL=
+      - P2P_SYNC=true
+    entrypoint: [taiko-client, driver]
+    restart: unless-stopped
+    depends_on:
+      - taiko-hoodi
+    networks:
+      - chains
+    volumes:
+      - .jwtsecret:/jwtsecret:ro
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+
+volumes:
+  taiko-hoodi-geth-pruned-pebble-path:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: taiko
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+        # not compatible with path state scheme
+        - name: debug_traceBlockByHash
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
+        # standard geth and erigon
+        - name: debug_accountRange
+        - name: debug_getModifiedAccountsByNumber
+        - name: debug_getModifiedAccountsByHash
+        # non standard geth and erigon
+        - name: eth_getRawTransactionByHash
+        - name: eth_getRawTransactionByBlockHashAndIndex
+...
