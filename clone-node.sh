@@ -22,6 +22,7 @@ declare -a USED_PORTS=()
 setup_ssh_multiplex() {
     echo "Setting up SSH control connection..."
     ssh -nNf -o ControlMaster=yes \
+            -o StrictHostKeyChecking=no \
             -o ControlPath=/tmp/ssh-mux-%h-%p-%r \
             -o ControlPersist=600 \
             -o Compression=no \
@@ -29,10 +30,10 @@ setup_ssh_multiplex() {
     
     if [[ $? -eq 0 ]]; then
         echo "SSH control connection established"
-        export SSH_CMD="ssh -o ControlPath=/tmp/ssh-mux-%h-%p-%r"
+        export SSH_CMD="ssh -o StrictHostKeyChecking=no -o ControlPath=/tmp/ssh-mux-%h-%p-%r"
     else
         echo "Failed to setup SSH multiplexing, using direct SSH"
-        export SSH_CMD="ssh"
+        export SSH_CMD="ssh -o StrictHostKeyChecking=no"
     fi
 }
 
