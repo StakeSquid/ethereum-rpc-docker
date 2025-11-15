@@ -11,7 +11,7 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 
-CONFIG_FILE="$1"
+CONFIG_FILE="$1.yml"
 GLOBS_FILE="${2:-node-key-globs.txt}"
 
 # Check if config file exists
