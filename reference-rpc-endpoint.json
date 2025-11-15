@@ -157,6 +157,14 @@
       "https://mainnet-rpc.thundercore.io"
     ]
   },
+  "shibarium": {
+    "id": 109,
+    "urls": [
+      "https://www.shibrpc.com",
+      "https://rpc.shibrpc.com",
+      "https://shib.nownodes.io"
+    ]
+  },
   "fuse": {
     "id": 122,
     "urls": [
@@ -196,6 +204,10 @@
       "https://polygon.gateway.tenderly.co",
       "https://polygon.drpc.org"
     ]
+  },
+  "monad-mainnet": {
+    "id": 143,
+    "urls": []
   },
   "sonic": {
     "id": 146,
@@ -347,6 +359,18 @@
     "id": 919,
     "urls": [
       "https://sepolia.mode.network"
+    ]
+  },
+  "bittensor-testnet": {
+    "id": 945,
+    "urls": [
+      "https://test.chain.opentensor.ai"
+    ]
+  },
+  "bittensor": {
+    "id": 964,
+    "urls": [
+      "https://lite.chain.opentensor.ai"
     ]
   },
   "hyperliquid-testnet": {
@@ -629,6 +653,18 @@
       "https://rpc.sepolia-api.lisk.com"
     ]
   },
+  "iotex": {
+    "id": 4689,
+    "urls": [
+      "https://babel-api.mainnet.iotex.io"
+    ]
+  },
+  "iotex-testnet": {
+    "id": 4690,
+    "urls": [
+      "https://babel-api.testnet.iotex.io"
+    ]
+  },
   "worldchain-sepolia": {
     "id": 4801,
     "urls": [
@@ -663,6 +699,12 @@
       "https://opbnb-testnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3",
       "https://opbnb-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5",
       "https://opbnb-testnet-rpc.publicnode.com"
+    ]
+  },
+  "megaeth-testnet": {
+    "id": 6342,
+    "urls": [
+      "https://carrot.megaeth.com/rpc"
     ]
   },
   "everclear-sepolia": {
@@ -719,6 +761,18 @@
     "urls": [
       "https://evmos.lava.build",
       "https://evmos-evm-rpc.publicnode.com"
+    ]
+  },
+  "plasma": {
+    "id": 9745,
+    "urls": [
+      "https://rpc.plasma.to"
+    ]
+  },
+  "plasma-testnet": {
+    "id": 9746,
+    "urls": [
+      "https://testnet-rpc.plasma.to"
     ]
   },
   "monad-testnet": {
@@ -778,8 +832,18 @@
   },
   "0g-newton-testnet": {
     "id": 16600,
+    "urls": []
+  },
+  "0g-galileo-testnet": {
+    "id": 16601,
     "urls": [
       "https://evmrpc-testnet.0g.ai"
+    ]
+  },
+  "0g-mainnet": {
+    "id": 16661,
+    "urls": [
+      "https://evmrpc.0g.ai"
     ]
   },
   "holesky": {
@@ -801,6 +865,15 @@
     "id": 31611,
     "urls": [
       "https://rpc.test.mezo.org"
+    ]
+  },
+  "mezo": {
+    "id": 31612,
+    "urls": [
+      "https://rpc_evm-mezo.imperator.co",
+      "https://rpc-http.mezo.boar.network",
+      "https://mainnet.mezo.public.validationcloud.io",
+      "https://rpc-internal.mezo.org"
     ]
   },
   "apechain-curtis": {
@@ -855,6 +928,12 @@
       "https://forno.celo.org"
     ]
   },
+  "hemi": {
+    "id": 43111,
+    "urls": [
+      "https://rpc.hemi.network/rpc"
+    ]
+  },
   "avalanche-fuji": {
     "id": 43113,
     "urls": [
@@ -891,6 +970,18 @@
     "id": 48900,
     "urls": [
       "https://mainnet.zircuit.com"
+    ]
+  },
+  "sophon": {
+    "id": 50104,
+    "urls": [
+      "https://rpc.sophon.xyz"
+    ]
+  },
+  "somnia-testnet": {
+    "id": 50312,
+    "urls": [
+      "https://dream-rpc.somnia.network"
     ]
   },
   "superseed-sepolia": {
@@ -992,10 +1083,22 @@
       "https://base-sepolia-rpc.publicnode.com"
     ]
   },
-  "plume": {
-    "id": 98865,
+  "doma-testnet": {
+    "id": 97476,
     "urls": [
-      "https://rpc.plumenetwork.xyz"
+      "https://rpc-testnet.doma.xyz"
+    ]
+  },
+  "doma": {
+    "id": 97477,
+    "urls": [
+      "https://rpc.doma.xyz"
+    ]
+  },
+  "plume": {
+    "id": 98866,
+    "urls": [
+      "https://rpc.plume.org"
     ]
   },
   "real": {
@@ -1088,6 +1191,18 @@
       "https://evm-rpc.arctic-1.seinetwork.io"
     ]
   },
+  "hemi-testnet": {
+    "id": 743111,
+    "urls": [
+      "https://testnet.rpc.hemi.network/rpc"
+    ]
+  },
+  "katana": {
+    "id": 747474,
+    "urls": [
+      "https://rpc.katana.network"
+    ]
+  },
   "ink-sepolia": {
     "id": 763373,
     "urls": [
@@ -1100,16 +1215,44 @@
       "https://bob-sepolia.rpc.gobob.xyz"
     ]
   },
+  "xrpl-devnet": {
+    "id": 1440002,
+    "urls": [
+      "https://rpc.xrplevm.org",
+      "https://ws.xrplevm.org"
+    ]
+  },
+  "xrpl-testnet": {
+    "id": 1449000,
+    "urls": [
+      "https://rpc.testnet.xrplevm.org",
+      "https://ws.testnet.xrplevm.org"
+    ]
+  },
   "manta-pacific-sepolia": {
     "id": 3441006,
     "urls": [
       "https://pacific-rpc.sepolia-testnet.manta.network/http"
     ]
   },
+  "arc-testnet": {
+    "id": 5042002,
+    "urls": [
+      "https://rpc.testnet.arc.network",
+      "https://rpc.quicknode.testnet.arc.network",
+      "https://rpc.blockdaemon.testnet.arc.network"
+    ]
+  },
   "zora": {
     "id": 7777777,
     "urls": [
       "https://rpc.zora.energy/"
+    ]
+  },
+  "celo-sepolia": {
+    "id": 11142220,
+    "urls": [
+      "https://forno.celo-sepolia.celo-testnet.org"
     ]
   },
   "sepolia": {
@@ -1166,6 +1309,12 @@
     "urls": [
       "https://neon-proxy-mainnet.solana.p2p.org",
       "https://neon-evm.drpc.org"
+    ]
+  },
+  "sophon-testnet": {
+    "id": 531050104,
+    "urls": [
+      "https://rpc.testnet.sophon.xyz"
     ]
   },
   "tron": {
@@ -1236,6 +1385,18 @@
     "id": 48816,
     "urls": [
       "https://rpc.testnet3.goat.network"
+    ]
+  },
+  "starknet": {
+    "id": 23448594291968336,
+    "urls": [
+      "https://starknet.api.onfinality.io/public"
+    ]
+  },
+  "starknet-sepolia": {
+    "id": 393402133025997800000000,
+    "urls": [
+      "https://rpc.starknet-testnet.lava.build"
     ]
   }
 }
