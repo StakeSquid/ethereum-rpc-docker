@@ -5,6 +5,9 @@
 # geth clones and erigon
 **/nodekey
 
+# besu
+key
+
 # reth
 discovery-secret
 
