@@ -20,16 +20,16 @@ x-logging-defaults: &logging-defaults
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:taiko/nethermind/taiko-hoodi-nethermind-pruned-rocksdb-trace.yml
+# COMPOSE_FILE=base.yml:rpc.yml:taiko/nethermind/taiko-hoodi-nethermind-archive-rocksdb-trace.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/taiko-hoodi-nethermind \
+# curl -X POST https://${IP}.traefik.me/taiko-hoodi-nethermind-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  taiko-hoodi-nethermind:
+  taiko-hoodi-nethermind-archive:
     image: ${TAIKO_NETHERMIND_IMAGE:-nethermind/nethermind}:${TAIKO_HOODI_NETHERMIND_VERSION:-1.35.2}
     sysctls:
       # TCP Performance
@@ -46,15 +46,15 @@ services:
       nofile: 1048576    # Max open files (for RPC/WS connections)
     user: root
     ports:
-      - 11610:11610
-      - 11610:11610/udp
+      - 14576:14576
+      - 14576:14576/udp
     expose:
       - 8545
       - 9091
     env_file:
       - ./taiko/hoodi.env
     environment:
-      - NETHERMIND_CONFIG=taiko-hoodi
+      - NETHERMIND_CONFIG=taiko-hoodi_archive
       - NETHERMIND_INITCONFIG_BASEDBPATH=/data/db
       - NETHERMIND_INITCONFIG_LOGDIRECTORY=/data/logs
       - NETHERMIND_INITCONFIG_WEBSOCKETSENABLED=true
@@ -67,10 +67,12 @@ services:
       - NETHERMIND_JSONRPCCONFIG_PORT=8545
       - NETHERMIND_JSONRPCCONFIG_WEBSOCKETSPORT=8545
       - NETHERMIND_METRICSCONFIG_EXPOSEPORT=9091
-      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=11610
+      - NETHERMIND_NETWORKCONFIG_DISCOVERYPORT=14576
       - NETHERMIND_NETWORKCONFIG_EXTERNALIP=${IP}
       - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=250
-      - NETHERMIND_NETWORKCONFIG_P2PPORT=11610
+      - NETHERMIND_NETWORKCONFIG_P2PPORT=14576
+      - NETHERMIND_RECEIPTCONFIG_TXLOOKUPLIMIT=0
+      - NETHERMIND_TRACESTORECONFIG_BLOCKSTOKEEP=0
       - NETHERMIND_TRACESTORECONFIG_ENABLED=true
       - NETHERMIND_TRACESTORECONFIG_TRACETYPES=Trace,Rewards
     restart: unless-stopped
@@ -78,7 +80,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${TAIKO_HOODI_NETHERMIND_PRUNED_ROCKSDB_TRACE_DATA:-taiko-hoodi-nethermind-pruned-rocksdb-trace}:/data
+      - ${TAIKO_HOODI_NETHERMIND_ARCHIVE_ROCKSDB_TRACE_DATA:-taiko-hoodi-nethermind-archive-rocksdb-trace}:/data
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
     logging: *logging-defaults
@@ -87,35 +89,44 @@ services:
       - prometheus-scrape.port=9091
       - prometheus-scrape.path=/metrics
       - traefik.enable=true
-      - traefik.http.middlewares.taiko-hoodi-nethermind-pruned-rocksdb-trace-stripprefix.stripprefix.prefixes=/taiko-hoodi-nethermind
-      - traefik.http.services.taiko-hoodi-nethermind-pruned-rocksdb-trace.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.taiko-hoodi-nethermind-pruned-rocksdb-trace.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.taiko-hoodi-nethermind-pruned-rocksdb-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.taiko-hoodi-nethermind-pruned-rocksdb-trace.rule=Host(`$DOMAIN`) && (Path(`/taiko-hoodi-nethermind`) || Path(`/taiko-hoodi-nethermind/`))}
-      - ${NO_SSL:+traefik.http.routers.taiko-hoodi-nethermind-pruned-rocksdb-trace.rule=Path(`/taiko-hoodi-nethermind`) || Path(`/taiko-hoodi-nethermind/`)}
-      - traefik.http.routers.taiko-hoodi-nethermind-pruned-rocksdb-trace.middlewares=taiko-hoodi-nethermind-pruned-rocksdb-trace-stripprefix, ipallowlist
+      - traefik.http.middlewares.taiko-hoodi-nethermind-archive-rocksdb-trace-stripprefix.stripprefix.prefixes=/taiko-hoodi-nethermind-archive
+      - traefik.http.services.taiko-hoodi-nethermind-archive-rocksdb-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.taiko-hoodi-nethermind-archive-rocksdb-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.taiko-hoodi-nethermind-archive-rocksdb-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.taiko-hoodi-nethermind-archive-rocksdb-trace.rule=Host(`$DOMAIN`) && (Path(`/taiko-hoodi-nethermind-archive`) || Path(`/taiko-hoodi-nethermind-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.taiko-hoodi-nethermind-archive-rocksdb-trace.rule=Path(`/taiko-hoodi-nethermind-archive`) || Path(`/taiko-hoodi-nethermind-archive/`)}
+      - traefik.http.routers.taiko-hoodi-nethermind-archive-rocksdb-trace.middlewares=taiko-hoodi-nethermind-archive-rocksdb-trace-stripprefix, ipallowlist
 
-  taiko-hoodi-nethermind-node:
+  taiko-hoodi-nethermind-archive-node:
     image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HOODI_DRIVER_VERSION:-sha-153e66e}
     ports:
-      - 16610:16610
-      - 16610:16610/udp
+      - 19576:19576
+      - 19576:19576/udp
+      - 39576:39576
+      - 39576:39576/udp
     env_file:
       - ./taiko/hoodi.env
     environment:
-      - ENABLE_PRECONFS_P2P=false
+      - ENABLE_PRECONFS_P2P=true
       - JWT_SECRET=/jwtsecret
       - L1_BEACON=${ETHEREUM_HOODI_BEACON_REST}
       - L1_WS=${ETHEREUM_HOODI_EXECUTION_WS}
-      - L2_AUTH=http://taiko-hoodi-nethermind:8551
-      - L2_WS=ws://taiko-hoodi-nethermind:8545
+      - L2_AUTH=http://taiko-hoodi-nethermind-archive:8551
+      - L2_WS=ws://taiko-hoodi-nethermind-archive:8545
       - NODE_IMAGE=us-docker.pkg.dev/evmchain/images/taiko-client
       - P2P_CHECK_POINT_SYNC_URL=https://rpc.hoodi.taiko.xyz
       - P2P_SYNC=true
+      - PRECONFIRMATION_P2P_ADVERTISE_IP=${IP}
+      - PRECONFIRMATION_P2P_ADVERTISE_TCP_PORT=39576
+      - PRECONFIRMATION_P2P_ADVERTISE_UDP_PORT=39576
+      - PRECONFIRMATION_P2P_BOOTNODES=
+      - PRECONFIRMATION_P2P_LISTEN_TCP_PORT=39576
+      - PRECONFIRMATION_P2P_LISTEN_UDP_PORT=39576
+      - PRECONFIRMATION_SERVER_PORT=9871
     entrypoint: [taiko-client, driver]
     restart: unless-stopped
     depends_on:
-      - taiko-hoodi-nethermind
+      - taiko-hoodi-nethermind-archive
     networks:
       - chains
     volumes:
@@ -125,7 +136,7 @@ services:
       - prometheus-scrape.enabled=false
 
 volumes:
-  taiko-hoodi-nethermind-pruned-rocksdb-trace:
+  taiko-hoodi-nethermind-archive-rocksdb-trace:
 
 x-upstreams:
   - id: $${ID}
