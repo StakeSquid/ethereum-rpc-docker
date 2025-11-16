@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   sophon-mainnet-archive:
-    image: ${SOPHON_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${SOPHON_MAINNET_EXTERNAL_NODE_VERSION:-v29.1.2}
+    image: ${SOPHON_EXTERNAL_NODE_IMAGE:-matterlabs/external-node}:${SOPHON_MAINNET_EXTERNAL_NODE_VERSION:-v29.1.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
