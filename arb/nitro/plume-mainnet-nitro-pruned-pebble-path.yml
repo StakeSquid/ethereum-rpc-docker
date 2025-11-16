@@ -114,9 +114,9 @@ services:
     command:
       - --celestia.namespace-id=00000d048007a33abfeb
       - --celestia.rpc=${CELESTIA_MAINNET_RPC}
-      - --das.enable
+      - --das.enable=true
       - --das.rpc.url=http://plume-mainnet-provider:9880
-      - --fallback-enabled
+      - --fallback-enabled=true
       - --log-level=INFO
       - --rpc-addr=0.0.0.0
       - --rpc-port=80
@@ -137,12 +137,14 @@ services:
     entrypoint: /usr/local/bin/daprovider
     command:
       - --das-server.addr=0.0.0.0
-      - --das-server.data-availability.enable
+      - --das-server.data-availability.enable=true
       - --das-server.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - --das-server.data-availability.rest-aggregator.enable
+      - --das-server.data-availability.rest-aggregator.enable=true
       - --das-server.data-availability.rest-aggregator.urls=https://das-plume-mainnet-1.t.conduit.xyz
       - --das-server.data-availability.sequencer-inbox-address=0x85eC1b9138a8b9659A51e2b51bb0861901040b59
       - --das-server.port=9880
+    networks:
+      - chains
     logging: *logging-defaults
 
 volumes:
