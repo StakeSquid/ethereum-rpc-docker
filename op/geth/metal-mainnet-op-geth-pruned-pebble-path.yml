@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   metal-mainnet:
-    image: ${METAL_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${METAL_MAINNET_GETH_VERSION:-v1.101603.4}
+    image: ${METAL_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${METAL_MAINNET_GETH_VERSION:-v1.101603.5}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.metal-mainnet-op-geth-pruned-pebble-path.middlewares=metal-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   metal-mainnet-node:
-    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_MAINNET_NODE_VERSION:-v1.16.1}
+    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_MAINNET_NODE_VERSION:-v1.16.2}
     ports:
       - 17821:17821
       - 17821:17821/udp

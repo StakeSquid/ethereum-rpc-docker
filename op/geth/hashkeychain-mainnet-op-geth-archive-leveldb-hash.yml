@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   hashkeychain-mainnet-archive:
-    image: ${HASHKEYCHAIN_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${HASHKEYCHAIN_MAINNET_GETH_VERSION:-v1.101603.4}
+    image: ${HASHKEYCHAIN_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${HASHKEYCHAIN_MAINNET_GETH_VERSION:-v1.101603.5}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.hashkeychain-mainnet-op-geth-archive-leveldb-hash.middlewares=hashkeychain-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   hashkeychain-mainnet-archive-node:
-    image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.16.1}
+    image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.16.2}
     ports:
       - 19113:19113
       - 19113:19113/udp

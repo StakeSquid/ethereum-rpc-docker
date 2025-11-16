@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   mode-mainnet-archive:
-    image: ${MODE_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${MODE_MAINNET_GETH_VERSION:-v1.101603.4}
+    image: ${MODE_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${MODE_MAINNET_GETH_VERSION:-v1.101603.5}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.mode-mainnet-op-geth-archive-leveldb-hash.middlewares=mode-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   mode-mainnet-archive-node:
-    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.16.1}
+    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.16.2}
     ports:
       - 15430:15430
       - 15430:15430/udp
