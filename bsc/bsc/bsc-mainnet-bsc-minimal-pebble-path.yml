@@ -64,9 +64,10 @@ services:
       - --datadir=/bsc/.ethereum
       - --db.engine=pebble
       - --gcmode=full
+      - --history.blocks=1024
       - --history.logs.disable=true
-      - --history.state=360000
-      - --history.transactions=360000
+      - --history.state=1024
+      - --history.transactions=1024
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,txpool,debug,admin,parlia
