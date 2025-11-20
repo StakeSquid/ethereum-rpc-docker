@@ -63,6 +63,7 @@ services:
       - --datadir=/root/.local/share/erigon
       - --db.pagesize=16k
       - --db.size.limit=16t
+      - --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@pos.polygon-peers.io
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,ots

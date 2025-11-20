@@ -60,6 +60,7 @@ services:
       - --bor.heimdall=https://polygon-amoy-heimdall-rest.publicnode.com
       - --chain=amoy
       - --datadir=/root/.local/share/erigon
+      - --discovery.dns=enrtree://AKUEZKN7PSKVNR65FZDHECMKOJQSGPARGTPPBI7WS2VUL4EGR6XPC@amoy.polygon-peers.io
       - --http
       - --http.addr=0.0.0.0
       - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,ots
