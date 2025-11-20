@@ -49,7 +49,7 @@ services:
       args:
         LLVM_IMAGE: ${LLVM_IMAGE:-snowstep/llvm}
         LLVM_VERSION: ${LLVM_VERSION:-20250912105042}
-        RETH_VERSION: ${BSC_MAINNET_RETH_VERSION:-v0.0.4-archivenode-alpha}
+        RETH_VERSION: ${BSC_MAINNET_RETH_VERSION:-v0.0.5-beta}
         RETH_REPO: ${BSC_MAINNET_RETH_REPO:-https://github.com/bnb-chain/reth-bsc.git}
         ARCH_TARGET: ${ARCH_TARGET:-native}
         PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
