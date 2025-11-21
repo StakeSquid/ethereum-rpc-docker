@@ -559,7 +559,6 @@
   "ronin": {
     "id": 2020,
     "urls": [
-      "https://api.roninchain.com/rpc",
       "https://ronin.lgns.net/rpc"
     ]
   },
