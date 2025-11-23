@@ -30,7 +30,12 @@ x-logging-defaults: &logging-defaults
 
 services:
   haqq-mainnet:
-    image: ${HAQQ_HAQQ_IMAGE:-alhaqq/haqq}:${HAQQ_MAINNET_HAQQ_VERSION:-v1.9.1}
+    build:
+      context: ./haqq
+      dockerfile: haqq.Dockerfile
+      args:
+        HAQQ_HAQQ_VERSION: ${HAQQ_MAINNET_HAQQ_VERSION:-v1.8.5}
+        HAQQ_HAQQ_IMAGE: ${HAQQ_MAINNET_HAQQ_IMAGE:-alhaqq/haqq}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -51,18 +56,24 @@ services:
     expose:
       - 8545
       - 8546
-    entrypoint: [haqqd, start]
-    command: --p2p.laddr=tcp://0.0.0.0:10465
+      - 6065
+    environment:
+      - IP=${IP}
+      - MONIKER=d${DOMAIN:-local}
+      - P2P_PORT=10465
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
       - chains
     volumes:
-      - ${HAQQ_MAINNET_HAQQ_PRUNED_DATA:-haqq-mainnet-haqq-pruned}:/root/.haqqd
+      - ${HAQQ_MAINNET_HAQQ_PRUNED_DATA:-haqq-mainnet-haqq-pruned}:/root/.haqqd/data
       - /slowdisk:/slowdisk
+      - haqq-mainnet-haqq-pruned_config:/root/.haqqd/config
     logging: *logging-defaults
     labels:
-      - prometheus-scrape.enabled=false
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=6065
+      - prometheus-scrape.path=/metrics
       - traefik.enable=true
       - traefik.http.middlewares.haqq-mainnet-haqq-pruned-stripprefix.stripprefix.prefixes=/haqq-mainnet
       - traefik.http.services.haqq-mainnet-haqq-pruned.loadbalancer.server.port=8545
@@ -84,6 +95,7 @@ services:
 
 volumes:
   haqq-mainnet-haqq-pruned:
+  haqq-mainnet-haqq-pruned_config:
 
 x-upstreams:
   - id: $${ID}
