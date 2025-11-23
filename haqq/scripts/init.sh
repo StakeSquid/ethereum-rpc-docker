@@ -12,7 +12,6 @@ CONFIG_DIR="/root/.haqqd/config"
 # Create config directory
 mkdir -p "$CONFIG_DIR"
 
-JWTSECRET="$(cat /jwtsecret)" # needs to go to the config dir (default path)
 P2P_STRING="tcp:\\/\\/0\\.0\\.0\\.0\\:${P2P_PORT:-10465}"
 NAT_STRING="${IP}:${P2P_PORT:-10465}"
 
