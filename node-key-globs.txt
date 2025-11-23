@@ -13,3 +13,7 @@ discovery-secret
 
 # avalanchego
 staking/*
+
+# cosmos
+priv_validator_key.json
+node_key.json

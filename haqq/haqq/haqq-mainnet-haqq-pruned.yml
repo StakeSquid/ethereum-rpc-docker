@@ -58,6 +58,9 @@ services:
       - 8546
       - 6065
     environment:
+      - API=eth,txpool,net,debug,web3
+      - CHAINID=haqq_11235-1
+      - CHAINNAME=mainnet
       - IP=${IP}
       - MONIKER=d${DOMAIN:-local}
       - P2P_PORT=10465
