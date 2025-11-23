@@ -6,6 +6,7 @@ echo "MONIKER: $MONIKER"
 
 CHAINID=${CHAINID:-haqq_11235-1}
 CHAINNAME=${CHAINNAME:-mainnet}
+API=${API:-eth,net,web3}
 
 CONFIG_DIR="/root/.haqqd/config"
 
@@ -50,9 +51,10 @@ sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $CONFIG_D
 sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"19\"/" $CONFIG_DIR/app.toml
 sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $CONFIG_DIR/config.toml
 
-sed -i "/^\[json-rpc\]/,/^\[/{s|^address = .*|address = \"tcp://0.0.0.0:8545\"|}" "$CONFIG_DIR/app.toml"
-sed -i "/^\[json-rpc\]/,/^\[/{s|^ws-address = .*|ws-address = \"tcp://0.0.0.0:8546\"|}" "$CONFIG_DIR/app.toml"
-sed -i "/^\[json-rpc\]/,/^\[/{s|^metrics-address = .*|metrics-address = \"tcp://0.0.0.0:6065\"|}" "$CONFIG_DIR/app.toml"
+sed -i "/^\[json-rpc\]/,/^\[/{s|^address = .*|address = \"0.0.0.0:8545\"|}" "$CONFIG_DIR/app.toml"
+sed -i "/^\[json-rpc\]/,/^\[/{s|^ws-address = .*|ws-address = \"0.0.0.0:8546\"|}" "$CONFIG_DIR/app.toml"
+sed -i "/^\[json-rpc\]/,/^\[/{s|^metrics-address = .*|metrics-address = \"0.0.0.0:6065\"|}" "$CONFIG_DIR/app.toml"
+sed -i "/^\[json-rpc\]/,/^\[/{s|^api = .*|api = \"$API\"|}" "$CONFIG_DIR/app.toml"
 
 # Update moniker if set
 if [ -n "$MONIKER" ] && [ -f "$CONFIG_DIR/config.toml" ]; then
