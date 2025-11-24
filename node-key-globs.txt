@@ -2,7 +2,7 @@
 # One pattern per line. Lines starting with # are ignored.
 # Patterns are matched relative to the volume data directory
 
-# geth clones and erigon
+# geth clones, erigon and sonic
 **/nodekey
 
 # besu
