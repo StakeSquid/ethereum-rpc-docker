@@ -22,6 +22,10 @@ else
     # GOMEMLIMIT=28GiB exec sonictool --datadir "$datadir" --cache 12000 heal
 fi
 
+# after every restart I needed to do this manually so lets just do it automatically each time
+
+GOMEMLIMIT="${CACHE_GB}GiB" sonictool --datadir "$datadir" --cache "${CACHE_GB}000" heal
+
 #echo "Generating new Geth node key..."
 #openssl rand 32 | xxd -p -c 32 | tr -d '\n' > "$datadir/nodekey"
 
