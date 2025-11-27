@@ -41,7 +41,7 @@ services:
       context: ./sonic
       dockerfile: sonic.Dockerfile
       args:
-        VERSION: v2.1.0
+        VERSION: v2.1.4
         REPO: https://github.com/0xsoniclabs/sonic.git
         COMMIT: ''
         PATCH: ''

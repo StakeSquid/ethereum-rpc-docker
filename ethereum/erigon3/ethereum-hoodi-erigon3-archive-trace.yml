@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ethereum-hoodi-erigon3-archive:
-    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOODI_ERIGON3_VERSION:-v3.2.2}
+    image: ${ETHEREUM_ERIGON3_IMAGE:-erigontech/erigon}:${ETHEREUM_HOODI_ERIGON3_VERSION:-v3.3.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

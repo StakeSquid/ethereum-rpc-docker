@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   alephzero-mainnet:
-    image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_MAINNET_NITRO_VERSION:-v3.9.2-52e8959}
+    image: ${ALEPHZERO_NITRO_IMAGE:-offchainlabs/nitro-node}:${ALEPHZERO_MAINNET_NITRO_VERSION:-v3.9.3-8bc5554}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

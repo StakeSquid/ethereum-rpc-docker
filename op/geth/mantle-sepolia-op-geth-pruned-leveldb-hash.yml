@@ -33,7 +33,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   mantle-sepolia:
-    image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-op-geth}:${MANTLE_SEPOLIA_GETH_VERSION:-v1.3.0}
+    image: ${MANTLE_GETH_IMAGE:-mantlenetworkio/mantle-op-geth}:${MANTLE_SEPOLIA_GETH_VERSION:-v1.4.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -106,7 +106,7 @@ services:
       - traefik.http.routers.mantle-sepolia-op-geth-pruned-leveldb-hash.middlewares=mantle-sepolia-op-geth-pruned-leveldb-hash-stripprefix, ipallowlist
 
   mantle-sepolia-node:
-    image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-op-node}:${MANTLE_SEPOLIA_NODE_VERSION:-v1.3.0}
+    image: ${MANTLE_NODE_IMAGE:-mantlenetworkio/mantle-op-node}:${MANTLE_SEPOLIA_NODE_VERSION:-v1.4.1}
     ports:
       - 18358:18358
       - 18358:18358/udp

@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   bnb-testnet-archive:
-    image: ${BNB_GETH_IMAGE:-ghcr.io/bnb-chain/op-geth}:${BNB_TESTNET_GETH_VERSION:-v0.5.8}
+    image: ${BNB_GETH_IMAGE:-ghcr.io/bnb-chain/op-geth}:${BNB_TESTNET_GETH_VERSION:-v0.5.9}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.bnb-testnet-op-geth-archive-leveldb-hash.middlewares=bnb-testnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   bnb-testnet-archive-node:
-    image: ${BNB_NODE_IMAGE:-ghcr.io/bnb-chain/op-node}:${BNB_TESTNET_NODE_VERSION:-v0.5.4}
+    image: ${BNB_NODE_IMAGE:-ghcr.io/bnb-chain/op-node}:${BNB_TESTNET_NODE_VERSION:-v0.5.5}
     ports:
       - 15163:15163
       - 15163:15163/udp
