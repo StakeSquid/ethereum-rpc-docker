@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   linea-sepolia:
-    image: ${LINEA_BESU_IMAGE:-consensys/linea-besu-package}:${LINEA_SEPOLIA_BESU_VERSION:-beta-v4.4-rc5-20251126225622-d4ef83e}
+    image: ${LINEA_BESU_IMAGE:-consensys/linea-besu-package}:${LINEA_SEPOLIA_BESU_VERSION:-beta-v4.4-rc7-20251128021032-58550ad}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
