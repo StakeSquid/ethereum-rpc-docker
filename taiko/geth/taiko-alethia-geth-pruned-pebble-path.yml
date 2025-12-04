@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   taiko-alethia:
-    image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_ALETHIA_GETH_VERSION:-v1.17.0}
+    image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_ALETHIA_GETH_VERSION:-v1.17.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -110,7 +110,7 @@ services:
       - traefik.http.routers.taiko-alethia-geth-pruned-pebble-path.middlewares=taiko-alethia-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   taiko-alethia-node:
-    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v1.10.1}
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v1.11.0}
     ports:
       - 15251:15251
       - 15251:15251/udp

@@ -32,7 +32,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   xlayer-mainnet-archive:
-    image: ${XLAYER_GETH_IMAGE:-xlayer/op-geth}:${XLAYER_MAINNET_GETH_VERSION:-0.0.6}
+    image: ${XLAYER_GETH_IMAGE:-xlayer/op-geth}:${XLAYER_MAINNET_GETH_VERSION:-0.1.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.xlayer-mainnet-op-geth-archive-pebble-hash.middlewares=xlayer-mainnet-op-geth-archive-pebble-hash-stripprefix, ipallowlist
 
   xlayer-mainnet-archive-node:
-    image: ${XLAYER_NODE_IMAGE:-xlayer/op-node}:${XLAYER_MAINNET_NODE_VERSION:-0.0.9}
+    image: ${XLAYER_NODE_IMAGE:-xlayer/op-node}:${XLAYER_MAINNET_NODE_VERSION:-0.1.1}
     ports:
       - 17934:17934
       - 17934:17934/udp

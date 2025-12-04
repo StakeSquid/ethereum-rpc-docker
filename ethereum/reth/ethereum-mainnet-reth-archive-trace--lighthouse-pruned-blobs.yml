@@ -108,7 +108,7 @@ services:
     shm_size: 2gb
 
   ethereum-mainnet-reth-node:
-    image: ${ETHEREUM_LIGHTHOUSE_IMAGE:-sigp/lighthouse}:${ETHEREUM_MAINNET_LIGHTHOUSE_VERSION:-v7.1.0}
+    image: ${ETHEREUM_LIGHTHOUSE_IMAGE:-sigp/lighthouse}:${ETHEREUM_MAINNET_LIGHTHOUSE_VERSION:-v8.0.1}
     ports:
       - 19563:19563
       - 19563:19563/udp

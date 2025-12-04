@@ -109,7 +109,7 @@ services:
     shm_size: 2gb
 
   ethereum-sepolia-reth-pruned-node:
-    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_SEPOLIA_NIMBUS_VERSION:-multiarch-v25.11.0}
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_SEPOLIA_NIMBUS_VERSION:-multiarch-v25.11.1}
     user: root
     ports:
       - 17150:17150

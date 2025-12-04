@@ -61,7 +61,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   berachain-mainnet-reth:
-    image: ${BERACHAIN_RETH_IMAGE:-ghcr.io/berachain/bera-reth}:${BERACHAIN_MAINNET_RETH_VERSION:-v1.3.0}
+    image: ${BERACHAIN_RETH_IMAGE:-ghcr.io/berachain/bera-reth}:${BERACHAIN_MAINNET_RETH_VERSION:-v1.3.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

@@ -94,7 +94,7 @@ services:
       - traefik.http.routers.ethereum-hoodie-nethermind-pruned-rocksdb-trace.middlewares=ethereum-hoodie-nethermind-pruned-rocksdb-trace-stripprefix, ipallowlist
 
   ethereum-hoodie-nethermind-node:
-    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_HOODIE_NIMBUS_VERSION:-multiarch-v25.11.0}
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_HOODIE_NIMBUS_VERSION:-multiarch-v25.11.1}
     user: root
     ports:
       - 16214:16214

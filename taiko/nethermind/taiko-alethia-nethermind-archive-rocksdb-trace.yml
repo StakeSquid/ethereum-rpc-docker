@@ -98,7 +98,7 @@ services:
       - traefik.http.routers.taiko-alethia-nethermind-archive-rocksdb-trace.middlewares=taiko-alethia-nethermind-archive-rocksdb-trace-stripprefix, ipallowlist
 
   taiko-alethia-nethermind-archive-node:
-    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v1.10.1}
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_ALETHIA_DRIVER_VERSION:-taiko-alethia-client-v1.11.0}
     ports:
       - 16001:16001
       - 16001:16001/udp

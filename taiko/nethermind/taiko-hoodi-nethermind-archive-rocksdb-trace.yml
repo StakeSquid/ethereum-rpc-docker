@@ -98,7 +98,7 @@ services:
       - traefik.http.routers.taiko-hoodi-nethermind-archive-rocksdb-trace.middlewares=taiko-hoodi-nethermind-archive-rocksdb-trace-stripprefix, ipallowlist
 
   taiko-hoodi-nethermind-archive-node:
-    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HOODI_DRIVER_VERSION:-sha-153e66e}
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HOODI_DRIVER_VERSION:-taiko-alethia-client-v1.11.0}
     ports:
       - 19576:19576
       - 19576:19576/udp
