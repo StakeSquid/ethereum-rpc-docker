@@ -114,7 +114,7 @@ services:
       dockerfile: maru.Dockerfile
       args:
         MARU_IMAGE: ${LINEA_SEPOLIA_MARU_IMAGE:-consensys/maru}
-        MARU_VERSION: ${LINEA_SEPOLIA_MARU_VERSION:-bcfdb43}
+        MARU_VERSION: ${LINEA_SEPOLIA_MARU_VERSION:-9737a45}
     ports:
       - 15620:15620
       - 15620:15620/udp
@@ -125,6 +125,7 @@ services:
       - IP=${IP}
       - L1_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - P2P_PORT=15620
+      - SEQUENCER=
     entrypoint: [/bin/bash, -c]
     command:
       - |

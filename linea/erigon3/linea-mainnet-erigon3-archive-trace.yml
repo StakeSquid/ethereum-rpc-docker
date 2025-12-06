@@ -113,7 +113,7 @@ services:
       dockerfile: maru.Dockerfile
       args:
         MARU_IMAGE: ${LINEA_MAINNET_MARU_IMAGE:-consensys/maru}
-        MARU_VERSION: ${LINEA_MAINNET_MARU_VERSION:-bcfdb43}
+        MARU_VERSION: ${LINEA_MAINNET_MARU_VERSION:-9737a45}
     ports:
       - 15060:15060
       - 15060:15060/udp
@@ -124,6 +124,7 @@ services:
       - IP=${IP}
       - L1_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - P2P_PORT=15060
+      - SEQUENCER=
     entrypoint: [/bin/bash, -c]
     command:
       - |
