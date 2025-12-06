@@ -9,7 +9,7 @@
 #   ./list-restorable.sh -a       # Same as --all
 
 dir="$(dirname "$0")"
-registry_file="${dir}/../compose_registry.json"
+registry_file="${dir}/compose_registry.json"
 backup_dir="/backup"
 
 if [ ! -f "$registry_file" ]; then
