@@ -71,7 +71,11 @@ if [ -n "$filter_network" ] || [ -n "$filter_chain" ]; then
         condition_parts+=(".chain == \"$filter_chain\"")
     fi
     # Join conditions with " and "
-    condition_str=$(IFS=" and "; echo "${condition_parts[*]}")
+    if [ ${#condition_parts[@]} -eq 1 ]; then
+        condition_str="${condition_parts[0]}"
+    elif [ ${#condition_parts[@]} -eq 2 ]; then
+        condition_str="${condition_parts[0]} and ${condition_parts[1]}"
+    fi
     jq_filter=".[] | select($condition_str)"
 fi
 
