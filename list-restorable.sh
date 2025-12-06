@@ -4,9 +4,12 @@
 # backup files exist in /backup/
 #
 # Usage:
-#   ./list-restorable.sh          # Show only compose files with all backups available
-#   ./list-restorable.sh --all    # Show all compose files, including those with missing backups
-#   ./list-restorable.sh -a       # Same as --all
+#   ./list-restorable.sh                          # Show only compose files with all backups available
+#   ./list-restorable.sh --all                    # Show all compose files, including those with missing backups
+#   ./list-restorable.sh <network>                # Filter by network (e.g., ethereum, arbitrum, polygon)
+#   ./list-restorable.sh <network> <chain>        # Filter by network and chain (e.g., ethereum mainnet)
+#   ./list-restorable.sh --all <network> <chain>  # Combine with --all flag (--all can be anywhere)
+#   ./list-restorable.sh <network> --all <chain>  # --all can be in any position
 
 dir="$(dirname "$0")"
 registry_file="${dir}/compose_registry.json"
@@ -28,9 +31,61 @@ if ! command -v jq &> /dev/null; then
     exit 1
 fi
 
-# Count total entries
-total_entries=$(jq 'length' "$registry_file")
-echo "Checking $total_entries compose files for restorable backups..."
+# Parse command-line arguments
+# First pass: extract --all/-a flags from anywhere
+show_all=false
+positional_args=()
+
+for arg in "$@"; do
+    case "$arg" in
+        --all|-a)
+            show_all=true
+            ;;
+        *)
+            positional_args+=("$arg")
+            ;;
+    esac
+done
+
+# Second pass: treat remaining args as positional parameters
+# First arg = network, second arg = chain
+filter_network=""
+filter_chain=""
+
+if [ ${#positional_args[@]} -gt 0 ]; then
+    filter_network="${positional_args[0]}"
+fi
+
+if [ ${#positional_args[@]} -gt 1 ]; then
+    filter_chain="${positional_args[1]}"
+fi
+
+# Build jq filter for network and chain
+jq_filter=".[]"
+if [ -n "$filter_network" ] || [ -n "$filter_chain" ]; then
+    condition_parts=()
+    if [ -n "$filter_network" ]; then
+        condition_parts+=(".network == \"$filter_network\"")
+    fi
+    if [ -n "$filter_chain" ]; then
+        condition_parts+=(".chain == \"$filter_chain\"")
+    fi
+    # Join conditions with " and "
+    condition_str=$(IFS=" and "; echo "${condition_parts[*]}")
+    jq_filter=".[] | select($condition_str)"
+fi
+
+# Count filtered entries
+if [ -n "$filter_network" ] || [ -n "$filter_chain" ]; then
+    total_entries=$(jq -c "$jq_filter" "$registry_file" | wc -l | tr -d ' ')
+    filter_info=""
+    [ -n "$filter_network" ] && filter_info="${filter_info}network=$filter_network "
+    [ -n "$filter_chain" ] && filter_info="${filter_info}chain=$filter_chain "
+    echo "Checking $total_entries compose files (filtered by: ${filter_info% }) for restorable backups..."
+else
+    total_entries=$(jq 'length' "$registry_file")
+    echo "Checking $total_entries compose files for restorable backups..."
+fi
 echo ""
 
 # Use temporary files to collect results (since variables in subshells don't persist)
@@ -41,6 +96,11 @@ trap "rm -f $restorable_list $missing_list" EXIT
 # Process each entry in the registry
 # Use process substitution to avoid subshell issues
 while IFS= read -r entry; do
+    # Skip empty entries
+    if [ -z "$entry" ]; then
+        continue
+    fi
+    
     compose_file=$(echo "$entry" | jq -r '.compose_file')
     volumes=$(echo "$entry" | jq -r '.volumes[]')
     
@@ -133,12 +193,12 @@ while IFS= read -r entry; do
         echo "✓ $compose_file [${info_str}]"
         echo "$compose_file" >> "$restorable_list"
     else
-        if [ "${1}" = "--all" ] || [ "${1}" = "-a" ]; then
+        if [ "$show_all" = true ]; then
             echo "✗ $compose_file (missing: ${missing_volumes[*]})"
             echo "$compose_file" >> "$missing_list"
         fi
     fi
-done < <(jq -c '.[]' "$registry_file")
+done < <(jq -c "$jq_filter" "$registry_file")
 
 # Count results
 restorable_count=$(wc -l < "$restorable_list" 2>/dev/null | tr -d ' ' || echo "0")
@@ -147,9 +207,14 @@ missing_count=$(wc -l < "$missing_list" 2>/dev/null | tr -d ' ' || echo "0")
 echo ""
 echo "Summary:"
 echo "  Restorable: $restorable_count"
-if [ "${1}" = "--all" ] || [ "${1}" = "-a" ]; then
+if [ "$show_all" = true ]; then
     echo "  Missing backups: $missing_count"
 fi
 echo ""
-echo "Use --all or -a flag to show compose files with missing backups"
+if [ "$show_all" = false ]; then
+    echo "Use --all or -a flag to show compose files with missing backups"
+fi
+if [ -z "$filter_network" ] && [ -z "$filter_chain" ]; then
+    echo "Use --network <name> and/or --chain <name> to filter results"
+fi
 
