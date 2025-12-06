@@ -53,6 +53,7 @@ while IFS= read -r entry; do
     # Check each volume for backup file
     all_backups_exist=true
     missing_volumes=()
+    backup_info=()
     
     while IFS= read -r volume; do
         volume_name="rpc_${volume}"
@@ -62,11 +63,74 @@ while IFS= read -r entry; do
         if [ -z "$backup_file" ]; then
             all_backups_exist=false
             missing_volumes+=("$volume_name")
+        else
+            # Extract size and date from filename (format: rpc_<volume>-<date>-<size>G.tar.zst)
+            backup_basename=$(basename "$backup_file" .tar.zst)
+            # Extract size (the part ending with G before .tar.zst)
+            size=$(echo "$backup_basename" | grep -oE '[0-9]+G$' || echo "")
+            
+            # Try to extract date from filename (format: YYYY-MM-DD-HH-MM-SS)
+            # Remove the volume name prefix, then remove the size suffix, what remains should be the date
+            if [ -n "$size" ]; then
+                # Remove volume prefix and size suffix
+                date_candidate=$(echo "$backup_basename" | sed "s/^${volume_name}-//" | sed "s/-${size}$//")
+                # Verify it matches the date pattern
+                date_str=$(echo "$date_candidate" | grep -oE '^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}$' || echo "")
+            else
+                date_str=""
+            fi
+            
+            # Calculate age from filename date or file modification time
+            if [ -n "$date_str" ]; then
+                # Convert date string to timestamp
+                # Format: YYYY-MM-DD-HH-MM-SS -> YYYY-MM-DD HH:MM:SS
+                date_formatted=$(echo "$date_str" | sed 's/\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)/\1 \2:\3:\4/')
+                # Try macOS date format first, then Linux
+                backup_timestamp=$(date -j -f "%Y-%m-%d %H:%M:%S" "$date_formatted" +%s 2>/dev/null || \
+                                   date -d "$date_formatted" +%s 2>/dev/null || echo "")
+            fi
+            
+            # Fallback to file modification time if date parsing failed
+            if [ -z "$backup_timestamp" ] || [ -z "$date_str" ]; then
+                # Use file modification time (works on both macOS and Linux)
+                if [[ "$OSTYPE" == "darwin"* ]]; then
+                    backup_timestamp=$(stat -f %m "$backup_file" 2>/dev/null || echo "")
+                else
+                    backup_timestamp=$(stat -c %Y "$backup_file" 2>/dev/null || echo "")
+                fi
+            fi
+            
+            # Calculate and format age
+            if [ -n "$backup_timestamp" ]; then
+                current_timestamp=$(date +%s)
+                age_seconds=$((current_timestamp - backup_timestamp))
+                
+                # Format age
+                if [ $age_seconds -lt 3600 ]; then
+                    age_mins=$((age_seconds / 60))
+                    age="${age_mins}m"
+                elif [ $age_seconds -lt 86400 ]; then
+                    age_hours=$((age_seconds / 3600))
+                    age="${age_hours}h"
+                elif [ $age_seconds -lt 604800 ]; then
+                    age_days=$((age_seconds / 86400))
+                    age="${age_days}d"
+                else
+                    age_weeks=$((age_seconds / 604800))
+                    age="${age_weeks}w"
+                fi
+            else
+                age="unknown"
+            fi
+            
+            backup_info+=("${size:-unknown} (${age})")
         fi
     done <<< "$volumes"
     
     if [ "$all_backups_exist" = true ]; then
-        echo "✓ $compose_file"
+        # Format backup info for display
+        info_str=$(IFS=", "; echo "${backup_info[*]}")
+        echo "✓ $compose_file [${info_str}]"
         echo "$compose_file" >> "$restorable_list"
     else
         if [ "${1}" = "--all" ] || [ "${1}" = "-a" ]; then
