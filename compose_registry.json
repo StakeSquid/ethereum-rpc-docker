@@ -1,0 +1,6898 @@
+[
+  {
+    "chain": "mainnet",
+    "client": "external-node",
+    "compose_file": "abstract/external-node/abstract-mainnet-external-node-archive",
+    "features": [],
+    "network": "abstract",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "abstract-mainnet-external-node-archive",
+      "abstract-mainnet-external-node-archive_db"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "external-node",
+    "compose_file": "abstract/external-node/abstract-mainnet-external-node-pruned",
+    "features": [],
+    "network": "abstract",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "abstract-mainnet-external-node-pruned",
+      "abstract-mainnet-external-node-pruned_db"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "external-node",
+    "compose_file": "abstract/external-node/abstract-testnet-external-node-archive",
+    "features": [],
+    "network": "abstract",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "abstract-testnet-external-node-archive",
+      "abstract-testnet-external-node-archive_db"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "external-node",
+    "compose_file": "abstract/external-node/abstract-testnet-external-node-pruned",
+    "features": [],
+    "network": "abstract",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "abstract-testnet-external-node-pruned",
+      "abstract-testnet-external-node-pruned_db"
+    ]
+  },
+  {
+    "chain": "one",
+    "client": "arbnode",
+    "compose_file": "arb/arbnode/arbitrum-one-arbnode-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "arbitrum-one-arbnode-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "one",
+    "client": "fireeth",
+    "compose_file": "arb/fireeth/arbitrum-one-fireeth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "arbitrum-one-fireeth-pruned-pebble-hash",
+      "arbitrum-one-fireeth-pruned-pebble-hash-blocks"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/alephzero-mainnet-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "alephzero",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "alephzero-mainnet-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/alephzero-mainnet-nitro-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "alephzero",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "alephzero-mainnet-nitro-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/alephzero-mainnet-nitro-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "alephzero",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "alephzero-mainnet-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/alephzero-sepolia-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "alephzero",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "alephzero-sepolia-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/alephzero-sepolia-nitro-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "alephzero",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "alephzero-sepolia-nitro-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/alephzero-sepolia-nitro-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "alephzero",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "alephzero-sepolia-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "nova",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-nova-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "arbitrum-nova-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "nova",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-nova-nitro-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "arbitrum-nova-nitro-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "one",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-one-nitro-archive-erigon",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "arbitrum-one-nitro-archive-erigon"
+    ]
+  },
+  {
+    "chain": "one",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-one-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "arbitrum-one-arbnode-archive-leveldb-hash",
+      "arbitrum-one-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "one",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-one-nitro-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "arbitrum-one-arbnode-archive-leveldb-hash",
+      "arbitrum-one-nitro-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "one",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-one-nitro-pruned-pebble-hash--fireeth",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "arbitrum-one-nitro-pruned-pebble-hash",
+      "arbitrum-one-nitro-pruned-pebble-hash_fireeth"
+    ]
+  },
+  {
+    "chain": "one",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-one-nitro-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "arbitrum-one-nitro-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-sepolia-nitro-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "arbitrum-sepolia-nitro-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-sepolia-nitro-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "arbitrum-sepolia-nitro-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/arbitrum-sepolia-nitro-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "arbitrum-sepolia-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/connext-sepolia-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "connext",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "connext-sepolia-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/connext-sepolia-nitro-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "connext",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "connext-sepolia-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/everclear-mainnet-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "everclear",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "everclear-mainnet-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/everclear-mainnet-nitro-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "everclear",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "everclear-mainnet-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/opencampuscodex-sepolia-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "opencampuscodex",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "opencampuscodex-sepolia-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/opencampuscodex-sepolia-nitro-pruned-pebble-hash",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "opencampuscodex",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "opencampuscodex-sepolia-nitro-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro",
+    "compose_file": "arb/nitro/opencampuscodex-sepolia-nitro-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "opencampuscodex",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "opencampuscodex-sepolia-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/playblock-mainnet-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "playblock",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "playblock-mainnet-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/playblock-mainnet-nitro-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "playblock",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "playblock-mainnet-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/plume-mainnet-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "plume",
+    "node": null,
+    "relay": "celestia",
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "plume-mainnet-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/plume-mainnet-nitro-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "plume",
+    "node": null,
+    "relay": "celestia",
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "plume-mainnet-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/real-mainnet-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "real",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "real-mainnet-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/real-mainnet-nitro-archive-pebble-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "real",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "real-mainnet-nitro-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/real-mainnet-nitro-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "real",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "real-mainnet-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro-erigon",
+    "compose_file": "arb/nitro-erigon/arbitrum-sepolia-nitro-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "arbitrum-sepolia-nitro-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro-erigon",
+    "compose_file": "arb/nitro-erigon/arbitrum-sepolia-nitro-erigon-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "minimal",
+    "volumes": [
+      "arbitrum-sepolia-nitro-erigon-minimal-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nitro-erigon",
+    "compose_file": "arb/nitro-erigon/arbitrum-sepolia-nitro-erigon-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "arbitrum",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "arbitrum-sepolia-nitro-erigon-pruned-trace"
+    ]
+  },
+  {
+    "chain": "fuji",
+    "client": "go",
+    "compose_file": "avalanche/go/avalanche-fuji-go-archive-leveldb",
+    "features": [
+      "leveldb"
+    ],
+    "network": "avalanche",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "avalanche-fuji-go-archive-leveldb"
+    ]
+  },
+  {
+    "chain": "fuji",
+    "client": "go",
+    "compose_file": "avalanche/go/avalanche-fuji-go-pruned-leveldb",
+    "features": [
+      "leveldb"
+    ],
+    "network": "avalanche",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "avalanche-fuji-go-pruned-leveldb"
+    ]
+  },
+  {
+    "chain": "fuji",
+    "client": "go",
+    "compose_file": "avalanche/go/avalanche-fuji-go-pruned-pebbledb",
+    "features": [
+      "leveldb"
+    ],
+    "network": "avalanche",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "avalanche-fuji-go-pruned-pebbledb"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "go",
+    "compose_file": "avalanche/go/avalanche-mainnet-go-archive-leveldb",
+    "features": [
+      "leveldb"
+    ],
+    "network": "avalanche",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "avalanche-mainnet-go-archive-leveldb"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "go",
+    "compose_file": "avalanche/go/avalanche-mainnet-go-pruned-leveldb",
+    "features": [
+      "leveldb"
+    ],
+    "network": "avalanche",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "avalanche-mainnet-go-pruned-leveldb"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "go",
+    "compose_file": "avalanche/go/avalanche-mainnet-go-pruned-pebbledb",
+    "features": [
+      "leveldb"
+    ],
+    "network": "avalanche",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "avalanche-mainnet-go-pruned-pebbledb"
+    ]
+  },
+  {
+    "chain": "bepolia",
+    "client": "geth",
+    "compose_file": "berachain/geth/berachain-bepolia-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "berachain",
+    "node": "beacon-kit",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "berachain-bepolia-geth-pruned-pebble-path",
+      "berachain-bepolia-geth-pruned-pebble-path_beacon-kit",
+      "berachain-bepolia-geth-pruned-pebble-path_config"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "berachain/geth/berachain-mainnet-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "berachain",
+    "node": "beacon-kit",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "berachain-mainnet-geth-pruned-pebble-path",
+      "berachain-mainnet-geth-pruned-pebble-path_beacon-kit",
+      "berachain-mainnet-geth-pruned-pebble-path_config"
+    ]
+  },
+  {
+    "chain": "bartio",
+    "client": "reth",
+    "compose_file": "berachain/reth/berachain-bartio-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "berachain",
+    "node": "beacon-kit",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "berachain-bartio-reth-archive-trace",
+      "berachain-bartio-reth-archive-trace_beacon-kit",
+      "berachain-bartio-reth-archive-trace_config"
+    ]
+  },
+  {
+    "chain": "bartio",
+    "client": "reth",
+    "compose_file": "berachain/reth/berachain-bartio-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "berachain",
+    "node": "beacon-kit",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "berachain-bartio-reth-pruned-trace",
+      "berachain-bartio-reth-pruned-trace_beacon-kit",
+      "berachain-bartio-reth-pruned-trace_config"
+    ]
+  },
+  {
+    "chain": "bepolia",
+    "client": "reth",
+    "compose_file": "berachain/reth/berachain-bepolia-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "berachain",
+    "node": "beacon-kit",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "berachain-bepolia-reth-archive-trace",
+      "berachain-bepolia-reth-archive-trace_beacon-kit",
+      "berachain-bepolia-reth-archive-trace_config"
+    ]
+  },
+  {
+    "chain": "bepolia",
+    "client": "reth",
+    "compose_file": "berachain/reth/berachain-bepolia-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "berachain",
+    "node": "beacon-kit",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "berachain-bepolia-reth-pruned-trace",
+      "berachain-bepolia-reth-pruned-trace_beacon-kit",
+      "berachain-bepolia-reth-pruned-trace_config"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "berachain/reth/berachain-mainnet-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "berachain",
+    "node": "beacon-kit",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "berachain-mainnet-reth-archive-trace",
+      "berachain-mainnet-reth-archive-trace_beacon-kit",
+      "berachain-mainnet-reth-archive-trace_config"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "berachain/reth/berachain-mainnet-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "berachain",
+    "node": "beacon-kit",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "berachain-mainnet-reth-pruned-trace",
+      "berachain-mainnet-reth-pruned-trace_beacon-kit",
+      "berachain-mainnet-reth-pruned-trace_config"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "bitcoind",
+    "compose_file": "bitcoin/bitcoind/bitcoin-mainnet-bitcoind-full",
+    "features": [],
+    "network": "bitcoin",
+    "node": "esplora",
+    "relay": null,
+    "stack": null,
+    "type": "full",
+    "volumes": [
+      "bitcoin-mainnet-bitcoind-full",
+      "bitcoin-mainnet-bitcoind-full_esplora"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "bitcoind",
+    "compose_file": "bitcoin/bitcoind/bitcoin-testnet-bitcoind-full",
+    "features": [],
+    "network": "bitcoin",
+    "node": "esplora",
+    "relay": null,
+    "stack": null,
+    "type": "full",
+    "volumes": [
+      "bitcoin-testnet-bitcoind-full",
+      "bitcoin-testnet-bitcoind-full_esplora"
+    ]
+  },
+  {
+    "chain": "cash-mainnet",
+    "client": "bitcoind",
+    "compose_file": "bitcoin-cash/bitcoind/bitcoin-cash-mainnet-bitcoind-full",
+    "features": [],
+    "network": "bitcoin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "full",
+    "volumes": [
+      "bitcoin-cash-mainnet-bitcoind-full"
+    ]
+  },
+  {
+    "chain": "cash-testnet",
+    "client": "bitcoind",
+    "compose_file": "bitcoin-cash/bitcoind/bitcoin-cash-testnet-bitcoind-full",
+    "features": [],
+    "network": "bitcoin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "full",
+    "volumes": [
+      "bitcoin-cash-testnet-bitcoind-full"
+    ]
+  },
+  {
+    "chain": "chapel",
+    "client": "bsc",
+    "compose_file": "bsc/bsc/bsc-chapel-bsc-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "bsc-chapel-bsc-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "bsc",
+    "compose_file": "bsc/bsc/bsc-mainnet-bsc-minimal-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "bsc-mainnet-bsc-minimal-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "bsc",
+    "compose_file": "bsc/bsc/bsc-mainnet-bsc-pruned-pebble-path--fireeth",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "bsc-mainnet-bsc-pruned-pebble-path",
+      "bsc-mainnet-bsc-pruned-pebble-path_fireeth"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "bsc",
+    "compose_file": "bsc/bsc/bsc-mainnet-bsc-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "bsc-mainnet-bsc-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "chapel",
+    "client": "erigon3",
+    "compose_file": "bsc/erigon3/bsc-chapel-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "bsc-chapel-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "chapel",
+    "client": "erigon3",
+    "compose_file": "bsc/erigon3/bsc-chapel-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "bsc-chapel-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "chapel",
+    "client": "erigon3",
+    "compose_file": "bsc/erigon3/bsc-chapel-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "bsc-chapel-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "bsc/erigon3/bsc-mainnet-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "bsc-mainnet-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "bsc/erigon3/bsc-mainnet-erigon3-minimal-trace--benchmark",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "bsc-mainnet-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "bsc/erigon3/bsc-mainnet-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "bsc-mainnet-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "bsc/erigon3/bsc-mainnet-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "bsc-mainnet-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "chapel",
+    "client": "reth",
+    "compose_file": "bsc/reth/bsc-chapel-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "bsc-chapel-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "chapel",
+    "client": "reth",
+    "compose_file": "bsc/reth/bsc-chapel-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "bsc-chapel-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "bsc/reth/bsc-mainnet-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "bsc-mainnet-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "bsc/reth/bsc-mainnet-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "bsc-mainnet-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "alfajores",
+    "client": "geth",
+    "compose_file": "celo/geth/celo-alfajores-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "celo",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "celo-alfajores-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "alfajores",
+    "client": "geth",
+    "compose_file": "celo/geth/celo-alfajores-geth-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "celo",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "celo-alfajores-geth-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "celo/geth/celo-mainnet-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "celo-mainnet-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "celo/geth/celo-mainnet-geth-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "celo-mainnet-geth-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "buffalo",
+    "client": "core",
+    "compose_file": "core/core/core-buffalo-core-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "core",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "core-buffalo-core-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "buffalo",
+    "client": "core",
+    "compose_file": "core/core/core-buffalo-core-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "core",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "core-buffalo-core-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "core",
+    "compose_file": "core/core/core-mainnet-core-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "core",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "core-mainnet-core-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "core",
+    "compose_file": "core/core/core-mainnet-core-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "core",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "core-mainnet-core-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "core",
+    "compose_file": "core/core/core-mainnet-core-pruned-pebble-path",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "core",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "core-mainnet-core-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "pigeon",
+    "client": "core",
+    "compose_file": "core/core/core-pigeon-core-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "core",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "core-pigeon-core-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "pigeon",
+    "client": "core",
+    "compose_file": "core/core/core-pigeon-core-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "core",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "core-pigeon-core-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "zkevm-mainnet",
+    "client": "external-node",
+    "compose_file": "cronos-zkevm/external-node/cronos-zkevm-mainnet-external-node-archive",
+    "features": [],
+    "network": "cronos",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "cronos-zkevm-mainnet-external-node-archive",
+      "cronos-zkevm-mainnet-external-node-archive_db"
+    ]
+  },
+  {
+    "chain": "zkevm-mainnet",
+    "client": "external-node",
+    "compose_file": "cronos-zkevm/external-node/cronos-zkevm-mainnet-external-node-pruned",
+    "features": [],
+    "network": "cronos",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "cronos-zkevm-mainnet-external-node-pruned",
+      "cronos-zkevm-mainnet-external-node-pruned_db"
+    ]
+  },
+  {
+    "chain": "zkevm-testnet",
+    "client": "external-node",
+    "compose_file": "cronos-zkevm/external-node/cronos-zkevm-testnet-external-node-archive",
+    "features": [],
+    "network": "cronos",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "cronos-zkevm-testnet-external-node-archive",
+      "cronos-zkevm-testnet-external-node-archive_db"
+    ]
+  },
+  {
+    "chain": "zkevm-testnet",
+    "client": "external-node",
+    "compose_file": "cronos-zkevm/external-node/cronos-zkevm-testnet-external-node-pruned",
+    "features": [],
+    "network": "cronos",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "cronos-zkevm-testnet-external-node-pruned",
+      "cronos-zkevm-testnet-external-node-pruned_db"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "dogecoind",
+    "compose_file": "dogecoin/dogecoind/dogecoin-mainnet-dogecoind-full",
+    "features": [],
+    "network": "dogecoin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "full",
+    "volumes": [
+      "dogecoin-mainnet-dogecoind-full"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "dogecoind",
+    "compose_file": "dogecoin/dogecoind/dogecoin-testnet-dogecoind-full",
+    "features": [],
+    "network": "dogecoin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "full",
+    "volumes": [
+      "dogecoin-testnet-dogecoind-full"
+    ]
+  },
+  {
+    "chain": "classic",
+    "client": "besu",
+    "compose_file": "ethereum/besu/ethereum-classic-besu-pruned-bonsai",
+    "features": [
+      "bonsai"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-classic-besu-pruned-bonsai"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "besu",
+    "compose_file": "ethereum/besu/ethereum-mainnet-besu-pruned-bonsai--nimbus",
+    "features": [
+      "bonsai"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-besu-pruned-bonsai",
+      "ethereum-mainnet-besu-pruned-bonsai_nimbus"
+    ]
+  },
+  {
+    "chain": "holesky",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-holesky-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-holesky-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "holesky",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-holesky-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "ethereum-holesky-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "holesky",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-holesky-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-holesky-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-hoodi-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-hoodi-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-hoodi-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "ethereum-hoodi-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-hoodi-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-hoodi-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-mainnet-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-mainnet-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-mainnet-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "ethereum-mainnet-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-mainnet-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-sepolia-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-sepolia-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-sepolia-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "ethereum-sepolia-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon3",
+    "compose_file": "ethereum/erigon3/ethereum-sepolia-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-sepolia-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "holesky",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-holesky-geth-pruned-pebble-path--nimbus",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-holesky-geth-pruned-pebble-path",
+      "ethereum-holesky-geth-pruned-pebble-path_nimbus"
+    ]
+  },
+  {
+    "chain": "holesky",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-holesky-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-holesky-geth-pruned-pebble-path",
+      "ethereum-holesky-geth-pruned-pebble-path_prysm"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-hoodi-geth-pruned-pebble-path--nimbus",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-hoodi-geth-pruned-pebble-path",
+      "ethereum-hoodi-geth-pruned-pebble-path_nimbus"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-hoodi-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-hoodi-geth-pruned-pebble-path",
+      "ethereum-hoodi-geth-pruned-pebble-path_prysm"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-mainnet-geth-minimal-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "prysm",
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "ethereum-mainnet-geth-minimal-pebble-path",
+      "ethereum-mainnet-geth-minimal-pebble-path_prysm"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-mainnet-geth-pruned-leveldb-hash--nimbus--fireeth",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-geth-pruned-leveldb-hash",
+      "ethereum-mainnet-geth-pruned-leveldb-hash_fireeth",
+      "ethereum-mainnet-geth-pruned-leveldb-hash_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-mainnet-geth-pruned-pebble-path--nimbus--fireeth",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-geth-pruned-pebble-path",
+      "ethereum-mainnet-geth-pruned-pebble-path_fireeth",
+      "ethereum-mainnet-geth-pruned-pebble-path_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-mainnet-geth-pruned-pebble-path--nimbus",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-geth-pruned-pebble-path",
+      "ethereum-mainnet-geth-pruned-pebble-path_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-mainnet-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-geth-pruned-pebble-path",
+      "ethereum-mainnet-geth-pruned-pebble-path_prysm"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-sepolia-geth-pruned-pebble-path--nimbus",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-sepolia-geth-pruned-pebble-path",
+      "ethereum-sepolia-geth-pruned-pebble-path_nimbus"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "ethereum/geth/ethereum-sepolia-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-sepolia-geth-pruned-pebble-path",
+      "ethereum-sepolia-geth-pruned-pebble-path_prysm"
+    ]
+  },
+  {
+    "chain": "hoodie",
+    "client": "nethermind",
+    "compose_file": "ethereum/nethermind/ethereum-hoodie-nethermind-pruned-rocksdb-trace--nimbus",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-hoodie-nethermind-pruned-rocksdb-trace",
+      "ethereum-hoodie-nethermind-pruned-rocksdb-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nethermind",
+    "compose_file": "ethereum/nethermind/ethereum-mainnet-nethermind-pruned-rocksdb-trace--nimbus",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-nethermind-pruned-rocksdb-trace",
+      "ethereum-mainnet-nethermind-pruned-rocksdb-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "nethermind",
+    "compose_file": "ethereum/nethermind/ethereum-sepolia-nethermind-pruned-rocksdb-trace--nimbus",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-sepolia-nethermind-pruned-rocksdb-trace",
+      "ethereum-sepolia-nethermind-pruned-rocksdb-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "holesky",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-holesky-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "lighthouse",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-holesky-reth-archive-trace",
+      "ethereum-holesky-reth-archive-trace_prysm"
+    ]
+  },
+  {
+    "chain": "holesky",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-holesky-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "lighthouse",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-holesky-reth-pruned-trace",
+      "ethereum-holesky-reth-pruned-trace_prysm"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-hoodi-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "prysm",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-hoodi-reth-archive-trace",
+      "ethereum-hoodi-reth-archive-trace_prysm"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-hoodi-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "prysm",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-hoodi-reth-pruned-trace",
+      "ethereum-hoodi-reth-pruned-trace_prysm"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-mainnet-reth-archive-trace--lighthouse-pruned-blobs",
+    "features": [
+      "blobs",
+      "pruned",
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "lighthouse",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-mainnet-reth-archive-trace",
+      "ethereum-mainnet-reth-archive-trace_lighthouse-pruned-blobs"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-mainnet-reth-archive-trace--nimbus",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "lighthouse",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-mainnet-reth-archive-trace",
+      "ethereum-mainnet-reth-archive-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-mainnet-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "lighthouse",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-mainnet-reth-archive-trace",
+      "ethereum-mainnet-reth-archive-trace_prysm"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-mainnet-reth-minimal-trace--blsync",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "blsync",
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "ethereum-mainnet-reth-minimal-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-mainnet-reth-minimal-trace--nimbus",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "blsync",
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "ethereum-mainnet-reth-minimal-trace",
+      "ethereum-mainnet-reth-minimal-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-mainnet-reth-pruned-trace--lighthouse",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "lighthouse",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-reth-pruned-trace",
+      "ethereum-mainnet-reth-pruned-trace_lighthouse"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-mainnet-reth-pruned-trace--nimbus",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "lighthouse",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-reth-pruned-trace",
+      "ethereum-mainnet-reth-pruned-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-mainnet-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "lighthouse",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-mainnet-reth-pruned-trace",
+      "ethereum-mainnet-reth-pruned-trace_prysm"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-sepolia-reth-archive-trace--nimbus",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-sepolia-reth-archive-trace",
+      "ethereum-sepolia-reth-archive-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-sepolia-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ethereum-sepolia-reth-archive-trace",
+      "ethereum-sepolia-reth-archive-trace_prysm"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-sepolia-reth-pruned-trace--nimbus",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-sepolia-reth-pruned-trace",
+      "ethereum-sepolia-reth-pruned-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "ethereum/reth/ethereum-sepolia-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ethereum",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ethereum-sepolia-reth-pruned-trace",
+      "ethereum-sepolia-reth-pruned-trace_prysm"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "opera",
+    "compose_file": "fantom/opera/fantom-mainnet-opera-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "fantom-mainnet-opera-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "opera",
+    "compose_file": "fantom/opera/fantom-mainnet-opera-archive",
+    "features": [],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "fantom-mainnet-opera-archive"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "opera",
+    "compose_file": "fantom/opera/fantom-mainnet-opera-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "fantom-mainnet-opera-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "opera",
+    "compose_file": "fantom/opera/fantom-mainnet-opera-pruned",
+    "features": [],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "fantom-mainnet-opera-pruned"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "opera",
+    "compose_file": "fantom/opera/fantom-testnet-opera-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "fantom-testnet-opera-archive-trace"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "opera",
+    "compose_file": "fantom/opera/fantom-testnet-opera-archive",
+    "features": [],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "fantom-testnet-opera-archive"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "opera",
+    "compose_file": "fantom/opera/fantom-testnet-opera-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "fantom-testnet-opera-pruned-trace"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "opera",
+    "compose_file": "fantom/opera/fantom-testnet-opera-pruned",
+    "features": [],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "fantom-testnet-opera-pruned"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "sonic",
+    "compose_file": "fantom/sonic/fantom-mainnet-sonic-archive",
+    "features": [],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "fantom-mainnet-sonic-archive"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "sonic",
+    "compose_file": "fantom/sonic/fantom-testnet-sonic-archive",
+    "features": [],
+    "network": "fantom",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "fantom-testnet-sonic-archive"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nethermind",
+    "compose_file": "fuse/nethermind/fuse-mainnet-nethermind-archive-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "fuse",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "fuse-mainnet-nethermind-archive-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nethermind",
+    "compose_file": "fuse/nethermind/fuse-mainnet-nethermind-minimal-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "fuse",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "fuse-mainnet-nethermind-minimal-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nethermind",
+    "compose_file": "fuse/nethermind/fuse-mainnet-nethermind-pruned-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "fuse",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "fuse-mainnet-nethermind-pruned-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "spark",
+    "client": "nethermind",
+    "compose_file": "fuse/nethermind/fuse-spark-nethermind-archive-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "fuse",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "fuse-spark-nethermind-archive-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "spark",
+    "client": "nethermind",
+    "compose_file": "fuse/nethermind/fuse-spark-nethermind-minimal-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "fuse",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "fuse-spark-nethermind-minimal-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "spark",
+    "client": "nethermind",
+    "compose_file": "fuse/nethermind/fuse-spark-nethermind-pruned-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "fuse",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "fuse-spark-nethermind-pruned-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "chiado",
+    "client": "erigon3",
+    "compose_file": "gnosis/erigon3/gnosis-chiado-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "gnosis-chiado-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "chiado",
+    "client": "erigon3",
+    "compose_file": "gnosis/erigon3/gnosis-chiado-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "gnosis-chiado-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "chiado",
+    "client": "erigon3",
+    "compose_file": "gnosis/erigon3/gnosis-chiado-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "gnosis-chiado-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "gnosis/erigon3/gnosis-mainnet-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "gnosis-mainnet-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "gnosis/erigon3/gnosis-mainnet-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "gnosis-mainnet-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "gnosis/erigon3/gnosis-mainnet-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "gnosis-mainnet-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "chiado",
+    "client": "nethermind",
+    "compose_file": "gnosis/nethermind/gnosis-chiado-nethermind-archive-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "gnosis-chiado-nethermind-archive-rocksdb-trace",
+      "gnosis-chiado-nethermind-archive-rocksdb-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "chiado",
+    "client": "nethermind",
+    "compose_file": "gnosis/nethermind/gnosis-chiado-nethermind-minimal-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "gnosis-chiado-nethermind-minimal-rocksdb-trace",
+      "gnosis-chiado-nethermind-minimal-rocksdb-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "chiado",
+    "client": "nethermind",
+    "compose_file": "gnosis/nethermind/gnosis-chiado-nethermind-pruned-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "gnosis-chiado-nethermind-pruned-rocksdb-trace",
+      "gnosis-chiado-nethermind-pruned-rocksdb-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nethermind",
+    "compose_file": "gnosis/nethermind/gnosis-mainnet-nethermind-archive-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "gnosis-mainnet-nethermind-archive-rocksdb-trace",
+      "gnosis-mainnet-nethermind-archive-rocksdb-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nethermind",
+    "compose_file": "gnosis/nethermind/gnosis-mainnet-nethermind-minimal-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "gnosis-mainnet-nethermind-minimal-rocksdb-trace",
+      "gnosis-mainnet-nethermind-minimal-rocksdb-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "nethermind",
+    "compose_file": "gnosis/nethermind/gnosis-mainnet-nethermind-pruned-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "gnosis-mainnet-nethermind-pruned-rocksdb-trace",
+      "gnosis-mainnet-nethermind-pruned-rocksdb-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "chiado",
+    "client": "reth",
+    "compose_file": "gnosis/reth/gnosis-chiado-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "gnosis-chiado-reth-archive-trace",
+      "gnosis-chiado-reth-archive-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "chiado",
+    "client": "reth",
+    "compose_file": "gnosis/reth/gnosis-chiado-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "gnosis-chiado-reth-pruned-trace",
+      "gnosis-chiado-reth-pruned-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "gnosis/reth/gnosis-mainnet-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "gnosis-mainnet-reth-archive-trace",
+      "gnosis-mainnet-reth-archive-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "gnosis/reth/gnosis-mainnet-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "gnosis",
+    "node": "nimbus",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "gnosis-mainnet-reth-pruned-trace",
+      "gnosis-mainnet-reth-pruned-trace_nimbus"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "goat/geth/goat-mainnet-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "goat",
+    "node": "node",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "goat-mainnet-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "goat/geth/goat-mainnet-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "goat",
+    "node": "node",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "goat-mainnet-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "testnet3",
+    "client": "geth",
+    "compose_file": "goat/geth/goat-testnet3-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "goat",
+    "node": "node",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "goat-testnet3-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "testnet3",
+    "client": "geth",
+    "compose_file": "goat/geth/goat-testnet3-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "goat",
+    "node": "node",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "goat-testnet3-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "haqq",
+    "compose_file": "haqq/haqq/haqq-mainnet-haqq-pruned",
+    "features": [],
+    "network": "haqq",
+    "node": "config",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "haqq-mainnet-haqq-pruned",
+      "haqq-mainnet-haqq-pruned_config"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "visor",
+    "compose_file": "hyperliquid/visor/hyperliquid-mainnet-visor-pruned",
+    "features": [],
+    "network": "hyperliquid",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "hyperliquid-mainnet-visor-pruned"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "visor",
+    "compose_file": "hyperliquid/visor/hyperliquid-testnet-visor-pruned",
+    "features": [],
+    "network": "hyperliquid",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "hyperliquid-testnet-visor-pruned"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "external-node",
+    "compose_file": "lens/external-node/lens-mainnet-external-node-archive",
+    "features": [],
+    "network": "lens",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "lens-mainnet-external-node-archive",
+      "lens-mainnet-external-node-archive_db"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "external-node",
+    "compose_file": "lens/external-node/lens-mainnet-external-node-pruned",
+    "features": [],
+    "network": "lens",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "lens-mainnet-external-node-pruned",
+      "lens-mainnet-external-node-pruned_db"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "external-node",
+    "compose_file": "lens/external-node/lens-testnet-external-node-archive",
+    "features": [],
+    "network": "lens",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "lens-testnet-external-node-archive",
+      "lens-testnet-external-node-archive_db"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "external-node",
+    "compose_file": "lens/external-node/lens-testnet-external-node-pruned",
+    "features": [],
+    "network": "lens",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "lens-testnet-external-node-pruned",
+      "lens-testnet-external-node-pruned_db"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "besu",
+    "compose_file": "linea/besu/linea-mainnet-besu-pruned-bonsai",
+    "features": [
+      "bonsai"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "linea-mainnet-besu-pruned-bonsai",
+      "linea-mainnet-besu-pruned-bonsai_maru"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "besu",
+    "compose_file": "linea/besu/linea-sepolia-besu-pruned-bonsai",
+    "features": [
+      "bonsai"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "linea-sepolia-besu-pruned-bonsai",
+      "linea-sepolia-besu-pruned-bonsai_maru"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "linea/erigon3/linea-mainnet-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "linea-mainnet-erigon3-archive-trace",
+      "linea-mainnet-erigon3-archive-trace_maru"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "linea/erigon3/linea-mainnet-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "linea-mainnet-erigon3-minimal-trace",
+      "linea-mainnet-erigon3-minimal-trace_maru"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "linea/erigon3/linea-mainnet-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "linea-mainnet-erigon3-pruned-trace",
+      "linea-mainnet-erigon3-pruned-trace_maru"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon3",
+    "compose_file": "linea/erigon3/linea-sepolia-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "linea-sepolia-erigon3-archive-trace",
+      "linea-sepolia-erigon3-archive-trace_maru"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon3",
+    "compose_file": "linea/erigon3/linea-sepolia-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "linea-sepolia-erigon3-minimal-trace",
+      "linea-sepolia-erigon3-minimal-trace_maru"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon3",
+    "compose_file": "linea/erigon3/linea-sepolia-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "linea-sepolia-erigon3-pruned-trace",
+      "linea-sepolia-erigon3-pruned-trace_maru"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "linea/reth/linea-mainnet-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "linea",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "linea-mainnet-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "linea/reth/linea-mainnet-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "linea",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "linea-mainnet-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "litecoind",
+    "compose_file": "litecoin/litecoind/litecoin-mainnet-litecoind-full",
+    "features": [],
+    "network": "litecoin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "full",
+    "volumes": [
+      "litecoin-mainnet-litecoind-full"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "litecoind",
+    "compose_file": "litecoin/litecoind/litecoin-testnet-litecoind-full",
+    "features": [],
+    "network": "litecoin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "full",
+    "volumes": [
+      "litecoin-testnet-litecoind-full"
+    ]
+  },
+  {
+    "chain": "andromeda-mainnet",
+    "client": "l2geth",
+    "compose_file": "metis-andromeda/l2geth/metis-andromeda-mainnet-l2geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "metis",
+    "node": "dtl",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "metis-andromeda-mainnet-l2geth-archive-leveldb-hash",
+      "metis-andromeda-mainnet-l2geth-archive-leveldb-hash_dtl"
+    ]
+  },
+  {
+    "chain": "andromeda-sepolia",
+    "client": "l2geth",
+    "compose_file": "metis-andromeda/l2geth/metis-andromeda-sepolia-l2geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "metis",
+    "node": "dtl",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "metis-andromeda-sepolia-l2geth-archive-leveldb-hash",
+      "metis-andromeda-sepolia-l2geth-archive-leveldb-hash_dtl"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/base-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "base-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/base-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "base-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/bob-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "bob",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "bob-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/boba-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "boba",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "boba-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/boba-mainnet-op-erigon-archive",
+    "features": [
+      "trace"
+    ],
+    "network": "boba",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "boba-mainnet-op-erigon-archive"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/boba-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "boba",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "boba-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/boba-sepolia-op-erigon-archive",
+    "features": [
+      "trace"
+    ],
+    "network": "boba",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "boba-sepolia-op-erigon-archive"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/hashkeychain-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "hashkeychain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "hashkeychain-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/ink-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ink",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "ink-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/ink-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "ink",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "ink-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/lisk-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "lisk-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/lisk-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "lisk-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/metal-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "metal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "metal-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/metal-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "metal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "metal-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/mode-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "mode",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "mode-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/mode-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "mode",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "mode-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/op-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "op-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/op-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "op-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/snax-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "snax",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "snax-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/soneium-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "soneium",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "soneium-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/soneium-minato-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "soneium-minato",
+    "node": null,
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "soneium-minato-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/soneium-miniato-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "soneium-miniato",
+    "node": null,
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "soneium-miniato-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/swell-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "swell",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "swell-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/unichain-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "unichain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "unichain-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/unichain-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "unichain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "unichain-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/worldchain-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "worldchain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "worldchain-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/worldchain-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "worldchain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "worldchain-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon",
+    "compose_file": "op/erigon/zora-mainnet-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "zora",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zora-mainnet-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "erigon",
+    "compose_file": "op/erigon/zora-sepolia-op-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "zora",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zora-sepolia-op-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/base-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "base-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/base-mainnet-op-geth-pruned-pebble-path--fireeth",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "base-mainnet-op-geth-pruned-pebble-path",
+      "base-mainnet-op-geth-pruned-pebble-path_fireeth"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/base-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "base-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/base-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "base-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/base-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "base-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/blast-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "blast",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "blast-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/blast-mainnet-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "blast",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "blast-mainnet-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/blast-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "blast",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "blast-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/blast-sepolia-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "blast",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "blast-sepolia-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/bnb-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "bnb",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "bnb-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/bnb-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "bnb",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "bnb-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/bnb-testnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "bnb",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "bnb-testnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/bnb-testnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "bnb",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "bnb-testnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/bob-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "bob",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "bob-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/bob-mainnet-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "bob",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "bob-mainnet-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/bob-mainnet-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "bob",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "bob-mainnet-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/bob-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "bob",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "bob-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/boba-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "boba",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "boba-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/celo-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "celo-mainnet-geth-archive-leveldb-hash",
+      "celo-mainnet-op-geth-archive-leveldb-hash",
+      "celo-mainnet-op-geth-archive-leveldb-hash_eigenda-proxy"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/celo-mainnet-op-geth-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "celo-mainnet-geth-pruned-leveldb-hash",
+      "celo-mainnet-op-geth-pruned-leveldb-hash",
+      "celo-mainnet-op-geth-pruned-leveldb-hash_eigenda-proxy"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/celo-mainnet-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "celo-mainnet-op-geth-pruned-pebble-hash",
+      "celo-mainnet-op-geth-pruned-pebble-hash_eigenda-proxy"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/celo-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "celo-mainnet-op-geth-pruned-pebble-path",
+      "celo-mainnet-op-geth-pruned-pebble-path_eigenda-proxy"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/celo-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "celo-sepolia-op-geth-archive-leveldb-hash",
+      "celo-sepolia-op-geth-archive-leveldb-hash_eigenda-proxy"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/celo-sepolia-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "celo-sepolia-op-geth-archive-pebble-hash",
+      "celo-sepolia-op-geth-archive-pebble-hash_eigenda-proxy"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/celo-sepolia-op-geth-archive-pebble-path",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "celo-sepolia-op-geth-archive-pebble-path",
+      "celo-sepolia-op-geth-archive-pebble-path_eigenda-proxy"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/celo-sepolia-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "celo-sepolia-op-geth-pruned-pebble-hash",
+      "celo-sepolia-op-geth-pruned-pebble-hash_eigenda-proxy"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/celo-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "celo",
+    "node": "node",
+    "relay": "eigenda-proxy",
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "celo-sepolia-op-geth-pruned-pebble-path",
+      "celo-sepolia-op-geth-pruned-pebble-path_eigenda-proxy"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/fraxtal-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "fraxtal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "fraxtal-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/fraxtal-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "fraxtal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "fraxtal-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/fraxtal-testnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "fraxtal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "fraxtal-testnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/fraxtal-testnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "fraxtal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "fraxtal-testnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/hashkeychain-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "hashkeychain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "hashkeychain-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/hashkeychain-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "hashkeychain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "hashkeychain-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/hemi-mainnet-op-geth-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "hemi",
+    "node": "node",
+    "relay": "bss",
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "hemi-mainnet-op-geth-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/ink-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "ink",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "ink-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/ink-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ink",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "ink-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/ink-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "ink",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "ink-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/ink-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "ink",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "ink-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/lisk-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "lisk-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/lisk-mainnet-op-geth-pruned-pebble-hash",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "lisk-mainnet-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/lisk-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "lisk-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/lisk-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "lisk-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/lisk-sepolia-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "lisk-sepolia-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/lisk-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "lisk-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "pacific-mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/manta-pacific-mainnet-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "manta",
+    "node": null,
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "manta-pacific-mainnet-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/mantle-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "mantle",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "mantle-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/mantle-mainnet-op-geth-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "mantle",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "mantle-mainnet-op-geth-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/mantle-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "mantle",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "mantle-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/mantle-sepolia-op-geth-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "mantle",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "mantle-sepolia-op-geth-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/metal-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "metal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "metal-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/metal-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "metal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "metal-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/metal-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "metal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "metal-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/metal-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "metal",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "metal-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/mode-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "mode",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "mode-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/mode-mainnet-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "mode",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "mode-mainnet-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/mode-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "mode",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "mode-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/mode-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "mode",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "mode-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/mode-sepolia-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "mode",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "mode-sepolia-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/mode-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "mode",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "mode-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/op-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "op-mainnet-l2geth-archive-leveldb-hash",
+      "op-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/op-mainnet-op-geth-pruned-pebble-path--fireeth",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "op-mainnet-op-geth-pruned-pebble-path",
+      "op-mainnet-op-geth-pruned-pebble-path_fireeth"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/op-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "op-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/op-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "op-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/op-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "op-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/snax-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "snax",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "snax-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/snax-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "snax",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "snax-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/soneium-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "soneium",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "soneium-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/soneium-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "soneium",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "soneium-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/soneium-minato-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "soneium-minato",
+    "node": null,
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "soneium-minato-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/soneium-minato-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "soneium-minato",
+    "node": null,
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "soneium-minato-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/superseed-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "superseed",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "superseed-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/superseed-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "superseed",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "superseed-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/swell-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "swell",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "swell-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/swell-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "swell",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "swell-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/unichain-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "unichain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "unichain-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/unichain-mainnet-op-geth-pruned-pebble-path--fireeth",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "unichain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "unichain-mainnet-op-geth-pruned-pebble-path",
+      "unichain-mainnet-op-geth-pruned-pebble-path_fireeth"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/unichain-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "unichain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "unichain-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/unichain-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "unichain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "unichain-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/unichain-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "unichain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "unichain-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/worldchain-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "worldchain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "worldchain-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/worldchain-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "worldchain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "worldchain-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/worldchain-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "worldchain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "worldchain-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/worldchain-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "worldchain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "worldchain-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/xlayer-mainnet-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "xlayer",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "xlayer-mainnet-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/xlayer-testnet-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "xlayer",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "xlayer-testnet-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "garfield",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-garfield-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zircuit-garfield-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "garfield",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-garfield-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zircuit-garfield-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "garfield",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-garfield-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zircuit-garfield-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "garfield",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-garfield-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zircuit-garfield-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zircuit-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-mainnet-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zircuit-mainnet-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-mainnet-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zircuit-mainnet-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zircuit-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-testnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zircuit-testnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-testnet-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zircuit-testnet-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-testnet-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zircuit-testnet-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/zircuit-testnet-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zircuit",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zircuit-testnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/zora-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "zora",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zora-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/zora-mainnet-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zora",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zora-mainnet-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/zora-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zora",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zora-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/zora-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "zora",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "zora-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/zora-sepolia-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zora",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zora-sepolia-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/zora-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "zora",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "zora-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "l2geth",
+    "compose_file": "op/l2geth/op-mainnet-l2geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "op",
+    "node": null,
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "op-mainnet-l2geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/base-mainnet-op-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "base-mainnet-op-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/base-mainnet-op-reth-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "minimal",
+    "volumes": [
+      "base-mainnet-op-reth-minimal-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/base-mainnet-op-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "base-mainnet-op-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "op/reth/base-sepolia-op-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "base-sepolia-op-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "op/reth/base-sepolia-op-reth-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "minimal",
+    "volumes": [
+      "base-sepolia-op-reth-minimal-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "op/reth/base-sepolia-op-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "base",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "base-sepolia-op-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/lisk-mainnet-op-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "lisk-mainnet-op-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/lisk-mainnet-op-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "lisk",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "lisk-mainnet-op-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/op-mainnet-op-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "op-mainnet-op-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/op-mainnet-op-reth-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "minimal",
+    "volumes": [
+      "op-mainnet-op-reth-minimal-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/op-mainnet-op-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "op-mainnet-op-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "op/reth/op-sepolia-op-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "op-sepolia-op-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "op/reth/op-sepolia-op-reth-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "minimal",
+    "volumes": [
+      "op-sepolia-op-reth-minimal-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "op/reth/op-sepolia-op-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "op",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "op-sepolia-op-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/soneium-mainnet-op-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "soneium",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "soneium-mainnet-op-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
+    "compose_file": "op/reth/soneium-mainnet-op-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "soneium",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "soneium-mainnet-op-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "op/reth/soneium-minato-sepolia-op-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "soneium-minato",
+    "node": null,
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "soneium-minato-sepolia-op-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "reth",
+    "compose_file": "op/reth/soneium-minato-sepolia-op-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "soneium-minato",
+    "node": null,
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "soneium-minato-sepolia-op-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "amoy",
+    "client": "bor",
+    "compose_file": "polygon/bor/polygon-amoy-bor-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "polygon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "polygon-amoy-bor-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "bor",
+    "compose_file": "polygon/bor/polygon-mainnet-bor-pruned-pebble-path--fireeth",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "polygon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "polygon-mainnet-bor-pruned-pebble-path",
+      "polygon-mainnet-bor-pruned-pebble-path_fireeth"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "bor",
+    "compose_file": "polygon/bor/polygon-mainnet-bor-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "polygon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "polygon-mainnet-bor-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "amoy",
+    "client": "erigon3",
+    "compose_file": "polygon/erigon3/polygon-amoy-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "polygon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "polygon-amoy-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "amoy",
+    "client": "erigon3",
+    "compose_file": "polygon/erigon3/polygon-amoy-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "polygon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "polygon-amoy-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "amoy",
+    "client": "erigon3",
+    "compose_file": "polygon/erigon3/polygon-amoy-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "polygon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "polygon-amoy-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "polygon/erigon3/polygon-mainnet-erigon3-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "polygon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "polygon-mainnet-erigon3-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "polygon/erigon3/polygon-mainnet-erigon3-minimal-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "polygon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "minimal",
+    "volumes": [
+      "polygon-mainnet-erigon3-minimal-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "erigon3",
+    "compose_file": "polygon/erigon3/polygon-mainnet-erigon3-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "polygon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "polygon-mainnet-erigon3-pruned-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "rippled",
+    "compose_file": "ripple/rippled/ripple-mainnet-rippled-pruned-nudb",
+    "features": [
+      "nudb"
+    ],
+    "network": "ripple",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ripple-mainnet-rippled-pruned-nudb"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "ronin",
+    "compose_file": "ronin/ronin/ronin-mainnet-ronin-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "ronin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ronin-mainnet-ronin-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "ronin",
+    "compose_file": "ronin/ronin/ronin-mainnet-ronin-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "ronin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ronin-mainnet-ronin-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "ronin",
+    "compose_file": "ronin/ronin/ronin-mainnet-ronin-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "ronin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ronin-mainnet-ronin-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "saigon",
+    "client": "ronin",
+    "compose_file": "ronin/ronin/ronin-saigon-ronin-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "ronin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "ronin-saigon-ronin-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "saigon",
+    "client": "ronin",
+    "compose_file": "ronin/ronin/ronin-saigon-ronin-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "ronin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ronin-saigon-ronin-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "saigon",
+    "client": "ronin",
+    "compose_file": "ronin/ronin/ronin-saigon-ronin-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "ronin",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "ronin-saigon-ronin-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "bamboo",
+    "client": "rskj",
+    "compose_file": "rootstock/rskj/rootstock-bamboo-rskj-archive",
+    "features": [],
+    "network": "rootstock",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "rootstock-bamboo-rskj-archive"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "rskj",
+    "compose_file": "rootstock/rskj/rootstock-mainnet-rskj-archive",
+    "features": [],
+    "network": "rootstock",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "rootstock-mainnet-rskj-archive"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "l2geth",
+    "compose_file": "scroll/l2geth/scroll-mainnet-l2geth-archive-leveldb-hash-mpt",
+    "features": [
+      "hash",
+      "leveldb",
+      "mpt"
+    ],
+    "network": "scroll",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "scroll-mainnet-l2geth-archive-leveldb-hash-mpt"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "l2geth",
+    "compose_file": "scroll/l2geth/scroll-mainnet-l2geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb",
+      "mpt"
+    ],
+    "network": "scroll",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "scroll-mainnet-l2geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "l2geth",
+    "compose_file": "scroll/l2geth/scroll-sepolia-l2geth-archive-leveldb-hash-mpt",
+    "features": [
+      "hash",
+      "leveldb",
+      "mpt"
+    ],
+    "network": "scroll",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "scroll-sepolia-l2geth-archive-leveldb-hash-mpt"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "l2geth",
+    "compose_file": "scroll/l2geth/scroll-sepolia-l2geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb",
+      "mpt"
+    ],
+    "network": "scroll",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "scroll-sepolia-l2geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "sei",
+    "compose_file": "sei/sei/sei-mainnet-sei-pruned",
+    "features": [],
+    "network": "sei",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "sei-mainnet-sei-pruned"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "sei",
+    "compose_file": "sei/sei/sei-testnet-sei-pruned",
+    "features": [],
+    "network": "sei",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "sei-testnet-sei-pruned"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "agave",
+    "compose_file": "solana/agave/solana-mainnet-agave-pruned-rocksdb--firesol",
+    "features": [
+      "rocksdb"
+    ],
+    "network": "solana",
+    "node": "firesol",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "solana-mainnet-agave-pruned-rocksdb",
+      "solana-mainnet-agave-pruned-rocksdb_firesol"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "agave",
+    "compose_file": "solana/agave/solana-testnet-agave-pruned-rocksdb--firesol",
+    "features": [
+      "rocksdb"
+    ],
+    "network": "solana",
+    "node": "firesol",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "solana-testnet-agave-pruned-rocksdb",
+      "solana-testnet-agave-pruned-rocksdb_firesol"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "sonic",
+    "compose_file": "sonic/sonic/sonic-mainnet-sonic-archive",
+    "features": [],
+    "network": "sonic",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "sonic-mainnet-sonic-archive"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "sonic",
+    "compose_file": "sonic/sonic/sonic-mainnet-sonic-pruned",
+    "features": [],
+    "network": "sonic",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "sonic-mainnet-sonic-pruned"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "sonic",
+    "compose_file": "sonic/sonic/sonic-testnet-sonic-archive",
+    "features": [],
+    "network": "sonic",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "sonic-testnet-sonic-archive"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "sonic",
+    "compose_file": "sonic/sonic/sonic-testnet-sonic-pruned",
+    "features": [],
+    "network": "sonic",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "sonic-testnet-sonic-pruned"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "external-node",
+    "compose_file": "sophon/external-node/sophon-mainnet-external-node-archive",
+    "features": [],
+    "network": "sophon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "sophon-mainnet-external-node-archive",
+      "sophon-mainnet-external-node-archive_db"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "external-node",
+    "compose_file": "sophon/external-node/sophon-mainnet-external-node-pruned",
+    "features": [],
+    "network": "sophon",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "sophon-mainnet-external-node-pruned",
+      "sophon-mainnet-external-node-pruned_db"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "juno",
+    "compose_file": "starknet/juno/starknet-mainnet-juno-archive",
+    "features": [],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "starknet-mainnet-juno-archive"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "juno",
+    "compose_file": "starknet/juno/starknet-sepolia-juno-archive",
+    "features": [],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "starknet-sepolia-juno-archive"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "madara",
+    "compose_file": "starknet/madara/starknet-mainnet-madara-archive",
+    "features": [],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "starknet-mainnet-madara-archive"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "madara",
+    "compose_file": "starknet/madara/starknet-mainnet-madara-pruned",
+    "features": [],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "starknet-mainnet-madara-pruned"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "madara",
+    "compose_file": "starknet/madara/starknet-sepolia-madara-archive",
+    "features": [],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "starknet-sepolia-madara-archive"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "madara",
+    "compose_file": "starknet/madara/starknet-sepolia-madara-pruned",
+    "features": [],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "starknet-sepolia-madara-pruned"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "pathfinder",
+    "compose_file": "starknet/pathfinder/starknet-mainnet-pathfinder-archive",
+    "features": [],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "starknet-mainnet-pathfinder-archive"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "pathfinder",
+    "compose_file": "starknet/pathfinder/starknet-mainnet-pathfinder-pruned-history",
+    "features": [
+      "history"
+    ],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "starknet-mainnet-pathfinder-pruned-history"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "pathfinder",
+    "compose_file": "starknet/pathfinder/starknet-mainnet-pathfinder-pruned",
+    "features": [
+      "history"
+    ],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "starknet-mainnet-pathfinder-pruned"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "pathfinder",
+    "compose_file": "starknet/pathfinder/starknet-sepolia-pathfinder-archive",
+    "features": [],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "starknet-sepolia-pathfinder-archive"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "pathfinder",
+    "compose_file": "starknet/pathfinder/starknet-sepolia-pathfinder-pruned-history",
+    "features": [
+      "history"
+    ],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "starknet-sepolia-pathfinder-pruned-history"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "pathfinder",
+    "compose_file": "starknet/pathfinder/starknet-sepolia-pathfinder-pruned",
+    "features": [
+      "history"
+    ],
+    "network": "starknet",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "starknet-sepolia-pathfinder-pruned"
+    ]
+  },
+  {
+    "chain": "alethia",
+    "client": "geth",
+    "compose_file": "taiko/geth/taiko-alethia-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "taiko-alethia-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "alethia",
+    "client": "geth",
+    "compose_file": "taiko/geth/taiko-alethia-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "taiko-alethia-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "alethia",
+    "client": "geth",
+    "compose_file": "taiko/geth/taiko-alethia-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "taiko-alethia-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "hekla",
+    "client": "geth",
+    "compose_file": "taiko/geth/taiko-hekla-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "taiko-hekla-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "hekla",
+    "client": "geth",
+    "compose_file": "taiko/geth/taiko-hekla-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "taiko-hekla-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "hekla",
+    "client": "geth",
+    "compose_file": "taiko/geth/taiko-hekla-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "taiko-hekla-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "geth",
+    "compose_file": "taiko/geth/taiko-hoodi-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "taiko-hoodi-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "geth",
+    "compose_file": "taiko/geth/taiko-hoodi-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "taiko-hoodi-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "geth",
+    "compose_file": "taiko/geth/taiko-hoodi-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "taiko-hoodi-geth-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "alethia",
+    "client": "nethermind",
+    "compose_file": "taiko/nethermind/taiko-alethia-nethermind-archive-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "taiko-alethia-nethermind-archive-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "alethia",
+    "client": "nethermind",
+    "compose_file": "taiko/nethermind/taiko-alethia-nethermind-pruned-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "taiko-alethia-nethermind-pruned-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "hekla",
+    "client": "nethermind",
+    "compose_file": "taiko/nethermind/taiko-hekla-nethermind-archive-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "taiko-hekla-nethermind-archive-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "hekla",
+    "client": "nethermind",
+    "compose_file": "taiko/nethermind/taiko-hekla-nethermind-pruned-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "taiko-hekla-nethermind-pruned-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "nethermind",
+    "compose_file": "taiko/nethermind/taiko-hoodi-nethermind-archive-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "taiko-hoodi-nethermind-archive-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "hoodi",
+    "client": "nethermind",
+    "compose_file": "taiko/nethermind/taiko-hoodi-nethermind-pruned-rocksdb-trace",
+    "features": [
+      "rocksdb",
+      "trace"
+    ],
+    "network": "taiko",
+    "node": "driver",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "taiko-hoodi-nethermind-pruned-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "venus",
+    "client": "thunder",
+    "compose_file": "thundercore/thunder/thundercore-venus-thunder-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "thundercore",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "thundercore-venus-thunder-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "zeus",
+    "client": "thunder",
+    "compose_file": "thundercore/thunder/thundercore-zeus-thunder-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "thundercore",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "thundercore-zeus-thunder-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "java-tron",
+    "compose_file": "tron/java-tron/tron-mainnet-java-tron-pruned-rocksdb",
+    "features": [
+      "rocksdb"
+    ],
+    "network": "tron",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "tron-mainnet-java-tron-pruned-rocksdb"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "node",
+    "compose_file": "viction/node/viction-mainnet-node-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "viction",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "viction-mainnet-node-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "node",
+    "compose_file": "viction/node/viction-mainnet-node-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "viction",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "viction-mainnet-node-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "node",
+    "compose_file": "viction/node/viction-testnet-node-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "viction",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "viction-testnet-node-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "node",
+    "compose_file": "viction/node/viction-testnet-node-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "viction",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "viction-testnet-node-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "go-wemix",
+    "compose_file": "wemix/go-wemix/wemix-mainnet-go-wemix-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "wemix",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "wemix-mainnet-go-wemix-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "go-wemix",
+    "compose_file": "wemix/go-wemix/wemix-mainnet-go-wemix-pruned-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "wemix",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "wemix-mainnet-go-wemix-pruned-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "cdk-erigon",
+    "compose_file": "xlayer/cdk-erigon/xlayer-mainnet-cdk-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "xlayer",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "xlayer-mainnet-cdk-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "cdk-erigon",
+    "compose_file": "xlayer/cdk-erigon/xlayer-mainnet-cdk-erigon-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "xlayer",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "xlayer-mainnet-cdk-erigon-pruned-trace"
+    ]
+  },
+  {
+    "chain": "galileo",
+    "client": "geth",
+    "compose_file": "zero-gravity/geth/zero-gravity-galileo-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "zero-gravity",
+    "node": "zerog",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "zero-gravity-galileo-geth-pruned-pebble-path",
+      "zero-gravity-galileo-geth-pruned-pebble-path_config",
+      "zero-gravity-galileo-geth-pruned-pebble-path_zerog"
+    ]
+  },
+  {
+    "chain": "boojnet",
+    "client": "external-node",
+    "compose_file": "zksync-era/external-node/zksync-era-boojnet-external-node-archive",
+    "features": [],
+    "network": "zksync-era",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "zksync-era-boojnet-external-node-archive",
+      "zksync-era-boojnet-external-node-archive_db"
+    ]
+  },
+  {
+    "chain": "boojnet",
+    "client": "external-node",
+    "compose_file": "zksync-era/external-node/zksync-era-boojnet-external-node-pruned",
+    "features": [],
+    "network": "zksync-era",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "zksync-era-boojnet-external-node-pruned",
+      "zksync-era-boojnet-external-node-pruned_db"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "external-node",
+    "compose_file": "zksync-era/external-node/zksync-era-mainnet-external-node-archive",
+    "features": [],
+    "network": "zksync-era",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "zksync-era-mainnet-external-node-archive",
+      "zksync-era-mainnet-external-node-archive_db"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "external-node",
+    "compose_file": "zksync-era/external-node/zksync-era-mainnet-external-node-pruned",
+    "features": [],
+    "network": "zksync-era",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "zksync-era-mainnet-external-node-pruned",
+      "zksync-era-mainnet-external-node-pruned_db"
+    ]
+  }
+]
