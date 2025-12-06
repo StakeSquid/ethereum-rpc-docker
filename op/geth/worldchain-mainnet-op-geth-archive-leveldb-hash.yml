@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.worldchain-mainnet-op-geth-archive-leveldb-hash.middlewares=worldchain-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   worldchain-mainnet-archive-node:
-    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_MAINNET_NODE_VERSION:-v1.16.2}
+    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_MAINNET_NODE_VERSION:-v1.16.3}
     ports:
       - 18162:18162
       - 18162:18162/udp

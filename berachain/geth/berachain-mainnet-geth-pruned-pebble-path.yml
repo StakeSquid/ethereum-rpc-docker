@@ -112,7 +112,7 @@ services:
       context: ./berachain
       dockerfile: beacon-kit.Dockerfile
       args:
-        BEACONKIT_VERSION: ${BERACHAIN_MAINNET_BEACON_KIT_VERSION:-v1.3.3}
+        BEACONKIT_VERSION: ${BERACHAIN_MAINNET_BEACON_KIT_VERSION:-v1.3.4}
         BEACONKIT_IMAGE: ${BERACHAIN_MAINNET_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}
     ports:
       - 16562:16562

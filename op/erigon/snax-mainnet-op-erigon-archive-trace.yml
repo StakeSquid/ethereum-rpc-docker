@@ -107,7 +107,7 @@ services:
     shm_size: 2gb
 
   snax-mainnet-op-erigon-node:
-    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.16.2}
+    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.16.3}
     ports:
       - 19671:19671
       - 19671:19671/udp

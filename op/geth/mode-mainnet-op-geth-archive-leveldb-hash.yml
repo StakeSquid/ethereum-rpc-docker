@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.mode-mainnet-op-geth-archive-leveldb-hash.middlewares=mode-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   mode-mainnet-archive-node:
-    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.16.2}
+    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.16.3}
     ports:
       - 15430:15430
       - 15430:15430/udp

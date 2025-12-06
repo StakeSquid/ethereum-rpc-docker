@@ -110,7 +110,7 @@ services:
       - traefik.http.routers.lisk-mainnet-op-geth-archive-leveldb-hash.middlewares=lisk-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   lisk-mainnet-archive-node:
-    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.16.2}
+    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.16.3}
     ports:
       - 16157:16157
       - 16157:16157/udp

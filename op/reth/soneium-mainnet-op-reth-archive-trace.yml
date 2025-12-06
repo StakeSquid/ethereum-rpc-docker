@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   soneium-mainnet-op-reth-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.16.2}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.16.3}
     ports:
       - 19133:19133
       - 19133:19133/udp

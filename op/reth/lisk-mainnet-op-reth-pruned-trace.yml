@@ -110,7 +110,7 @@ services:
     shm_size: 2gb
 
   lisk-mainnet-op-reth-pruned-node:
-    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.16.2}
+    image: ${LISK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${LISK_MAINNET_NODE_VERSION:-v1.16.3}
     ports:
       - 17812:17812
       - 17812:17812/udp

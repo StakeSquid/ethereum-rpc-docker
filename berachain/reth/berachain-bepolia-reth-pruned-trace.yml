@@ -95,6 +95,7 @@ services:
       - --chain=/config/eth-genesis.json
       - --datadir=/root/.local/share/reth
       - --discovery.port=12274
+      - --engine.always-process-payload-attributes-on-canonical-head
       - --engine.cross-block-cache-size=${BERACHAIN_BEPOLIA_RETH_STATE_CACHE:-4096}
       - --engine.memory-block-buffer-target=0
       - --engine.persistence-threshold=0
@@ -152,7 +153,7 @@ services:
       context: ./berachain
       dockerfile: beacon-kit.Dockerfile
       args:
-        BEACONKIT_VERSION: ${BERACHAIN_BEPOLIA_BEACON_KIT_VERSION:-v1.3.3}
+        BEACONKIT_VERSION: ${BERACHAIN_BEPOLIA_BEACON_KIT_VERSION:-v1.3.4}
         BEACONKIT_IMAGE: ${BERACHAIN_BEPOLIA_BEACON_KIT_IMAGE:-ghcr.io/berachain/beacon-kit}
     ports:
       - 17274:17274
