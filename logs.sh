@@ -5,4 +5,10 @@ if [ -z "$1" ] || [ ! -f "/root/rpc/$1.yml" ]; then
     exit 1
 fi
 
-docker compose logs -f $(cat /root/rpc/$1.yml | yaml2json - | jq '.services' | jq -r 'keys[]' | tr '\n' ' ')
+SERVICES=$(cat /root/rpc/$1.yml | yaml2json - | jq '.services' | jq -r 'keys[]' | tr '\n' ' ')
+
+if [ -n "$2" ]; then
+    docker compose logs -f --tail "$2" $SERVICES
+else
+    docker compose logs -f $SERVICES
+fi
