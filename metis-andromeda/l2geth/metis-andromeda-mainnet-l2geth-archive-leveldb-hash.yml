@@ -126,7 +126,7 @@ services:
       - traefik.http.routers.metis-andromeda-mainnet-l2geth-archive-leveldb-hash-ws.middlewares=metis-andromeda-mainnet-l2geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   metis-andromeda-mainnet-archive-node:
-    image: ${METIS_ANDROMEDA_DTL_IMAGE:-metisdao/dtl}:${METIS_ANDROMEDA_MAINNET_DTL_VERSION:-v0.2.3}
+    image: ${METIS_ANDROMEDA_DTL_IMAGE:-metisdao/dtl}:${METIS_ANDROMEDA_MAINNET_DTL_VERSION:-v0.2.5}
     ports:
       - 15743:15743
       - 15743:15743/udp

@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   linea-mainnet-erigon3:
-    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_MAINNET_ERIGON3_VERSION:-v3.3.0}
+    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_MAINNET_ERIGON3_VERSION:-v3.3.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

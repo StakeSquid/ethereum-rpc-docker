@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   plume-mainnet-archive:
-    image: ${PLUME_NITRO_IMAGE:-ghcr.io/celestiaorg/nitro}:${PLUME_MAINNET_NITRO_VERSION:-v3.6.8}
+    image: ${PLUME_NITRO_IMAGE:-offchainlabs/nitro-node}:${PLUME_MAINNET_NITRO_VERSION:-v3.9.4-rc.2-7f582c3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -56,6 +56,7 @@ services:
       - --execution.caching.trie-dirty-cache=${PLUME_MAINNET_NITRO_ARCHIVE_LEVELDB_HASH_TRIE_DIRTY_CACHE:-1024}
       - --execution.forwarding-target=https://rpc.plume.org
       - --execution.rpc.gas-cap=5500000000
+      - --execution.rpc.log-history=0
       - --execution.sequencer.enable=false
       - --http.addr=0.0.0.0
       - --http.api=eth,net,web3,arb,txpool,debug
@@ -67,12 +68,12 @@ services:
       - --metrics-server.addr=0.0.0.0
       - --metrics-server.port=6070
       - --node.batch-poster.enable=false
-      - --node.da-provider.enable=true
-      - --node.da-provider.rpc.url=http://plume-mainnet-archive-relay
-      - --node.da-provider.with-writer=true
-      - --node.data-availability.enable=false
+      - --node.da-provider.enable=false
+      - --node.data-availability.enable=true
+      - --node.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - --node.data-availability.rest-aggregator.enable=true
       - --node.data-availability.rest-aggregator.urls=https://das-plume-mainnet-1.t.conduit.xyz
+      - --node.data-availability.sequencer-inbox-address=0x85eC1b9138a8b9659A51e2b51bb0861901040b59
       - --node.feed.input.url=wss://relay-plume-mainnet-1.t.conduit.xyz
       - --node.sequencer=false
       - --node.staker.enable=false
@@ -103,47 +104,6 @@ services:
       - ${NO_SSL:-traefik.http.routers.plume-mainnet-nitro-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/plume-mainnet-archive`) || Path(`/plume-mainnet-archive/`))}
       - ${NO_SSL:+traefik.http.routers.plume-mainnet-nitro-archive-leveldb-hash.rule=Path(`/plume-mainnet-archive`) || Path(`/plume-mainnet-archive/`)}
       - traefik.http.routers.plume-mainnet-nitro-archive-leveldb-hash.middlewares=plume-mainnet-nitro-archive-leveldb-hash-stripprefix, ipallowlist
-
-  plume-mainnet-archive-relay:
-    image: ${PLUME_CELESTIA_IMAGE:-ghcr.io/celestiaorg/nitro-das-celestia}:${PLUME_MAINNET_CELESTIA_VERSION:-v0.5.6}
-    expose:
-      - 80
-    entrypoint: [/bin/celestia-server]
-    command:
-      - --celestia.namespace-id=00000d048007a33abfeb
-      - --celestia.rpc=${CELESTIA_MAINNET_RPC}
-      - --das.enable=true
-      - --das.rpc.url=http://plume-mainnet-archive-provider:9880
-      - --fallback-enabled=true
-      - --log-level=INFO
-      - --rpc-addr=0.0.0.0
-      - --rpc-port=80
-    restart: unless-stopped
-    networks:
-      - chains
-    volumes:
-      - ./arb/plume/mainnet:/config
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
-
-  plume-mainnet-archive-provider:
-    # same image as the client
-    image: ${PLUME_NITRO_IMAGE:-ghcr.io/celestiaorg/nitro}:${PLUME_MAINNET_NITRO_VERSION:-v3.6.8}
-    expose:
-      - 9880
-    entrypoint: /usr/local/bin/daprovider
-    command:
-      - --das-server.addr=0.0.0.0
-      - --das-server.data-availability.enable=true
-      - --das-server.data-availability.parent-chain-node-url=${ETHEREUM_MAINNET_EXECUTION_RPC}
-      - --das-server.data-availability.rest-aggregator.enable=true
-      - --das-server.data-availability.rest-aggregator.urls=https://das-plume-mainnet-1.t.conduit.xyz
-      - --das-server.data-availability.sequencer-inbox-address=0x85eC1b9138a8b9659A51e2b51bb0861901040b59
-      - --das-server.port=9880
-    networks:
-      - chains
-    logging: *logging-defaults
 
 volumes:
   plume-mainnet-nitro-archive-leveldb-hash:

@@ -532,7 +532,7 @@
     ],
     "network": "plume",
     "node": null,
-    "relay": "celestia",
+    "relay": null,
     "stack": "arb",
     "type": "archive",
     "volumes": [
@@ -549,11 +549,45 @@
     ],
     "network": "plume",
     "node": null,
-    "relay": "celestia",
+    "relay": null,
     "stack": "arb",
     "type": "pruned",
     "volumes": [
       "plume-mainnet-nitro-pruned-pebble-path"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/plume-testnet-nitro-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "plume",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "archive",
+    "volumes": [
+      "plume-testnet-nitro-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "nitro",
+    "compose_file": "arb/nitro/plume-testnet-nitro-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "plume",
+    "node": null,
+    "relay": null,
+    "stack": "arb",
+    "type": "pruned",
+    "volumes": [
+      "plume-testnet-nitro-pruned-pebble-path"
     ]
   },
   {

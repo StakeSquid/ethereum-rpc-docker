@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   boba-mainnet-op-erigon-node:
-    image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-v1.6.3}
+    image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-op-node/v1.16.3}
     ports:
       - 16732:16732
       - 16732:16732/udp

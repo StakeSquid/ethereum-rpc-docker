@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   polygon-amoy-erigon3-minimal:
-    image: ${POLYGON_ERIGON3_IMAGE:-0xpolygon/erigon}:${POLYGON_AMOY_ERIGON3_VERSION:-2.3.0-beta4}
+    image: ${POLYGON_ERIGON3_IMAGE:-0xpolygon/erigon}:${POLYGON_AMOY_ERIGON3_VERSION:-v3.3.3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

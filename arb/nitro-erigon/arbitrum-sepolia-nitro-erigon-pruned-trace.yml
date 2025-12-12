@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   arbitrum-sepolia-nitro-erigon:
-    image: ${ARBITRUM_NITRO_ERIGON_IMAGE:-erigontech/nitro-erigon}:${ARBITRUM_SEPOLIA_NITRO_ERIGON_VERSION:-main-86d8b56}
+    image: ${ARBITRUM_NITRO_ERIGON_IMAGE:-erigontech/nitro-erigon}:${ARBITRUM_SEPOLIA_NITRO_ERIGON_VERSION:-main-1a9771c}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

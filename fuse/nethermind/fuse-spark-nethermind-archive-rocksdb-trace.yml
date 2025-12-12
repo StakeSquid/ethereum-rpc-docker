@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   fuse-spark-archive:
-    image: ${FUSE_NETHERMIND_IMAGE:-fusenet/node}:${FUSE_SPARK_NETHERMIND_VERSION:-nethermind-1.28.0-v6.0.3}
+    image: ${FUSE_NETHERMIND_IMAGE:-fusenet/node}:${FUSE_SPARK_NETHERMIND_VERSION:-nethermind-1.32.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

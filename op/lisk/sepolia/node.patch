@@ -1,20 +1,22 @@
 Subject: [PATCH] Lisk Sepolia patch
+
 ---
-Index: op-node/rollup/derive/system_config.go
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
+ op-node/rollup/derive/system_config.go | 3 +++
+ 1 file changed, 3 insertions(+)
+
 diff --git a/op-node/rollup/derive/system_config.go b/op-node/rollup/derive/system_config.go
---- a/op-node/rollup/derive/system_config.go	(revision bd0ef87f20bc2575c060571b92de9b4ce249fac5)
-+++ b/op-node/rollup/derive/system_config.go	(revision 8c0a1fc612c062a61253cb2763796f1bffe95e89)
-@@ -142,6 +142,9 @@
+index 0d03dd056d..742f3f18e4 100644
+--- a/op-node/rollup/derive/system_config.go
++++ b/op-node/rollup/derive/system_config.go
+@@ -119,6 +119,9 @@ func ProcessSystemConfigUpdateLogEvent(destSysCfg *eth.SystemConfig, ev *types.L
  		destSysCfg.GasLimit = gasLimit
  		return nil
  	case SystemConfigUpdateEIP1559Params:
 +		if !rollupCfg.IsHolocene(l1Time) {
 +			return nil // ignore event prior to Holocene
 +		}
- 		if pointer, err := solabi.ReadUint64(reader); err != nil || pointer != 32 {
- 			return NewCriticalError(errors.New("invalid pointer field"))
- 		}
+ 		params, err := parseSystemConfigUpdateEIP1559Params(ev.Data)
+ 		if err != nil {
+ 			return err
+-- 
+2.51.2

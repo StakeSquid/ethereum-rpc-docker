@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   fraxtal-mainnet-archive:
-    image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-geth}:${FRAXTAL_MAINNET_GETH_VERSION:-v1.101603.4-frax-1.3.0}
+    image: ${FRAXTAL_GETH_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-geth}:${FRAXTAL_MAINNET_GETH_VERSION:-v1.101603.5-frax-1.3.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -54,6 +54,7 @@ services:
       - 8551
     environment:
       - GETH_BOOTNODES=enr:-J24QI8QR7VIgvQFuvLl09b9ocugoQ1WkS_AOMWKFgNX48-4P1hjgDKGeMFXZmKtfjYA2aEehxKT066riaktnxhh92OGAY5Sw_QsgmlkgnY0gmlwhCztZu2Hb3BzdGFja4P8AQCJc2VjcDI1NmsxoQM2KM0mkdH97Ze8AqwxLeqc934PKj8-xoKsyP6mAptWwIN0Y3CCdl2DdWRwgnZd,enr:-J24QGD1J-g2EPY9b7XiuwLhIoGocVp2qx2gWSfDI_CdftiPSHlgi7G6LtzkQlDskuSvRj4OXTg3vXLISubphXNNhqyGAY5Sw8GxgmlkgnY0gmlwhCzW_iGHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQPvMYlJHJUsEyciuJCTkKHLE2ogZ6cs2xuPI28CGq0CTIN0Y3CCdl2DdWRwgnZd,enr:-J24QCA5I3xroUXt7Ge_Kf04VCRBnI-GbZeyBxOkkpIDGGLrVsonrbngQG1hAEnufRb1TgS6sNFCGtaZ2ZpRx7AgciGGAY5SxEy0gmlkgnY0gmlwhCLzRQyHb3BzdGFja4P8AQCJc2VjcDI1NmsxoQOaHzrtPQWYcwAcFJWFrbGlbNUsBC0VEhCcH02RbgEIwIN0Y3CCdl2DdWRwgnZd
+      - GETH_OVERRIDE_CANYON=0
       - GETH_OVERRIDE_ECOTONE=1717009201
       - GETH_OVERRIDE_FJORD=1733947201
       - GETH_OVERRIDE_GRANITE=1738958401
@@ -115,7 +116,7 @@ services:
       - traefik.http.routers.fraxtal-mainnet-op-geth-archive-leveldb-hash.middlewares=fraxtal-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   fraxtal-mainnet-archive-node:
-    image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-node}:${FRAXTAL_MAINNET_NODE_VERSION:-v1.16.1-frax-1.2.0}
+    image: ${FRAXTAL_NODE_IMAGE:-ghcr.io/fraxfinance/fraxtal-op-node}:${FRAXTAL_MAINNET_NODE_VERSION:-v1.16.3-frax-1.2.0}
     ports:
       - 18290:18290
       - 18290:18290/udp

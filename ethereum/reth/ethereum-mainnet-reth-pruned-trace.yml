@@ -109,7 +109,7 @@ services:
     shm_size: 2gb
 
   ethereum-mainnet-reth-pruned-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v7.0.0}
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v7.1.0}
     ports:
       - 15150:15150
       - 15150:15150/udp
