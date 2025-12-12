@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.boba-mainnet-op-geth-pruned-pebble-path.middlewares=boba-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   boba-mainnet-node:
-    image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-op-node/v1.16.3}
+    image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-v1.16.3}
     ports:
       - 15624:15624
       - 15624:15624/udp
