@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   bitcoin-mainnet:
-    image: ${BITCOIN_BITCOIND_IMAGE:-lncm/bitcoind}:${BITCOIN_MAINNET_BITCOIND_VERSION:-v27.2}
+    image: ${BITCOIN_BITCOIND_IMAGE:-lncm/bitcoind}:${BITCOIN_MAINNET_BITCOIND_VERSION:-v28.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
