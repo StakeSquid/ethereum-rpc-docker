@@ -1,6 +1,7 @@
 # Multi-stage build for reth with architecture-specific optimizations
 ARG LLVM_IMAGE=snowstep/llvm
-ARG LLVM_VERSION=20250514100911
+ARG LLVM_VERSION=debian-13-20251208082922
+#20250514100911
 FROM ${LLVM_IMAGE}:${LLVM_VERSION} AS builder
 
 # Install build dependencies and tools
