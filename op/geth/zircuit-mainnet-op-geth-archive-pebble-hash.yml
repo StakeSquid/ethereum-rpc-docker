@@ -109,7 +109,7 @@ services:
       - traefik.http.routers.zircuit-mainnet-op-geth-archive-pebble-hash.middlewares=zircuit-mainnet-op-geth-archive-pebble-hash-stripprefix, ipallowlist
 
   zircuit-mainnet-archive-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${MAINNET_NODE_VERSION:-v1.122.9}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${MAINNET_NODE_VERSION:-v1.125.6-nov26-hotfix-e2698405}
     ports:
       - 15588:15588
       - 15588:15588/udp

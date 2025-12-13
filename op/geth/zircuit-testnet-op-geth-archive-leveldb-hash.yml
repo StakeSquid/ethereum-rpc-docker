@@ -112,7 +112,7 @@ services:
       - traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash.middlewares=zircuit-testnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   zircuit-testnet-archive-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${TESTNET_NODE_VERSION:-v1.122.9}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${TESTNET_NODE_VERSION:-v1.125.6-nov26-hotfix-e2698405}
     ports:
       - 18095:18095
       - 18095:18095/udp

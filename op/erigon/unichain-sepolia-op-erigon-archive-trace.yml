@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   unichain-sepolia-op-erigon:
-    image: ${UNICHAIN_ERIGON_IMAGE:-testinprod/op-erigon}:${UNICHAIN_SEPOLIA_ERIGON_VERSION:-v2.61.3-0.10.0}
+    image: ${UNICHAIN_ERIGON_IMAGE:-testinprod/op-erigon}:${UNICHAIN_SEPOLIA_ERIGON_VERSION:-v2.61.3-0.10.1}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

@@ -101,7 +101,7 @@ services:
       - traefik.http.routers.arbitrum-one-nitro-archive-pebble-hash.middlewares=arbitrum-one-nitro-archive-pebble-hash-stripprefix, ipallowlist
 
   arbitrum-one-arbnode-archive:
-    image: ${ARBITRUM_ARBNODE_IMAGE:-offchainlabs/arb-node}:${ARBITRUM_ONE_ARBNODE_VERSION:-v1.4.5-e97c1a4}
+    image: ${ARBITRUM_ARBNODE_IMAGE:-offchainlabs/arb-node}:${ARBITRUM_ONE_ARBNODE_VERSION:-v1.4.6-551a39b3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

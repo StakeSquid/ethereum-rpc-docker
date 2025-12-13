@@ -109,7 +109,7 @@ services:
       - traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-path.middlewares=zircuit-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   zircuit-mainnet-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${MAINNET_NODE_VERSION:-v1.122.9}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${MAINNET_NODE_VERSION:-v1.125.6-nov26-hotfix-e2698405}
     ports:
       - 18359:18359
       - 18359:18359/udp

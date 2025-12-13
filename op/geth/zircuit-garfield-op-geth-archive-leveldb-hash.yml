@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.zircuit-garfield-op-geth-archive-leveldb-hash.middlewares=zircuit-garfield-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   zircuit-garfield-archive-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${GARFIELD_NODE_VERSION:-v1.122.9}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${GARFIELD_NODE_VERSION:-v1.125.6-nov26-hotfix-e2698405}
     ports:
       - 17296:17296
       - 17296:17296/udp
