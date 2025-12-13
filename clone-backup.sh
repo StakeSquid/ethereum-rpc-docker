@@ -31,7 +31,7 @@ if [ ! -d "$LOCAL_DIR" ]; then
 
     for file in "${files[@]}"; do
 	echo "Processing: $file"
-	curl -# "${base_url}${file}" | zstd -d | tar -xvf - -C /
+	curl --ipv4 -# "${base_url}${file}" | zstd -d | tar -xvf - -C /
 
 	if [ $? -ne 0 ]; then
 	    echo "Error processing $file"

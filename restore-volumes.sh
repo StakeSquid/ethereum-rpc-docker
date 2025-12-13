@@ -59,7 +59,7 @@ for file in "${restore_files[@]}"; do
 	    echo "Error: /backup directory does not exist. download from http and extract directly to /var/lib/docker"
 
 
-	    curl -# "${2}${file}" | zstd -d | tar -xvf - --dereference -C /
+	    curl --ipv4 -# "${2}${file}" | zstd -d | tar -xvf - --dereference -C /
 
 	    if [ $? -ne 0 ]; then
 		echo "Error processing $file"
