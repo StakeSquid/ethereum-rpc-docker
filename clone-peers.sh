@@ -109,17 +109,17 @@ echo "=========================================="
 echo "DEBUG: Manual curl commands"
 echo "=========================================="
 echo "To fetch peers from source, run:"
-echo "curl -X POST -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"admin_peers\",\"params\":[],\"id\":1}' \"$SOURCE_URL\""
+echo "curl --ipv4 -X POST -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"admin_peers\",\"params\":[],\"id\":1}' \"$SOURCE_URL\""
 echo ""
 echo "To add a peer to target, run:"
-echo "curl -X POST -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"admin_addPeer\",\"params\":[\"<enode>\"],\"id\":1}' \"$TARGET_URL\""
+echo "curl --ipv4 -X POST -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"admin_addPeer\",\"params\":[\"<enode>\"],\"id\":1}' \"$TARGET_URL\""
 echo "=========================================="
 echo ""
 
 # Run the command to get the list of enode strings from source
 echo "Fetching peers from source node..."
-echo "DEBUG: Executing: curl -X POST -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"admin_peers\",\"params\":[],\"id\":1}' \"$SOURCE_URL\""
-enodes=$(curl -X POST -H "Content-Type: application/json" --silent --data "{\"jsonrpc\":\"2.0\",\"method\":\"admin_peers\",\"params\":[],\"id\":1}" "$SOURCE_URL" | jq -r '.result[].enode' 2>/dev/null)
+echo "DEBUG: Executing: curl --ipv4 -X POST -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"admin_peers\",\"params\":[],\"id\":1}' \"$SOURCE_URL\""
+enodes=$(curl --ipv4 -X POST -H "Content-Type: application/json" --silent --data "{\"jsonrpc\":\"2.0\",\"method\":\"admin_peers\",\"params\":[],\"id\":1}" "$SOURCE_URL" | jq -r '.result[].enode' 2>/dev/null)
 
 # Check if the command was successful
 if [ $? -ne 0 ] || [ -z "$enodes" ]; then
@@ -141,8 +141,8 @@ while IFS= read -r enode; do
     fi
     
     echo "Adding peer: ${enode:0:50}..."
-    echo "DEBUG: Executing: curl -X POST -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"admin_addPeer\",\"params\":[\"${enode}\"],\"id\":1}' \"$TARGET_URL\""
-    result=$(curl -X POST -H "Content-Type: application/json" --silent --data "{\"jsonrpc\":\"2.0\",\"method\":\"admin_addPeer\",\"params\":[\"${enode}\"],\"id\":1}" "$TARGET_URL" | jq -r '.result' 2>/dev/null)
+    echo "DEBUG: Executing: curl --ipv4 -X POST -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"admin_addPeer\",\"params\":[\"${enode}\"],\"id\":1}' \"$TARGET_URL\""
+    result=$(curl --ipv4 -X POST -H "Content-Type: application/json" --silent --data "{\"jsonrpc\":\"2.0\",\"method\":\"admin_addPeer\",\"params\":[\"${enode}\"],\"id\":1}" "$TARGET_URL" | jq -r '.result' 2>/dev/null)
     
     if [ "$result" = "true" ] || [ "$result" = "null" ]; then
         echo "  ✓ Success"
