@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     autoconf \
     automake \
     libtool \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up clang as default C/C++ compiler
@@ -31,11 +32,12 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
     sh -s -- -y --no-modify-path --default-toolchain stable --profile minimal
 
 # Install mold linker (faster than lld)
-RUN wget https://github.com/rui314/mold/releases/download/v2.30.0/mold-2.30.0-x86_64-linux.tar.gz && \
-    tar xf mold-2.30.0-x86_64-linux.tar.gz && \
-    cp mold-2.30.0-x86_64-linux/bin/mold /usr/local/bin/ && \
-    cp -r mold-2.30.0-x86_64-linux/lib/* /usr/local/lib/ && \
-    rm -rf mold-2.30.0-x86_64-linux*
+# Updated to v2.40.4 to fix zlib symbol resolution issues with static linking
+RUN wget https://github.com/rui314/mold/releases/download/v2.40.4/mold-2.40.4-x86_64-linux.tar.gz && \
+    tar xf mold-2.40.4-x86_64-linux.tar.gz && \
+    cp mold-2.40.4-x86_64-linux/bin/mold /usr/local/bin/ && \
+    cp -r mold-2.40.4-x86_64-linux/lib/* /usr/local/lib/ && \
+    rm -rf mold-2.40.4-x86_64-linux*
 
 # Install sccache for build caching
 RUN wget https://github.com/mozilla/sccache/releases/download/v0.7.4/sccache-v0.7.4-x86_64-unknown-linux-musl.tar.gz && \
@@ -68,7 +70,7 @@ RUN mkdir -p /root/.cargo && \
     echo '' >> /root/.cargo/config.toml && \
     echo '[target.x86_64-unknown-linux-gnu]' >> /root/.cargo/config.toml && \
     echo 'linker = "/usr/local/bin/clang"' >> /root/.cargo/config.toml && \
-    echo 'rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/mold", "-C", "link-arg=-Wl,--as-needed", "-C", "link-arg=-Wl,--gc-sections"]' >> /root/.cargo/config.toml
+    echo 'rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/mold", "-C", "link-arg=-Wl,--as-needed"]' >> /root/.cargo/config.toml
 
 # Clone and build reth
 WORKDIR /build
@@ -84,11 +86,14 @@ ENV RANLIB=llvm-ranlib
 ENV LD=/usr/local/bin/mold
 ENV SCCACHE_DIR=/tmp/sccache
 ENV RUSTC_WRAPPER=/usr/local/bin/sccache
+# Ensure zlib is built statically (default, but explicit for clarity)
+ENV LIBZ_SYS_STATIC=1
 
 # Set C/C++ flags for dependencies
-ENV CFLAGS_BASE="-O3 -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
-ENV CXXFLAGS_BASE="-O3 -fomit-frame-pointer -fno-semantic-interposition -funroll-loops -ffast-math"
-ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed -Wl,--gc-sections"
+# Note: -ffast-math removed as it can cause issues with zlib and other libraries
+ENV CFLAGS_BASE="-O3 -fomit-frame-pointer -fno-semantic-interposition -funroll-loops"
+ENV CXXFLAGS_BASE="-O3 -fomit-frame-pointer -fno-semantic-interposition -funroll-loops"
+ENV LDFLAGS="-Wl,-O3 -Wl,--as-needed"
 
 # Configure architecture-specific flags and build
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
