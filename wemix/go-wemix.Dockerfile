@@ -13,7 +13,8 @@ RUN apt-get install -y --no-install-recommends \
     git \
     ca-certificates \
     openssl \
-    make && \
+    make \
+    libsnappy-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Define the location for custom certificates
@@ -62,7 +63,8 @@ RUN apt-get install -y --no-install-recommends \
     libc-dev \
     ca-certificates \
     bash \
-    wget && \
+    wget \
+    libsnappy1v5 && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
