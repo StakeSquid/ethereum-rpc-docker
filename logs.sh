@@ -7,8 +7,31 @@ fi
 
 SERVICES=$(cat /root/rpc/$1.yml | yaml2json - | jq '.services' | jq -r 'keys[]' | tr '\n' ' ')
 
-if [ -n "$2" ]; then
-    docker compose logs -f --tail "$2" $SERVICES
+# Check if -f flag is provided
+FOLLOW_FLAG=""
+TAIL_COUNT=""
+
+# Parse arguments (skip first argument which is the compose file)
+shift
+for arg in "$@"; do
+    if [ "$arg" = "-f" ]; then
+        FOLLOW_FLAG="-f"
+    elif [[ "$arg" =~ ^[0-9]+$ ]]; then
+        TAIL_COUNT="$arg"
+    fi
+done
+
+# Build the command
+if [ -n "$TAIL_COUNT" ]; then
+    if [ -n "$FOLLOW_FLAG" ]; then
+        docker compose logs -f --tail "$TAIL_COUNT" $SERVICES
+    else
+        docker compose logs --tail "$TAIL_COUNT" $SERVICES
+    fi
 else
-    docker compose logs -f $SERVICES
+    if [ -n "$FOLLOW_FLAG" ]; then
+        docker compose logs -f $SERVICES
+    else
+        docker compose logs $SERVICES
+    fi
 fi
