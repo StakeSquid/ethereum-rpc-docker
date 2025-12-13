@@ -15,21 +15,16 @@ if [ $# -lt 2 ]; then
 fi
 
 BASEPATH="$(dirname "$0")"
+source $BASEPATH/.env
+
 COMPOSE_FILE="$1"
 TARGET_HOST="$2"
 TARGET_COMPOSE_FILE="${3:-$COMPOSE_FILE}"  # Use source compose file if not provided
 
-# Get current hostname
-# Try to extract host number from full hostname (e.g., "1.stakesquid.eu" -> "1")
-SOURCE_HOST=$(hostname -f 2>/dev/null | sed -n 's/^\([0-9]*\)\.stakesquid\.eu.*/\1/p')
-if [ -z "$SOURCE_HOST" ]; then
-    # Try short hostname (e.g., "1" or "host1" -> "1")
-    SOURCE_HOST=$(hostname -s 2>/dev/null | sed 's/[^0-9]//g')
-fi
-if [ -z "$SOURCE_HOST" ]; then
-    # Fallback: use environment variable or default
-    SOURCE_HOST="${HOST_NUMBER:-1}"
-    echo "Warning: Could not detect source host number, using: $SOURCE_HOST" >&2
+# Check if DOMAIN is set
+if [ -z "$DOMAIN" ]; then
+    echo "Error: DOMAIN variable not found in $BASEPATH/.env" >&2
+    exit 1
 fi
 
 # Function to extract RPC path from compose file
@@ -97,13 +92,13 @@ fi
 
 echo "Source RPC path: $SOURCE_RPC_PATH"
 echo "Target RPC path: $TARGET_RPC_PATH"
-echo "Source host: $SOURCE_HOST.stakesquid.eu"
+echo "Source host: $DOMAIN"
 echo "Target host: $TARGET_HOST.stakesquid.eu"
 echo ""
 
 # Run the command to get the list of enode strings from source
 echo "Fetching peers from source node..."
-enodes=$(curl -X POST -H "Content-Type: application/json" --silent --data "{\"jsonrpc\":\"2.0\",\"method\":\"admin_peers\",\"params\":[],\"id\":1}" "https://${SOURCE_HOST}.stakesquid.eu${SOURCE_RPC_PATH}" | jq -r '.result[].enode' 2>/dev/null)
+enodes=$(curl -X POST -H "Content-Type: application/json" --silent --data "{\"jsonrpc\":\"2.0\",\"method\":\"admin_peers\",\"params\":[],\"id\":1}" "https://${DOMAIN}${SOURCE_RPC_PATH}" | jq -r '.result[].enode' 2>/dev/null)
 
 # Check if the command was successful
 if [ $? -ne 0 ] || [ -z "$enodes" ]; then
