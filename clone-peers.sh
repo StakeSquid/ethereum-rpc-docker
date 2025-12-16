@@ -141,7 +141,7 @@ while IFS= read -r enode; do
     fi
     
     echo "Adding peer: ${enode:0:50}..."
-    ./check-enode.sh "$enode"
+    ./check-enode.sh "$enode" --target "$TARGET_URL"
     if [ $? -ne 0 ]; then
         echo "Error: Peer is not reachable - do not add"
         continue

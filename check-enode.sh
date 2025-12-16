@@ -2,6 +2,11 @@
 
 # Enode connectivity checker
 # Tests TCP and UDP connectivity for blockchain peer nodes
+#
+# Exit codes:
+#   0 - Peer is reachable and not already connected (safe to add)
+#   1 - Peer is not reachable (TCP failed)
+#   2 - Peer is already connected to target node
 
 set -euo pipefail
 
@@ -12,15 +17,17 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 usage() {
-    echo "Usage: $0 <enode-url> [timeout]"
+    echo "Usage: $0 <enode-url> [options]"
     echo ""
     echo "Examples:"
     echo "  $0 'enode://pubkey@192.168.1.1:30303'"
-    echo "  $0 'enode://pubkey@192.168.1.1:30303?discport=30304'"
-    echo "  $0 'enode://pubkey@192.168.1.1:30303' 5"
+    echo "  $0 'enode://pubkey@192.168.1.1:30303' --timeout 5"
+    echo "  $0 'enode://pubkey@192.168.1.1:30303' --target http://localhost:18545"
+    echo "  $0 'enode://pubkey@192.168.1.1:30303' --target http://localhost:18545 --timeout 5"
     echo ""
     echo "Options:"
-    echo "  timeout    Connection timeout in seconds (default: 3)"
+    echo "  --timeout, -t    Connection timeout in seconds (default: 3)"
+    echo "  --target, -T     Target node RPC URL to check if peer is already connected"
     exit 1
 }
 
@@ -29,7 +36,33 @@ if [[ $# -lt 1 ]]; then
 fi
 
 ENODE="$1"
-TIMEOUT="${2:-3}"
+shift
+
+TIMEOUT=3
+TARGET_URL=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --timeout|-t)
+            TIMEOUT="$2"
+            shift 2
+            ;;
+        --target|-T)
+            TARGET_URL="$2"
+            shift 2
+            ;;
+        *)
+            # Legacy: if it's just a number, treat as timeout
+            if [[ "$1" =~ ^[0-9]+$ ]]; then
+                TIMEOUT="$1"
+                shift
+            else
+                echo "Unknown option: $1"
+                usage
+            fi
+            ;;
+    esac
+done
 
 # Validate enode format
 if [[ ! "$ENODE" =~ ^enode:// ]]; then
@@ -61,7 +94,60 @@ echo -e "IP:        ${YELLOW}${IP}${NC}"
 echo -e "TCP Port:  ${YELLOW}${TCP_PORT}${NC}"
 echo -e "UDP Port:  ${YELLOW}${UDP_PORT}${NC}"
 echo -e "Timeout:   ${YELLOW}${TIMEOUT}s${NC}"
+if [[ -n "$TARGET_URL" ]]; then
+    echo -e "Target:    ${YELLOW}${TARGET_URL}${NC}"
+fi
 echo ""
+
+# Check if peer is already connected to target node
+if [[ -n "$TARGET_URL" ]]; then
+    echo -e "${CYAN}--- Target Node Check ---${NC}"
+    echo ""
+    
+    echo -n "Querying target node peers... "
+    
+    PEERS_RESPONSE=$(curl -s -X POST "$TARGET_URL" \
+        -H "Content-Type: application/json" \
+        -d '{"jsonrpc":"2.0","method":"admin_peers","params":[],"id":1}' \
+        --connect-timeout "$TIMEOUT" 2>/dev/null || echo "")
+    
+    if [[ -z "$PEERS_RESPONSE" ]]; then
+        echo -e "${RED}FAILED${NC}"
+        echo -e "${YELLOW}Warning: Could not query target node (connection failed or admin API disabled)${NC}"
+        echo ""
+    elif [[ "$PEERS_RESPONSE" =~ "error" ]] && [[ ! "$PEERS_RESPONSE" =~ "result" ]]; then
+        echo -e "${RED}ERROR${NC}"
+        ERROR_MSG=$(echo "$PEERS_RESPONSE" | grep -oP '"message"\s*:\s*"\K[^"]+' || echo "unknown error")
+        echo -e "${YELLOW}Warning: admin_peers failed: ${ERROR_MSG}${NC}"
+        echo ""
+    else
+        echo -e "${GREEN}OK${NC}"
+        
+        # Check if pubkey is already in peers list
+        # The enode pubkey appears in the peer's enode field
+        if echo "$PEERS_RESPONSE" | grep -qi "$PUBKEY"; then
+            echo -e "${YELLOW}⚠ ALREADY CONNECTED: Peer pubkey found in target's peer list${NC}"
+            echo ""
+            echo -e "${RED}Skip adding this peer - it will cause 'already connected' error${NC}"
+            echo ""
+            exit 2
+        fi
+        
+        # Also check by IP in case pubkey changed but same host
+        if echo "$PEERS_RESPONSE" | grep -qi "\"$IP\""; then
+            echo -e "${YELLOW}⚠ WARNING: Target already has a peer from IP ${IP}${NC}"
+            echo -e "  This might be the same node with a different pubkey"
+            echo ""
+        else
+            echo -e "${GREEN}✓ Peer not currently connected to target${NC}"
+        fi
+        
+        # Show current peer count
+        PEER_COUNT=$(echo "$PEERS_RESPONSE" | grep -oP '"enode"' | wc -l || echo "0")
+        echo -e "  Target has ${CYAN}${PEER_COUNT}${NC} current peers"
+        echo ""
+    fi
+fi
 
 # Check if IP is valid
 if [[ ! "$IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && [[ ! "$IP" =~ : ]]; then
