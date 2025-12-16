@@ -81,6 +81,6 @@ for file in "${restore_files[@]}"; do
     fi
 done
 
-./delete-node-keys.sh $1
+"$dir/delete-node-keys.sh" "$1"
 
 echo "node $1 restored."

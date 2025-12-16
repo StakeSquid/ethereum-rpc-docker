@@ -13,22 +13,36 @@ fi
 
 CONFIG_FILE="$1.yml"
 GLOBS_FILE="${2:-node-key-globs.txt}"
+SCRIPT_DIR="$(dirname "$0")"
 
-# Check if config file exists
-if [[ ! -f "/root/rpc/$CONFIG_FILE" ]]; then
-    echo "Error: Configuration file /root/rpc/$CONFIG_FILE does not exist"
+# Try to find config file in multiple locations
+if [[ -f "$SCRIPT_DIR/$CONFIG_FILE" ]]; then
+    CONFIG_PATH="$SCRIPT_DIR/$CONFIG_FILE"
+elif [[ -f "/root/rpc/$CONFIG_FILE" ]]; then
+    CONFIG_PATH="/root/rpc/$CONFIG_FILE"
+else
+    echo "Error: Configuration file $CONFIG_FILE not found in $SCRIPT_DIR or /root/rpc"
     exit 1
 fi
 
+# Resolve globs file path - always relative to script directory
+if [[ "$GLOBS_FILE" == /* ]]; then
+    # Absolute path provided, use as-is
+    GLOBS_PATH="$GLOBS_FILE"
+else
+    # Relative path, resolve relative to script directory
+    GLOBS_PATH="$SCRIPT_DIR/$GLOBS_FILE"
+fi
+
 # Check if globs file exists
-if [[ ! -f "$(dirname "$0")/$GLOBS_FILE" ]]; then
-    echo "Error: Globs file $(dirname "$0")/$GLOBS_FILE does not exist"
+if [[ ! -f "$GLOBS_PATH" ]]; then
+    echo "Error: Globs file $GLOBS_PATH does not exist"
     exit 1
 fi
 
 # Read volume keys from config file
-echo "Reading volume configuration from $CONFIG_FILE..."
-keys=$(cat /root/rpc/$CONFIG_FILE | yaml2json - | jq '.volumes' | jq -r 'keys[]')
+echo "Reading volume configuration from $CONFIG_PATH..."
+keys=$(cat "$CONFIG_PATH" | yaml2json - | jq '.volumes' | jq -r 'keys[]')
 
 if [[ -z "$keys" ]]; then
     echo "Error: No volumes found in configuration"
@@ -42,16 +56,16 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     if [[ -n "$line" && ! "$line" =~ ^[[:space:]]*# ]]; then
         globs+=("$line")
     fi
-done < "$(dirname "$0")/$GLOBS_FILE"
+done < "$GLOBS_PATH"
 
 if [[ ${#globs[@]} -eq 0 ]]; then
-    echo "Error: No glob patterns found in $GLOBS_FILE"
+    echo "Error: No glob patterns found in $GLOBS_PATH"
     exit 1
 fi
 
 volume_count=$(echo "$keys" | wc -l)
 echo "Found $volume_count volumes to process"
-echo "Using ${#globs[@]} glob pattern(s) from $GLOBS_FILE"
+echo "Using ${#globs[@]} glob pattern(s) from $GLOBS_PATH"
 echo "----------------------------------------"
 
 deleted_count=0
@@ -69,27 +83,44 @@ for key in $keys; do
     volume_deleted=0
     
     # For each glob pattern, find and delete matching files
-    # Use subshell to safely change directory and enable globstar
+    # Use find instead of shell globbing for more reliable pattern matching
     for glob in "${globs[@]}"; do
-        # Process in subshell to avoid affecting parent shell state
-        while IFS= read -r file; do
-            if [[ -n "$file" && -f "$file" ]]; then
-                echo "  Deleting: $file"
-                rm -f "$file"
-                ((volume_deleted++))
-                ((deleted_count++))
-            fi
-        done < <(
-            # Enable extended globbing and globstar for recursive patterns
-            shopt -s globstar nullglob
-            cd "$volume_path" || exit 1
-            # Expand glob pattern and output full paths
-            for f in $glob; do
-                if [[ -f "$f" ]]; then
-                    echo "$volume_path/$f"
+        # Convert glob pattern to find pattern
+        # Handle **/ patterns by using find recursively
+        if [[ "$glob" =~ ^\*\*/ ]]; then
+            # Pattern like **/nodekey - find recursively
+            find_pattern="${glob#\*\*/}"  # Remove **/ prefix
+            while IFS= read -r -d '' file; do
+                if [[ -n "$file" && -f "$file" ]]; then
+                    echo "  Deleting: $file"
+                    rm -f "$file"
+                    ((volume_deleted++))
+                    ((deleted_count++))
                 fi
-            done
-        )
+            done < <(find "$volume_path" -type f -name "$find_pattern" -print0 2>/dev/null)
+        elif [[ "$glob" == */* ]]; then
+            # Pattern like staking/* - find in specific directory
+            find_dir="${glob%/*}"
+            find_name="${glob#*/}"
+            while IFS= read -r -d '' file; do
+                if [[ -n "$file" && -f "$file" ]]; then
+                    echo "  Deleting: $file"
+                    rm -f "$file"
+                    ((volume_deleted++))
+                    ((deleted_count++))
+                fi
+            done < <(find "$volume_path/$find_dir" -maxdepth 1 -type f -name "$find_name" -print0 2>/dev/null)
+        else
+            # Simple pattern like "key" or "node_key.json" - find recursively
+            while IFS= read -r -d '' file; do
+                if [[ -n "$file" && -f "$file" ]]; then
+                    echo "  Deleting: $file"
+                    rm -f "$file"
+                    ((volume_deleted++))
+                    ((deleted_count++))
+                fi
+            done < <(find "$volume_path" -type f -name "$glob" -print0 2>/dev/null)
+        fi
     done
     
     if [[ $volume_deleted -eq 0 ]]; then
