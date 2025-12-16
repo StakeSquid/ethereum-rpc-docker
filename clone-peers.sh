@@ -141,6 +141,11 @@ while IFS= read -r enode; do
     fi
     
     echo "Adding peer: ${enode:0:50}..."
+    ./check-enode.sh "$enode"
+    if [ $? -ne 0 ]; then
+        echo "Error: Peer is not reachable - do not add"
+        continue
+    fi
     echo "DEBUG: Executing: curl -X POST -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"admin_addPeer\",\"params\":[\"${enode}\"],\"id\":1}' \"$TARGET_URL\""
     result=$(curl -X POST -H "Content-Type: application/json" --silent --data "{\"jsonrpc\":\"2.0\",\"method\":\"admin_addPeer\",\"params\":[\"${enode}\"],\"id\":1}" "$TARGET_URL" | jq -r '.result' 2>/dev/null)
     
