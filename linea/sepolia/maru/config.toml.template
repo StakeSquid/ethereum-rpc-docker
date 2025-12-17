@@ -4,6 +4,7 @@ contract-address = "0xB218f8A4Bc926cF1cA7b3423c154a0D627Bdb7E5"
 l1-eth-api = { endpoint = "${L1_RPC}" }
 l1-polling-interval = "6 seconds"
 l1-highest-block-tag = "finalized"
+l2-eth-api-endpoint = { endpoint = "${SEQUENCER}" }
 
 [persistence]
 data-path = "/opt/maru/data"
@@ -13,7 +14,7 @@ private-key-path = "/opt/maru/private-key"
 port = ${P2P_PORT}  # Default port (can be same as discovery)
 ip-address = "0.0.0.0"
 static-peers = [
- "/ip4/3.129.120.128/tcp/31005/p2p/16Uiu2HAmR33t8RZiAHovuH9iH2UuUrajrbfyYowiYDAQo3D5Y9wg",
+  "/ip4/3.129.120.128/tcp/31005/p2p/16Uiu2HAmR33t8RZiAHovuH9iH2UuUrajrbfyYowiYDAQo3D5Y9wg",
   "/ip4/3.129.120.128/tcp/31006/p2p/16Uiu2HAm9HB5oNmnmj8yY6T7dfhLVidVzYqa8QVDtEthkMr6b8tx"
 ]
 reconnect-delay = "500ms"
