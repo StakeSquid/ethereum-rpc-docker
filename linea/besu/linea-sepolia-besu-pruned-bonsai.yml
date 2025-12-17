@@ -54,7 +54,6 @@ services:
       - 9545
     command:
       - --Xbonsai-full-flat-db-enabled=true
-      - --Xeth-capability-max=67
       - --data-path=/opt/besu/database
       - --data-storage-format=BONSAI
       - --engine-host-allowlist=*
