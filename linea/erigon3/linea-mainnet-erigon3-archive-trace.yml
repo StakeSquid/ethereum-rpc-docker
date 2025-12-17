@@ -124,7 +124,7 @@ services:
       - IP=${IP}
       - L1_RPC=${ETHEREUM_MAINNET_EXECUTION_RPC}
       - P2P_PORT=15060
-      - SEQUENCER=
+      - SEQUENCER=https://rpc.linea.build
     entrypoint: [/bin/bash, -c]
     command:
       - |

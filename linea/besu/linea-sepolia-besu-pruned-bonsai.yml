@@ -68,7 +68,6 @@ services:
       - --metrics-port=9545
       - --p2p-host=${IP}
       - --p2p-port=14691
-      - --plugin-linea-l1-rpc-endpoint=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - --profile=advanced-sepolia
       - --rpc-http-api=ETH,NET,WEB3,DEBUG,TRACE,TXPOOL,LINEA,ADMIN
       - --rpc-http-enabled=true
@@ -130,7 +129,7 @@ services:
       - IP=${IP}
       - L1_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
       - P2P_PORT=19691
-      - SEQUENCER=
+      - SEQUENCER=https://rpc.sepolia.linea.build
     entrypoint: [/bin/bash, -c]
     command:
       - |
