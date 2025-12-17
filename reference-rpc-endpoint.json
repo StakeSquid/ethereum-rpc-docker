@@ -207,9 +207,7 @@
   },
   "monad-mainnet": {
     "id": 143,
-    "urls": [
-      "https://rpc.monad.xyz"
-    ]
+    "urls": []
   },
   "sonic": {
     "id": 146,
@@ -561,6 +559,7 @@
   "ronin": {
     "id": 2020,
     "urls": [
+      "https://api.roninchain.com/rpc",
       "https://ronin.lgns.net/rpc"
     ]
   },
@@ -618,6 +617,13 @@
     "id": 2442,
     "urls": [
       "https://rpc.cardona.zkevm-rpc.com"
+    ]
+  },
+  "fraxtal-testnet": {
+    "id": 2522,
+    "urls": [
+      "https://rpc.testnet.frax.com",
+      "https://fraxtal-holesky-rpc.publicnode.com"
     ]
   },
   "abstract": {
@@ -679,12 +685,6 @@
     "id": 5003,
     "urls": [
       "https://rpc.sepolia.mantle.xyz"
-    ]
-  },
-  "somnia": {
-    "id": 5031,
-    "urls": [
-      "https://api.infra.mainnet.somnia.network"
     ]
   },
   "superseed": {
@@ -829,12 +829,6 @@
     "id": 13505,
     "urls": [
       "https://rpc-sepolia.gravity.xyz"
-    ]
-  },
-  "sonic-testnet-v2": {
-    "id": 14601,
-    "urls": [
-      "https://rpc.testnet.soniclabs.com"
     ]
   },
   "0g-newton-testnet": {
@@ -1125,12 +1119,9 @@
   },
   "taiko-hekla": {
     "id": 167009,
-    "urls": []
-  },
-  "taiko-hoodi": {
-    "id": 167013,
     "urls": [
-      "https://rpc.hoodi.taiko.xyz"
+      "https://rpc.hekla.taiko.xyz",
+      "https://taiko-hekla-rpc.publicnode.com"
     ]
   },
   "filecoin-calibration": {
@@ -1225,22 +1216,18 @@
       "https://bob-sepolia.rpc.gobob.xyz"
     ]
   },
-  "xrpl": {
-    "id": 1440000,
-    "urls": [
-      "https://rpc.xrplevm.org"
-    ]
-  },
   "xrpl-devnet": {
     "id": 1440002,
     "urls": [
-      "https://rpc.devnet.xrplevm.org"
+      "https://rpc.xrplevm.org",
+      "https://ws.xrplevm.org"
     ]
   },
   "xrpl-testnet": {
     "id": 1449000,
     "urls": [
-      "https://rpc.testnet.xrplevm.org"
+      "https://rpc.testnet.xrplevm.org",
+      "https://ws.testnet.xrplevm.org"
     ]
   },
   "manta-pacific-sepolia": {
