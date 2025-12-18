@@ -198,6 +198,38 @@ extract_name() {
     echo "$response" | grep -oP '"name"\s*:\s*"\K[^"]+' | head -1
 }
 
+# Function to check if JSON-RPC response indicates success
+check_rpc_success() {
+    local response="$1"
+    
+    # Check if response contains "true" (successful result)
+    if [[ "$response" =~ "true" ]]; then
+        return 0
+    fi
+    
+    # Check if response contains an error
+    if [[ "$response" =~ "\"error\"" ]]; then
+        return 1
+    fi
+    
+    # Empty or unexpected response
+    return 1
+}
+
+# Function to extract error message from JSON-RPC response
+extract_error_message() {
+    local response="$1"
+    
+    # Try to extract error message using grep
+    local error_msg=$(echo "$response" | grep -oP '"message"\s*:\s*"\K[^"]+' | head -1)
+    
+    if [[ -n "$error_msg" ]]; then
+        echo "$error_msg"
+    else
+        echo "Unknown error"
+    fi
+}
+
 # Function to add static peer
 add_static_peer() {
     local url="$1"
@@ -332,12 +364,20 @@ elif [[ "$DRY_RUN" == true ]]; then
     SOURCE_SUCCESS=true
 else
     RESULT=$(add_static_peer "$SOURCE_URL" "$TARGET_ENODE")
-    if [[ "$RESULT" =~ "true" ]]; then
+    if check_rpc_success "$RESULT"; then
         echo -e "${GREEN}OK${NC}"
         SOURCE_SUCCESS=true
     else
         echo -e "${RED}FAILED${NC}"
-        echo -e "  Response: $RESULT"
+        ERROR_MSG=$(extract_error_message "$RESULT")
+        if [[ -n "$ERROR_MSG" ]]; then
+            echo -e "  Error: ${ERROR_MSG}"
+        fi
+        if [[ -n "$RESULT" ]]; then
+            echo -e "  Response: $RESULT"
+        else
+            echo -e "  No response from node (connection timeout or unreachable)"
+        fi
         ((ERRORS++))
     fi
 fi
@@ -353,12 +393,20 @@ elif [[ "$DRY_RUN" == true ]]; then
     TARGET_SUCCESS=true
 else
     RESULT=$(add_static_peer "$TARGET_URL" "$SOURCE_ENODE")
-    if [[ "$RESULT" =~ "true" ]]; then
+    if check_rpc_success "$RESULT"; then
         echo -e "${GREEN}OK${NC}"
         TARGET_SUCCESS=true
     else
         echo -e "${RED}FAILED${NC}"
-        echo -e "  Response: $RESULT"
+        ERROR_MSG=$(extract_error_message "$RESULT")
+        if [[ -n "$ERROR_MSG" ]]; then
+            echo -e "  Error: ${ERROR_MSG}"
+        fi
+        if [[ -n "$RESULT" ]]; then
+            echo -e "  Response: $RESULT"
+        else
+            echo -e "  No response from node (connection timeout or unreachable)"
+        fi
         ((ERRORS++))
     fi
 fi
