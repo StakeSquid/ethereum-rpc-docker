@@ -175,7 +175,7 @@ get_node_info() {
     local url="$1"
     local response
     
-    response=$(curl -s -X POST "$url" \
+    response=$(curl --ipv4 -s -X POST "$url" \
         -H "Content-Type: application/json" \
         -d '{"jsonrpc":"2.0","method":"admin_nodeInfo","params":[],"id":1}' \
         --connect-timeout "$TIMEOUT" 2>/dev/null) || {
@@ -204,7 +204,7 @@ add_static_peer() {
     local enode="$2"
     local response
     
-    response=$(curl -s -X POST "$url" \
+    response=$(curl --ipv4 -s -X POST "$url" \
         -H "Content-Type: application/json" \
         -d "{\"jsonrpc\":\"2.0\",\"method\":\"admin_addStaticPeer\",\"params\":[\"$enode\"],\"id\":1}" \
         --connect-timeout "$TIMEOUT" 2>/dev/null) || {
@@ -221,7 +221,7 @@ check_already_peers() {
     local pubkey="$2"
     local response
     
-    response=$(curl -s -X POST "$url" \
+    response=$(curl --ipv4 -s -X POST "$url" \
         -H "Content-Type: application/json" \
         -d '{"jsonrpc":"2.0","method":"admin_peers","params":[],"id":1}' \
         --connect-timeout "$TIMEOUT" 2>/dev/null) || {
