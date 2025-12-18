@@ -369,6 +369,7 @@ else
         SOURCE_SUCCESS=true
     else
         echo -e "${RED}FAILED${NC}"
+        echo -e "  Enode: ${TARGET_ENODE}"
         ERROR_MSG=$(extract_error_message "$RESULT")
         if [[ -n "$ERROR_MSG" ]]; then
             echo -e "  Error: ${ERROR_MSG}"
@@ -398,6 +399,7 @@ else
         TARGET_SUCCESS=true
     else
         echo -e "${RED}FAILED${NC}"
+        echo -e "  Enode: ${SOURCE_ENODE}"
         ERROR_MSG=$(extract_error_message "$RESULT")
         if [[ -n "$ERROR_MSG" ]]; then
             echo -e "  Error: ${ERROR_MSG}"
