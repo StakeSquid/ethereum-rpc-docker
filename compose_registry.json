@@ -3977,23 +3977,6 @@
   {
     "chain": "mainnet",
     "client": "geth",
-    "compose_file": "op/geth/boba-mainnet-op-geth-pruned-pebble-path",
-    "features": [
-      "hash",
-      "leveldb"
-    ],
-    "network": "boba",
-    "node": "node",
-    "relay": null,
-    "stack": "op",
-    "type": "pruned",
-    "volumes": [
-      "boba-mainnet-op-geth-pruned-pebble-path"
-    ]
-  },
-  {
-    "chain": "mainnet",
-    "client": "geth",
     "compose_file": "op/geth/celo-mainnet-op-geth-archive-leveldb-hash",
     "features": [
       "hash",
