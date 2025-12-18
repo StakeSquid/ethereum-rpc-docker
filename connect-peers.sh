@@ -378,7 +378,7 @@ else
         else
             echo -e "  No response from node (connection timeout or unreachable)"
         fi
-        ((ERRORS++))
+        ERRORS=$((ERRORS + 1))
     fi
 fi
 
@@ -407,7 +407,7 @@ else
         else
             echo -e "  No response from node (connection timeout or unreachable)"
         fi
-        ((ERRORS++))
+        ERRORS=$((ERRORS + 1))
     fi
 fi
 
