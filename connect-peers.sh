@@ -10,8 +10,8 @@
 #                        If not provided, use the same compose file for both source and target
 #
 # Exit codes:
-#   0 - Both nodes connected successfully
-#   1 - Failed to connect (see output for details)
+#   0 - At least one node connected successfully (bidirectional or one-way)
+#   1 - Failed to connect to both nodes (see output for details)
 
 set -euo pipefail
 
@@ -317,19 +317,24 @@ echo ""
 echo -e "${CYAN}--- Adding Static Peers ---${NC}"
 echo ""
 
+SOURCE_SUCCESS=false
+TARGET_SUCCESS=false
 ERRORS=0
 
 # Add target's enode to source
 echo -n "Adding target to source... "
 if [[ "$SOURCE_HAS_TARGET" == "connected" ]]; then
     echo -e "${YELLOW}skipped (already connected)${NC}"
+    SOURCE_SUCCESS=true
 elif [[ "$DRY_RUN" == true ]]; then
     echo -e "${CYAN}dry run${NC}"
     echo -e "  Would run: admin_addStaticPeer(\"${TARGET_ENODE:0:50}...\")"
+    SOURCE_SUCCESS=true
 else
     RESULT=$(add_static_peer "$SOURCE_URL" "$TARGET_ENODE")
     if [[ "$RESULT" =~ "true" ]]; then
         echo -e "${GREEN}OK${NC}"
+        SOURCE_SUCCESS=true
     else
         echo -e "${RED}FAILED${NC}"
         echo -e "  Response: $RESULT"
@@ -341,13 +346,16 @@ fi
 echo -n "Adding source to target... "
 if [[ "$TARGET_HAS_SOURCE" == "connected" ]]; then
     echo -e "${YELLOW}skipped (already connected)${NC}"
+    TARGET_SUCCESS=true
 elif [[ "$DRY_RUN" == true ]]; then
     echo -e "${CYAN}dry run${NC}"
     echo -e "  Would run: admin_addStaticPeer(\"${SOURCE_ENODE:0:50}...\")"
+    TARGET_SUCCESS=true
 else
     RESULT=$(add_static_peer "$TARGET_URL" "$SOURCE_ENODE")
     if [[ "$RESULT" =~ "true" ]]; then
         echo -e "${GREEN}OK${NC}"
+        TARGET_SUCCESS=true
     else
         echo -e "${RED}FAILED${NC}"
         echo -e "  Response: $RESULT"
@@ -391,19 +399,37 @@ fi
 echo -e "${CYAN}--- Summary ---${NC}"
 echo ""
 
-if [[ $ERRORS -eq 0 ]]; then
-    if [[ "$DRY_RUN" == true ]]; then
-        echo -e "${GREEN}Dry run completed - no changes made${NC}"
+if [[ "$DRY_RUN" == true ]]; then
+    echo -e "${GREEN}Dry run completed - no changes made${NC}"
+    echo ""
+    exit 0
+elif [[ "$SOURCE_SUCCESS" == true && "$TARGET_SUCCESS" == true ]]; then
+    echo -e "${GREEN}Nodes connected successfully (bidirectional)${NC}"
+    echo ""
+    echo "Both nodes should now discover each other's peers via the"
+    echo "devp2p discovery protocol. Give it a few minutes to propagate."
+    echo ""
+    exit 0
+elif [[ "$SOURCE_SUCCESS" == true || "$TARGET_SUCCESS" == true ]]; then
+    echo -e "${YELLOW}Partial success - peer added to one node${NC}"
+    if [[ "$SOURCE_SUCCESS" == true ]]; then
+        echo -e "  ${GREEN}✓${NC} Target peer added to source node"
     else
-        echo -e "${GREEN}Nodes connected successfully${NC}"
-        echo ""
-        echo "Both nodes should now discover each other's peers via the"
-        echo "devp2p discovery protocol. Give it a few minutes to propagate."
+        echo -e "  ${RED}✗${NC} Failed to add target peer to source node"
     fi
+    if [[ "$TARGET_SUCCESS" == true ]]; then
+        echo -e "  ${GREEN}✓${NC} Source peer added to target node"
+    else
+        echo -e "  ${RED}✗${NC} Failed to add source peer to target node"
+    fi
+    echo ""
+    echo "One-way connection established. The node that successfully added"
+    echo "the peer should be able to connect. Retry later to establish"
+    echo "bidirectional connection."
     echo ""
     exit 0
 else
-    echo -e "${RED}Connection failed with $ERRORS error(s)${NC}"
+    echo -e "${RED}Connection failed - could not add peer to either node${NC}"
     echo ""
     exit 1
 fi
