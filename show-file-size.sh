@@ -11,7 +11,7 @@ for key in $keys; do
 
     prefix="/var/lib/docker/volumes/rpc_$key"
 
-    volume_size=$(du -s $prefix 2>/dev/null | awk '{print $1}')
+    volume_size=$(du -sL $prefix 2>/dev/null | awk '{print $1}')
 
     total_size=$((total_size + volume_size))
 done

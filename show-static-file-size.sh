@@ -12,7 +12,7 @@ for key in $keys; do
 
     prefix="/var/lib/docker/volumes/rpc_$key"
 
-    volume_size=$(du -s $prefix 2>/dev/null | awk '{print $1}')
+    volume_size=$(du -sL $prefix 2>/dev/null | awk '{print $1}')
 
     total_size=$((total_size + volume_size))
 
@@ -20,7 +20,7 @@ for key in $keys; do
     # Check if the path exists
     if [[ -e "$prefix/_data/$path" ]]; then
         # Print the size of the file or directory
-        size=$(du -s "$prefix/_data/$path" 2>/dev/null | awk '{print $1}')
+        size=$(du -sL "$prefix/_data/$path" 2>/dev/null | awk '{print $1}')
         static_size=$((static_size + size))
         #echo "$path: $size"
     fi
