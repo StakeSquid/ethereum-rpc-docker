@@ -105,6 +105,125 @@ release_port() {
     USED_PORTS=("${new_array[@]}")
 }
 
+# Check if SLOWDISK mode is enabled on target
+check_slowdisk_enabled() {
+    $SSH_CMD "$DEST_HOST" "grep -q '^SLOWDISK=true' /root/rpc/.env 2>/dev/null"
+    return $?
+}
+
+# Parse metadata file and calculate sizes (local file)
+parse_metadata() {
+    local metadata_file=$1
+    local static_size_kb=0
+    local static_paths=()
+    
+    if [[ ! -f "$metadata_file" ]]; then
+        return 1
+    fi
+    
+    # Read metadata file, skip header lines
+    while IFS= read -r line; do
+        # Skip header lines (contain "Static file", "Generated", or empty)
+        if [[ "$line" =~ ^Static\ file ]] || [[ "$line" =~ ^Generated ]] || [[ -z "$line" ]]; then
+            continue
+        fi
+        
+        # Parse line: "size  path" - format is like "1.23GiB  path/to/file"
+        # Use awk to split on multiple spaces
+        local size_str=$(echo "$line" | awk '{print $1}')
+        local path=$(echo "$line" | awk '{$1=""; print substr($0,2)}' | sed 's/^[[:space:]]*//')
+        
+        if [[ -n "$size_str" ]] && [[ -n "$path" ]]; then
+            # Convert size to KB (approximate, for disk space checking)
+            local size_kb=0
+            if [[ "$size_str" =~ ^([0-9.]+)([KMGT]?i?)B$ ]]; then
+                local num="${BASH_REMATCH[1]}"
+                local unit="${BASH_REMATCH[2]}"
+                
+                case "$unit" in
+                    Ki|K) size_kb=$(echo "$num" | awk '{printf "%.0f", $1}') ;;
+                    Mi|M) size_kb=$(echo "$num" | awk '{printf "%.0f", $1 * 1024}') ;;
+                    Gi|G) size_kb=$(echo "$num" | awk '{printf "%.0f", $1 * 1024 * 1024}') ;;
+                    Ti|T) size_kb=$(echo "$num" | awk '{printf "%.0f", $1 * 1024 * 1024 * 1024}') ;;
+                    *) size_kb=$(echo "$num" | awk '{printf "%.0f", $1 / 1024}') ;; # Assume bytes
+                esac
+            fi
+            
+            static_size_kb=$((static_size_kb + size_kb))
+            static_paths+=("$path")
+        fi
+    done < "$metadata_file"
+    
+    echo "$static_size_kb"
+    printf '%s\n' "${static_paths[@]}"
+}
+
+# Setup slowdisk directory structure with symlinks
+setup_slowdisk_structure() {
+    local key=$1
+    local static_size_kb=$2
+    shift 2
+    local static_paths=("$@")
+    local volume_path="/var/lib/docker/volumes/rpc_$key/_data"
+    local slowdisk_base="/slowdisk"
+    
+    if [[ ${#static_paths[@]} -eq 0 ]]; then
+        echo "No static paths provided"
+        return 1
+    fi
+    
+    echo "Setting up SLOWDISK structure for $key"
+    echo "  Static size: $((static_size_kb / 1024))MB"
+    echo "  Static paths: ${#static_paths[@]}"
+    
+    # Check available space on /slowdisk
+    local slowdisk_available=$($SSH_CMD "$DEST_HOST" "df -BK /slowdisk 2>/dev/null | tail -1 | awk '{print \$4}' | sed 's/K//'")
+    if [[ -z "$slowdisk_available" ]] || [[ "$slowdisk_available" -lt "$static_size_kb" ]]; then
+        echo "Error: Not enough space on /slowdisk (available: ${slowdisk_available}KB, needed: ${static_size_kb}KB)"
+        return 1
+    fi
+    
+    # Check available space on /var/lib/docker/volumes (for dynamic data)
+    # We'll estimate dynamic size as total - static, but we don't know total yet
+    # So we'll just check if there's reasonable space
+    local docker_available=$($SSH_CMD "$DEST_HOST" "df -BK /var/lib/docker/volumes 2>/dev/null | tail -1 | awk '{print \$4}' | sed 's/K//'")
+    if [[ -z "$docker_available" ]] || [[ "$docker_available" -lt 1048576 ]]; then # At least 1GB
+        echo "Warning: Limited space on /var/lib/docker/volumes (available: ${docker_available}KB)"
+    fi
+    
+    # Create volume directory
+    $SSH_CMD "$DEST_HOST" "mkdir -p '$volume_path'"
+    
+    # Create slowdisk directories and symlinks
+    for path in "${static_paths[@]}"; do
+        # Convert path to slowdisk path: /slowdisk/rpc_key__data_path
+        # Replace / with __
+        local slowdisk_path="${slowdisk_base}/rpc_${key}__data_${path//\//__}"
+        local target_path="${volume_path}/${path}"
+        local target_dir=$(dirname "$target_path")
+        
+        # Create parent directories in volume
+        $SSH_CMD "$DEST_HOST" "mkdir -p '$target_dir'"
+        
+        # Create slowdisk directory
+        $SSH_CMD "$DEST_HOST" "mkdir -p '$slowdisk_path'"
+        
+        # Remove target if it exists (file, symlink, or empty directory)
+        # Then create symlink
+        $SSH_CMD "$DEST_HOST" "
+            if [[ -e '$target_path' ]]; then
+                rm -rf '$target_path'
+            fi
+            ln -s '$slowdisk_path' '$target_path'
+        "
+        
+        echo "  Created symlink: $target_path -> $slowdisk_path"
+    done
+    
+    echo "SLOWDISK structure setup complete"
+    return 0
+}
+
 # Cleanup all used ports on exit
 cleanup_all_ports() {
     echo "Cleaning up all used ports..."
@@ -129,6 +248,41 @@ transfer_backup() {
     if [[ -z "$backup_file" ]] || [[ ! -f "$backup_file" ]]; then
         echo "Warning: No backup file found for $volume_name, skipping"
         return 1
+    fi
+    
+    # Check for metadata file
+    local backup_basename=$(basename "$backup_file" .tar.zst)
+    local metadata_file="$backup_dir/${backup_basename}.txt"
+    local use_slowdisk=false
+    local tar_extract_opts="-xf - -C /"
+    
+    if [[ -f "$metadata_file" ]] && check_slowdisk_enabled; then
+        echo "Metadata file found and SLOWDISK mode enabled"
+        echo "Setting up SLOWDISK structure..."
+        
+        # Parse metadata locally
+        local metadata_output=$(parse_metadata "$metadata_file")
+        local static_size_kb=$(echo "$metadata_output" | head -n 1)
+        local static_paths=($(echo "$metadata_output" | tail -n +2))
+        
+        if [[ ${#static_paths[@]} -gt 0 ]] && [[ -n "$static_size_kb" ]]; then
+            # Setup slowdisk structure on remote
+            if setup_slowdisk_structure "$key" "$static_size_kb" "${static_paths[@]}"; then
+                use_slowdisk=true
+                # Use --skip-old-files to avoid overwriting existing symlinks/directories
+                # But we still want to extract files into symlinked directories
+                tar_extract_opts="-xf - -C / --skip-old-files"
+                echo "SLOWDISK structure ready, will extract respecting symlinks"
+            else
+                echo "Warning: Failed to setup SLOWDISK structure, falling back to normal extraction"
+            fi
+        else
+            echo "Warning: Could not parse metadata file, falling back to normal extraction"
+        fi
+    elif [[ -f "$metadata_file" ]]; then
+        echo "Metadata file found but SLOWDISK mode not enabled"
+    else
+        echo "No metadata file found, using normal extraction"
     fi
     
     local file_size=$(stat -f%z "$backup_file" 2>/dev/null || stat -c%s "$backup_file" 2>/dev/null)
@@ -156,9 +310,10 @@ transfer_backup() {
         
         # Start listener in screen session with proper escaping
         # The backup file is already zstd compressed, so we just decompress and extract
+        # Use tar_extract_opts which may include --skip-old-files for SLOWDISK mode
         $SSH_CMD "$DEST_HOST" "
             screen -dmS transfer_${key} bash -c '
-                nc -l -p $port | zstd -d | tar -xf - -C / 2>/tmp/transfer_${key}.err
+                nc -l -p $port | zstd -d | tar $tar_extract_opts 2>/tmp/transfer_${key}.err
                 echo \$? > /tmp/transfer_${key}.done
             '
         "
@@ -176,9 +331,10 @@ transfer_backup() {
         echo "Screen not available, using nohup method..."
         
         # Use nohup with proper backgrounding
+        # Use tar_extract_opts which may include --skip-old-files for SLOWDISK mode
         $SSH_CMD "$DEST_HOST" "
             nohup bash -c '
-                nc -l -p $port | zstd -d | tar -xf - -C / 2>/tmp/transfer_${key}.err
+                nc -l -p $port | zstd -d | tar $tar_extract_opts 2>/tmp/transfer_${key}.err
                 echo \$? > /tmp/transfer_${key}.done
             ' > /tmp/transfer_${key}.log 2>&1 < /dev/null &
             echo \$! > /tmp/transfer_${key}.pid
@@ -278,11 +434,38 @@ transfer_backup_ssh() {
     
     local file_size=$(stat -f%z "$backup_file" 2>/dev/null || stat -c%s "$backup_file" 2>/dev/null)
     
+    # Check for metadata file and SLOWDISK mode (same logic as transfer_backup)
+    local backup_basename=$(basename "$backup_file" .tar.zst)
+    local metadata_file="$backup_dir/${backup_basename}.txt"
+    local tar_extract_opts="-xf - -C /"
+    
+    if [[ -f "$metadata_file" ]] && check_slowdisk_enabled; then
+        echo "Metadata file found and SLOWDISK mode enabled"
+        echo "Setting up SLOWDISK structure..."
+        
+        # Parse metadata locally
+        local metadata_output=$(parse_metadata "$metadata_file")
+        local static_size_kb=$(echo "$metadata_output" | head -n 1)
+        local static_paths=($(echo "$metadata_output" | tail -n +2))
+        
+        if [[ ${#static_paths[@]} -gt 0 ]] && [[ -n "$static_size_kb" ]]; then
+            # Setup slowdisk structure on remote
+            if setup_slowdisk_structure "$key" "$static_size_kb" "${static_paths[@]}"; then
+                tar_extract_opts="-xf - -C / --skip-old-files"
+                echo "SLOWDISK structure ready, will extract respecting symlinks"
+            else
+                echo "Warning: Failed to setup SLOWDISK structure, falling back to normal extraction"
+            fi
+        else
+            echo "Warning: Could not parse metadata file, falling back to normal extraction"
+        fi
+    fi
+    
     echo "Using direct SSH transfer for $key (file: $(basename "$backup_file"), size: $((file_size / 1048576))MB)"
     
     pv -pterb -s "$file_size" -N "$key" < "$backup_file" | \
         $SSH_CMD -c chacha20-poly1305@openssh.com "$DEST_HOST" \
-        "zstd -d | tar -xf - -C /"
+        "zstd -d | tar $tar_extract_opts"
     
     if [[ $? -eq 0 ]]; then
         echo "✓ Backup $key transferred successfully"

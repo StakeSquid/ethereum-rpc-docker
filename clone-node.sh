@@ -2,6 +2,8 @@
 
 # Fixed version that handles missing netstat
 
+BASEPATH="$(dirname "$0")"
+
 if [[ -n $2 ]]; then
     DEST_HOST="$2.stakesquid.eu"
     echo "Setting up optimized transfer to $DEST_HOST"
@@ -99,6 +101,111 @@ release_port() {
     USED_PORTS=("${new_array[@]}")
 }
 
+# Check if SLOWDISK mode is enabled on target
+check_slowdisk_enabled() {
+    $SSH_CMD "$DEST_HOST" "grep -q '^SLOWDISK=true' /root/rpc/.env 2>/dev/null"
+    return $?
+}
+
+# Detect static files from source volume
+detect_static_files() {
+    local key=$1
+    local source_folder="/var/lib/docker/volumes/rpc_${key}/_data"
+    local static_file_list="$BASEPATH/static-file-path-list.txt"
+    local static_size_kb=0
+    local static_paths=()
+    
+    if [[ ! -f "$static_file_list" ]]; then
+        return 1
+    fi
+    
+    # Check each static file path in the source volume
+    while IFS= read -r path; do
+        local full_path="$source_folder/$path"
+        if [[ -e "$full_path" ]]; then
+            # Get the size in KB
+            local size=$(du -sL "$full_path" 2>/dev/null | awk '{print $1}')
+            if [[ -n "$size" ]] && [[ "$size" =~ ^[0-9]+$ ]]; then
+                static_size_kb=$((static_size_kb + size))
+                static_paths+=("$path")
+            fi
+        fi
+    done < "$static_file_list"
+    
+    if [[ ${#static_paths[@]} -eq 0 ]]; then
+        return 1
+    fi
+    
+    echo "$static_size_kb"
+    printf '%s\n' "${static_paths[@]}"
+}
+
+# Setup slowdisk directory structure with symlinks
+setup_slowdisk_structure() {
+    local key=$1
+    local static_size_kb=$2
+    shift 2
+    local static_paths=("$@")
+    local volume_path="/var/lib/docker/volumes/rpc_$key/_data"
+    local slowdisk_base="/slowdisk"
+    
+    if [[ ${#static_paths[@]} -eq 0 ]]; then
+        echo "No static paths provided"
+        return 1
+    fi
+    
+    echo "Setting up SLOWDISK structure for $key"
+    echo "  Static size: $((static_size_kb / 1024))MB"
+    echo "  Static paths: ${#static_paths[@]}"
+    
+    # Check available space on /slowdisk
+    local slowdisk_available=$($SSH_CMD "$DEST_HOST" "df -BK /slowdisk 2>/dev/null | tail -1 | awk '{print \$4}' | sed 's/K//'")
+    if [[ -z "$slowdisk_available" ]] || [[ "$slowdisk_available" -lt "$static_size_kb" ]]; then
+        echo "Error: Not enough space on /slowdisk (available: ${slowdisk_available}KB, needed: ${static_size_kb}KB)"
+        return 1
+    fi
+    
+    # Check available space on /var/lib/docker/volumes (for dynamic data)
+    # We'll estimate dynamic size as total - static, but we don't know total yet
+    # So we'll just check if there's reasonable space
+    local docker_available=$($SSH_CMD "$DEST_HOST" "df -BK /var/lib/docker/volumes 2>/dev/null | tail -1 | awk '{print \$4}' | sed 's/K//'")
+    if [[ -z "$docker_available" ]] || [[ "$docker_available" -lt 1048576 ]]; then # At least 1GB
+        echo "Warning: Limited space on /var/lib/docker/volumes (available: ${docker_available}KB)"
+    fi
+    
+    # Create volume directory
+    $SSH_CMD "$DEST_HOST" "mkdir -p '$volume_path'"
+    
+    # Create slowdisk directories and symlinks
+    for path in "${static_paths[@]}"; do
+        # Convert path to slowdisk path: /slowdisk/rpc_key__data_path
+        # Replace / with __
+        local slowdisk_path="${slowdisk_base}/rpc_${key}__data_${path//\//__}"
+        local target_path="${volume_path}/${path}"
+        local target_dir=$(dirname "$target_path")
+        
+        # Create parent directories in volume
+        $SSH_CMD "$DEST_HOST" "mkdir -p '$target_dir'"
+        
+        # Create slowdisk directory
+        $SSH_CMD "$DEST_HOST" "mkdir -p '$slowdisk_path'"
+        
+        # Remove target if it exists (file, symlink, or empty directory)
+        # Then create symlink
+        $SSH_CMD "$DEST_HOST" "
+            if [[ -e '$target_path' ]]; then
+                rm -rf '$target_path'
+            fi
+            ln -s '$slowdisk_path' '$target_path'
+        "
+        
+        echo "  Created symlink: $target_path -> $slowdisk_path"
+    done
+    
+    echo "SLOWDISK structure setup complete"
+    return 0
+}
+
 # Cleanup all used ports on exit
 cleanup_all_ports() {
     echo "Cleaning up all used ports..."
@@ -123,6 +230,38 @@ transfer_volume() {
     fi
     
     local folder_size=$(du -sb "$source_folder" 2>/dev/null | awk '{print $1}')
+    local tar_extract_opts="-xf - -C /"
+    local use_slowdisk=false
+    
+    # Check for SLOWDISK mode and detect static files
+    if check_slowdisk_enabled; then
+        echo "SLOWDISK mode enabled, detecting static files in source volume..."
+        local static_output=$(detect_static_files "$key")
+        
+        if [[ -n "$static_output" ]]; then
+            local static_size_kb=$(echo "$static_output" | head -n 1)
+            local static_paths=($(echo "$static_output" | tail -n +2))
+            
+            if [[ ${#static_paths[@]} -gt 0 ]] && [[ -n "$static_size_kb" ]]; then
+                echo "Found ${#static_paths[@]} static paths (total: $((static_size_kb / 1024))MB)"
+                echo "Setting up SLOWDISK structure on target..."
+                
+                # Setup slowdisk structure on remote
+                if setup_slowdisk_structure "$key" "$static_size_kb" "${static_paths[@]}"; then
+                    use_slowdisk=true
+                    # Use --skip-old-files to avoid overwriting existing symlinks/directories
+                    tar_extract_opts="-xf - -C / --skip-old-files"
+                    echo "SLOWDISK structure ready, will extract respecting symlinks"
+                else
+                    echo "Warning: Failed to setup SLOWDISK structure, falling back to normal extraction"
+                fi
+            else
+                echo "No static files detected, using normal extraction"
+            fi
+        else
+            echo "Could not detect static files, using normal extraction"
+        fi
+    fi
     
     # Find an available port
     local port=$(find_available_port)
@@ -146,9 +285,10 @@ transfer_volume() {
         echo "Starting screen listener on port $port..."
         
         # Start listener in screen session with proper escaping
+        # Use tar_extract_opts which may include --skip-old-files for SLOWDISK mode
         $SSH_CMD "$DEST_HOST" "
             screen -dmS transfer_${key} bash -c '
-                nc -l -p $port | zstd -d | tar -xf - -C / 2>/tmp/transfer_${key}.err
+                nc -l -p $port | zstd -d | tar $tar_extract_opts 2>/tmp/transfer_${key}.err
                 echo \$? > /tmp/transfer_${key}.done
             '
         "
@@ -166,9 +306,10 @@ transfer_volume() {
         echo "Screen not available, using nohup method..."
         
         # Use nohup with proper backgrounding
+        # Use tar_extract_opts which may include --skip-old-files for SLOWDISK mode
         $SSH_CMD "$DEST_HOST" "
             nohup bash -c '
-                nc -l -p $port | zstd -d | tar -xf - -C / 2>/tmp/transfer_${key}.err
+                nc -l -p $port | zstd -d | tar $tar_extract_opts 2>/tmp/transfer_${key}.err
                 echo \$? > /tmp/transfer_${key}.done
             ' > /tmp/transfer_${key}.log 2>&1 < /dev/null &
             echo \$! > /tmp/transfer_${key}.pid
@@ -266,6 +407,35 @@ transfer_volume_ssh() {
     fi
     
     local folder_size=$(du -sb "$source_folder" 2>/dev/null | awk '{print $1}')
+    local tar_extract_opts="-xf - -C /"
+    
+    # Check for SLOWDISK mode and detect static files (same logic as transfer_volume)
+    if check_slowdisk_enabled; then
+        echo "SLOWDISK mode enabled, detecting static files in source volume..."
+        local static_output=$(detect_static_files "$key")
+        
+        if [[ -n "$static_output" ]]; then
+            local static_size_kb=$(echo "$static_output" | head -n 1)
+            local static_paths=($(echo "$static_output" | tail -n +2))
+            
+            if [[ ${#static_paths[@]} -gt 0 ]] && [[ -n "$static_size_kb" ]]; then
+                echo "Found ${#static_paths[@]} static paths (total: $((static_size_kb / 1024))MB)"
+                echo "Setting up SLOWDISK structure on target..."
+                
+                # Setup slowdisk structure on remote
+                if setup_slowdisk_structure "$key" "$static_size_kb" "${static_paths[@]}"; then
+                    tar_extract_opts="-xf - -C / --skip-old-files"
+                    echo "SLOWDISK structure ready, will extract respecting symlinks"
+                else
+                    echo "Warning: Failed to setup SLOWDISK structure, falling back to normal extraction"
+                fi
+            else
+                echo "No static files detected, using normal extraction"
+            fi
+        else
+            echo "Could not detect static files, using normal extraction"
+        fi
+    fi
     
     echo "Using direct SSH transfer for $key (size: $((folder_size / 1048576))MB)"
     
@@ -273,7 +443,7 @@ transfer_volume_ssh() {
         pv -pterb -s "$folder_size" -N "$key" | \
         zstd -3 -T0 | \
         $SSH_CMD -c chacha20-poly1305@openssh.com "$DEST_HOST" \
-        "zstd -d | tar -xf - -C /"
+        "zstd -d | tar $tar_extract_opts"
     
     if [[ $? -eq 0 ]]; then
         echo "✓ Volume $key transferred successfully"
