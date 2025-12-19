@@ -22,7 +22,8 @@ for key in $keys; do
         # Print the size of the file or directory
         size=$(du -sL "$prefix/_data/$path" 2>/dev/null | awk '{print $1}')
         static_size=$((static_size + size))
-        #echo "$path: $size"
+        # Print the detected path to stderr so it doesn't interfere with ratio output
+        echo "$prefix/_data/$path" >&2
     fi
     done < static-file-path-list.txt
 done
