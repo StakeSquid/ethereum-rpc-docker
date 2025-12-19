@@ -109,7 +109,7 @@ services:
     shm_size: 2gb
 
   gnosis-chiado-reth-pruned-node:
-    image: ${GNOSIS_NIMBUS_IMAGE:-ghcr.io/gnosischain/gnosis-nimbus-eth2}:${GNOSIS_CHIADO_NIMBUS_VERSION:-v25.11.0}
+    image: ${GNOSIS_NIMBUS_IMAGE:-ghcr.io/gnosischain/gnosis-nimbus-eth2}:${GNOSIS_CHIADO_NIMBUS_VERSION:-v25.12.0}
     user: root
     ports:
       - 15751:15751

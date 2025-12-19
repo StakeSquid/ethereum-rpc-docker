@@ -109,7 +109,7 @@ services:
     shm_size: 2gb
 
   gnosis-mainnet-reth-pruned-node:
-    image: ${GNOSIS_NIMBUS_IMAGE:-ghcr.io/gnosischain/gnosis-nimbus-eth2}:${GNOSIS_MAINNET_NIMBUS_VERSION:-v25.11.0}
+    image: ${GNOSIS_NIMBUS_IMAGE:-ghcr.io/gnosischain/gnosis-nimbus-eth2}:${GNOSIS_MAINNET_NIMBUS_VERSION:-v25.12.0}
     user: root
     ports:
       - 18516:18516
