@@ -33,6 +33,8 @@ for part in "${parts[@]}"; do
     fi
 
     if $include; then
+        echo "Checking ${part%.yml}..." >&2
+        # Capture stdout (ratio) while letting stderr display naturally
 	static_ratio="$($BASEPATH/show-static-file-size.sh ${part%.yml})"
         static_ratio="0$static_ratio"
         total_kb=$($BASEPATH/show-file-size.sh ${part%.yml})
@@ -46,6 +48,7 @@ for part in "${parts[@]}"; do
 	static_size=$(echo "$static_size + $static_part" | bc)
         #output=$(echo "$static_size" | numfmt --to=iec --suffix=B --format="%.2f")
         #echo "$output"
+        echo "" >&2
     fi
 done
 

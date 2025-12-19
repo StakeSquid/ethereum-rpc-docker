@@ -22,11 +22,18 @@ for key in $keys; do
         # Print the size of the file or directory
         size=$(du -sL "$prefix/_data/$path" 2>/dev/null | awk '{print $1}')
         static_size=$((static_size + size))
-        # Print the detected path to stderr so it doesn't interfere with ratio output
-        echo "$prefix/_data/$path" >&2
+        # Format size in human-readable format
+        size_formatted=$(echo "$(( size * 1024 ))" | numfmt --to=iec --suffix=B --format="%.2f")
+        # Print the detected path with size to stderr (one per line)
+        echo "$size_formatted  $prefix/_data/$path" >&2
     fi
     done < static-file-path-list.txt
 done
+
+# Print total static size to stderr
+static_total_formatted=$(echo "$(( static_size * 1024 ))" | numfmt --to=iec --suffix=B --format="%.2f")
+echo "---" >&2
+echo "Total static: $static_total_formatted" >&2
 
 ratio=$(bc -l <<< "scale=2; $static_size/$total_size")
 echo "$ratio"
