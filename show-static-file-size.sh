@@ -30,10 +30,5 @@ for key in $keys; do
     done < static-file-path-list.txt
 done
 
-# Print total static size to stderr
-static_total_formatted=$(echo "$(( static_size * 1024 ))" | numfmt --to=iec --suffix=B --format="%.2f")
-echo "---" >&2
-echo "Total static: $static_total_formatted" >&2
-
 ratio=$(bc -l <<< "scale=2; $static_size/$total_size")
 echo "$ratio"

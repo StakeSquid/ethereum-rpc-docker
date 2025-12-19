@@ -54,6 +54,9 @@ done
 
 total=$(echo "$(( total_size * 1024 ))" | numfmt --to=iec --suffix=B --format="%.2f")
 static=$(echo $(echo "$static_size * 1024" | bc) | numfmt --to=iec --suffix=B --format="%.2f")
+dynamic_kb=$(echo "$total_size - $static_size" | bc)
+dynamic=$(echo $(echo "$dynamic_kb * 1024" | bc) | numfmt --to=iec --suffix=B --format="%.2f")
 
-echo "total: $total"
-echo "static: $static"
+echo "Total static: $static"
+echo "Total: $total"
+echo "Dynamic: $dynamic"
