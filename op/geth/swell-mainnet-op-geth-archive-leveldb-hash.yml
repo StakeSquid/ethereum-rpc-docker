@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.swell-mainnet-op-geth-archive-leveldb-hash.middlewares=swell-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   swell-mainnet-archive-node:
-    image: ${SWELL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SWELL_MAINNET_NODE_VERSION:-v1.16.3}
+    image: ${SWELL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SWELL_MAINNET_NODE_VERSION:-v1.16.4}
     ports:
       - 16863:16863
       - 16863:16863/udp

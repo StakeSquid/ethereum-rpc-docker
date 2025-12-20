@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.ink-mainnet-op-geth-pruned-pebble-path.middlewares=ink-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   ink-mainnet-node:
-    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_MAINNET_NODE_VERSION:-v1.16.3}
+    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_MAINNET_NODE_VERSION:-v1.16.4}
     ports:
       - 16271:16271
       - 16271:16271/udp

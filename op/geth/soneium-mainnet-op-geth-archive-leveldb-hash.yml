@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.soneium-mainnet-op-geth-archive-leveldb-hash.middlewares=soneium-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   soneium-mainnet-archive-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.16.3}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.16.4}
     ports:
       - 15889:15889
       - 15889:15889/udp

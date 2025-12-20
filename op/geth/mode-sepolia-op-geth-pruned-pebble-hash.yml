@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.mode-sepolia-op-geth-pruned-pebble-hash.middlewares=mode-sepolia-op-geth-pruned-pebble-hash-stripprefix, ipallowlist
 
   mode-sepolia-node:
-    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_SEPOLIA_NODE_VERSION:-v1.16.3}
+    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_SEPOLIA_NODE_VERSION:-v1.16.4}
     ports:
       - 18454:18454
       - 18454:18454/udp

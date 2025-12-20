@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.snax-mainnet-op-geth-pruned-pebble-path.middlewares=snax-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   snax-mainnet-node:
-    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.16.3}
+    image: ${SNAX_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SNAX_MAINNET_NODE_VERSION:-v1.16.4}
     ports:
       - 16332:16332
       - 16332:16332/udp

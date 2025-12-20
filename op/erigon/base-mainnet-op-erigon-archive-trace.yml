@@ -107,7 +107,7 @@ services:
     shm_size: 2gb
 
   base-mainnet-op-erigon-node:
-    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.16.3}
+    image: ${BASE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BASE_MAINNET_NODE_VERSION:-v1.16.4}
     ports:
       - 18092:18092
       - 18092:18092/udp

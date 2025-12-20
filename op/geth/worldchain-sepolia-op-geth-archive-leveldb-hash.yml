@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.worldchain-sepolia-op-geth-archive-leveldb-hash.middlewares=worldchain-sepolia-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   worldchain-sepolia-archive-node:
-    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_SEPOLIA_NODE_VERSION:-v1.16.3}
+    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_SEPOLIA_NODE_VERSION:-v1.16.4}
     ports:
       - 16720:16720
       - 16720:16720/udp

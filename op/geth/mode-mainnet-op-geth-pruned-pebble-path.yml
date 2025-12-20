@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.mode-mainnet-op-geth-pruned-pebble-path.middlewares=mode-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   mode-mainnet-node:
-    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.16.3}
+    image: ${MODE_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${MODE_MAINNET_NODE_VERSION:-v1.16.4}
     ports:
       - 17054:17054
       - 17054:17054/udp

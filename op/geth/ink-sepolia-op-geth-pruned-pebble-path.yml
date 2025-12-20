@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.ink-sepolia-op-geth-pruned-pebble-path.middlewares=ink-sepolia-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   ink-sepolia-node:
-    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_SEPOLIA_NODE_VERSION:-v1.16.3}
+    image: ${INK_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${INK_SEPOLIA_NODE_VERSION:-v1.16.4}
     ports:
       - 16869:16869
       - 16869:16869/udp

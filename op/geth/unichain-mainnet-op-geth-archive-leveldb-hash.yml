@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.unichain-mainnet-op-geth-archive-leveldb-hash.middlewares=unichain-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   unichain-mainnet-archive-node:
-    image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_MAINNET_NODE_VERSION:-v1.16.3}
+    image: ${UNICHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${UNICHAIN_MAINNET_NODE_VERSION:-v1.16.4}
     ports:
       - 16789:16789
       - 16789:16789/udp
