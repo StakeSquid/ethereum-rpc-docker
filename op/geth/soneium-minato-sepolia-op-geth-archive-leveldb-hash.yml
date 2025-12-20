@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   soneium-minato-sepolia-archive:
-    image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MINATO_SEPOLIA_GETH_VERSION:-v1.101603.5}
+    image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MINATO_SEPOLIA_GETH_VERSION:-v1.101604.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

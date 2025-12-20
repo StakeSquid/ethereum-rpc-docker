@@ -103,7 +103,7 @@ services:
       - traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path.middlewares=ethereum-hoodi-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   ethereum-hoodi-geth-node:
-    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_HOODI_NIMBUS_VERSION:-multiarch-v25.11.1}
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_HOODI_NIMBUS_VERSION:-multiarch-v25.12.0}
     user: root
     ports:
       - 16917:16917
