@@ -51,8 +51,6 @@ services:
       - 8551
     environment:
       - GETH_OP_NETWORK=boba-mainnet
-      - GETH_OVERRIDE_FJORD=1725951600
-      - GETH_OVERRIDE_GRANITE=1729753200
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://mainnet.boba.network
     entrypoint: /bin/sh -c 'exec geth "$@"' --
