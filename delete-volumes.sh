@@ -69,7 +69,19 @@ for key in $keys; do
         echo "  Volume _data directory not found, skipping symlink check"
     fi
     
-    # Remove the docker volume
-    docker volume rm "rpc_$key" 2>/dev/null
+    # Remove the docker volume (ignore error if volume doesn't exist)
+    if docker volume rm "rpc_$key" 2>/dev/null; then
+        echo "  ✓ Volume removed successfully"
+    else
+        # Check if volume exists - if not, that's fine, exit with 0
+        if ! docker volume inspect "rpc_$key" &>/dev/null; then
+            echo "  Volume does not exist, skipping"
+        else
+            echo "  ✗ Failed to remove volume (may require root or may be in use)"
+        fi
+    fi
 
 done
+
+# Exit successfully even if some volumes didn't exist
+exit 0
