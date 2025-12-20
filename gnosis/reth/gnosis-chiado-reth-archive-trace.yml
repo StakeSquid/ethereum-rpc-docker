@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   gnosis-chiado-reth:
-    image: ${GNOSIS_RETH_IMAGE:-ghcr.io/gnosischain/reth_gnosis}:${GNOSIS_CHIADO_RETH_VERSION:-v0.1.8}
+    image: ${GNOSIS_RETH_IMAGE:-ghcr.io/gnosischain/reth_gnosis}:${GNOSIS_CHIADO_RETH_VERSION:-v0.1.9}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
