@@ -234,7 +234,7 @@ elif [[ $SOURCE_ADMIN_STATUS -eq 1 ]]; then
         echo -e "${RED}Error: ${SOURCE_ADMIN_CHECK}${NC}"
     fi
     echo -e "${YELLOW}Hint: The admin API must be whitelisted/enabled for this script to work.${NC}"
-    echo -e "${YELLOW}Required methods: admin_nodeInfo, admin_addStaticPeer, admin_peers${NC}"
+    echo -e "${YELLOW}Required methods: admin_nodeInfo, admin_addPeer (or admin_addStaticPeer for Geth), admin_peers${NC}"
     exit 1
 else
     echo -e "${GREEN}OK${NC}"
@@ -254,7 +254,7 @@ elif [[ $TARGET_ADMIN_STATUS -eq 1 ]]; then
         echo -e "${RED}Error: ${TARGET_ADMIN_CHECK}${NC}"
     fi
     echo -e "${YELLOW}Hint: The admin API must be whitelisted/enabled for this script to work.${NC}"
-    echo -e "${YELLOW}Required methods: admin_nodeInfo, admin_addStaticPeer, admin_peers${NC}"
+    echo -e "${YELLOW}Required methods: admin_nodeInfo, admin_addPeer (or admin_addStaticPeer for Geth), admin_peers${NC}"
     exit 1
 else
     echo -e "${GREEN}OK${NC}"
@@ -308,19 +308,66 @@ check_rpc_success() {
     return 1
 }
 
-# Function to add static peer
+# Function to detect client type from node name
+detect_client_type() {
+    local node_name="$1"
+    local name_lower=$(echo "$node_name" | tr '[:upper:]' '[:lower:]')
+    
+    if [[ "$name_lower" == *"geth"* ]]; then
+        echo "geth"
+    elif [[ "$name_lower" == *"reth"* ]]; then
+        echo "reth"
+    elif [[ "$name_lower" == *"erigon"* ]]; then
+        echo "erigon"
+    elif [[ "$name_lower" == *"nethermind"* ]]; then
+        echo "nethermind"
+    elif [[ "$name_lower" == *"besu"* ]]; then
+        echo "besu"
+    else
+        echo "unknown"
+    fi
+}
+
+# Function to add static peer (tries appropriate method based on client)
 add_static_peer() {
     local url="$1"
     local enode="$2"
+    local client_type="${3:-unknown}"  # Optional client type hint
     local response
+    local method
     
+    # Determine which method to try first based on client type
+    if [[ "$client_type" == "geth" ]]; then
+        # Geth supports admin_addStaticPeer
+        method="admin_addStaticPeer"
+    else
+        # Reth and most other clients use admin_addPeer
+        method="admin_addPeer"
+    fi
+    
+    # Try the primary method
     response=$(curl --ipv4 -s -X POST "$url" \
         -H "Content-Type: application/json" \
-        -d "{\"jsonrpc\":\"2.0\",\"method\":\"admin_addStaticPeer\",\"params\":[\"$enode\"],\"id\":1}" \
+        -d "{\"jsonrpc\":\"2.0\",\"method\":\"$method\",\"params\":[\"$enode\"],\"id\":1}" \
         --connect-timeout "$TIMEOUT" 2>/dev/null) || {
         echo ""
         return 1
     }
+    
+    # Check if method not found, try fallback
+    if echo "$response" | grep -qi "method not found"; then
+        if [[ "$method" == "admin_addStaticPeer" ]]; then
+            # Try admin_addPeer as fallback
+            method="admin_addPeer"
+            response=$(curl --ipv4 -s -X POST "$url" \
+                -H "Content-Type: application/json" \
+                -d "{\"jsonrpc\":\"2.0\",\"method\":\"$method\",\"params\":[\"$enode\"],\"id\":1}" \
+                --connect-timeout "$TIMEOUT" 2>/dev/null) || {
+                echo ""
+                return 1
+            }
+        fi
+    fi
     
     echo "$response"
 }
@@ -368,6 +415,7 @@ echo -e "${GREEN}OK${NC}"
 SOURCE_ENODE=$(extract_enode "$SOURCE_INFO")
 SOURCE_NAME=$(extract_name "$SOURCE_INFO")
 SOURCE_PUBKEY=$(echo "$SOURCE_ENODE" | sed -E 's|enode://([^@]+)@.*|\1|')
+SOURCE_CLIENT=$(detect_client_type "$SOURCE_NAME")
 
 if [[ -z "$SOURCE_ENODE" ]]; then
     echo -e "${RED}Could not extract enode from source${NC}"
@@ -375,6 +423,7 @@ if [[ -z "$SOURCE_ENODE" ]]; then
 fi
 
 echo -e "  Name:  ${GREEN}${SOURCE_NAME}${NC}"
+echo -e "  Client: ${GREEN}${SOURCE_CLIENT}${NC}"
 echo -e "  Enode: ${GREEN}${SOURCE_ENODE:0:60}...${NC}"
 echo ""
 
@@ -398,6 +447,7 @@ echo -e "${GREEN}OK${NC}"
 TARGET_ENODE=$(extract_enode "$TARGET_INFO")
 TARGET_NAME=$(extract_name "$TARGET_INFO")
 TARGET_PUBKEY=$(echo "$TARGET_ENODE" | sed -E 's|enode://([^@]+)@.*|\1|')
+TARGET_CLIENT=$(detect_client_type "$TARGET_NAME")
 
 if [[ -z "$TARGET_ENODE" ]]; then
     echo -e "${RED}Could not extract enode from target${NC}"
@@ -405,6 +455,7 @@ if [[ -z "$TARGET_ENODE" ]]; then
 fi
 
 echo -e "  Name:  ${GREEN}${TARGET_NAME}${NC}"
+echo -e "  Client: ${GREEN}${TARGET_CLIENT}${NC}"
 echo -e "  Enode: ${GREEN}${TARGET_ENODE:0:60}...${NC}"
 echo ""
 
@@ -453,7 +504,7 @@ elif [[ "$DRY_RUN" == true ]]; then
     echo -e "  Would run: admin_addStaticPeer(\"${TARGET_ENODE:0:50}...\")"
     SOURCE_SUCCESS=true
 else
-    RESULT=$(add_static_peer "$SOURCE_URL" "$TARGET_ENODE")
+    RESULT=$(add_static_peer "$SOURCE_URL" "$TARGET_ENODE" "$SOURCE_CLIENT")
     if check_rpc_success "$RESULT"; then
         echo -e "${GREEN}OK${NC}"
         SOURCE_SUCCESS=true
@@ -463,7 +514,7 @@ else
         ERROR_MSG=$(extract_error_message "$RESULT")
         if [[ -n "$ERROR_MSG" ]]; then
             if [[ "$ERROR_MSG" == *"method not found"* ]] || [[ "$ERROR_MSG" == *"Method not found"* ]]; then
-                echo -e "  ${RED}Error: Admin API method 'admin_addStaticPeer' not available on source node${NC}"
+                echo -e "  ${RED}Error: Admin API methods (admin_addStaticPeer/admin_addPeer) not available on source node${NC}"
                 echo -e "  ${YELLOW}Please whitelist the admin API in your RPC configuration.${NC}"
             else
                 echo -e "  Error: ${ERROR_MSG}"
@@ -488,7 +539,7 @@ elif [[ "$DRY_RUN" == true ]]; then
     echo -e "  Would run: admin_addStaticPeer(\"${SOURCE_ENODE:0:50}...\")"
     TARGET_SUCCESS=true
 else
-    RESULT=$(add_static_peer "$TARGET_URL" "$SOURCE_ENODE")
+    RESULT=$(add_static_peer "$TARGET_URL" "$SOURCE_ENODE" "$TARGET_CLIENT")
     if check_rpc_success "$RESULT"; then
         echo -e "${GREEN}OK${NC}"
         TARGET_SUCCESS=true
@@ -498,7 +549,7 @@ else
         ERROR_MSG=$(extract_error_message "$RESULT")
         if [[ -n "$ERROR_MSG" ]]; then
             if [[ "$ERROR_MSG" == *"method not found"* ]] || [[ "$ERROR_MSG" == *"Method not found"* ]]; then
-                echo -e "  ${RED}Error: Admin API method 'admin_addStaticPeer' not available on target node${NC}"
+                echo -e "  ${RED}Error: Admin API methods (admin_addStaticPeer/admin_addPeer) not available on target node${NC}"
                 echo -e "  ${YELLOW}Please whitelist the admin API in your RPC configuration.${NC}"
             else
                 echo -e "  Error: ${ERROR_MSG}"
