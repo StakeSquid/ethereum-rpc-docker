@@ -2,10 +2,16 @@
 
 # Script to backup peers from all running nodes
 # Can be run as a cronjob to periodically backup peer lists
-# Usage: ./backup-peers.sh [backup-directory]
+# Usage: ./backup-peers.sh [backup-directory] [--verbose]
 
 BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
+
+# Check for verbose flag
+VERBOSE=false
+if [[ "$*" == *"--verbose"* ]] || [[ "$*" == *"-v"* ]]; then
+    VERBOSE=true
+fi
 
 # Default backup directory
 BACKUP_DIR="${1:-$BASEPATH/peer-backups}"
@@ -40,6 +46,12 @@ if [ -n "$NO_SSL" ]; then
     DOMAIN="${DOMAIN:-0.0.0.0}"
 else
     PROTO="https"
+    # For HTTPS, DOMAIN should be set
+    if [ -z "$DOMAIN" ]; then
+        echo "Error: DOMAIN variable not found in $BASEPATH/.env" >&2
+        echo "Please set DOMAIN in your .env file" >&2
+        exit 1
+    fi
 fi
 
 # Function to extract RPC paths from a compose file
@@ -84,6 +96,11 @@ backup_peers_from_path() {
     local safe_compose_name=$(echo "$compose_name" | sed 's/[^a-zA-Z0-9_-]/_/g')
     local safe_path=$(echo "$path" | sed 's|[^a-zA-Z0-9_-]|_|g')
     
+    # Ensure path starts with /
+    if [[ ! "$path" =~ ^/ ]]; then
+        path="/$path"
+    fi
+    
     local RPC_URL="${PROTO}://${DOMAIN}${path}"
     
     # Try admin_peers first (returns detailed peer info)
@@ -91,6 +108,12 @@ backup_peers_from_path() {
         -H "Content-Type: application/json" \
         --data '{"jsonrpc":"2.0","method":"admin_peers","params":[],"id":1}' \
         --max-time 10 2>/dev/null)
+    
+    # Check for curl errors
+    if [ $? -ne 0 ]; then
+        echo "✗ Failed to connect to $compose_file ($path): curl error"
+        return 1
+    fi
     
     # Check if we got a valid response
     if echo "$response" | jq -e '.result' > /dev/null 2>&1; then
@@ -145,16 +168,26 @@ backup_peers_from_path() {
                 return 0
             fi
         else
-            echo "⚠ No peers found for $compose_file ($path)"
-            return 1
+            if [ "$VERBOSE" = true ]; then
+                echo "⚠ No peers found for $compose_file ($path)"
+            fi
+            return 2  # Return 2 for "no peers" (not a failure, just nothing to backup)
         fi
     else
         # Check if this is a method not found error (consensus client or admin API disabled)
         error_code=$(echo "$response" | jq -r '.error.code // empty' 2>/dev/null)
+        error_message=$(echo "$response" | jq -r '.error.message // empty' 2>/dev/null)
         
         if [ -n "$error_code" ] && [ "$error_code" != "null" ]; then
-            # This is likely a consensus client endpoint, skip it silently
-            return 1
+            # Check if it's a method not found error (likely consensus client)
+            if [ "$error_code" = "-32601" ] || [ "$error_code" = "32601" ]; then
+                # Method not found - likely consensus client, skip silently
+                return 1
+            else
+                # Other error
+                echo "✗ $compose_file ($path): RPC error $error_code - ${error_message:-unknown error}"
+                return 1
+            fi
         fi
         
         # Try net_peerCount as fallback (but we can't get enodes from this)
@@ -167,6 +200,15 @@ backup_peers_from_path() {
             peer_count=$(echo "$response" | jq -r '.result' | xargs printf "%d")
             if [ "$peer_count" -gt 0 ]; then
                 echo "⚠ $compose_file ($path) has $peer_count peer(s) but admin_peers not available (cannot backup enodes)"
+            else
+                echo "⚠ $compose_file ($path): no peers connected"
+            fi
+        else
+            # Couldn't get peer count either
+            if [ -z "$response" ]; then
+                echo "✗ $compose_file ($path): no response from RPC endpoint"
+            else
+                echo "✗ $compose_file ($path): RPC endpoint not accessible or invalid"
             fi
         fi
         
@@ -186,15 +228,28 @@ IFS=':' read -ra parts <<< "$COMPOSE_FILE"
 total_backed_up=0
 total_failed=0
 total_skipped=0
+total_no_peers=0
 
 echo "Starting peer backup at $(date)"
 echo "Backup directory: $BACKUP_DIR"
+echo "COMPOSE_FILE contains: ${#parts[@]} compose file(s)"
 echo ""
 
 # Process each compose file
 for part in "${parts[@]}"; do
-    # Remove .yml extension if present for processing
-    compose_file="${part%.yml}.yml"
+    # Handle compose file name - part might already have .yml or might not
+    if [[ "$part" == *.yml ]]; then
+        compose_file="$part"
+    else
+        compose_file="${part}.yml"
+    fi
+    
+    # Check if file exists
+    if [ ! -f "$BASEPATH/$compose_file" ]; then
+        echo "⚠ Skipping $compose_file: file not found"
+        total_skipped=$((total_skipped + 1))
+        continue
+    fi
     
     # Check blacklist
     include=true
@@ -214,6 +269,7 @@ for part in "${parts[@]}"; do
     paths=$(extract_rpc_paths "$compose_file")
     
     if [ -z "$paths" ]; then
+        echo "⚠ Skipping $compose_file: no RPC paths found"
         total_skipped=$((total_skipped + 1))
         continue
     fi
@@ -224,10 +280,19 @@ for part in "${parts[@]}"; do
         # Check path blacklist
         if should_include_path "$path"; then
             path_found=true
-            if backup_peers_from_path "$compose_file" "$path"; then
+            backup_peers_from_path "$compose_file" "$path"
+            exit_code=$?
+            if [ $exit_code -eq 0 ]; then
                 total_backed_up=$((total_backed_up + 1))
+            elif [ $exit_code -eq 2 ]; then
+                # No peers (not a failure)
+                total_no_peers=$((total_no_peers + 1))
             else
                 total_failed=$((total_failed + 1))
+            fi
+        else
+            if [ "$VERBOSE" = true ]; then
+                echo "⚠ Skipping path $path from $compose_file: blacklisted"
             fi
         fi
     done
@@ -242,6 +307,9 @@ echo "=========================================="
 echo "Backup Summary"
 echo "=========================================="
 echo "Total nodes backed up: $total_backed_up"
+if [ $total_no_peers -gt 0 ]; then
+    echo "Total nodes with no peers: $total_no_peers"
+fi
 echo "Total nodes failed: $total_failed"
 echo "Total nodes skipped: $total_skipped"
 echo "Backup directory: $BACKUP_DIR"
