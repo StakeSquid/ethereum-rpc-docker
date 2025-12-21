@@ -154,6 +154,52 @@ fi
 SOURCE_URL="https://${DOMAIN}${SOURCE_RPC_PATH}"
 TARGET_URL="https://${TARGET_HOST}.stakesquid.eu${TARGET_RPC_PATH}"
 
+# Function to extract error message from JSON-RPC response
+extract_error_message() {
+    local response="$1"
+    
+    # Try to extract error message using grep
+    local error_msg=$(echo "$response" | grep -oP '"message"\s*:\s*"\K[^"]+' | head -1)
+    
+    if [[ -n "$error_msg" ]]; then
+        echo "$error_msg"
+    else
+        echo "Unknown error"
+    fi
+}
+
+# Function to check if admin API is available
+check_admin_api() {
+    local url="$1"
+    local response
+    
+    # Try to call admin_nodeInfo as a test
+    response=$(curl --ipv4 -s -X POST "$url" \
+        -H "Content-Type: application/json" \
+        -d '{"jsonrpc":"2.0","method":"admin_nodeInfo","params":[],"id":1}' \
+        --connect-timeout "$TIMEOUT" 2>/dev/null) || {
+        return 2  # Connection error
+    }
+    
+    # Check if response contains "method not found" or similar error
+    if echo "$response" | grep -qi "method not found\|method not available\|unauthorized\|forbidden"; then
+        # Extract the actual error message
+        local error_msg=$(extract_error_message "$response")
+        echo "$error_msg"
+        return 1  # Method not found
+    fi
+    
+    # Check if response contains an error (but not method not found)
+    if echo "$response" | grep -qi '"error"'; then
+        local error_msg=$(extract_error_message "$response")
+        echo "$error_msg"
+        return 1
+    fi
+    
+    # If we got here, the method exists (even if it failed for other reasons)
+    return 0
+}
+
 echo -e "${CYAN}======================================${NC}"
 echo -e "${CYAN}Node Peer Connector${NC}"
 echo -e "${CYAN}======================================${NC}"
@@ -260,52 +306,6 @@ check_rpc_success() {
     
     # Empty or unexpected response
     return 1
-}
-
-# Function to extract error message from JSON-RPC response
-extract_error_message() {
-    local response="$1"
-    
-    # Try to extract error message using grep
-    local error_msg=$(echo "$response" | grep -oP '"message"\s*:\s*"\K[^"]+' | head -1)
-    
-    if [[ -n "$error_msg" ]]; then
-        echo "$error_msg"
-    else
-        echo "Unknown error"
-    fi
-}
-
-# Function to check if admin API is available
-check_admin_api() {
-    local url="$1"
-    local response
-    
-    # Try to call admin_nodeInfo as a test
-    response=$(curl --ipv4 -s -X POST "$url" \
-        -H "Content-Type: application/json" \
-        -d '{"jsonrpc":"2.0","method":"admin_nodeInfo","params":[],"id":1}' \
-        --connect-timeout "$TIMEOUT" 2>/dev/null) || {
-        return 2  # Connection error
-    }
-    
-    # Check if response contains "method not found" or similar error
-    if echo "$response" | grep -qi "method not found\|method not available\|unauthorized\|forbidden"; then
-        # Extract the actual error message
-        local error_msg=$(extract_error_message "$response")
-        echo "$error_msg"
-        return 1  # Method not found
-    fi
-    
-    # Check if response contains an error (but not method not found)
-    if echo "$response" | grep -qi '"error"'; then
-        local error_msg=$(extract_error_message "$response")
-        echo "$error_msg"
-        return 1
-    fi
-    
-    # If we got here, the method exists (even if it failed for other reasons)
-    return 0
 }
 
 # Function to add static peer
