@@ -7,14 +7,34 @@
 BASEPATH="$(dirname "$0")"
 source $BASEPATH/.env
 
-# Check for verbose flag
+# Parse arguments
 VERBOSE=false
-if [[ "$*" == *"--verbose"* ]] || [[ "$*" == *"-v"* ]]; then
-    VERBOSE=true
-fi
+BACKUP_DIR=""
 
-# Default backup directory
-BACKUP_DIR="${1:-$BASEPATH/peer-backups}"
+for arg in "$@"; do
+    case "$arg" in
+        --verbose|-v)
+            VERBOSE=true
+            ;;
+        --help|-h)
+            echo "Usage: $0 [backup-directory] [--verbose|-v]"
+            echo ""
+            echo "  backup-directory: Optional. Directory to store backups (default: ./peer-backups)"
+            echo "  --verbose, -v:    Enable verbose output"
+            exit 0
+            ;;
+        *)
+            if [ -z "$BACKUP_DIR" ] && [[ ! "$arg" =~ ^- ]]; then
+                BACKUP_DIR="$arg"
+            fi
+            ;;
+    esac
+done
+
+# Default backup directory if not provided
+if [ -z "$BACKUP_DIR" ]; then
+    BACKUP_DIR="$BASEPATH/peer-backups"
+fi
 
 # Create backup directory if it doesn't exist
 mkdir -p "$BACKUP_DIR"
@@ -77,8 +97,21 @@ extract_rpc_paths() {
 should_include_path() {
     local path="$1"
     
+    # Always exclude paths ending with /node (consensus client endpoints)
+    if [[ "$path" =~ /node$ ]]; then
+        if [ "$VERBOSE" = true ]; then
+            echo "  Path $path excluded: ends with /node"
+        fi
+        return 1
+    fi
+    
     for word in "${path_blacklist[@]}"; do
-        if echo "$path" | grep -qE "$word"; then
+        # Unescape the pattern (handle \-node -> -node)
+        pattern=$(echo "$word" | sed 's/\\-/-/g')
+        if echo "$path" | grep -qE "$pattern"; then
+            if [ "$VERBOSE" = true ]; then
+                echo "  Path $path matches blacklist pattern: $word"
+            fi
             return 1
         fi
     done
@@ -164,7 +197,9 @@ backup_peers_from_path() {
                 local backup_txt_file="$BACKUP_DIR/${safe_compose_name}__${safe_path}__${TIMESTAMP}.txt"
                 echo "$enodes" > "$backup_txt_file"
                 
-                echo "✓ Backed up $peer_count peer(s) from $compose_file ($path) to $(basename "$backup_file")"
+                # Extract just the filename for display
+                backup_filename=$(basename "$backup_file" 2>/dev/null || echo "${backup_file##*/}")
+                echo "✓ Backed up $peer_count peer(s) from $compose_file ($path) to $backup_filename"
                 return 0
             fi
         else
