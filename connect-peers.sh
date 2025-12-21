@@ -170,6 +170,52 @@ if [[ "$DRY_RUN" == true ]]; then
 fi
 echo ""
 
+# Verify admin API is available before proceeding
+echo -e "${CYAN}--- Verifying Admin API Access ---${NC}"
+echo ""
+
+echo -n "Checking source admin API... "
+SOURCE_ADMIN_CHECK=$(check_admin_api "$SOURCE_URL")
+SOURCE_ADMIN_STATUS=$?
+if [[ $SOURCE_ADMIN_STATUS -eq 2 ]]; then
+    echo -e "${RED}FAILED${NC}"
+    echo -e "${RED}Could not connect to source RPC endpoint.${NC}"
+    exit 1
+elif [[ $SOURCE_ADMIN_STATUS -eq 1 ]]; then
+    echo -e "${RED}FAILED${NC}"
+    echo -e "${RED}Admin API not available on source node.${NC}"
+    if [[ -n "$SOURCE_ADMIN_CHECK" ]]; then
+        echo -e "${RED}Error: ${SOURCE_ADMIN_CHECK}${NC}"
+    fi
+    echo -e "${YELLOW}Hint: The admin API must be whitelisted/enabled for this script to work.${NC}"
+    echo -e "${YELLOW}Required methods: admin_nodeInfo, admin_addStaticPeer, admin_peers${NC}"
+    exit 1
+else
+    echo -e "${GREEN}OK${NC}"
+fi
+
+echo -n "Checking target admin API... "
+TARGET_ADMIN_CHECK=$(check_admin_api "$TARGET_URL")
+TARGET_ADMIN_STATUS=$?
+if [[ $TARGET_ADMIN_STATUS -eq 2 ]]; then
+    echo -e "${RED}FAILED${NC}"
+    echo -e "${RED}Could not connect to target RPC endpoint.${NC}"
+    exit 1
+elif [[ $TARGET_ADMIN_STATUS -eq 1 ]]; then
+    echo -e "${RED}FAILED${NC}"
+    echo -e "${RED}Admin API not available on target node.${NC}"
+    if [[ -n "$TARGET_ADMIN_CHECK" ]]; then
+        echo -e "${RED}Error: ${TARGET_ADMIN_CHECK}${NC}"
+    fi
+    echo -e "${YELLOW}Hint: The admin API must be whitelisted/enabled for this script to work.${NC}"
+    echo -e "${YELLOW}Required methods: admin_nodeInfo, admin_addStaticPeer, admin_peers${NC}"
+    exit 1
+else
+    echo -e "${GREEN}OK${NC}"
+fi
+
+echo ""
+
 # Function to get node info
 get_node_info() {
     local url="$1"
@@ -230,6 +276,38 @@ extract_error_message() {
     fi
 }
 
+# Function to check if admin API is available
+check_admin_api() {
+    local url="$1"
+    local response
+    
+    # Try to call admin_nodeInfo as a test
+    response=$(curl --ipv4 -s -X POST "$url" \
+        -H "Content-Type: application/json" \
+        -d '{"jsonrpc":"2.0","method":"admin_nodeInfo","params":[],"id":1}' \
+        --connect-timeout "$TIMEOUT" 2>/dev/null) || {
+        return 2  # Connection error
+    }
+    
+    # Check if response contains "method not found" or similar error
+    if echo "$response" | grep -qi "method not found\|method not available\|unauthorized\|forbidden"; then
+        # Extract the actual error message
+        local error_msg=$(extract_error_message "$response")
+        echo "$error_msg"
+        return 1  # Method not found
+    fi
+    
+    # Check if response contains an error (but not method not found)
+    if echo "$response" | grep -qi '"error"'; then
+        local error_msg=$(extract_error_message "$response")
+        echo "$error_msg"
+        return 1
+    fi
+    
+    # If we got here, the method exists (even if it failed for other reasons)
+    return 0
+}
+
 # Function to add static peer
 add_static_peer() {
     local url="$1"
@@ -276,7 +354,13 @@ echo -n "Source node info... "
 SOURCE_INFO=$(get_node_info "$SOURCE_URL")
 if [[ -z "$SOURCE_INFO" ]] || [[ "$SOURCE_INFO" =~ "error" && ! "$SOURCE_INFO" =~ "result" ]]; then
     echo -e "${RED}FAILED${NC}"
-    echo -e "${RED}Could not get nodeInfo from source. Is admin API enabled?${NC}"
+    ERROR_MSG=$(extract_error_message "$SOURCE_INFO")
+    if [[ "$ERROR_MSG" == *"method not found"* ]] || [[ "$ERROR_MSG" == *"Method not found"* ]]; then
+        echo -e "${RED}Admin API method 'admin_nodeInfo' not available on source node.${NC}"
+        echo -e "${YELLOW}Please whitelist the admin API in your RPC configuration.${NC}"
+    else
+        echo -e "${RED}Could not get nodeInfo from source: ${ERROR_MSG}${NC}"
+    fi
     exit 1
 fi
 echo -e "${GREEN}OK${NC}"
@@ -300,7 +384,13 @@ echo -n "Target node info... "
 TARGET_INFO=$(get_node_info "$TARGET_URL")
 if [[ -z "$TARGET_INFO" ]] || [[ "$TARGET_INFO" =~ "error" && ! "$TARGET_INFO" =~ "result" ]]; then
     echo -e "${RED}FAILED${NC}"
-    echo -e "${RED}Could not get nodeInfo from target. Is admin API enabled?${NC}"
+    ERROR_MSG=$(extract_error_message "$TARGET_INFO")
+    if [[ "$ERROR_MSG" == *"method not found"* ]] || [[ "$ERROR_MSG" == *"Method not found"* ]]; then
+        echo -e "${RED}Admin API method 'admin_nodeInfo' not available on target node.${NC}"
+        echo -e "${YELLOW}Please whitelist the admin API in your RPC configuration.${NC}"
+    else
+        echo -e "${RED}Could not get nodeInfo from target: ${ERROR_MSG}${NC}"
+    fi
     exit 1
 fi
 echo -e "${GREEN}OK${NC}"
@@ -372,7 +462,12 @@ else
         echo -e "  Enode: ${TARGET_ENODE}"
         ERROR_MSG=$(extract_error_message "$RESULT")
         if [[ -n "$ERROR_MSG" ]]; then
-            echo -e "  Error: ${ERROR_MSG}"
+            if [[ "$ERROR_MSG" == *"method not found"* ]] || [[ "$ERROR_MSG" == *"Method not found"* ]]; then
+                echo -e "  ${RED}Error: Admin API method 'admin_addStaticPeer' not available on source node${NC}"
+                echo -e "  ${YELLOW}Please whitelist the admin API in your RPC configuration.${NC}"
+            else
+                echo -e "  Error: ${ERROR_MSG}"
+            fi
         fi
         if [[ -n "$RESULT" ]]; then
             echo -e "  Response: $RESULT"
@@ -402,7 +497,12 @@ else
         echo -e "  Enode: ${SOURCE_ENODE}"
         ERROR_MSG=$(extract_error_message "$RESULT")
         if [[ -n "$ERROR_MSG" ]]; then
-            echo -e "  Error: ${ERROR_MSG}"
+            if [[ "$ERROR_MSG" == *"method not found"* ]] || [[ "$ERROR_MSG" == *"Method not found"* ]]; then
+                echo -e "  ${RED}Error: Admin API method 'admin_addStaticPeer' not available on target node${NC}"
+                echo -e "  ${YELLOW}Please whitelist the admin API in your RPC configuration.${NC}"
+            else
+                echo -e "  Error: ${ERROR_MSG}"
+            fi
         fi
         if [[ -n "$RESULT" ]]; then
             echo -e "  Response: $RESULT"
