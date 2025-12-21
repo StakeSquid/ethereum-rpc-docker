@@ -84,7 +84,12 @@ extract_rpc_paths() {
     fi
     
     # Extract paths using grep (same method as peer-count.sh)
+    # Try Perl regex first, fallback to extended regex if -P is not supported
     pathlist=$(cat "$full_path" | grep -oP "stripprefix\.prefixes.*?/\K[^\"]+" 2>/dev/null)
+    if [ $? -ne 0 ] || [ -z "$pathlist" ]; then
+        # Fallback for systems without Perl regex support
+        pathlist=$(cat "$full_path" | grep -oE "stripprefix\.prefixes[^:]*:.*?/([^\"]+)" 2>/dev/null | sed -E 's/.*\/([^"]+)/\1/' | grep -v '^$')
+    fi
     
     if [ -z "$pathlist" ]; then
         return 1
@@ -108,7 +113,8 @@ should_include_path() {
     for word in "${path_blacklist[@]}"; do
         # Unescape the pattern (handle \-node -> -node)
         pattern=$(echo "$word" | sed 's/\\-/-/g')
-        if echo "$path" | grep -qE "$pattern"; then
+        # Use -- to prevent grep from interpreting pattern as options
+        if echo "$path" | grep -qE -- "$pattern"; then
             if [ "$VERBOSE" = true ]; then
                 echo "  Path $path matches blacklist pattern: $word"
             fi
@@ -232,7 +238,9 @@ backup_peers_from_path() {
             --max-time 10 2>/dev/null)
         
         if echo "$response" | jq -e '.result' > /dev/null 2>&1; then
-            peer_count=$(echo "$response" | jq -r '.result' | xargs printf "%d")
+            hex_value=$(echo "$response" | jq -r '.result')
+            # Convert hex to decimal (net_peerCount returns hex like "0x10")
+            peer_count=$((hex_value))
             if [ "$peer_count" -gt 0 ]; then
                 echo "⚠ $compose_file ($path) has $peer_count peer(s) but admin_peers not available (cannot backup enodes)"
             else
@@ -289,7 +297,8 @@ for part in "${parts[@]}"; do
     # Check blacklist
     include=true
     for word in "${blacklist[@]}"; do
-        if echo "$compose_file" | grep -qE "$word"; then
+        # Use -- to prevent grep from interpreting pattern as options
+        if echo "$compose_file" | grep -qE -- "$word"; then
             include=false
             break
         fi
@@ -311,7 +320,12 @@ for part in "${parts[@]}"; do
     
     # Process each path
     path_found=false
-    for path in $paths; do
+    # Use while loop with read to safely handle paths with spaces or special characters
+    while IFS= read -r path || [ -n "$path" ]; do
+        # Skip empty paths
+        if [ -z "$path" ]; then
+            continue
+        fi
         # Check path blacklist
         if should_include_path "$path"; then
             path_found=true
@@ -330,7 +344,7 @@ for part in "${parts[@]}"; do
                 echo "⚠ Skipping path $path from $compose_file: blacklisted"
             fi
         fi
-    done
+    done <<< "$paths"
     
     if [ "$path_found" = false ]; then
         total_skipped=$((total_skipped + 1))
