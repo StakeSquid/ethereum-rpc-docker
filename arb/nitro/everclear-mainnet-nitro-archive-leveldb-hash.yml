@@ -63,7 +63,6 @@ services:
       - --http.corsdomain=*
       - --http.port=8545
       - --http.vhosts=*
-      - --init.download-path=/tmp
       - --metrics
       - --metrics-server.addr=0.0.0.0
       - --metrics-server.port=6070
