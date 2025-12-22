@@ -3482,7 +3482,7 @@
       "trace"
     ],
     "network": "snax",
-    "node": "node",
+    "node": null,
     "relay": null,
     "stack": "op",
     "type": "archive",
@@ -4778,7 +4778,7 @@
       "leveldb"
     ],
     "network": "snax",
-    "node": "node",
+    "node": null,
     "relay": null,
     "stack": "op",
     "type": "archive",
@@ -4795,7 +4795,7 @@
       "pebble"
     ],
     "network": "snax",
-    "node": "node",
+    "node": null,
     "relay": null,
     "stack": "op",
     "type": "pruned",
