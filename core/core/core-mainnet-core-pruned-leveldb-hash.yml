@@ -74,6 +74,7 @@ services:
       - --rpc.txfeecap=0
       - --state.scheme=hash
       - --syncmode=full
+      - --txpool.pricelimit=500000000
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=eth,net,web3,txpool,debug,admin,satoshi

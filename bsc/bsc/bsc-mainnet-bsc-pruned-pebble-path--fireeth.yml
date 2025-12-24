@@ -79,6 +79,7 @@ services:
       - --rpc.txfeecap=0
       - --state.scheme=path
       - --syncmode=full
+      - --txpool.pricelimit=500000000
       - --vmtrace=firehose
       - --ws
       - --ws.addr=0.0.0.0
