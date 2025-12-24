@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   hemi-mainnet:
-    image: ${HEMI_GETH_IMAGE:-ghcr.io/hemilabs/op-geth}:${HEMI_MAINNET_GETH_VERSION:-e79d992@sha256:dbe292e013345a8a41c9dc8ee09088853410b17c06ef779258d251f55356c501}
+    image: ${HEMI_GETH_IMAGE:-ghcr.io/hemilabs/op-geth}:${HEMI_MAINNET_GETH_VERSION:-6ba3f1d}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -123,7 +123,7 @@ services:
       - traefik.http.routers.hemi-mainnet-op-geth-pruned-leveldb-hash.middlewares=hemi-mainnet-op-geth-pruned-leveldb-hash-stripprefix, ipallowlist
 
   hemi-mainnet-node:
-    image: ${HEMI_NODE_IMAGE:-ghcr.io/hemilabs/op-node}:${HEMI_MAINNET_NODE_VERSION:-ea9fe7b@sha256:7110e3c4c61e495ea0a6621d7ec211ceb7e948e25c648b05bd51fcc557ad06bc}
+    image: ${HEMI_NODE_IMAGE:-ghcr.io/hemilabs/op-node}:${HEMI_MAINNET_NODE_VERSION:-4c1032e}
     ports:
       - 19669:19669
       - 19669:19669/udp

@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   arbitrum-sepolia-archive:
-    image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_SEPOLIA_NITRO_VERSION:-v3.9.4-rc.2-7f582c3}
+    image: ${ARBITRUM_NITRO_IMAGE:-offchainlabs/nitro-node}:${ARBITRUM_SEPOLIA_NITRO_VERSION:-v3.9.4-7f582c3}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
