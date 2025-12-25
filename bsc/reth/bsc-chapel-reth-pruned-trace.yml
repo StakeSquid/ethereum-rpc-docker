@@ -84,7 +84,7 @@ services:
       - --engine.memory-block-buffer-target=128
       - --engine.parallel-sparse-trie
       - --full
-      - --gpo.maxprice=1000000
+      - --gpo.maxprice=500000000
       - --http
       - --http.addr=0.0.0.0
       - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
