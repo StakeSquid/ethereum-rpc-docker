@@ -45,7 +45,11 @@ DATA_DIR="$HOME_DIR/data"
 mkdir -p $CONFIG_DIR
 mkdir -p $DATA_DIR
 
-CHAIN_SPEC=devnet
+if [ "$CHAIN_NAME" = "galileo" ]; then
+    CHAIN_SPEC=galileo
+else
+    CHAIN_SPEC=mainney
+fi
 env
 
 # seems to be the same for all the 0g chains

@@ -58,6 +58,8 @@ services:
       - 8545
       - 6060
       - 8551
+    environment:
+      - CHAIN_NAME=galileo
     entrypoint: [/usr/local/bin/init.sh, geth]
     command:
       - --bootnodes=enode://de7b86d8ac452b1413983049c20eafa2ea0851a3219c2cc12649b971c1677bd83fe24c5331e078471e52a94d95e8cde84cb9d866574fec957124e57ac6056699@8.218.88.60:30303
@@ -121,6 +123,7 @@ services:
       - 16172:16172
       - 16172:16172/udp
     environment:
+      - CHAIN_NAME=galileo
       - IP=${IP}
       - MONIKER=d${DOMAIN:-local}
     entrypoint: [/usr/local/bin/init.sh, 0gchaind, start]

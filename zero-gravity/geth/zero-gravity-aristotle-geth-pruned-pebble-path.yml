@@ -58,6 +58,8 @@ services:
       - 8545
       - 6060
       - 8551
+    environment:
+      - CHAIN_NAME=aristotle
     entrypoint: [/usr/local/bin/init.sh, geth]
     command:
       - --bootnodes=enode://2bf74c837a98c94ad0fa8f5c58a428237d2040f9269fe622c3dbe4fef68141c28e2097d7af6ebaa041194257543dc112514238361a6498f9a38f70fd56493f96@8.221.140.134:30303
@@ -121,6 +123,7 @@ services:
       - 19914:19914
       - 19914:19914/udp
     environment:
+      - CHAIN_NAME=aristotle
       - IP=${IP}
       - MONIKER=d${DOMAIN:-local}
     entrypoint: [/usr/local/bin/init.sh, 0gchaind, start]
