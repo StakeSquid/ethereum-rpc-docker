@@ -18,7 +18,14 @@ case "$MODE" in
         GETH_DATA_DIR="/root/.ethereum/"
 
         if [ -z "$(ls -A "$GETH_DATA_DIR")" ]; then
-            /0g/bin/geth init --datadir $GETH_DATA_DIR /0g/genesis.json
+            if [ -f /0g/genesis.json ]; then
+                /0g/bin/geth init --datadir $GETH_DATA_DIR /0g/genesis.json
+            elif [ -f /0g/eth-genesis.json ]; then
+                /0g/bin/geth init --datadir $GETH_DATA_DIR /0g/eth-genesis.json
+            else
+                echo "No genesis file found at /0g/genesis.json or /0g/eth-genesis.json" >&2
+                exit 1
+            fi
         else
             echo "Datadir not empty, continuing!" >&2
         fi
