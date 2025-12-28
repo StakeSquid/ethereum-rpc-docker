@@ -129,7 +129,7 @@ services:
     entrypoint: [/usr/local/bin/init.sh, 0gchaind, start]
     command:
       - --chaincfg.block-store-service.enabled
-      - --chaincfg.chain-spec=devnet
+      - --chaincfg.chain-spec=mainnet
       - --chaincfg.engine.jwt-secret-path=/jwtsecret
       - --chaincfg.engine.rpc-dial-url=http://zero-gravity-aristotle-geth:8551
       - --chaincfg.kzg.implementation=crate-crypto/go-kzg-4844
