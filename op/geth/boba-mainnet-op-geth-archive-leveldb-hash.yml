@@ -105,7 +105,7 @@ services:
       - traefik.http.routers.boba-mainnet-op-geth-archive-leveldb-hash.middlewares=boba-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   boba-mainnet-archive-node:
-    image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-v1.16.3}
+    image: ${BOBA_NODE_IMAGE:-us-docker.pkg.dev/boba-392114/bobanetwork-tools-artifacts/images/op-node}:${BOBA_MAINNET_NODE_VERSION:-v1.16.2}
     ports:
       - 18197:18197
       - 18197:18197/udp

@@ -6868,6 +6868,25 @@
     ]
   },
   {
+    "chain": "aristotle",
+    "client": "geth",
+    "compose_file": "zero-gravity/geth/zero-gravity-aristotle-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "zero-gravity",
+    "node": "zerog",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "zero-gravity-aristotle-geth-pruned-pebble-path",
+      "zero-gravity-aristotle-geth-pruned-pebble-path_config",
+      "zero-gravity-aristotle-geth-pruned-pebble-path_zerog"
+    ]
+  },
+  {
     "chain": "galileo",
     "client": "geth",
     "compose_file": "zero-gravity/geth/zero-gravity-galileo-geth-pruned-pebble-path",

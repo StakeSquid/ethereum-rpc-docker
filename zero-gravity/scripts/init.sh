@@ -53,7 +53,7 @@ mkdir -p $CONFIG_DIR
 mkdir -p $DATA_DIR
 
 if [ "$CHAIN_NAME" = "galileo" ]; then
-    CHAIN_SPEC=devnet
+    CHAIN_SPEC=testnet
 else
     CHAIN_SPEC=mainnet
 fi
