@@ -20,10 +20,10 @@ case "$MODE" in
         if [ -z "$(ls -A "$GETH_DATA_DIR")" ]; then
             if [ -f /0g/genesis.json ]; then
                 /0g/bin/geth init --datadir $GETH_DATA_DIR /0g/genesis.json
-            elif [ -f /0g/eth-genesis.json ]; then
-                /0g/bin/geth init --datadir $GETH_DATA_DIR /0g/eth-genesis.json
+            elif [ -f /0g/geth-genesis.json ]; then
+                /0g/bin/geth init --datadir $GETH_DATA_DIR /0g/geth-genesis.json
             else
-                echo "No genesis file found at /0g/genesis.json or /0g/eth-genesis.json" >&2
+                echo "No genesis file found at /0g/genesis.json or /0g/geth-genesis.json" >&2
                 exit 1
             fi
         else
