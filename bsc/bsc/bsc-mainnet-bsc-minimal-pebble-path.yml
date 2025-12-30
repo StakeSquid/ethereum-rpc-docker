@@ -85,7 +85,7 @@ services:
       - --state.scheme=path
       - --syncmode=snap
       - --tries-verify-mode=none
-      - --txpool.pricelimit=500000000
+      - --txpool.pricelimit=50000000
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.api=eth,net,web3,txpool,debug,admin,parlia
