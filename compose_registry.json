@@ -1173,9 +1173,27 @@
   {
     "chain": "chapel",
     "client": "reth",
+    "compose_file": "bsc/reth/bsc-chapel-reth-archive-trace-triedb",
+    "features": [
+      "trace",
+      "triedb"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "bsc-chapel-reth-archive-trace-triedb"
+    ]
+  },
+  {
+    "chain": "chapel",
+    "client": "reth",
     "compose_file": "bsc/reth/bsc-chapel-reth-archive-trace",
     "features": [
-      "trace"
+      "trace",
+      "triedb"
     ],
     "network": "bsc",
     "node": null,
@@ -1189,9 +1207,27 @@
   {
     "chain": "chapel",
     "client": "reth",
+    "compose_file": "bsc/reth/bsc-chapel-reth-pruned-trace-triedb",
+    "features": [
+      "trace",
+      "triedb"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "bsc-chapel-reth-pruned-trace-triedb"
+    ]
+  },
+  {
+    "chain": "chapel",
+    "client": "reth",
     "compose_file": "bsc/reth/bsc-chapel-reth-pruned-trace",
     "features": [
-      "trace"
+      "trace",
+      "triedb"
     ],
     "network": "bsc",
     "node": null,
@@ -1205,9 +1241,27 @@
   {
     "chain": "mainnet",
     "client": "reth",
+    "compose_file": "bsc/reth/bsc-mainnet-reth-archive-trace-triedb",
+    "features": [
+      "trace",
+      "triedb"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "bsc-mainnet-reth-archive-trace-triedb"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
     "compose_file": "bsc/reth/bsc-mainnet-reth-archive-trace",
     "features": [
-      "trace"
+      "trace",
+      "triedb"
     ],
     "network": "bsc",
     "node": null,
@@ -1221,9 +1275,27 @@
   {
     "chain": "mainnet",
     "client": "reth",
+    "compose_file": "bsc/reth/bsc-mainnet-reth-pruned-trace-triedb",
+    "features": [
+      "trace",
+      "triedb"
+    ],
+    "network": "bsc",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "bsc-mainnet-reth-pruned-trace-triedb"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "reth",
     "compose_file": "bsc/reth/bsc-mainnet-reth-pruned-trace",
     "features": [
-      "trace"
+      "trace",
+      "triedb"
     ],
     "network": "bsc",
     "node": null,
