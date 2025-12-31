@@ -4013,6 +4013,74 @@
     ]
   },
   {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/bob-sepolia-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "bob",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "bob-sepolia-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/bob-sepolia-op-geth-archive-pebble-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "bob",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "bob-sepolia-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/bob-sepolia-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "bob",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "bob-sepolia-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "op/geth/bob-sepolia-op-geth-pruned-pebble-path",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "bob",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "bob-sepolia-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
     "chain": "mainnet",
     "client": "geth",
     "compose_file": "op/geth/boba-mainnet-op-geth-archive-leveldb-hash",
