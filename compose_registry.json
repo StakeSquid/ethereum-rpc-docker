@@ -6940,6 +6940,38 @@
     ]
   },
   {
+    "chain": "testnet",
+    "client": "cdk-erigon",
+    "compose_file": "xlayer/cdk-erigon/xlayer-testnet-cdk-erigon-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "xlayer",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "xlayer-testnet-cdk-erigon-archive-trace"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "cdk-erigon",
+    "compose_file": "xlayer/cdk-erigon/xlayer-testnet-cdk-erigon-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "xlayer",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "xlayer-testnet-cdk-erigon-pruned-trace"
+    ]
+  },
+  {
     "chain": "aristotle",
     "client": "geth",
     "compose_file": "zero-gravity/geth/zero-gravity-aristotle-geth-pruned-pebble-path",
