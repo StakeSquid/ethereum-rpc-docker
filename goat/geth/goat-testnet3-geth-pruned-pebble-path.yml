@@ -102,7 +102,7 @@ services:
       - traefik.http.routers.goat-testnet3-geth-pruned-pebble-path.middlewares=goat-testnet3-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   goat-testnet3-node:
-    image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_TESTNET3_NODE_VERSION:-v0.4.1}
+    image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_TESTNET3_NODE_VERSION:-v0.4.2}
     ports:
       - 18272:18272
       - 18272:18272/udp

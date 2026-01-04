@@ -102,7 +102,7 @@ services:
       - traefik.http.routers.goat-mainnet-geth-archive-leveldb-hash.middlewares=goat-mainnet-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   goat-mainnet-archive-node:
-    image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_MAINNET_NODE_VERSION:-v0.4.1}
+    image: ${GOAT_NODE_IMAGE:-ghcr.io/goatnetwork/goat}:${GOAT_MAINNET_NODE_VERSION:-v0.4.2}
     ports:
       - 17891:17891
       - 17891:17891/udp
