@@ -1,20 +1,23 @@
 #!/bin/bash
 
 # Script to measure query jitter for a node endpoint
-# Usage: query-jitter.sh <node-path> [host]
+# Usage: query-jitter.sh <node-path> [host] [requests]
 # Example: query-jitter.sh arb/nitro/everclear-mainnet-nitro-archive-leveldb-hash
 # Example: query-jitter.sh arb/nitro/everclear-mainnet-nitro-archive-leveldb-hash 192.168.1.100
+# Example: query-jitter.sh arb/nitro/everclear-mainnet-nitro-archive-leveldb-hash 192.168.1.100 5000
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 <node-path> [host]"
+    echo "Usage: $0 <node-path> [host] [requests]"
     echo "Example: $0 arb/nitro/everclear-mainnet-nitro-archive-leveldb-hash"
     echo "Example: $0 arb/nitro/everclear-mainnet-nitro-archive-leveldb-hash 192.168.1.100"
+    echo "Example: $0 arb/nitro/everclear-mainnet-nitro-archive-leveldb-hash 192.168.1.100 5000"
     exit 1
 fi
 
 BASEPATH="$(dirname "$0")"
 NODE_PATH="$1"
 HOST="$2"
+REQUESTS="${3:-1000}"
 
 # Source .env file if it exists
 if [ -f "$BASEPATH/.env" ]; then
@@ -62,12 +65,12 @@ RPC_PATH=$(echo "$pathlist" | head -n1)
 RPC_URL="${PROTO}://${DOMAIN}/${RPC_PATH}"
 
 echo "Testing endpoint: $RPC_URL"
-echo "Running 1000 requests with 10 concurrent connections..."
+echo "Running $REQUESTS requests with 10 concurrent connections..."
 echo ""
 
 # Run hey via docker and show summary output
 echo "=== Hey Summary ==="
-docker run --rm ricoli/hey -n 1000 -c 10 \
+docker run --rm ricoli/hey -n "$REQUESTS" -c 10 \
     -m POST \
     -H "Content-Type: application/json" \
     -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
@@ -77,7 +80,7 @@ echo ""
 echo "=== Detailed Statistics (with stddev) ==="
 
 # Run again with CSV output to calculate stddev
-CSV_OUTPUT=$(docker run --rm ricoli/hey -n 1000 -c 10 \
+CSV_OUTPUT=$(docker run --rm ricoli/hey -n "$REQUESTS" -c 10 \
     -m POST \
     -H "Content-Type: application/json" \
     -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
