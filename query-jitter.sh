@@ -62,32 +62,61 @@ RPC_PATH=$(echo "$pathlist" | head -n1)
 RPC_URL="${PROTO}://${DOMAIN}/${RPC_PATH}"
 
 echo "Testing endpoint: $RPC_URL"
-echo "Running 1000 requests..."
+echo "Running 1000 requests with 10 concurrent connections..."
 echo ""
 
-# Hit the endpoint 1000 times and measure response time distribution
-for i in {1..1000}; do
-    curl -w "%{time_total}\n" -o /dev/null -s "$RPC_URL" \
-        -X POST \
-        -H "Content-Type: application/json" \
-        -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-done | awk '{
-    sum+=$1
-    sumsq+=$1*$1
-    if(NR==1||$1<min)min=$1
-    if($1>max)max=$1
-} END {
-    if(NR>0) {
-        avg=sum/NR
-        variance=sumsq/NR-(avg*avg)
-        stddev=sqrt(variance)
-        print "min:", min*1000, "ms"
-        print "avg:", avg*1000, "ms"
-        print "max:", max*1000, "ms"
-        print "stddev:", stddev*1000, "ms"
-        print "count:", NR
+# Run hey via docker and show summary output
+echo "=== Hey Summary ==="
+docker run --rm ricoli/hey -n 1000 -c 10 \
+    -m POST \
+    -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+    "$RPC_URL" 2>&1
+
+echo ""
+echo "=== Detailed Statistics (with stddev) ==="
+
+# Run again with CSV output to calculate stddev
+CSV_OUTPUT=$(docker run --rm ricoli/hey -n 1000 -c 10 \
+    -m POST \
+    -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+    -o csv \
+    "$RPC_URL" 2>&1)
+
+# Parse CSV output to calculate statistics
+echo "$CSV_OUTPUT" | awk -F',' '
+NR > 1 && $1 != "" {
+    # CSV format: response-time,status-code,offset
+    time = $1
+    # Only process numeric values (skip header and non-numeric)
+    if (time ~ /^[0-9]/) {
+        sum += time
+        sumsq += time * time
+        if (NR == 2 || time < min) min = time
+        if (time > max) max = time
+        count++
+    }
+}
+END {
+    if (count > 0) {
+        avg = sum / count
+        variance = sumsq / count - (avg * avg)
+        stddev = sqrt(variance)
+        print "min:", min * 1000, "ms"
+        print "avg:", avg * 1000, "ms"
+        print "max:", max * 1000, "ms"
+        print "stddev:", stddev * 1000, "ms"
+        print "count:", count
     } else {
         print "Error: No successful requests"
     }
 }'
+
+# If CSV parsing failed, show some debug info
+if [ -z "$CSV_OUTPUT" ] || ! echo "$CSV_OUTPUT" | grep -q "response-time"; then
+    echo ""
+    echo "Warning: Could not parse CSV output. Showing first few lines:"
+    echo "$CSV_OUTPUT" | head -5
+fi
 
