@@ -5251,6 +5251,23 @@
     ]
   },
   {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "op/geth/xlayer-mainnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "xlayer",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "xlayer-mainnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
     "chain": "testnet",
     "client": "geth",
     "compose_file": "op/geth/xlayer-testnet-op-geth-archive-pebble-hash",
@@ -5265,6 +5282,23 @@
     "type": "archive",
     "volumes": [
       "xlayer-testnet-op-geth-archive-pebble-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/xlayer-testnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "xlayer",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "xlayer-testnet-op-geth-pruned-pebble-path"
     ]
   },
   {
