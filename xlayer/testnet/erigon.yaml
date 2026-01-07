@@ -1,5 +1,5 @@
 zkevm.l2-chain-id: 1952
-zkevm.l2-sequencer-rpc-url: https://testrpc.xlayer.tech
+zkevm.l2-sequencer-rpc-url: https://testrpc.xlayer.tech/terigon
 zkevm.l2-datastreamer-url: teststream.xlayer.tech:8900
 zkevm.l1-chain-id: 11155111
 
