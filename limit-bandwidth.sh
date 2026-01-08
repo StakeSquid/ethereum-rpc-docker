@@ -243,7 +243,11 @@ case "$ACTION" in
         # - You can't control what others send (incoming)
         # - Dropping incoming packets causes retransmissions and wastes bandwidth
         # - P2P protocols have backpressure mechanisms
-        tc qdisc add dev "$BRIDGE" root handle 1: htb default 30
+        #
+        # Set r2q (rate to quantum ratio) to handle low bandwidths better
+        # Higher r2q = smaller quantum = better for low bandwidths
+        # Default r2q=10, but for low bandwidths we use r2q=40 to avoid quantum warnings
+        tc qdisc add dev "$BRIDGE" root handle 1: htb r2q 40 default 30
         
         # Create root class with high bandwidth
         tc class add dev "$BRIDGE" parent 1: classid 1:1 htb rate 1000mbit
