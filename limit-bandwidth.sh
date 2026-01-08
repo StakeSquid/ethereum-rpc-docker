@@ -127,9 +127,26 @@ if [[ "$BANDWIDTH_LIMIT" =~ ^([0-9]+)([a-zA-Z]+)$ ]]; then
         BURST_NUM=1
     fi
     BURST="${BURST_NUM}${LIMIT_UNIT}"
+    
+    # Calculate appropriate r2q based on bandwidth limit
+    # For very low rates (< 10mbit), use higher r2q to avoid quantum warnings
+    # r2q controls quantum size: quantum = rate / r2q
+    # Higher r2q = smaller quantum = better for low bandwidths
+    # We use a high r2q to avoid warnings on both low-rate classes and high-rate root classes
+    if [ "$LIMIT_NUM" -lt 10 ]; then
+        # Very low bandwidth (< 10mbit): use r2q 200 to minimize quantum warnings
+        R2Q_VALUE=200
+    elif [ "$LIMIT_NUM" -lt 50 ]; then
+        # Low bandwidth (< 50mbit): use r2q 100
+        R2Q_VALUE=100
+    else
+        # Higher bandwidth: use r2q 40 (still higher than default 10 to avoid root class warnings)
+        R2Q_VALUE=40
+    fi
 else
     # Fallback: use 10% of limit as string manipulation
     BURST="${BANDWIDTH_LIMIT}"
+    R2Q_VALUE=40  # Safe default
 fi
 
 echo -e "${BLUE}Compose file: ${COMPOSE_FILE}${NC}"
@@ -246,10 +263,12 @@ case "$ACTION" in
         #
         # Set r2q (rate to quantum ratio) to handle low bandwidths better
         # Higher r2q = smaller quantum = better for low bandwidths
-        # Default r2q=10, but for low bandwidths we use r2q=40 to avoid quantum warnings
-        tc qdisc add dev "$BRIDGE" root handle 1: htb r2q 40 default 30
+        # Quantum = rate / r2q, so higher r2q means smaller quantums
+        # Adaptive r2q based on bandwidth limit to avoid quantum warnings
+        tc qdisc add dev "$BRIDGE" root handle 1: htb r2q ${R2Q_VALUE} default 30
         
         # Create root class with high bandwidth
+        # Quantum will be calculated from r2q: quantum = rate / r2q
         tc class add dev "$BRIDGE" parent 1: classid 1:1 htb rate 1000mbit
         
         # Create unlimited class for non-limited traffic
@@ -261,7 +280,26 @@ case "$ACTION" in
             echo -e "${BLUE}  Limiting port ${port} to ${BANDWIDTH_LIMIT}...${NC}"
             
             # Create limited class for this port (outgoing traffic only)
-            tc class add dev "$BRIDGE" parent 1:1 classid 1:${PORT_ID} htb rate ${BANDWIDTH_LIMIT} burst ${BURST} ceil ${BANDWIDTH_LIMIT}
+            # Calculate quantum based on rate to avoid warnings
+            # Quantum should be roughly rate_in_bytes / 100, but minimum 1500 (MTU size)
+            # For 1mbit: 1mbit = 125000 bytes/sec, quantum = 1250, but use at least 1500
+            if [[ "$BANDWIDTH_LIMIT" =~ ^([0-9]+)mbit$ ]]; then
+                RATE_NUM="${BASH_REMATCH[1]}"
+                RATE_BYTES=$((RATE_NUM * 125000))  # Convert mbit to bytes/sec
+                QUANTUM=$((RATE_BYTES / 100))
+                # Ensure minimum quantum of 1500 (MTU size)
+                if [ "$QUANTUM" -lt 1500 ]; then
+                    QUANTUM=1500
+                fi
+                # Cap maximum quantum to avoid issues
+                if [ "$QUANTUM" -gt 100000 ]; then
+                    QUANTUM=100000
+                fi
+                tc class add dev "$BRIDGE" parent 1:1 classid 1:${PORT_ID} htb rate ${BANDWIDTH_LIMIT} burst ${BURST} ceil ${BANDWIDTH_LIMIT} quantum ${QUANTUM}
+            else
+                # Fallback: let HTB calculate automatically
+                tc class add dev "$BRIDGE" parent 1:1 classid 1:${PORT_ID} htb rate ${BANDWIDTH_LIMIT} burst ${BURST} ceil ${BANDWIDTH_LIMIT}
+            fi
             
             # Add filter to route marked packets to this class (outgoing only)
             tc filter add dev "$BRIDGE" parent 1: protocol ip prio ${PORT_ID} handle ${PORT_ID} fw flowid 1:${PORT_ID}
