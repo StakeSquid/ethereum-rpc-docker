@@ -1,11 +1,18 @@
 #!/bin/bash
-# General script to limit bandwidth for all public ports in a Docker Compose file
-# Limits each port to specified bandwidth (default: 100 MBit/s)
+# General script to limit OUTGOING bandwidth for all public ports in a Docker Compose file
+# Limits each port's outgoing traffic to specified bandwidth (default: 100 MBit/s)
+#
+# Note: This script limits OUTGOING bandwidth only. Limiting incoming bandwidth is
+# impractical for P2P networks because:
+# - You can't control what other nodes send you
+# - Dropping incoming packets causes retransmissions and wastes bandwidth
+# - P2P protocols have backpressure - if you're slow to respond, peers back off
+# - Limiting outgoing is usually sufficient to control your bandwidth usage
 #
 # Usage: 
 #   ./limit-bandwidth.sh <compose-file> [start|stop|status] [--limit BANDWIDTH]
-#   ./limit-bandwidth.sh rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace.yml start
-#   ./limit-bandwidth.sh rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace.yml start --limit 20mbit
+#   ./limit-bandwidth.sh rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace start
+#   ./limit-bandwidth.sh rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace start --limit 20mbit
 #
 # Environment variable:
 #   BANDWIDTH_LIMIT=20mbit ./limit-bandwidth.sh <compose-file> start
@@ -61,10 +68,11 @@ if [ $# -lt 1 ]; then
     echo "                       Can also use BANDWIDTH_LIMIT environment variable"
     echo ""
     echo "Examples:"
+    echo "  $0 rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace start"
     echo "  $0 rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace.yml start"
-    echo "  $0 rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace.yml start --limit 20mbit"
-    echo "  BANDWIDTH_LIMIT=20mbit $0 rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace.yml start"
-    echo "  $0 rpc/ethereum/geth/ethereum-mainnet-geth-pruned-pebble-path.yml status"
+    echo "  $0 rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace start --limit 20mbit"
+    echo "  BANDWIDTH_LIMIT=20mbit $0 rpc/gnosis/reth/gnosis-mainnet-reth-pruned-trace start"
+    echo "  $0 rpc/ethereum/geth/ethereum-mainnet-geth-pruned-pebble-path status"
     exit 1
 fi
 
@@ -86,6 +94,12 @@ elif [ "$ACTION" = "--limit" ]; then
     exit 1
 fi
 
+# Handle .yml extension (like latest.sh does)
+# If filename doesn't end in .yml, append it
+if [[ ! "$COMPOSE_FILE" == *.yml ]]; then
+    COMPOSE_FILE="${COMPOSE_FILE}.yml"
+fi
+
 # Resolve compose file path
 if [ ! -f "$COMPOSE_FILE" ]; then
     # Try relative to BASEPATH
@@ -93,6 +107,7 @@ if [ ! -f "$COMPOSE_FILE" ]; then
         COMPOSE_FILE="$BASEPATH/$COMPOSE_FILE"
     else
         echo -e "${RED}Error: Compose file not found: $1${NC}"
+        echo "Tried: $COMPOSE_FILE and $BASEPATH/$COMPOSE_FILE"
         exit 1
     fi
 fi
@@ -222,7 +237,12 @@ case "$ACTION" in
         # Remove existing qdisc if any
         tc qdisc del dev "$BRIDGE" root 2>/dev/null || true
         
-        # Create HTB (Hierarchical Token Bucket) qdisc
+        # Create HTB (Hierarchical Token Bucket) qdisc for egress (outgoing traffic only)
+        # We only limit outgoing because:
+        # - You control what you send (outgoing)
+        # - You can't control what others send (incoming)
+        # - Dropping incoming packets causes retransmissions and wastes bandwidth
+        # - P2P protocols have backpressure mechanisms
         tc qdisc add dev "$BRIDGE" root handle 1: htb default 30
         
         # Create root class with high bandwidth
@@ -236,39 +256,31 @@ case "$ACTION" in
         for port in "${PORTS[@]}"; do
             echo -e "${BLUE}  Limiting port ${port} to ${BANDWIDTH_LIMIT}...${NC}"
             
-            # Create limited class for this port
+            # Create limited class for this port (outgoing traffic only)
             tc class add dev "$BRIDGE" parent 1:1 classid 1:${PORT_ID} htb rate ${BANDWIDTH_LIMIT} burst ${BURST} ceil ${BANDWIDTH_LIMIT}
             
-            # Add filter to route marked packets to this class
+            # Add filter to route marked packets to this class (outgoing only)
             tc filter add dev "$BRIDGE" parent 1: protocol ip prio ${PORT_ID} handle ${PORT_ID} fw flowid 1:${PORT_ID}
             
-            # Mark TCP traffic for this port
+            # Mark outgoing traffic in OUTPUT chain (traffic from host)
             iptables -t mangle -C OUTPUT -p tcp --sport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || \
                 iptables -t mangle -A OUTPUT -p tcp --sport ${port} -j MARK --set-mark ${PORT_ID}
-            iptables -t mangle -C OUTPUT -p tcp --dport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || \
-                iptables -t mangle -A OUTPUT -p tcp --dport ${port} -j MARK --set-mark ${PORT_ID}
-            
-            # Mark UDP traffic for this port
             iptables -t mangle -C OUTPUT -p udp --sport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || \
                 iptables -t mangle -A OUTPUT -p udp --sport ${port} -j MARK --set-mark ${PORT_ID}
-            iptables -t mangle -C OUTPUT -p udp --dport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || \
-                iptables -t mangle -A OUTPUT -p udp --dport ${port} -j MARK --set-mark ${PORT_ID}
             
-            # Mark in FORWARD chain (container traffic)
+            # Mark outgoing traffic in FORWARD chain (traffic from containers)
+            # This catches traffic from containers going out through the bridge
             iptables -t mangle -C FORWARD -p tcp --sport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || \
                 iptables -t mangle -A FORWARD -p tcp --sport ${port} -j MARK --set-mark ${PORT_ID}
-            iptables -t mangle -C FORWARD -p tcp --dport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || \
-                iptables -t mangle -A FORWARD -p tcp --dport ${port} -j MARK --set-mark ${PORT_ID}
             iptables -t mangle -C FORWARD -p udp --sport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || \
                 iptables -t mangle -A FORWARD -p udp --sport ${port} -j MARK --set-mark ${PORT_ID}
-            iptables -t mangle -C FORWARD -p udp --dport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || \
-                iptables -t mangle -A FORWARD -p udp --dport ${port} -j MARK --set-mark ${PORT_ID}
             
             PORT_ID=$((PORT_ID + 1))
         done
         
-        echo -e "${GREEN}✓ Bandwidth limiting configured!${NC}"
-        echo -e "${GREEN}All ports are now limited to ${BANDWIDTH_LIMIT} each${NC}"
+        echo -e "${GREEN}✓ Outgoing bandwidth limiting configured!${NC}"
+        echo -e "${GREEN}All ports are now limited to ${BANDWIDTH_LIMIT} outgoing traffic each${NC}"
+        echo -e "${YELLOW}Note: Only OUTGOING traffic is limited. Incoming traffic is not limited.${NC}"
         ;;
     stop)
         echo -e "${YELLOW}Removing bandwidth limiting...${NC}"
@@ -278,14 +290,13 @@ case "$ACTION" in
         for port in "${PORTS[@]}"; do
             echo -e "${BLUE}  Removing limits for port ${port}...${NC}"
             
+            # Remove OUTPUT rules (outgoing from host)
             iptables -t mangle -D OUTPUT -p tcp --sport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || true
-            iptables -t mangle -D OUTPUT -p tcp --dport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || true
             iptables -t mangle -D OUTPUT -p udp --sport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || true
-            iptables -t mangle -D OUTPUT -p udp --dport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || true
+            
+            # Remove FORWARD rules (outgoing from containers)
             iptables -t mangle -D FORWARD -p tcp --sport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || true
-            iptables -t mangle -D FORWARD -p tcp --dport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || true
             iptables -t mangle -D FORWARD -p udp --sport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || true
-            iptables -t mangle -D FORWARD -p udp --dport ${port} -j MARK --set-mark ${PORT_ID} 2>/dev/null || true
             
             PORT_ID=$((PORT_ID + 1))
         done
@@ -304,11 +315,14 @@ case "$ACTION" in
         echo -e "${BLUE}TC Classes:${NC}"
         tc class show dev "$BRIDGE" 2>/dev/null || echo "  No classes configured"
         echo ""
-        echo -e "${BLUE}Iptables rules (OUTPUT):${NC}"
+        echo -e "${BLUE}Iptables rules (OUTPUT - outgoing from host):${NC}"
         iptables -t mangle -L OUTPUT -n --line-numbers | grep -E "MARK|${PORTS[0]}" || echo "  No rules found"
         echo ""
-        echo -e "${BLUE}Iptables rules (FORWARD):${NC}"
+        echo -e "${BLUE}Iptables rules (FORWARD - outgoing from containers):${NC}"
         iptables -t mangle -L FORWARD -n --line-numbers | grep -E "MARK|${PORTS[0]}" || echo "  No rules found"
+        echo ""
+        echo -e "${YELLOW}Note: Only outgoing traffic is limited. Incoming traffic is not limited${NC}"
+        echo -e "${YELLOW}      because you can't control what other nodes send you.${NC}"
         echo ""
         echo -e "${BLUE}Monitored ports: ${PORTS[*]}${NC}"
         ;;
