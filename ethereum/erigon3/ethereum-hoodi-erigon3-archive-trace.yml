@@ -66,7 +66,7 @@ services:
       - --beacon.api.cors.allow-origins=*
       - --beacon.api.port=5555
       - --beacon.api=beacon,builder,debug,lighthouse,node,validator,config
-      - --caplin.archive=true
+      - --caplin.blobs-archive=true
       - --caplin.discovery.addr=0.0.0.0
       - --caplin.discovery.port=19715
       - --caplin.discovery.tcpport=19715
