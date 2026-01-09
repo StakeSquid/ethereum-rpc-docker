@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.ethereum-mainnet-geth-minimal-pebble-path.middlewares=ethereum-mainnet-geth-minimal-pebble-path-stripprefix, ipallowlist
 
   ethereum-mainnet-geth-minimal-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v7.1.1}
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_MAINNET_PRYSM_VERSION:-v7.1.2}
     ports:
       - 19551:19551
       - 19551:19551/udp

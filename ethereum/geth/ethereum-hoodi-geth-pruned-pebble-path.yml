@@ -103,7 +103,7 @@ services:
       - traefik.http.routers.ethereum-hoodi-geth-pruned-pebble-path.middlewares=ethereum-hoodi-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   ethereum-hoodi-geth-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOODI_PRYSM_VERSION:-v7.1.1}
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_HOODI_PRYSM_VERSION:-v7.1.2}
     ports:
       - 16917:16917
       - 16917:16917/udp

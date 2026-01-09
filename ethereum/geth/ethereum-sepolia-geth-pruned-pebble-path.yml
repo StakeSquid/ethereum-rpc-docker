@@ -103,7 +103,7 @@ services:
       - traefik.http.routers.ethereum-sepolia-geth-pruned-pebble-path.middlewares=ethereum-sepolia-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   ethereum-sepolia-geth-node:
-    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v7.1.1}
+    image: ${ETHEREUM_PRYSM_IMAGE:-prysmaticlabs/prysm-beacon-chain}:${ETHEREUM_SEPOLIA_PRYSM_VERSION:-v7.1.2}
     ports:
       - 19710:19710
       - 19710:19710/udp
