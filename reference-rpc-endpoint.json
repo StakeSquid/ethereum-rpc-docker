@@ -26,11 +26,48 @@
       "https://optimism.drpc.org"
     ]
   },
+  "flare": {
+    "id": 14,
+    "urls": [
+      "https://flare-api.flare.network/ext/C/rpc",
+      "https://flare.rpc.thirdweb.com",
+      "https://flare-bundler.etherspot.io",
+      "https://rpc.ankr.com/flare",
+      "https://01-gravelines-003-01.rpc.tatum.io/ext/bc/C/rpc",
+      "https://01-vinthill-003-02.rpc.tatum.io/ext/bc/C/rpc",
+      "https://rpc.au.cc/flare",
+      "https://flare.enosys.global/ext/C/rpc",
+      "https://flare.solidifi.app/ext/C/rpc"
+    ]
+  },
+  "songbird-testnet": {
+    "id": 16,
+    "urls": [
+      "https://coston-api.flare.network/ext/C/rpc",
+      "https://songbird-testnet-coston.rpc.thirdweb.com",
+      "https://01-gravelines-004-01.rpc.tatum.io/ext/bc/C/rpc",
+      "https://02-chicago-004-02.rpc.tatum.io/ext/bc/C/rpc",
+      "https://02-tokyo-004-03.rpc.tatum.io/ext/bc/C/rpc",
+      "https://coston.enosys.global/ext/C/rpc"
+    ]
+  },
   "thundercore-testnet": {
     "id": 18,
     "urls": [
       "https://testnet-rpc.thundercore.com",
       "https://thundercore-testnet.drpc.org"
+    ]
+  },
+  "songbird": {
+    "id": 19,
+    "urls": [
+      "https://songbird-api.flare.network/ext/C/rpc",
+      "https://01-gravelines-006-01.rpc.tatum.io/ext/bc/C/rpc",
+      "https://01-vinthill-006-02.rpc.tatum.io/ext/bc/C/rpc",
+      "https://02-tokyo-006-03.rpc.tatum.io/ext/bc/C/rpc",
+      "https://rpc.au.cc/songbird",
+      "https://songbird.enosys.global/ext/C/rpc",
+      "https://songbird.solidifi.app/ext/C/rpc"
     ]
   },
   "cronos": {
@@ -67,6 +104,26 @@
     "urls": [
       "https://rpc.testnet.telos.net",
       "https://telos-testnet.drpc.org"
+    ]
+  },
+  "xdc": {
+    "id": 50,
+    "urls": [
+      "https://erpc.xinfin.network",
+      "https://rpc.xinfin.network",
+      "https://rpc1.xinfin.network",
+      "https://rpc.xdcrpc.com",
+      "https://erpc.xdcrpc.com",
+      "https://rpc.ankr.com/xdc",
+      "https://rpc.xdc.org"
+    ]
+  },
+  "xdc-testnet": {
+    "id": 51,
+    "urls": [
+      "https://rpc.apothem.network",
+      "https://erpc.apothem.network",
+      "https://apothem.xdcrpc.com"
     ]
   },
   "bsc": {
@@ -165,6 +222,18 @@
       "https://shib.nownodes.io"
     ]
   },
+  "flare-testnet": {
+    "id": 114,
+    "urls": [
+      "https://coston2-api.flare.network/ext/C/rpc",
+      "https://flare-testnet-coston2.rpc.thirdweb.com",
+      "https://flaretestnet-bundler.etherspot.io",
+      "https://01-gravelines-005-01.rpc.tatum.io/ext/bc/C/rpc",
+      "https://02-chicago-005-02.rpc.tatum.io/ext/bc/C/rpc",
+      "https://02-tokyo-005-03.rpc.tatum.io/ext/bc/C/rpc",
+      "https://coston2.enosys.global/ext/C/rpc"
+    ]
+  },
   "fuse": {
     "id": 122,
     "urls": [
@@ -231,13 +300,6 @@
       "https://mainnet.hsk.xyz"
     ]
   },
-  "xlayer-testnet": {
-    "id": 195,
-    "urls": [
-      "https://testrpc.xlayer.tech",
-      "https://xlayertestrpc.okx.com"
-    ]
-  },
   "xlayer": {
     "id": 196,
     "urls": [
@@ -272,6 +334,12 @@
     "id": 240,
     "urls": [
       "https://testnet.zkevm.cronos.org"
+    ]
+  },
+  "oasys": {
+    "id": 248,
+    "urls": [
+      "https://rpc.mainnet.oasys.games"
     ]
   },
   "fantom": {
@@ -495,6 +563,12 @@
       "https://unichain-sepolia-rpc.publicnode.com"
     ]
   },
+  "story-aeneid-testnet": {
+    "id": 1315,
+    "urls": [
+      "https://aeneid.storyrpc.io"
+    ]
+  },
   "sei-testnet": {
     "id": 1328,
     "urls": [
@@ -505,6 +579,18 @@
     "id": 1329,
     "urls": [
       "https://evm-rpc.sei-apis.com"
+    ]
+  },
+  "story-testnet": {
+    "id": 1513,
+    "urls": [
+      "https://testnet.storyrpc.io"
+    ]
+  },
+  "story": {
+    "id": 1514,
+    "urls": [
+      "https://mainnet.storyrpc.io"
     ]
   },
   "gravity-alpha": {
@@ -559,9 +645,9 @@
     ]
   },
   "ronin": {
-    "id": 2020,
+    "id": 1952,
     "urls": [
-      "https://ronin.lgns.net/rpc"
+      "https://testrpc.xlayer.tech"
     ]
   },
   "ronin-saigon": {
@@ -764,6 +850,12 @@
       "https://evmos-evm-rpc.publicnode.com"
     ]
   },
+  "oasys-testnet": {
+    "id": 9372,
+    "urls": [
+      "https://rpc.testnet.oasys.games"
+    ]
+  },
   "plasma": {
     "id": 9745,
     "urls": [
@@ -933,6 +1025,12 @@
     "id": 42220,
     "urls": [
       "https://forno.celo.org"
+    ]
+  },
+  "tempo-testnet": {
+    "id": 42429,
+    "urls": [
+      "https://rpc.testnet.tempo.xyz"
     ]
   },
   "hemi": {
@@ -1106,6 +1204,36 @@
     "id": 98866,
     "urls": [
       "https://rpc.plume.org"
+    ]
+  },
+  "vechain": {
+    "id": 100009,
+    "urls": [
+      "https://rpc-mainnet.vechain.energy"
+    ]
+  },
+  "vechain-testnet": {
+    "id": 100010,
+    "urls": [
+      "https://rpc-testnet.vechain.energy"
+    ]
+  },
+  "creditcoin": {
+    "id": 102030,
+    "urls": [
+      "https://mainnet3.creditcoin.network"
+    ]
+  },
+  "creditcoin-testnet": {
+    "id": 102031,
+    "urls": [
+      "https://rpc.cc3-testnet.creditcoin.network"
+    ]
+  },
+  "creditcoin-devnet": {
+    "id": 102032,
+    "urls": [
+      "https://rpc.cc3-devnet.creditcoin.network"
     ]
   },
   "real": {
