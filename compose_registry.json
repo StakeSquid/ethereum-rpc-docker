@@ -5236,10 +5236,27 @@
   {
     "chain": "mainnet",
     "client": "geth",
+    "compose_file": "op/geth/xlayer-mainnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "xlayer",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "xlayer-mainnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
     "compose_file": "op/geth/xlayer-mainnet-op-geth-archive-pebble-hash",
     "features": [
       "hash",
-      "pebble"
+      "leveldb"
     ],
     "network": "xlayer",
     "node": "node",
@@ -5270,10 +5287,27 @@
   {
     "chain": "testnet",
     "client": "geth",
+    "compose_file": "op/geth/xlayer-testnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "xlayer",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "xlayer-testnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
     "compose_file": "op/geth/xlayer-testnet-op-geth-archive-pebble-hash",
     "features": [
       "hash",
-      "pebble"
+      "leveldb"
     ],
     "network": "xlayer",
     "node": "node",
