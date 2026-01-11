@@ -56,7 +56,7 @@ services:
       - BLOCK_SIGNER_KEY=9f50ccaebd966113a0ef09793f8a3288cd0bb2c05d20caa3c0015b4e665f1b2d
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.mantle.xyz
-    entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && wget -qO /config/genesis.json "https://raw.githubusercontent.com/mantlenetworkio/networks/refs/heads/main/mainnet/genesis.json"; [ ! -d /data/geth ] && geth --gcmode=archive --db.engine=leveldb --datadir /data init --state.scheme=hash /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data
       - --db.engine=leveldb

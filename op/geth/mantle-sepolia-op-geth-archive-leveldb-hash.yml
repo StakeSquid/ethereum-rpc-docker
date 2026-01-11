@@ -55,7 +55,7 @@ services:
     environment:
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.sepolia.mantle.xyz
-    entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && wget -qO /config/genesis.json "https://raw.githubusercontent.com/mantlenetworkio/networks/refs/heads/main/sepolia/genesis.json"; [ ! -d /data/geth ] && geth --gcmode=archive --db.engine=leveldb --datadir /data init --state.scheme=hash /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
       - --datadir=/data
       - --db.engine=leveldb
