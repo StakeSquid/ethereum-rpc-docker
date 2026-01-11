@@ -55,7 +55,7 @@ services:
       - GENESIS_URL=https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
       - GETH_ROLLUP_SEQUENCERHTTP=https://rpc.xlayer.tech
-    entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && (mkdir -p /config/tmp && wget -qO- "https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz" | tar -xzf - -C /config/tmp && mv /config/tmp/*.json /config/genesis.json && rm -rf /config/tmp); [ ! -d /data/geth ] && geth --gcmode=full --db.engine=pebble --datadir /data init --state.scheme=path /config/genesis.json; exec geth "$@"' --
+    entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && wget -qO- "https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/chain/xlayer/snapshot/merged.genesis.json.mainnet.tar.gz" | tar -xzf - -O --wildcards "*.json" > /config/genesis.json; [ ! -d /data/geth ] && geth --gcmode=full --db.engine=pebble --datadir /data init --state.scheme=path /config/genesis.json; exec geth "$@"' --
     command:
       - --config=/config/geth.toml
       - --datadir=/data
