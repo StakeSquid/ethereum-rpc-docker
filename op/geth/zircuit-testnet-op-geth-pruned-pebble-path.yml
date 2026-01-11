@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   zircuit-testnet:
-    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_TESTNET_GETH_VERSION:-v1.125.6}
+    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_TESTNET_GETH_VERSION:-v1.125.6-nov26-hotfix-e2698405}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -60,7 +60,6 @@ services:
       - GETH_TXPOOL_GLOBALQUEUE=1024
     entrypoint: /bin/sh -c 'exec geth "$@"' --
     command:
-      - --circuit-capacity-check=false
       - --datadir=/data
       - --db.engine=pebble
       - --gcmode=full
