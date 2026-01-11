@@ -108,6 +108,7 @@ services:
 
   zircuit-garfield-archive-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${GARFIELD_NODE_VERSION:-v1.125.6-nov26-hotfix-e2698405}
+    user: root
     ports:
       - 17296:17296
       - 17296:17296/udp

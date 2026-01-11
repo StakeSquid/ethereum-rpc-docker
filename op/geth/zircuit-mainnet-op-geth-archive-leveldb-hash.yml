@@ -109,6 +109,7 @@ services:
 
   zircuit-mainnet-archive-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${MAINNET_NODE_VERSION:-v1.125.6-nov26-hotfix-e2698405}
+    user: root
     ports:
       - 19463:19463
       - 19463:19463/udp

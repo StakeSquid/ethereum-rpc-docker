@@ -112,6 +112,7 @@ services:
 
   zircuit-testnet-node:
     image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${TESTNET_NODE_VERSION:-v1.125.6-nov26-hotfix-e2698405}
+    user: root
     ports:
       - 16357:16357
       - 16357:16357/udp
