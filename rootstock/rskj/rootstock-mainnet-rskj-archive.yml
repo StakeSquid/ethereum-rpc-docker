@@ -29,7 +29,7 @@ x-logging-defaults: &logging-defaults
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  rootstock-mainnet-client:
+  rootstock-mainnet:
     image: ${ROOTSTOCK_RSKJ_IMAGE:-rsksmart/rskj}:${ROOTSTOCK_MAINNET_RSKJ_VERSION:-REED-8.1.0}
     sysctls:
       # TCP Performance
@@ -63,35 +63,25 @@ services:
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=false
-
-  rootstock-mainnet:
-    image: nginx
-    expose:
-      - '80'
-    environment:
-      PROXY_HOST: rootstock-mainnet-client
-      RPC_PATH: /
-      RPC_PORT: 8545
-      WS_PATH: /
-      WS_PORT: 8546
-    restart: unless-stopped
-    depends_on:
-      - rootstock-mainnet-client
-    networks:
-      - chains
-    volumes:
-      - ./nginx-proxy:/etc/nginx/templates
-    logging: *logging-defaults
-    labels:
-      - prometheus-scrape.enabled=false
       - traefik.enable=true
+      - traefik.http.middlewares.rootstock-mainnet-rskj-archive-host.headers.customrequestheaders.Host=localhost
       - traefik.http.middlewares.rootstock-mainnet-rskj-archive-stripprefix.stripprefix.prefixes=/rootstock-mainnet
-      - traefik.http.services.rootstock-mainnet-rskj-archive.loadbalancer.server.port=80
+      - traefik.http.services.rootstock-mainnet-rskj-archive.loadbalancer.server.port=8545
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.entrypoints=websecure}
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.tls.certresolver=myresolver}
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Host(`$DOMAIN`) && (Path(`/rootstock-mainnet`) || Path(`/rootstock-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Path(`/rootstock-mainnet`) || Path(`/rootstock-mainnet/`)}
-      - traefik.http.routers.rootstock-mainnet-rskj-archive.middlewares=rootstock-mainnet-rskj-archive-stripprefix, ipallowlist
+      - traefik.http.routers.rootstock-mainnet-rskj-archive.middlewares=rootstock-mainnet-rskj-archive-stripprefix, rootstock-mainnet-rskj-archive-host, ipallowlist
+      - traefik.http.routers.rootstock-mainnet-rskj-archive.priority=50   # gets any request that is not GET with UPGRADE header
+      - traefik.http.routers.rootstock-mainnet-rskj-archive-ws.priority=100   # answers GET requests first
+      - traefik.http.services.rootstock-mainnet-rskj-archive-ws.loadbalancer.server.port=8546
+      - traefik.http.routers.rootstock-mainnet-rskj-archive-ws.service=rootstock-mainnet-rskj-archive-ws
+      - traefik.http.routers.rootstock-mainnet-rskj-archive.service=rootstock-mainnet-rskj-archive
+      - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive-ws.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive-ws.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive-ws.rule=Host(`$DOMAIN`) && (Path(`/rootstock-mainnet`) || Path(`/rootstock-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - ${NO_SSL:+traefik.http.routers.rootstock-mainnet-rskj-archive-ws.rule=(Path(`/rootstock-mainnet`) || Path(`/rootstock-mainnet/`)) && Headers(`Upgrade`, `websocket`)}
+      - traefik.http.routers.rootstock-mainnet-rskj-archive-ws.middlewares=rootstock-mainnet-rskj-archive-stripprefix, rootstock-mainnet-rskj-archive-host, ipallowlist
 
 volumes:
   rootstock-mainnet-rskj-archive:
