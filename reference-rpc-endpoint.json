@@ -452,7 +452,7 @@
   "hyperliquid": {
     "id": 999,
     "urls": [
-      "https://gwan-ssl.wandevs.org:46891/"
+      "https://rpc.hyperliquid.xyz/evm"
     ]
   },
   "klaytn-baobab": {
@@ -704,6 +704,12 @@
     "id": 2442,
     "urls": [
       "https://rpc.cardona.zkevm-rpc.com"
+    ]
+  },
+  "fraxtal-testnet": {
+    "id": 2523,
+    "urls": [
+      "https://rpc.testnet.frax.com"
     ]
   },
   "abstract": {
