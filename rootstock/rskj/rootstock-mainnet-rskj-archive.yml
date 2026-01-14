@@ -72,8 +72,8 @@ services:
       - ${NO_SSL:-traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Host(`$DOMAIN`) && (Path(`/rootstock-mainnet`) || Path(`/rootstock-mainnet/`))}
       - ${NO_SSL:+traefik.http.routers.rootstock-mainnet-rskj-archive.rule=Path(`/rootstock-mainnet`) || Path(`/rootstock-mainnet/`)}
       - traefik.http.routers.rootstock-mainnet-rskj-archive.middlewares=rootstock-mainnet-rskj-archive-stripprefix, rootstock-mainnet-rskj-archive-host, ipallowlist
-      - traefik.http.routers.rootstock-mainnet-rskj-archive.priority=50   # gets any request that is not GET with UPGRADE header
-      - traefik.http.routers.rootstock-mainnet-rskj-archive-ws.priority=100   # answers GET requests first
+      - traefik.http.routers.rootstock-mainnet-rskj-archive.priority=50
+      - traefik.http.routers.rootstock-mainnet-rskj-archive-ws.priority=100
       - traefik.http.services.rootstock-mainnet-rskj-archive-ws.loadbalancer.server.port=8546
       - traefik.http.routers.rootstock-mainnet-rskj-archive-ws.service=rootstock-mainnet-rskj-archive-ws
       - traefik.http.routers.rootstock-mainnet-rskj-archive.service=rootstock-mainnet-rskj-archive

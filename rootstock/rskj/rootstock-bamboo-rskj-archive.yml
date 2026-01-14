@@ -72,8 +72,8 @@ services:
       - ${NO_SSL:-traefik.http.routers.rootstock-bamboo-rskj-archive.rule=Host(`$DOMAIN`) && (Path(`/rootstock-bamboo`) || Path(`/rootstock-bamboo/`))}
       - ${NO_SSL:+traefik.http.routers.rootstock-bamboo-rskj-archive.rule=Path(`/rootstock-bamboo`) || Path(`/rootstock-bamboo/`)}
       - traefik.http.routers.rootstock-bamboo-rskj-archive.middlewares=rootstock-bamboo-rskj-archive-stripprefix, rootstock-bamboo-rskj-archive-host, ipallowlist
-      - traefik.http.routers.rootstock-bamboo-rskj-archive.priority=50   # gets any request that is not GET with UPGRADE header
-      - traefik.http.routers.rootstock-bamboo-rskj-archive-ws.priority=100   # answers GET requests first
+      - traefik.http.routers.rootstock-bamboo-rskj-archive.priority=50
+      - traefik.http.routers.rootstock-bamboo-rskj-archive-ws.priority=100
       - traefik.http.services.rootstock-bamboo-rskj-archive-ws.loadbalancer.server.port=8546
       - traefik.http.routers.rootstock-bamboo-rskj-archive-ws.service=rootstock-bamboo-rskj-archive-ws
       - traefik.http.routers.rootstock-bamboo-rskj-archive.service=rootstock-bamboo-rskj-archive
