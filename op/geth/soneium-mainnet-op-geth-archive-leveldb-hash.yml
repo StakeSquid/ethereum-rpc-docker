@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   soneium-mainnet-archive:
-    image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MAINNET_GETH_VERSION:-v1.101604.0}
+    image: ${SONEIUM_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${SONEIUM_MAINNET_GETH_VERSION:-v1.101605.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.soneium-mainnet-op-geth-archive-leveldb-hash.middlewares=soneium-mainnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   soneium-mainnet-archive-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.16.4}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.16.5}
     ports:
       - 15889:15889
       - 15889:15889/udp

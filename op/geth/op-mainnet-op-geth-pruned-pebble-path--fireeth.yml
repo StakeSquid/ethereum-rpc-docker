@@ -172,7 +172,7 @@ services:
       - traefik.http.routers.op-mainnet-op-geth-pruned-pebble-path-events.middlewares=ipallowlist
 
   op-mainnet-node:
-    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.16.4}
+    image: ${OP_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${OP_MAINNET_NODE_VERSION:-v1.16.5}
     ports:
       - 17687:17687
       - 17687:17687/udp

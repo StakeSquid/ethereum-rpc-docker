@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   worldchain-sepolia-op-erigon-node:
-    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_SEPOLIA_NODE_VERSION:-v1.16.4}
+    image: ${WORLDCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${WORLDCHAIN_SEPOLIA_NODE_VERSION:-v1.16.5}
     ports:
       - 16046:16046
       - 16046:16046/udp

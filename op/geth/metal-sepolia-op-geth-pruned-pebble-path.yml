@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   metal-sepolia:
-    image: ${METAL_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${METAL_SEPOLIA_GETH_VERSION:-v1.101604.0}
+    image: ${METAL_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${METAL_SEPOLIA_GETH_VERSION:-v1.101605.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -103,7 +103,7 @@ services:
       - traefik.http.routers.metal-sepolia-op-geth-pruned-pebble-path.middlewares=metal-sepolia-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   metal-sepolia-node:
-    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_SEPOLIA_NODE_VERSION:-v1.16.4}
+    image: ${METAL_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${METAL_SEPOLIA_NODE_VERSION:-v1.16.5}
     ports:
       - 19701:19701
       - 19701:19701/udp

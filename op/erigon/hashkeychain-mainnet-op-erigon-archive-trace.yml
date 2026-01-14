@@ -106,7 +106,7 @@ services:
     shm_size: 2gb
 
   hashkeychain-mainnet-op-erigon-node:
-    image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.16.4}
+    image: ${HASHKEYCHAIN_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${HASHKEYCHAIN_MAINNET_NODE_VERSION:-v1.16.5}
     ports:
       - 16378:16378
       - 16378:16378/udp

@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   bob-mainnet-archive:
-    image: ${BOB_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${BOB_MAINNET_GETH_VERSION:-v1.101604.0}
+    image: ${BOB_GETH_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth}:${BOB_MAINNET_GETH_VERSION:-v1.101605.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.bob-mainnet-op-geth-archive-pebble-hash.middlewares=bob-mainnet-op-geth-archive-pebble-hash-stripprefix, ipallowlist
 
   bob-mainnet-archive-node:
-    image: ${BOB_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BOB_MAINNET_NODE_VERSION:-v1.16.4}
+    image: ${BOB_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${BOB_MAINNET_NODE_VERSION:-v1.16.5}
     ports:
       - 17223:17223
       - 17223:17223/udp

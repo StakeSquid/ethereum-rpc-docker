@@ -107,7 +107,7 @@ services:
     shm_size: 2gb
 
   soneium-mainnet-op-reth-pruned-node:
-    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.16.4}
+    image: ${SONEIUM_NODE_IMAGE:-us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node}:${SONEIUM_MAINNET_NODE_VERSION:-v1.16.5}
     ports:
       - 16080:16080
       - 16080:16080/udp
