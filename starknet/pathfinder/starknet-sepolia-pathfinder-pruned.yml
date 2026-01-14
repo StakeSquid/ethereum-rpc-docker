@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   starknet-sepolia-pathfinder-pruned:
-    image: ${STARKNET_PATHFINDER_IMAGE:-eqlabs/pathfinder}:${STARKNET_SEPOLIA_PATHFINDER_VERSION:-v0.21.3}
+    image: ${STARKNET_PATHFINDER_IMAGE:-eqlabs/pathfinder}:${STARKNET_SEPOLIA_PATHFINDER_VERSION:-v0.21.5}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
