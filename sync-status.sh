@@ -53,11 +53,12 @@ for path in $pathlist; do
                     chain_id=$(echo "$chain_id_response" | jq -r '.result' 2>/dev/null)
 
                     # Map Starknet chain IDs to reference endpoints
+                    # Chain ID can be plain string or hex-encoded ASCII
                     case "$chain_id" in
-                        "SN_MAIN")
+                        "SN_MAIN"|"0x534e5f4d41494e")
                             ref=$($BASEPATH/reference-rpc-endpoint.sh 23448594291968336)
                             ;;
-                        "SN_SEPOLIA")
+                        "SN_SEPOLIA"|"0x534e5f5345504f4c4941")
                             ref=$($BASEPATH/reference-rpc-endpoint.sh 393402133025997800000000)
                             ;;
                         *)
