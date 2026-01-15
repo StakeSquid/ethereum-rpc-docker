@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   taiko-hoodi-archive:
-    image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HOODI_GETH_VERSION:-v1.17.3}
+    image: ${TAIKO_GETH_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-geth}:${TAIKO_HOODI_GETH_VERSION:-v1.17.4}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -110,7 +110,7 @@ services:
       - traefik.http.routers.taiko-hoodi-geth-archive-pebble-hash.middlewares=taiko-hoodi-geth-archive-pebble-hash-stripprefix, ipallowlist
 
   taiko-hoodi-archive-node:
-    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HOODI_DRIVER_VERSION:-taiko-alethia-client-v1.11.0}
+    image: ${TAIKO_DRIVER_IMAGE:-us-docker.pkg.dev/evmchain/images/taiko-client}:${TAIKO_HOODI_DRIVER_VERSION:-taiko-alethia-client-v1.11.2}
     ports:
       - 17190:17190
       - 17190:17190/udp
