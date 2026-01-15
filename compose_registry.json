@@ -3164,6 +3164,78 @@
   },
   {
     "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "linea/geth/linea-mainnet-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "linea-mainnet-geth-archive-leveldb-hash",
+      "linea-mainnet-geth-archive-leveldb-hash_maru"
+    ]
+  },
+  {
+    "chain": "mainnet",
+    "client": "geth",
+    "compose_file": "linea/geth/linea-mainnet-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "linea-mainnet-geth-pruned-pebble-path",
+      "linea-mainnet-geth-pruned-pebble-path_maru"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "linea/geth/linea-sepolia-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "linea-sepolia-geth-archive-leveldb-hash",
+      "linea-sepolia-geth-archive-leveldb-hash_maru"
+    ]
+  },
+  {
+    "chain": "sepolia",
+    "client": "geth",
+    "compose_file": "linea/geth/linea-sepolia-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "linea",
+    "node": "maru",
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "linea-sepolia-geth-pruned-pebble-path",
+      "linea-sepolia-geth-pruned-pebble-path_maru"
+    ]
+  },
+  {
+    "chain": "mainnet",
     "client": "reth",
     "compose_file": "linea/reth/linea-mainnet-reth-archive-trace",
     "features": [

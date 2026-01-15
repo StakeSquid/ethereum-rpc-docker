@@ -113,7 +113,7 @@ services:
       dockerfile: maru.Dockerfile
       args:
         MARU_IMAGE: ${LINEA_MAINNET_MARU_IMAGE:-consensys/maru}
-        MARU_VERSION: ${LINEA_MAINNET_MARU_VERSION:-9737a45}
+        MARU_VERSION: ${LINEA_MAINNET_MARU_VERSION:-v1.0.0-20260108114606-36f5e2f}
     ports:
       - 15060:15060
       - 15060:15060/udp
@@ -129,7 +129,7 @@ services:
     command:
       - |
         envsubst < /config/maru/config.toml.template > /config.toml
-        exec java -Dlog4j2.configurationFile=/config/maru/log4j.xml -jar /opt/consensys/maru/maru.jar --config=/config.toml --maru-genesis-file=/config/maru/genesis.json "$@"
+        exec java -Dlog4j2.configurationFile=/config/maru/log4j.xml -jar /opt/consensys/maru/maru.jar --network=linea-mainnet --config=/config.toml "$@"
     restart: unless-stopped
     networks:
       - chains

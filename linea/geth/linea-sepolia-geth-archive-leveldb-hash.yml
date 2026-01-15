@@ -20,17 +20,17 @@ x-logging-defaults: &logging-defaults
 # ...
 # IP=$(curl ipinfo.io/ip)
 # DOMAIN=${IP}.traefik.me
-# COMPOSE_FILE=base.yml:rpc.yml:linea/erigon3/linea-sepolia-erigon3-pruned-trace.yml
+# COMPOSE_FILE=base.yml:rpc.yml:linea/geth/linea-sepolia-geth-archive-leveldb-hash.yml
 #
 # docker compose up -d
 #
-# curl -X POST https://${IP}.traefik.me/linea-sepolia-erigon3 \
+# curl -X POST https://${IP}.traefik.me/linea-sepolia-geth-archive \
 #   -H "Content-Type: application/json" \
 #   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 
 services:
-  linea-sepolia-erigon3:
-    image: ${LINEA_ERIGON3_IMAGE:-erigontech/erigon}:${LINEA_SEPOLIA_ERIGON3_VERSION:-v3.3.3}
+  linea-sepolia-geth-archive:
+    image: ${LINEA_GETH_IMAGE:-ethereum/client-go}:${LINEA_SEPOLIA_GETH_VERSION:-v1.16.7}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -44,52 +44,51 @@ services:
       net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
     ulimits:
       nofile: 1048576    # Max open files (for RPC/WS connections)
-      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
     user: root
     ports:
-      - 10620:10620
-      - 10620:10620/udp
-      - 30620:30620
-      - 30620:30620/udp
-      - 35620:35620
-      - 35620:35620/udp
+      - 11564:11564
+      - 11564:11564/udp
     expose:
       - 8545
-    entrypoint: /bin/sh -c '[ ! -d /root/.local/share/erigon/chaindata/mdbx.dat ] && erigon init --datadir /root/.local/share/erigon /config/genesis.json; exec erigon "$@"' --
+      - 6060
+      - 8551
+    environment:
+      - GETH_BOOTNODES=enode://6f20afbe4397e51b717a7c1ad3095e79aee48c835eebd9237a3e8a16951ade1fe0e66e981e30ea269849fcb6ba03d838da37f524fabd2a557474194a2e2604fa@18.221.100.27:31002,enode://ce1e0d8e0500cb5c0ac56bdcdafb2d6320c3a2c5125b5ccf12f5dfc9b47ee74acbcafc32559017613136c9c36a0ce74ba4f83b7fb8244f099f3b15708d9d3129@3.23.75.47:31000,enode://1b026a5eb0ae74300f58987d235ef0e3a550df963345cb3574be3b0b54378bd11f14dfd515a8976f2c2d2826090e9507b8ccc24f896a9ffffffcabcfd996a733@3.129.120.128:31001
+    entrypoint: /bin/sh -c '[ ! -d /root/.ethereum/geth ] && geth --db.engine=leveldb --gcmode=archive --datadir /root/.ethereum init --state.scheme=hash /config/genesis.json; exec geth "$@"' --
     command:
       - --bootnodes=enode://6f20afbe4397e51b717a7c1ad3095e79aee48c835eebd9237a3e8a16951ade1fe0e66e981e30ea269849fcb6ba03d838da37f524fabd2a557474194a2e2604fa@18.221.100.27:31002,enode://ce1e0d8e0500cb5c0ac56bdcdafb2d6320c3a2c5125b5ccf12f5dfc9b47ee74acbcafc32559017613136c9c36a0ce74ba4f83b7fb8244f099f3b15708d9d3129@3.23.75.47:31000,enode://1b026a5eb0ae74300f58987d235ef0e3a550df963345cb3574be3b0b54378bd11f14dfd515a8976f2c2d2826090e9507b8ccc24f896a9ffffffcabcfd996a733@3.129.120.128:31001
-      - --datadir=/root/.local/share/erigon
-      - --db.size.limit=600GB
-      - --externalcl=true
-      - --http
-      - --http.addr=0.0.0.0
-      - --http.api=eth,erigon,web3,net,debug,trace,txpool,admin,ots
-      - --http.port=8545
-      - --http.vhosts=*
+      - --datadir=/root/.ethereum
+      - --db.engine=leveldb
+      - --gcmode=archive
       - --maxpeers=50
       - --metrics
       - --metrics.addr=0.0.0.0
       - --metrics.port=6060
       - --nat=extip:${IP}
-      - --networkid=59141
-      - --p2p.allowed-ports=30620
-      - --p2p.allowed-ports=35620
-      - --persist.receipts=false
-      - --port=10620
-      - --prune.mode=full
-      - --rpc.evmtimeout=${LINEA_SEPOLIA_ERIGON3_PRUNED_TRACE_EVMTIMEOUT:-5m0s}
-      - --rpc.gascap=6000000000
-      - --rpc.overlay.getlogstimeout=${LINEA_SEPOLIA_ERIGON3_PRUNED_TRACE_GETLOGSTIMEOUT:-5m0s}
-      - --rpc.overlay.replayblocktimeout=${LINEA_SEPOLIA_ERIGON3_PRUNED_TRACE_REPLAYBLOCKTIMEOUT:-10s}
-      - --rpc.returndata.limit=10000000
+      - --port=11564
+      - --rpc.gascap=600000000
+      - --rpc.txfeecap=0
+      - --state.scheme=hash
+      - --syncmode=full
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=eth,net,web3,debug,admin,txpool
+      - --http.port=8545
+      - --http.vhosts=*
       - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=eth,net,web3,debug,admin,txpool
+      - --ws.origins=*
       - --ws.port=8545
+      - --authrpc.addr=0.0.0.0
+      - --authrpc.jwtsecret=/jwtsecret
+      - --authrpc.vhosts=*
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
       - chains
     volumes:
-      - ${LINEA_SEPOLIA_ERIGON3_PRUNED_TRACE_DATA:-linea-sepolia-erigon3-pruned-trace}:/root/.local/share/erigon
+      - ${LINEA_SEPOLIA_GETH_ARCHIVE_LEVELDB_HASH_DATA:-linea-sepolia-geth-archive-leveldb-hash}:/root/.ethereum
       - ./linea/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
       - /slowdisk:/slowdisk
@@ -99,16 +98,15 @@ services:
       - prometheus-scrape.port=6060
       - prometheus-scrape.path=/debug/metrics/prometheus
       - traefik.enable=true
-      - traefik.http.middlewares.linea-sepolia-erigon3-pruned-trace-stripprefix.stripprefix.prefixes=/linea-sepolia-erigon3
-      - traefik.http.services.linea-sepolia-erigon3-pruned-trace.loadbalancer.server.port=8545
-      - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-pruned-trace.entrypoints=websecure}
-      - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-pruned-trace.tls.certresolver=myresolver}
-      - ${NO_SSL:-traefik.http.routers.linea-sepolia-erigon3-pruned-trace.rule=Host(`$DOMAIN`) && (Path(`/linea-sepolia-erigon3`) || Path(`/linea-sepolia-erigon3/`))}
-      - ${NO_SSL:+traefik.http.routers.linea-sepolia-erigon3-pruned-trace.rule=Path(`/linea-sepolia-erigon3`) || Path(`/linea-sepolia-erigon3/`)}
-      - traefik.http.routers.linea-sepolia-erigon3-pruned-trace.middlewares=linea-sepolia-erigon3-pruned-trace-stripprefix, ipallowlist
-    shm_size: 2gb
+      - traefik.http.middlewares.linea-sepolia-geth-archive-leveldb-hash-stripprefix.stripprefix.prefixes=/linea-sepolia-geth-archive
+      - traefik.http.services.linea-sepolia-geth-archive-leveldb-hash.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.linea-sepolia-geth-archive-leveldb-hash.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.linea-sepolia-geth-archive-leveldb-hash.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.linea-sepolia-geth-archive-leveldb-hash.rule=Host(`$DOMAIN`) && (Path(`/linea-sepolia-geth-archive`) || Path(`/linea-sepolia-geth-archive/`))}
+      - ${NO_SSL:+traefik.http.routers.linea-sepolia-geth-archive-leveldb-hash.rule=Path(`/linea-sepolia-geth-archive`) || Path(`/linea-sepolia-geth-archive/`)}
+      - traefik.http.routers.linea-sepolia-geth-archive-leveldb-hash.middlewares=linea-sepolia-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
-  linea-sepolia-erigon3-node:
+  linea-sepolia-geth-archive-node:
     build:
       context: ./linea
       dockerfile: maru.Dockerfile
@@ -116,15 +114,15 @@ services:
         MARU_IMAGE: ${LINEA_SEPOLIA_MARU_IMAGE:-consensys/maru}
         MARU_VERSION: ${LINEA_SEPOLIA_MARU_VERSION:-v1.0.0-20260108114606-36f5e2f}
     ports:
-      - 15620:15620
-      - 15620:15620/udp
+      - 16564:16564
+      - 16564:16564/udp
     expose:
       - 8080
     environment:
-      - EL_HOST=linea-sepolia-erigon3
+      - EL_HOST=linea-sepolia-geth-archive
       - IP=${IP}
       - L1_RPC=${ETHEREUM_SEPOLIA_EXECUTION_RPC}
-      - P2P_PORT=15620
+      - P2P_PORT=16564
       - SEQUENCER=https://rpc.sepolia.linea.build
     entrypoint: [/bin/bash, -c]
     command:
@@ -135,7 +133,7 @@ services:
     networks:
       - chains
     volumes:
-      - ${LINEA_SEPOLIA_ERIGON3_PRUNED_TRACE__MARU_DATA:-linea-sepolia-erigon3-pruned-trace_maru}:/opt/maru/data
+      - ${LINEA_SEPOLIA_GETH_ARCHIVE_LEVELDB_HASH__MARU_DATA:-linea-sepolia-geth-archive-leveldb-hash_maru}:/opt/maru/data
       - ./linea/sepolia:/config
       - .jwtsecret:/jwtsecret:ro
     logging: *logging-defaults
@@ -145,8 +143,8 @@ services:
       - prometheus-scrape.path=/debug/metrics/prometheus
 
 volumes:
-  linea-sepolia-erigon3-pruned-trace:
-  linea-sepolia-erigon3-pruned-trace_maru:
+  linea-sepolia-geth-archive-leveldb-hash:
+  linea-sepolia-geth-archive-leveldb-hash_maru:
 
 x-upstreams:
   - id: $${ID}
@@ -165,12 +163,19 @@ x-upstreams:
       enabled:
         - debug
         - filter
-        - trace
     methods:
       disabled:
-        - name: eth_getLogs # this returns result [] on ethereum mainnet when it shouldn't so it's probably buggy on al networks
       enabled:
         - name: txpool_content # TODO: should be disabled for rollup nodes
+        # standard geth only
+        - name: debug_getRawBlock
+        - name: debug_getRawTransaction
+        - name: debug_getRawReceipts
+        - name: debug_getRawHeader
+        - name: debug_getBadBlocks
+        # non standard geth only slightly dangerous
+        - name: debug_intermediateRoots
+        - name: debug_dumpBlock
         # standard geth and erigon
         - name: debug_accountRange
         - name: debug_getModifiedAccountsByNumber
@@ -178,30 +183,4 @@ x-upstreams:
         # non standard geth and erigon
         - name: eth_getRawTransactionByHash
         - name: eth_getRawTransactionByBlockHashAndIndex
-        # non standard erigon only
-        - name: eth_getBlockReceipts
-        - name: eth_protocolVersion
-        - name: eth_callMany
-        - name: eth_callBundle
-        - name: debug_accountAt
-        - name: debug_traceCallMany
-        - name: erigon_getHeaderByHash
-        - name: erigon_getBlockReceiptsByBlockHash
-        - name: erigon_getHeaderByNumber
-        - name: erigon_getLogsByHash
-        - name: erigon_forks
-        - name: erigon_getBlockByTimestamp
-        - name: erigon_BlockNumber
-        - name: erigon_getLatestLogs
-        - name: ots_getInternalOperations
-        - name: ots_hasCode
-        - name: ots_getTransactionError
-        - name: ots_traceTransaction
-        - name: ots_getBlockDetails
-        - name: ots_getBlockDetailsByHash
-        - name: ots_getBlockTransactions
-        - name: ots_searchTransactionsBefore
-        - name: ots_searchTransactionsAfter
-        - name: ots_getTransactionBySenderAndNonce
-        - name: ots_getContractCreator
 ...
