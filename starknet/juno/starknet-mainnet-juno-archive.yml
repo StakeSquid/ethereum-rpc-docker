@@ -61,6 +61,7 @@ services:
       - --network=mainnet
       - --p2p
       - --p2p-addr=/ip4/0.0.0.0/tcp/13985
+      - --p2p-feeder-node
       - --p2p-public-addr=/ip4/${IP}/tcp/13985
       - --ws
       - --ws-host=0.0.0.0

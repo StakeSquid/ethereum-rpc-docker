@@ -61,6 +61,7 @@ services:
       - --network=sepolia
       - --p2p
       - --p2p-addr=/ip4/0.0.0.0/tcp/14344
+      - --p2p-feeder-node
       - --p2p-public-addr=/ip4/${IP}/tcp/14344
       - --ws
       - --ws-host=0.0.0.0
