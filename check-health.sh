@@ -8,9 +8,17 @@ if [ $# -lt 2 ]; then
 fi
 
 RPC_URL=$1
-REF=""
+shift
 
-for url in "${@:2}"; do
+# Check for --starknet flag
+is_starknet=false
+if [ "$1" == "--starknet" ]; then
+    is_starknet=true
+    shift
+fi
+
+REF=""
+for url in "$@"; do
     REF+="--url $url "
 done
 
@@ -23,49 +31,84 @@ timeout=3 # seconds
 
 response_file=$(mktemp)
 
-http_status_code=$(curl -L --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL)
+# Use appropriate RPC method based on chain type
+if $is_starknet; then
+    rpc_method='{"jsonrpc":"2.0","method":"starknet_getBlockWithTxHashes","params":["latest"],"id":1}'
+else
+    rpc_method='{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}'
+fi
+
+http_status_code=$(curl -L --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data "$rpc_method" $RPC_URL)
 
 if [ $? -eq 0 ]; then
     if [[ $http_status_code -eq 200 ]]; then
         response=$(cat "$response_file")
-        latest_block_timestamp=$(echo "$response" | jq -r '.result.timestamp')
-        latest_block_timestamp_decimal=$((16#${latest_block_timestamp#0x}))
+
+        if $is_starknet; then
+            # Starknet returns decimal timestamp and block_number
+            latest_block_timestamp_decimal=$(echo "$response" | jq -r '.result.timestamp')
+            latest_block_number=$(echo "$response" | jq -r '.result.block_number')
+            latest_block_hash=$(echo "$response" | jq -r '.result.block_hash')
+        else
+            # Ethereum returns hex timestamp and number
+            latest_block_timestamp=$(echo "$response" | jq -r '.result.timestamp')
+            latest_block_timestamp_decimal=$((16#${latest_block_timestamp#0x}))
+            latest_block_number=$(echo "$response" | jq -r '.result.number')
+            latest_block_hash=$(echo "$response" | jq -r '.result.hash')
+        fi
+
         current_time=$(date +%s)
         time_difference=$((current_time - latest_block_timestamp_decimal))
 
         rm "$response_file"
-        
-        if [ -n "$ref" ]; then
-            latest_block_number=$(echo "$response" | jq -r '.result.number')
-            latest_block_hash=$(echo "$response" | jq -r '.result.hash')            
+
+        if [ -n "$ref" ]; then            
             response_file2=$(mktemp)
 
 	    sleep 3 # to give the reference node more time to import the block if it is very current
-	    
-            http_status_code2=$($BASEPATH/multicurl.sh -L --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file2" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$latest_block_number\", false],\"id\":1}" $ref)
+
+            if $is_starknet; then
+                # Starknet uses block_id object with block_number
+                rpc_method2="{\"jsonrpc\":\"2.0\",\"method\":\"starknet_getBlockWithTxHashes\",\"params\":[{\"block_number\":$latest_block_number}],\"id\":1}"
+            else
+                rpc_method2="{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$latest_block_number\", false],\"id\":1}"
+            fi
+
+            http_status_code2=$($BASEPATH/multicurl.sh -L --ipv4 -m $timeout -s -X POST -w "%{http_code}" -o "$response_file2" -H "Content-Type: application/json" --data "$rpc_method2" $ref)
 
 	    curl_code2=$?
-	    
-            if [ $curl_code2 -eq 0 ]; then	    
+
+            if [ $curl_code2 -eq 0 ]; then
                 if [[ $http_status_code2 -eq 200 ]]; then
                     response2=$(cat "$response_file2")
-                    latest_block_hash2=$(echo "$response2" | jq -r '.result.hash')
+                    if $is_starknet; then
+                        latest_block_hash2=$(echo "$response2" | jq -r '.result.block_hash')
+                    else
+                        latest_block_hash2=$(echo "$response2" | jq -r '.result.hash')
+                    fi
 
                     rm "$response_file2"
                     
                     if [ "$latest_block_hash" == "$latest_block_hash2" ]; then
                         response_file3=$(mktemp)
 			status_file3=$(mktemp)
+
+                        if $is_starknet; then
+                            rpc_method_latest='{"jsonrpc":"2.0","method":"starknet_getBlockWithTxHashes","params":["latest"],"id":1}'
+                        else
+                            rpc_method_latest='{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}'
+                        fi
+
                         {
-			    $BASEPATH/multicurl.sh -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file3" -H "Content-Type: application/json" --data "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"latest\", false],\"id\":1}" $ref > "$status_file3"
-			} &			
+			    $BASEPATH/multicurl.sh -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file3" -H "Content-Type: application/json" --data "$rpc_method_latest" $ref > "$status_file3"
+			} &
 			pid3=$!
 
 			response_file4=$(mktemp)
 			status_file4=$(mktemp)
 
 			{
-			    curl -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file4" -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' $RPC_URL > "$status_file4"
+			    curl -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file4" -H "Content-Type: application/json" --data "$rpc_method_latest" $RPC_URL > "$status_file4"
 			} &
 			pid4=$!
 
@@ -86,17 +129,27 @@ if [ $? -eq 0 ]; then
 			if [ $curl_code3 -eq 0 ]; then
                             if [[ $http_status_code3 -eq 200 ]]; then
                                 response3=$(cat "$response_file3")
-                                latest_block_timestamp3=$(echo "$response3" | jq -r '.result.timestamp')
-                                latest_block_timestamp_decimal3=$((16#${latest_block_timestamp3#0x}))
 
-				# echo "refer: $latest_block_timestamp_decimal3"				
+                                if $is_starknet; then
+                                    latest_block_timestamp_decimal3=$(echo "$response3" | jq -r '.result.timestamp')
+                                else
+                                    latest_block_timestamp3=$(echo "$response3" | jq -r '.result.timestamp')
+                                    latest_block_timestamp_decimal3=$((16#${latest_block_timestamp3#0x}))
+                                fi
+
+				# echo "refer: $latest_block_timestamp_decimal3"
                                 rm "$response_file3"
 
 				if [ $curl_code4 -eq 0 ]; then
 				    if [[ $http_status_code4 -eq 200 ]]; then
 					response4=$(cat "$response_file4")
-					latest_block_timestamp4=$(echo "$response4" | jq -r '.result.timestamp')
-					latest_block_timestamp_decimal4=$((16#${latest_block_timestamp4#0x}))
+
+					if $is_starknet; then
+					    latest_block_timestamp_decimal4=$(echo "$response4" | jq -r '.result.timestamp')
+					else
+					    latest_block_timestamp4=$(echo "$response4" | jq -r '.result.timestamp')
+					    latest_block_timestamp_decimal4=$((16#${latest_block_timestamp4#0x}))
+					fi
 
 					#echo "local: $latest_block_timestamp_decimal4"
 					rm "$response_file4"

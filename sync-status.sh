@@ -34,32 +34,70 @@ for path in $pathlist; do
     if $include; then
         RPC_URL="$PROTO://$DOMAIN/$path"
 
+        # Detect Starknet vs Ethereum based on path
+        if echo "$path" | grep -qi "starknet"; then
+            is_starknet=true
+        else
+            is_starknet=false
+        fi
+
         ref=''
         if [ -n "$2" ]; then
             ref="$2"
         else
-            chain_id_response=$(curl -L --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL)
-		
-	    if [ $? -eq 0 ]; then
-		chain_id=$(echo "$chain_id_response" | jq -r '.result' 2>/dev/null)
+            if $is_starknet; then
+                # Starknet chain ID detection
+                chain_id_response=$(curl -L --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' $RPC_URL)
 
-		# echo "$RPC_URL: $chain_id"
-		
-		if [[ "$chain_id" =~ ^0x[0-9a-fA-F]+$ ]]; then
-		    chain_id_decimal=$((16#${chain_id#0x}))
-		    ref=$($BASEPATH/reference-rpc-endpoint.sh $chain_id_decimal)
-		else
-		    echo "error"
-		    exit 1
-		fi
-	    else
-		echo "error"
-		exit 1
-	    fi
+                if [ $? -eq 0 ]; then
+                    chain_id=$(echo "$chain_id_response" | jq -r '.result' 2>/dev/null)
+
+                    # Map Starknet chain IDs to reference endpoints
+                    case "$chain_id" in
+                        "SN_MAIN")
+                            ref=$($BASEPATH/reference-rpc-endpoint.sh 23448594291968336)
+                            ;;
+                        "SN_SEPOLIA")
+                            ref=$($BASEPATH/reference-rpc-endpoint.sh 393402133025997800000000)
+                            ;;
+                        *)
+                            echo "error: unknown starknet chain $chain_id"
+                            exit 1
+                            ;;
+                    esac
+                else
+                    echo "error"
+                    exit 1
+                fi
+            else
+                # Ethereum chain ID detection
+                chain_id_response=$(curl -L --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' $RPC_URL)
+
+                if [ $? -eq 0 ]; then
+                    chain_id=$(echo "$chain_id_response" | jq -r '.result' 2>/dev/null)
+
+                    # echo "$RPC_URL: $chain_id"
+
+                    if [[ "$chain_id" =~ ^0x[0-9a-fA-F]+$ ]]; then
+                        chain_id_decimal=$((16#${chain_id#0x}))
+                        ref=$($BASEPATH/reference-rpc-endpoint.sh $chain_id_decimal)
+                    else
+                        echo "error"
+                        exit 1
+                    fi
+                else
+                    echo "error"
+                    exit 1
+                fi
+            fi
         fi
 
-        # Call the health check script with RPC_URL and ref
-        $BASEPATH/check-health.sh "$RPC_URL" $ref
+        # Call the health check script with RPC_URL, ref, and starknet flag
+        if $is_starknet; then
+            $BASEPATH/check-health.sh "$RPC_URL" --starknet $ref
+        else
+            $BASEPATH/check-health.sh "$RPC_URL" $ref
+        fi
         exit $?
     fi
 done
