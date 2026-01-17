@@ -31,7 +31,7 @@ refresh-interval = "3s"
 # Besu and Geth node as execution layer client
 engine-api-endpoint = { endpoint = "http://${EL_HOST}:8551", jwt-secret-path = "/jwtsecret" }
 eth-api-endpoint = { endpoint = "http://${EL_HOST}:8545" }
-payload-validation-enabled = true
+payload-validation-enabled = false
 
 [observability]
 port = 9090
