@@ -78,7 +78,7 @@ services:
       - --rpc-ws-enabled=true
       - --rpc-ws-host=0.0.0.0
       - --rpc-ws-port=8546
-      - --sync-mode=SNAP
+      - --sync-mode=FULL
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
