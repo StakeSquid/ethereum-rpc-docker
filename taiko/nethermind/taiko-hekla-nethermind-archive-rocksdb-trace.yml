@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   taiko-hekla-nethermind-archive:
-    image: ${TAIKO_NETHERMIND_IMAGE:-nethermind/nethermind}:${TAIKO_HEKLA_NETHERMIND_VERSION:-1.35.8}
+    image: ${TAIKO_NETHERMIND_IMAGE:-nethermind/nethermind}:${TAIKO_HEKLA_NETHERMIND_VERSION:-1.36.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
