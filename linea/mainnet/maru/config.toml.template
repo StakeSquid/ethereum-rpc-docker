@@ -45,7 +45,7 @@ port = 8080
 peer-chain-height-polling-interval = "5s"
 el-sync-status-refresh-interval = "5s"
 sync-target-selection = "Highest"
-desync-tolerance = 0
+desync-tolerance = 100000
 
 [syncing.download]
 block-range-request-timeout = "10s"
