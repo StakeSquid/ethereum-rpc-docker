@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   linea-mainnet-geth:
-    image: ${LINEA_GETH_IMAGE:-ethereum/client-go}:${LINEA_MAINNET_GETH_VERSION:-v1.16.7}
+    image: ${LINEA_GETH_IMAGE:-ethereum/client-go}:${LINEA_MAINNET_GETH_VERSION:-v1.16.8}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

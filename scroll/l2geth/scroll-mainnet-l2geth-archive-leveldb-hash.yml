@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   scroll-mainnet-archive:
-    image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_L2GETH_VERSION:-scroll-v5.10.1}
+    image: ${SCROLL_L2GETH_IMAGE:-scrolltech/l2geth}:${SCROLL_L2GETH_VERSION:-scroll-v5.10.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

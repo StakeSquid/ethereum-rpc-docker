@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   starknet-sepolia-juno-archive:
-    image: ${STARKNET_JUNO_IMAGE:-nethermind/juno}:${STARKNET_SEPOLIA_JUNO_VERSION:-v0.15.16}
+    image: ${STARKNET_JUNO_IMAGE:-nethermind/juno}:${STARKNET_SEPOLIA_JUNO_VERSION:-v0.15.17}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

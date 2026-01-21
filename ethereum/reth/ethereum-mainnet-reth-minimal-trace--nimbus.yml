@@ -52,7 +52,7 @@ services:
       args:
         LLVM_IMAGE: ${LLVM_IMAGE:-snowstep/llvm}
         LLVM_VERSION: ${LLVM_VERSION:-20250912105042}
-        RETH_VERSION: ${ETHEREUM_MAINNET_RETH_VERSION:-v1.9.3}
+        RETH_VERSION: ${ETHEREUM_MAINNET_RETH_VERSION:-v1.10.1}
         RETH_REPO: ${ETHEREUM_MAINNET_RETH_REPO:-https://github.com/paradigmxyz/reth}
         ARCH_TARGET: ${ARCH_TARGET:-native}
         PROFILE: ${RETH_BUILD_PROFILE:-maxperf}
