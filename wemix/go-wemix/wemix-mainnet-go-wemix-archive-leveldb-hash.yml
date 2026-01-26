@@ -34,7 +34,7 @@ services:
       context: ./wemix
       dockerfile: go-wemix.Dockerfile
       args:
-        VERSION: w0.10.11
+        VERSION: w0.10.12
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle

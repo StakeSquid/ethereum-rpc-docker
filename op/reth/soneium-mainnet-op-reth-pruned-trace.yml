@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   soneium-mainnet-op-reth-pruned:
-    image: ${SONEIUM_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${SONEIUM_MAINNET_RETH_VERSION:-v1.10.1}
+    image: ${SONEIUM_RETH_IMAGE:-ghcr.io/paradigmxyz/op-reth}:${SONEIUM_MAINNET_RETH_VERSION:-v1.10.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
