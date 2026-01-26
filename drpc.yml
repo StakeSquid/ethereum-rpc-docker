@@ -1,6 +1,6 @@
 services:
   dshackle:
-    image: drpcorg/dshackle:0.73.0
+    image: drpcorg/dshackle:0.74.0
     restart: unless-stopped
     volumes:
       - ./main_configs:/etc/dshackle
