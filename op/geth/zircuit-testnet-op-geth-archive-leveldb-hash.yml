@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   zircuit-testnet-archive:
-    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_TESTNET_GETH_VERSION:-v1.127.13-beta}
+    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_TESTNET_GETH_VERSION:-v1.132.6}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -111,7 +111,7 @@ services:
       - traefik.http.routers.zircuit-testnet-op-geth-archive-leveldb-hash.middlewares=zircuit-testnet-op-geth-archive-leveldb-hash-stripprefix, ipallowlist
 
   zircuit-testnet-archive-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${TESTNET_NODE_VERSION:-v1.127.13-beta}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${TESTNET_NODE_VERSION:-v1.132.6}
     user: root
     ports:
       - 18095:18095

@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   zircuit-garfield-archive:
-    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_GARFIELD_GETH_VERSION:-v1.127.13-beta}
+    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_GARFIELD_GETH_VERSION:-v1.132.6}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -107,7 +107,7 @@ services:
       - traefik.http.routers.zircuit-garfield-op-geth-archive-pebble-hash.middlewares=zircuit-garfield-op-geth-archive-pebble-hash-stripprefix, ipallowlist
 
   zircuit-garfield-archive-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${GARFIELD_NODE_VERSION:-v1.127.13-beta}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${GARFIELD_NODE_VERSION:-v1.132.6}
     user: root
     ports:
       - 16723:16723

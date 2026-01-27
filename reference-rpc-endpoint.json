@@ -740,6 +740,10 @@
       "https://rpc.sepolia-api.lisk.com"
     ]
   },
+  "megaeth": {
+    "id": 4326,
+    "urls": []
+  },
   "iotex": {
     "id": 4689,
     "urls": [
@@ -794,7 +798,7 @@
       "https://opbnb-testnet-rpc.publicnode.com"
     ]
   },
-  "megaeth-testnet": {
+  "megaeth-deprecated": {
     "id": 6342,
     "urls": [
       "https://carrot.megaeth.com/rpc"
@@ -1037,6 +1041,12 @@
     "id": 42429,
     "urls": [
       "https://rpc.testnet.tempo.xyz"
+    ]
+  },
+  "tempo-moderato-testnet": {
+    "id": 42431,
+    "urls": [
+      "https://rpc.moderato.tempo.xyz"
     ]
   },
   "hemi": {
@@ -1335,6 +1345,12 @@
       "https://evm-rpc.arctic-1.seinetwork.io"
     ]
   },
+  "katana-testnet": {
+    "id": 737373,
+    "urls": [
+      "https://rpc-bokuto.katanarpc.com"
+    ]
+  },
   "hemi-testnet": {
     "id": 743111,
     "urls": [
@@ -1344,7 +1360,9 @@
   "katana": {
     "id": 747474,
     "urls": [
-      "https://rpc.katana.network"
+      "https://rpc.katana.network",
+      "https://katana.gateway.tenderly.co/",
+      "https://rpc.katanarpc.com/"
     ]
   },
   "ink-sepolia": {

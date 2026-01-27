@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   zircuit-mainnet:
-    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_MAINNET_GETH_VERSION:-v1.127.13-beta}
+    image: ${ZIRCUIT_GETH_IMAGE:-zircuit1/l2-geth}:${ZIRCUIT_MAINNET_GETH_VERSION:-v1.132.6}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -108,7 +108,7 @@ services:
       - traefik.http.routers.zircuit-mainnet-op-geth-pruned-pebble-path.middlewares=zircuit-mainnet-op-geth-pruned-pebble-path-stripprefix, ipallowlist
 
   zircuit-mainnet-node:
-    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${MAINNET_NODE_VERSION:-v1.127.13-beta}
+    image: ${ZIRCUIT_NODE_IMAGE:-zircuit1/op-node}:${MAINNET_NODE_VERSION:-v1.132.6}
     user: root
     ports:
       - 18359:18359
