@@ -30,7 +30,6 @@
     "batch_inbox_address": "0x734dde12fd466c14a85de838788efe6f1993c84c",
     "deposit_contract_address": "0xbaaf3bafdbd660380938b27d21c31bb7d072a799",
     "l1_system_config_address": "0x3974436fa4bb4deb5a04ace51a704b10ff5a1f25",
-    "protocol_versions_address": "0x0000000000000000000000000000000000000000",
-    "da_challenge_contract_address": "0x0000000000000000000000000000000000000000"
+    "protocol_versions_address": "0x0000000000000000000000000000000000000000"
   }
   
