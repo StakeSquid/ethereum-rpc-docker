@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   ripple-mainnet:
-    image: ${RIPPLE_RIPPLED_IMAGE:-xrpllabsofficial/xrpld}:${RIPPLE_MAINNET_RIPPLED_VERSION:-3.0.0}
+    image: ${RIPPLE_RIPPLED_IMAGE:-xrpllabsofficial/xrpld}:${RIPPLE_MAINNET_RIPPLED_VERSION:-3.1.0}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
