@@ -95,7 +95,7 @@ services:
         condition: none
 
   loki:
-    image: grafana/loki
+    image: grafana/loki:3.4.3
     container_name: loki
     user: "10001"
     volumes:
