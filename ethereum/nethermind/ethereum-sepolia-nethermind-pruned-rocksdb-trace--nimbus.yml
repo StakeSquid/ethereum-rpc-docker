@@ -94,7 +94,7 @@ services:
       - traefik.http.routers.ethereum-sepolia-nethermind-pruned-rocksdb-trace.middlewares=ethereum-sepolia-nethermind-pruned-rocksdb-trace-stripprefix, ipallowlist
 
   ethereum-sepolia-nethermind-node:
-    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_SEPOLIA_NIMBUS_VERSION:-multiarch-v25.12.0}
+    image: ${ETHEREUM_NIMBUS_IMAGE:-statusim/nimbus-eth2}:${ETHEREUM_SEPOLIA_NIMBUS_VERSION:-multiarch-v26.1.0}
     user: root
     ports:
       - 15835:15835
