@@ -4500,9 +4500,26 @@
   {
     "chain": "testnet",
     "client": "geth",
+    "compose_file": "op/geth/hashkeychain-testnet-op-geth-pruned-pebble-hash",
+    "features": [
+      "hash",
+      "pebble"
+    ],
+    "network": "hashkeychain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "hashkeychain-testnet-op-geth-pruned-pebble-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
     "compose_file": "op/geth/hashkeychain-testnet-op-geth-pruned-pebble-path",
     "features": [
-      "path",
+      "hash",
       "pebble"
     ],
     "network": "hashkeychain",
