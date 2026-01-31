@@ -1541,6 +1541,7 @@
     ]
   },
   "aztec-testnet": {
+    "rollup_version": "2500495677",
     "urls": [
       "https://rpc.testnet.aztec-labs.com"
     ]

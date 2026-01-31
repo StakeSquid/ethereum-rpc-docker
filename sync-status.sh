@@ -51,22 +51,24 @@ for path in $pathlist; do
             ref="$2"
         else
             if $is_aztec; then
-                # Aztec: resolve ref by path (mainnet/testnet/devnet)
-                case "$path" in
-                    *aztec-mainnet*)
-                        ref=$($BASEPATH/reference-rpc-endpoint.sh 418)
-                        ;;
-                    *aztec-testnet*)
-                        ref=$($BASEPATH/reference-rpc-endpoint.sh 11124)
-                        ;;
-                    *aztec-devnet*)
-                        ref=$($BASEPATH/reference-rpc-endpoint.sh 11125)
-                        ;;
-                    *)
-                        echo "error: unknown aztec path $path"
-                        exit 1
-                        ;;
-                esac
+                # Aztec: resolve ref by rollup_version from node (result.header.globalVariables.version)
+                aztec_block_response=$(curl -L --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"node_getBlock","params":["latest"],"id":1}' $RPC_URL)
+                if [ $? -ne 0 ]; then
+                    echo "error: failed to get Aztec block from $RPC_URL"
+                    exit 1
+                fi
+                version_hex=$(echo "$aztec_block_response" | jq -r '.result.header.globalVariables.version' 2>/dev/null)
+                if [ -z "$version_hex" ] || [ "$version_hex" = "null" ]; then
+                    echo "error: could not parse rollup version from Aztec node"
+                    exit 1
+                fi
+                # Convert hex (e.g. 0x950a893d) to decimal for JSON lookup
+                version_decimal=$((16#${version_hex#0x}))
+                ref=$($BASEPATH/reference-rpc-endpoint.sh --rollup-version "$version_decimal")
+                if [ $? -ne 0 ]; then
+                    echo "error: no reference endpoint for Aztec rollup_version $version_decimal"
+                    exit 1
+                fi
             elif $is_starknet; then
                 # Starknet chain ID detection
                 chain_id_response=$(curl -L --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' $RPC_URL)
