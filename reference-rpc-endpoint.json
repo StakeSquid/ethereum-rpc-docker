@@ -1540,16 +1540,9 @@
       "https://rpc.arb-blueberry.gelato.digital"
     ]
   },
-  "aztec": {
-    "id": 418,
-    "urls": [
-      "https://mainnet.aztec.network"
-    ]
-  },
   "aztec-testnet": {
-    "id": 11124,
     "urls": [
-      "https://aztec-alpha-testnet-fullnode.zkv.xyz"
+      "https://rpc.testnet.aztec-labs.com"
     ]
   },
   "core-pigeon": {

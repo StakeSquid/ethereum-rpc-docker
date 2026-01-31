@@ -51,13 +51,16 @@ for path in $pathlist; do
             ref="$2"
         else
             if $is_aztec; then
-                # Aztec: resolve ref by path (mainnet/testnet)
+                # Aztec: resolve ref by path (mainnet/testnet/devnet)
                 case "$path" in
                     *aztec-mainnet*)
                         ref=$($BASEPATH/reference-rpc-endpoint.sh 418)
                         ;;
                     *aztec-testnet*)
                         ref=$($BASEPATH/reference-rpc-endpoint.sh 11124)
+                        ;;
+                    *aztec-devnet*)
+                        ref=$($BASEPATH/reference-rpc-endpoint.sh 11125)
                         ;;
                     *)
                         echo "error: unknown aztec path $path"

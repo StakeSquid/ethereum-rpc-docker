@@ -104,7 +104,7 @@ x-upstreams:
           frameSize: 20Mb
           msgSize: 50Mb
           url: $${WS_URL}
-    chain: aztec
+    chain: aztec-devnet
     method-groups:
       enabled:
         - debug
