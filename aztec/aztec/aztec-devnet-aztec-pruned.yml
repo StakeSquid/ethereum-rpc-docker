@@ -1,0 +1,116 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+# Aztec full node. See https://docs.aztec.network/network/setup/running_a_node
+# Admin port (8880) is not exposed; use docker exec for admin API.
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:aztec/aztec/aztec-devnet-aztec-pruned.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/aztec-devnet \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  aztec-devnet:
+    image: ${AZTEC_AZTEC_IMAGE:-aztecprotocol/aztec}:${AZTEC_DEVNET_AZTEC_VERSION:-3.0.0-devnet.6-patch.1}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+    user: root
+    ports:
+      - 12024:12024
+      - 12024:12024/udp
+    expose:
+      - 8080
+    environment:
+      AZTEC_ADMIN_PORT: '8880'
+      AZTEC_PORT: '8080'
+      DATA_DIRECTORY: /var/lib/data
+      ETHEREUM_HOSTS: ${ETHEREUM_SEPOLIA_EXECUTION_RPC}
+      L1_CONSENSUS_HOST_URLS: ${ETHEREUM_SEPOLIA_BEACON_REST}
+      LOG_LEVEL: ${AZTEC_LOG_LEVEL:-info}
+      P2P_IP: ${IP}
+      P2P_PORT: '12024'
+    entrypoint:
+      - node
+      - --no-warnings
+      - /usr/src/yarn-project/aztec/dest/bin/index.js
+    command:
+      - --archiver
+      - --network=devnet
+      - --node
+      - start
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${AZTEC_DEVNET_AZTEC_PRUNED_DATA:-aztec-devnet-aztec-pruned}:/var/lib/data
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=false
+      - traefik.enable=true
+      - traefik.http.middlewares.aztec-devnet-aztec-pruned-stripprefix.stripprefix.prefixes=/aztec-devnet
+      - traefik.http.services.aztec-devnet-aztec-pruned.loadbalancer.server.port=8080
+      - ${NO_SSL:-traefik.http.routers.aztec-devnet-aztec-pruned.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.aztec-devnet-aztec-pruned.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.aztec-devnet-aztec-pruned.rule=Host(`$DOMAIN`) && (Path(`/aztec-devnet`) || Path(`/aztec-devnet/`))}
+      - ${NO_SSL:+traefik.http.routers.aztec-devnet-aztec-pruned.rule=Path(`/aztec-devnet`) || Path(`/aztec-devnet/`)}
+      - traefik.http.routers.aztec-devnet-aztec-pruned.middlewares=aztec-devnet-aztec-pruned-stripprefix, ipallowlist
+
+volumes:
+  aztec-devnet-aztec-pruned:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: aztec
+    method-groups:
+      enabled:
+        - debug
+        - filter
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...

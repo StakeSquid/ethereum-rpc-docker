@@ -10,10 +10,14 @@ fi
 RPC_URL=$1
 shift
 
-# Check for --starknet flag
+# Check for --starknet / --aztec flag
 is_starknet=false
+is_aztec=false
 if [ "$1" == "--starknet" ]; then
     is_starknet=true
+    shift
+elif [ "$1" == "--aztec" ]; then
+    is_aztec=true
     shift
 fi
 
@@ -34,6 +38,8 @@ response_file=$(mktemp)
 # Use appropriate RPC method based on chain type
 if $is_starknet; then
     rpc_method='{"jsonrpc":"2.0","method":"starknet_getBlockWithTxHashes","params":["latest"],"id":1}'
+elif $is_aztec; then
+    rpc_method='{"jsonrpc":"2.0","method":"node_getBlock","params":["latest"],"id":1}'
 else
     rpc_method='{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}'
 fi
@@ -49,6 +55,15 @@ if [ $? -eq 0 ]; then
             latest_block_timestamp_decimal=$(echo "$response" | jq -r '.result.timestamp')
             latest_block_number=$(echo "$response" | jq -r '.result.block_number')
             latest_block_hash=$(echo "$response" | jq -r '.result.block_hash')
+        elif $is_aztec; then
+            # Aztec: node_getBlock("latest") returns blockHash, header.globalVariables.blockNumber, header.globalVariables.timestamp
+            latest_block_number=$(echo "$response" | jq -r '.result.header.globalVariables.blockNumber')
+            latest_block_timestamp_decimal=$(echo "$response" | jq -r '.result.header.globalVariables.timestamp')
+            latest_block_hash=$(echo "$response" | jq -r '.result.blockHash')
+            if [ "$latest_block_number" = "null" ] || [ "$latest_block_timestamp_decimal" = "null" ] || [ -z "$latest_block_timestamp_decimal" ]; then
+                echo "error"
+                exit 1
+            fi
         else
             # Ethereum returns hex timestamp and number
             latest_block_timestamp=$(echo "$response" | jq -r '.result.timestamp')
@@ -70,6 +85,8 @@ if [ $? -eq 0 ]; then
             if $is_starknet; then
                 # Starknet uses block_id object with block_number
                 rpc_method2="{\"jsonrpc\":\"2.0\",\"method\":\"starknet_getBlockWithTxHashes\",\"params\":[{\"block_number\":$latest_block_number}],\"id\":1}"
+            elif $is_aztec; then
+                rpc_method2="{\"jsonrpc\":\"2.0\",\"method\":\"node_getBlock\",\"params\":[$latest_block_number],\"id\":1}"
             else
                 rpc_method2="{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$latest_block_number\", false],\"id\":1}"
             fi
@@ -83,34 +100,49 @@ if [ $? -eq 0 ]; then
                     response2=$(cat "$response_file2")
                     if $is_starknet; then
                         latest_block_hash2=$(echo "$response2" | jq -r '.result.block_hash')
+                    elif $is_aztec; then
+                        latest_block_hash2=$(echo "$response2" | jq -r '.result.blockHash')
                     else
                         latest_block_hash2=$(echo "$response2" | jq -r '.result.hash')
                     fi
 
                     rm "$response_file2"
                     
+                    # Proceed if hashes match (or both empty for Aztec when API omits hash)
                     if [ "$latest_block_hash" == "$latest_block_hash2" ]; then
                         response_file3=$(mktemp)
 			status_file3=$(mktemp)
 
-                        if $is_starknet; then
-                            rpc_method_latest='{"jsonrpc":"2.0","method":"starknet_getBlockWithTxHashes","params":["latest"],"id":1}'
+                        if $is_aztec; then
+                            # Aztec: node_getBlock("latest") - same single-request pattern as eth/starknet
+                            rpc_method_latest='{"jsonrpc":"2.0","method":"node_getBlock","params":["latest"],"id":1}'
+                            {
+                                $BASEPATH/multicurl.sh -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file3" -H "Content-Type: application/json" --data "$rpc_method_latest" $ref > "$status_file3"
+                            } &
+                            pid3=$!
+                            response_file4=$(mktemp)
+                            status_file4=$(mktemp)
+                            {
+                                curl -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file4" -H "Content-Type: application/json" --data "$rpc_method_latest" $RPC_URL > "$status_file4"
+                            } &
+                            pid4=$!
                         else
-                            rpc_method_latest='{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}'
+                            if $is_starknet; then
+                                rpc_method_latest='{"jsonrpc":"2.0","method":"starknet_getBlockWithTxHashes","params":["latest"],"id":1}'
+                            else
+                                rpc_method_latest='{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}'
+                            fi
+                            {
+			        $BASEPATH/multicurl.sh -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file3" -H "Content-Type: application/json" --data "$rpc_method_latest" $ref > "$status_file3"
+			    } &
+			    pid3=$!
+			    response_file4=$(mktemp)
+			    status_file4=$(mktemp)
+			    {
+			        curl -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file4" -H "Content-Type: application/json" --data "$rpc_method_latest" $RPC_URL > "$status_file4"
+			    } &
+			    pid4=$!
                         fi
-
-                        {
-			    $BASEPATH/multicurl.sh -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file3" -H "Content-Type: application/json" --data "$rpc_method_latest" $ref > "$status_file3"
-			} &
-			pid3=$!
-
-			response_file4=$(mktemp)
-			status_file4=$(mktemp)
-
-			{
-			    curl -L --ipv4 -m $timeout -s -X POST -w "%{http_code} %{time_total}" -o "$response_file4" -H "Content-Type: application/json" --data "$rpc_method_latest" $RPC_URL > "$status_file4"
-			} &
-			pid4=$!
 
 			wait $pid3
 			curl_code3=$?
@@ -132,6 +164,8 @@ if [ $? -eq 0 ]; then
 
                                 if $is_starknet; then
                                     latest_block_timestamp_decimal3=$(echo "$response3" | jq -r '.result.timestamp')
+                                elif $is_aztec; then
+                                    latest_block_timestamp_decimal3=$(echo "$response3" | jq -r '.result.header.globalVariables.timestamp')
                                 else
                                     latest_block_timestamp3=$(echo "$response3" | jq -r '.result.timestamp')
                                     latest_block_timestamp_decimal3=$((16#${latest_block_timestamp3#0x}))
@@ -146,6 +180,8 @@ if [ $? -eq 0 ]; then
 
 					if $is_starknet; then
 					    latest_block_timestamp_decimal4=$(echo "$response4" | jq -r '.result.timestamp')
+					elif $is_aztec; then
+					    latest_block_timestamp_decimal4=$(echo "$response4" | jq -r '.result.header.globalVariables.timestamp')
 					else
 					    latest_block_timestamp4=$(echo "$response4" | jq -r '.result.timestamp')
 					    latest_block_timestamp_decimal4=$((16#${latest_block_timestamp4#0x}))

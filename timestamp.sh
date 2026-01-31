@@ -30,13 +30,23 @@ for path in $pathlist; do
 	RPC_URL="$PROTO://$DOMAIN/$path"
 	response_file=$(mktemp)
 
-	# Detect Starknet vs Ethereum based on path
+	# Detect Starknet vs Ethereum vs Aztec based on path
 	if echo "$path" | grep -qi "starknet"; then
 	    rpc_method='{"jsonrpc":"2.0","method":"starknet_getBlockWithTxHashes","params":["latest"],"id":1}'
 	    is_starknet=true
+	    is_aztec=false
+	elif echo "$path" | grep -qi "aztec"; then
+	    is_starknet=false
+	    is_aztec=true
 	else
 	    rpc_method='{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}'
 	    is_starknet=false
+	    is_aztec=false
+	fi
+
+	if $is_aztec; then
+	    # Aztec: node_getBlock("latest") returns block with header.globalVariables.timestamp
+	    rpc_method='{"jsonrpc":"2.0","method":"node_getBlock","params":["latest"],"id":1}'
 	fi
 
 	http_status_code=$(curl -L --ipv4 -m 1 -s -X POST -w "%{http_code}" -o "$response_file" -H "Content-Type: application/json" --data "$rpc_method" $RPC_URL)
@@ -46,19 +56,29 @@ for path in $pathlist; do
 	    if [[ $http_status_code -eq 200 ]]; then
 		response=$(cat "$response_file")
 
-		if $is_starknet; then
+		if $is_aztec; then
+		    # result.header.globalVariables.timestamp, result.blockHash, result.header.globalVariables.blockNumber
+		    latest_block_timestamp_decimal=$(echo "$response" | jq -r '.result.header.globalVariables.timestamp')
+		    rm -f "$response_file"
+		    if [ "$latest_block_timestamp_decimal" = "null" ] || [ -z "$latest_block_timestamp_decimal" ]; then
+			exit 1
+		    fi
+		elif $is_starknet; then
 		    # Starknet returns decimal timestamp
 		    latest_block_timestamp_decimal=$(echo "$response" | jq -r '.result.timestamp')
+		    rm -f "$response_file"
 		else
 		    # Ethereum returns hex timestamp
 		    latest_block_timestamp=$(echo "$response" | jq -r '.result.timestamp')
 		    latest_block_timestamp_decimal=$((16#${latest_block_timestamp#0x}))
+		    rm -f "$response_file"
 		fi
 
 		echo "$latest_block_timestamp_decimal"
 
 		exit 0;
 	    fi
+	    rm -f "$response_file"
 	fi
 	break;
     fi

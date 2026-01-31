@@ -786,6 +786,34 @@
     ]
   },
   {
+    "chain": "devnet",
+    "client": "aztec",
+    "compose_file": "aztec/aztec/aztec-devnet-aztec-pruned",
+    "features": [],
+    "network": "aztec",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "aztec-devnet-aztec-pruned"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "aztec",
+    "compose_file": "aztec/aztec/aztec-testnet-aztec-pruned",
+    "features": [],
+    "network": "aztec",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "aztec-testnet-aztec-pruned"
+    ]
+  },
+  {
     "chain": "bepolia",
     "client": "geth",
     "compose_file": "berachain/geth/berachain-bepolia-geth-pruned-pebble-path",

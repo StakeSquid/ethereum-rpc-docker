@@ -34,18 +34,37 @@ for path in $pathlist; do
     if $include; then
         RPC_URL="$PROTO://$DOMAIN/$path"
 
-        # Detect Starknet vs Ethereum based on path
+        # Detect Starknet vs Ethereum vs Aztec based on path
         if echo "$path" | grep -qi "starknet"; then
             is_starknet=true
+            is_aztec=false
+        elif echo "$path" | grep -qi "aztec"; then
+            is_starknet=false
+            is_aztec=true
         else
             is_starknet=false
+            is_aztec=false
         fi
 
         ref=''
         if [ -n "$2" ]; then
             ref="$2"
         else
-            if $is_starknet; then
+            if $is_aztec; then
+                # Aztec: resolve ref by path (mainnet/testnet)
+                case "$path" in
+                    *aztec-mainnet*)
+                        ref=$($BASEPATH/reference-rpc-endpoint.sh 418)
+                        ;;
+                    *aztec-testnet*)
+                        ref=$($BASEPATH/reference-rpc-endpoint.sh 11124)
+                        ;;
+                    *)
+                        echo "error: unknown aztec path $path"
+                        exit 1
+                        ;;
+                esac
+            elif $is_starknet; then
                 # Starknet chain ID detection
                 chain_id_response=$(curl -L --ipv4 -m 1 -s -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"starknet_chainId","params":[],"id":1}' $RPC_URL)
 
@@ -93,8 +112,10 @@ for path in $pathlist; do
             fi
         fi
 
-        # Call the health check script with RPC_URL, ref, and starknet flag
-        if $is_starknet; then
+        # Call the health check script with RPC_URL, ref, and chain-type flag
+        if $is_aztec; then
+            $BASEPATH/check-health.sh "$RPC_URL" --aztec $ref
+        elif $is_starknet; then
             $BASEPATH/check-health.sh "$RPC_URL" --starknet $ref
         else
             $BASEPATH/check-health.sh "$RPC_URL" $ref
