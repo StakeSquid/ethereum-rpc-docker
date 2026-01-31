@@ -1540,6 +1540,12 @@
       "https://rpc.arb-blueberry.gelato.digital"
     ]
   },
+  "aztec-devnet": {
+    "rollup_version": "1647720761",
+    "urls": [
+      "https://devnet-6.aztec-labs.com/"
+    ]
+  },
   "aztec-testnet": {
     "rollup_version": "2500495677",
     "urls": [
