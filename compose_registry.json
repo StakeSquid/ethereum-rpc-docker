@@ -4481,6 +4481,40 @@
     ]
   },
   {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/hashkeychain-testnet-op-geth-archive-leveldb-hash",
+    "features": [
+      "hash",
+      "leveldb"
+    ],
+    "network": "hashkeychain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "archive",
+    "volumes": [
+      "hashkeychain-testnet-op-geth-archive-leveldb-hash"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "geth",
+    "compose_file": "op/geth/hashkeychain-testnet-op-geth-pruned-pebble-path",
+    "features": [
+      "path",
+      "pebble"
+    ],
+    "network": "hashkeychain",
+    "node": "node",
+    "relay": null,
+    "stack": "op",
+    "type": "pruned",
+    "volumes": [
+      "hashkeychain-testnet-op-geth-pruned-pebble-path"
+    ]
+  },
+  {
     "chain": "mainnet",
     "client": "geth",
     "compose_file": "op/geth/hemi-mainnet-op-geth-pruned-leveldb-hash",
