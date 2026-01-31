@@ -62,8 +62,11 @@ for path in $pathlist; do
                     echo "error: could not parse rollup version from Aztec node"
                     exit 1
                 fi
-                # Convert hex (e.g. 0x950a893d) to decimal for JSON lookup
-                version_decimal=$((16#${version_hex#0x}))
+                # Version is a 32-byte hash (0x...); rollup_version in JSON is the low 32 bits as decimal.
+                # Strip 0x, take last 8 hex chars, convert to integer for comparison.
+                version_hex="${version_hex#0x}"
+                version_hex="${version_hex: -8}"
+                version_decimal=$((16#$version_hex))
                 ref=$($BASEPATH/reference-rpc-endpoint.sh --rollup-version "$version_decimal")
                 if [ $? -ne 0 ]; then
                     echo "error: no reference endpoint for Aztec rollup_version $version_decimal"
