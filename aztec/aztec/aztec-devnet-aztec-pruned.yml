@@ -61,15 +61,11 @@ services:
       LOG_LEVEL: ${AZTEC_LOG_LEVEL:-info}
       P2P_IP: ${IP}
       P2P_PORT: '12024'
-    entrypoint:
-      - node
-      - --no-warnings
-      - /usr/src/yarn-project/aztec/dest/bin/index.js
+    entrypoint: [node, --no-warnings, /usr/src/yarn-project/aztec/dest/bin/index.js, start]
     command:
       - --archiver
       - --network=devnet
       - --node
-      - start
     restart: unless-stopped
     stop_grace_period: 5m
     networks:
