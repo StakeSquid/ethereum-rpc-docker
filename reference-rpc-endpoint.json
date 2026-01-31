@@ -452,7 +452,7 @@
   "hyperliquid": {
     "id": 999,
     "urls": [
-      "https://rpc.hyperliquid.xyz/evm"
+      "https://gwan-ssl.wandevs.org:46891/"
     ]
   },
   "klaytn-baobab": {
@@ -706,12 +706,6 @@
       "https://rpc.cardona.zkevm-rpc.com"
     ]
   },
-  "fraxtal-testnet": {
-    "id": 2523,
-    "urls": [
-      "https://rpc.testnet.frax.com"
-    ]
-  },
   "abstract": {
     "id": 2741,
     "urls": [
@@ -739,10 +733,6 @@
     "urls": [
       "https://rpc.sepolia-api.lisk.com"
     ]
-  },
-  "megaeth": {
-    "id": 4326,
-    "urls": []
   },
   "iotex": {
     "id": 4689,
@@ -798,7 +788,7 @@
       "https://opbnb-testnet-rpc.publicnode.com"
     ]
   },
-  "megaeth-deprecated": {
+  "megaeth-testnet": {
     "id": 6342,
     "urls": [
       "https://carrot.megaeth.com/rpc"
@@ -1041,12 +1031,6 @@
     "id": 42429,
     "urls": [
       "https://rpc.testnet.tempo.xyz"
-    ]
-  },
-  "tempo-moderato-testnet": {
-    "id": 42431,
-    "urls": [
-      "https://rpc.moderato.tempo.xyz"
     ]
   },
   "hemi": {
@@ -1345,12 +1329,6 @@
       "https://evm-rpc.arctic-1.seinetwork.io"
     ]
   },
-  "katana-testnet": {
-    "id": 737373,
-    "urls": [
-      "https://rpc-bokuto.katanarpc.com"
-    ]
-  },
   "hemi-testnet": {
     "id": 743111,
     "urls": [
@@ -1360,9 +1338,7 @@
   "katana": {
     "id": 747474,
     "urls": [
-      "https://rpc.katana.network",
-      "https://katana.gateway.tenderly.co/",
-      "https://rpc.katanarpc.com/"
+      "https://rpc.katana.network"
     ]
   },
   "ink-sepolia": {

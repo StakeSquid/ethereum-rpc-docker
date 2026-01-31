@@ -34,7 +34,7 @@ services:
       context: ./haqq
       dockerfile: haqq.Dockerfile
       args:
-        HAQQ_HAQQ_VERSION: ${HAQQ_MAINNET_HAQQ_VERSION:-v1.9.2}
+        HAQQ_HAQQ_VERSION: ${HAQQ_MAINNET_HAQQ_VERSION:-v1.9.1}
         HAQQ_HAQQ_IMAGE: ${HAQQ_MAINNET_HAQQ_IMAGE:-alhaqq/haqq}
     sysctls:
       # TCP Performance
