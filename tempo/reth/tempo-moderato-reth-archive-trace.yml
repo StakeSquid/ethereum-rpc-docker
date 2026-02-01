@@ -30,7 +30,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   tempo-moderato-reth:
-    image: ${TEMPO_RETH_IMAGE:-ghcr.io/tempoxyz/tempo}:${TEMPO_MODERATO_RETH_VERSION:-v1.0.2}
+    image: ${TEMPO_RETH_IMAGE:-ghcr.io/tempoxyz/tempo}:${TEMPO_MODERATO_RETH_VERSION:-sha-a1ac033}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
