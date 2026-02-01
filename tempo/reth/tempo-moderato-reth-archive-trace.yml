@@ -1,0 +1,134 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:tempo/reth/tempo-moderato-reth-archive-trace.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/tempo-moderato-reth \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  tempo-moderato-reth:
+    image: ${TEMPO_RETH_IMAGE:-ghcr.io/tempoxyz/tempo}:${TEMPO_MODERATO_RETH_VERSION:-v1.0.2}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    user: root
+    ports:
+      - 10941:10941
+      - 10941:10941/udp
+    expose:
+      - 8545
+      - 9001
+    environment:
+      - BOOTNODES=enode://daff60c56f91f13f7a01304badbf65a4b0fe71004293a1fa26e31bf9b2083cb7c176b8318219ac2a651dc26c61e094eff70ece6f440b849b8a1881c7766373bb@148.113.217.72:30014,enode://1dc8f9d6f7406cd9ea546f7dd8abc84f69fce8a88dc7315372859010e3db9235d74a93347e91732283e7b4dd22f7d3a60c81dee31a8dc6665dc7ed9aff977c20@148.113.193.121:30016,enode://c2b3cd1404534510487b96b099541d88072260d5410bcc38195d7f606decf0c0043964f6f9252869534675a80ca9f12af81d5b9c078966e9dfae4487a773cb0b@148.113.225.199:30018,enode://53fc9564e37a20aa3f53dc5b3dce124f55df6b8eab45f5b40b13d19f4753255f4b1e240c4b5004bab8f5f8698a7f8c6607d28dc9afa0018fb69526b88411d8ab@148.113.193.123:30020
+    entrypoint: [tempo, node]
+    command:
+      - --bootnodes=enode://daff60c56f91f13f7a01304badbf65a4b0fe71004293a1fa26e31bf9b2083cb7c176b8318219ac2a651dc26c61e094eff70ece6f440b849b8a1881c7766373bb@148.113.217.72:30014,enode://1dc8f9d6f7406cd9ea546f7dd8abc84f69fce8a88dc7315372859010e3db9235d74a93347e91732283e7b4dd22f7d3a60c81dee31a8dc6665dc7ed9aff977c20@148.113.193.121:30016,enode://c2b3cd1404534510487b96b099541d88072260d5410bcc38195d7f606decf0c0043964f6f9252869534675a80ca9f12af81d5b9c078966e9dfae4487a773cb0b@148.113.225.199:30018,enode://53fc9564e37a20aa3f53dc5b3dce124f55df6b8eab45f5b40b13d19f4753255f4b1e240c4b5004bab8f5f8698a7f8c6607d28dc9afa0018fb69526b88411d8ab@148.113.193.123:30020
+      - --chain=moderato
+      - --datadir=/root/.local/share/reth
+      - --discovery.port=10941
+      - --engine.cross-block-cache-size=${TEMPO_MODERATO_RETH_STATE_CACHE:-4096}
+      - --engine.memory-block-buffer-target=0
+      - --engine.persistence-threshold=0
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --http.corsdomain=*
+      - --http.port=8545
+      - --max-inbound-peers=50
+      - --max-outbound-peers=50
+      - --metrics=0.0.0.0:9001
+      - --nat=extip:${IP}
+      - --port=10941
+      - --rpc-cache.max-blocks=10000
+      - --rpc-cache.max-concurrent-db-requests=2048
+      - --rpc.gascap=600000000
+      - --rpc.max-blocks-per-filter=0
+      - --rpc.max-connections=50000
+      - --rpc.max-logs-per-response=0
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --ws.origins=*
+      - --ws.port=8545
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${TEMPO_MODERATO_RETH_ARCHIVE_TRACE_DATA:-tempo-moderato-reth-archive-trace}:/root/.local/share/reth
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9001
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.tempo-moderato-reth-archive-trace-stripprefix.stripprefix.prefixes=/tempo-moderato-reth
+      - traefik.http.services.tempo-moderato-reth-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.tempo-moderato-reth-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.tempo-moderato-reth-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.tempo-moderato-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/tempo-moderato-reth`) || Path(`/tempo-moderato-reth/`))}
+      - ${NO_SSL:+traefik.http.routers.tempo-moderato-reth-archive-trace.rule=Path(`/tempo-moderato-reth`) || Path(`/tempo-moderato-reth/`)}
+      - traefik.http.routers.tempo-moderato-reth-archive-trace.middlewares=tempo-moderato-reth-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
+
+volumes:
+  tempo-moderato-reth-archive-trace:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: tempo-moderato-testnet
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...

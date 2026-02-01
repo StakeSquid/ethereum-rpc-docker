@@ -1,0 +1,134 @@
+---
+x-logging-defaults: &logging-defaults
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Usage:
+#
+# mkdir rpc && cd rpc
+#
+# git init
+# git remote add origin https://github.com/StakeSquid/ethereum-rpc-docker.git
+# git fetch origin vibe
+# git checkout origin/vibe
+#
+# docker run --rm alpine sh -c "printf '0x'; head -c32 /dev/urandom | xxd -p -c 64" > .jwtsecret
+#
+# env
+# ...
+# IP=$(curl ipinfo.io/ip)
+# DOMAIN=${IP}.traefik.me
+# COMPOSE_FILE=base.yml:rpc.yml:tempo/reth/tempo-testnet-reth-archive-trace.yml
+#
+# docker compose up -d
+#
+# curl -X POST https://${IP}.traefik.me/tempo-testnet-reth \
+#   -H "Content-Type: application/json" \
+#   --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+services:
+  tempo-testnet-reth:
+    image: ${TEMPO_RETH_IMAGE:-ghcr.io/tempoxyz/tempo}:${TEMPO_TESTNET_RETH_VERSION:-v1.0.2}
+    sysctls:
+      # TCP Performance
+      net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
+      net.ipv4.tcp_no_metrics_save: 1             # Disable metrics cache
+      net.ipv4.tcp_rmem: 4096 87380 16777216      # Increase TCP read buffers
+      net.ipv4.tcp_wmem: 4096 87380 16777216      # Increase TCP write buffers
+      net.core.somaxconn: 32768                   # Higher connection queue
+      # Memory/Connection Management
+      # net.core.netdev_max_backlog: 50000          # Increase network buffer
+      net.ipv4.tcp_max_syn_backlog: 30000         # More SYN requests
+      net.ipv4.tcp_max_tw_buckets: 2000000        # Allow more TIME_WAIT sockets
+    ulimits:
+      nofile: 1048576    # Max open files (for RPC/WS connections)
+      memlock: -1        # Disable memory locking limits (for in-memory DBs like MDBX)
+    user: root
+    ports:
+      - 10279:10279
+      - 10279:10279/udp
+    expose:
+      - 8545
+      - 9001
+    environment:
+      - BOOTNODES=enode://386269ddd50fd95143ad8f33f60ff67c7bd17da1adb46aed19eba5c6ae5326316643595e3aa99784f41b7d861fedde78594b1f764e56a4659917b916c1c3e321@148.113.193.123:30004,enode://11103c936d2c21be1a2da3ca81f4daa3b5ad508e1a04e63198eaebf7b0783b2f805b2ea3997e4745e51881a0f6a49e0d8d2c3c85088c3a4a8a8f3ae0a086cc7d@148.113.225.199:30006,enode://b189a89051ac5c11010d21cac7fabe0c2a3723721f38625631bdd120e88d15a0a748760bc1e4d4a8cd808edf502d4ec6acf677e49592f9ab7d193d094049963b@148.113.193.121:30008,enode://022e06bfe3763851901baa2aae1cf94e276e4faa889d700422db3a88d075072d15868caa103d077ddd1d96f6fca266b1ded8dc9a41e2a612dcd77edc6dd5bae8@40.160.32.193:30010
+    entrypoint: [tempo, node]
+    command:
+      - --bootnodes=enode://386269ddd50fd95143ad8f33f60ff67c7bd17da1adb46aed19eba5c6ae5326316643595e3aa99784f41b7d861fedde78594b1f764e56a4659917b916c1c3e321@148.113.193.123:30004,enode://11103c936d2c21be1a2da3ca81f4daa3b5ad508e1a04e63198eaebf7b0783b2f805b2ea3997e4745e51881a0f6a49e0d8d2c3c85088c3a4a8a8f3ae0a086cc7d@148.113.225.199:30006,enode://b189a89051ac5c11010d21cac7fabe0c2a3723721f38625631bdd120e88d15a0a748760bc1e4d4a8cd808edf502d4ec6acf677e49592f9ab7d193d094049963b@148.113.193.121:30008,enode://022e06bfe3763851901baa2aae1cf94e276e4faa889d700422db3a88d075072d15868caa103d077ddd1d96f6fca266b1ded8dc9a41e2a612dcd77edc6dd5bae8@40.160.32.193:30010
+      - --chain=testnet
+      - --datadir=/root/.local/share/reth
+      - --discovery.port=10279
+      - --engine.cross-block-cache-size=${TEMPO_TESTNET_RETH_STATE_CACHE:-4096}
+      - --engine.memory-block-buffer-target=0
+      - --engine.persistence-threshold=0
+      - --http
+      - --http.addr=0.0.0.0
+      - --http.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --http.corsdomain=*
+      - --http.port=8545
+      - --max-inbound-peers=50
+      - --max-outbound-peers=50
+      - --metrics=0.0.0.0:9001
+      - --nat=extip:${IP}
+      - --port=10279
+      - --rpc-cache.max-blocks=10000
+      - --rpc-cache.max-concurrent-db-requests=2048
+      - --rpc.gascap=600000000
+      - --rpc.max-blocks-per-filter=0
+      - --rpc.max-connections=50000
+      - --rpc.max-logs-per-response=0
+      - --ws
+      - --ws.addr=0.0.0.0
+      - --ws.api=admin,debug,eth,net,trace,txpool,web3,rpc,reth,ots,flashbots,mev
+      - --ws.origins=*
+      - --ws.port=8545
+    restart: unless-stopped
+    stop_grace_period: 5m
+    networks:
+      - chains
+    volumes:
+      - ${TEMPO_TESTNET_RETH_ARCHIVE_TRACE_DATA:-tempo-testnet-reth-archive-trace}:/root/.local/share/reth
+      - /slowdisk:/slowdisk
+    logging: *logging-defaults
+    labels:
+      - prometheus-scrape.enabled=true
+      - prometheus-scrape.port=9001
+      - prometheus-scrape.path=/metrics
+      - traefik.enable=true
+      - traefik.http.middlewares.tempo-testnet-reth-archive-trace-stripprefix.stripprefix.prefixes=/tempo-testnet-reth
+      - traefik.http.services.tempo-testnet-reth-archive-trace.loadbalancer.server.port=8545
+      - ${NO_SSL:-traefik.http.routers.tempo-testnet-reth-archive-trace.entrypoints=websecure}
+      - ${NO_SSL:-traefik.http.routers.tempo-testnet-reth-archive-trace.tls.certresolver=myresolver}
+      - ${NO_SSL:-traefik.http.routers.tempo-testnet-reth-archive-trace.rule=Host(`$DOMAIN`) && (Path(`/tempo-testnet-reth`) || Path(`/tempo-testnet-reth/`))}
+      - ${NO_SSL:+traefik.http.routers.tempo-testnet-reth-archive-trace.rule=Path(`/tempo-testnet-reth`) || Path(`/tempo-testnet-reth/`)}
+      - traefik.http.routers.tempo-testnet-reth-archive-trace.middlewares=tempo-testnet-reth-archive-trace-stripprefix, ipallowlist
+    shm_size: 2gb
+
+volumes:
+  tempo-testnet-reth-archive-trace:
+
+x-upstreams:
+  - id: $${ID}
+    labels:
+      provider: $${PROVIDER}
+    connection:
+      generic:
+        rpc:
+          url: $${RPC_URL}
+        ws:
+          frameSize: 20Mb
+          msgSize: 50Mb
+          url: $${WS_URL}
+    chain: tempo-testnet
+    method-groups:
+      enabled:
+        - debug
+        - filter
+        - trace
+    methods:
+      disabled:
+      enabled:
+        - name: txpool_content # TODO: should be disabled for rollup nodes
+...

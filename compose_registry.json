@@ -4502,7 +4502,7 @@
     "client": "geth",
     "compose_file": "op/geth/hashkeychain-testnet-op-geth-pruned-pebble-hash",
     "features": [
-      "hash",
+      "path",
       "pebble"
     ],
     "network": "hashkeychain",
@@ -4519,7 +4519,7 @@
     "client": "geth",
     "compose_file": "op/geth/hashkeychain-testnet-op-geth-pruned-pebble-path",
     "features": [
-      "hash",
+      "path",
       "pebble"
     ],
     "network": "hashkeychain",
@@ -7040,6 +7040,70 @@
     "type": "pruned",
     "volumes": [
       "taiko-hoodi-nethermind-pruned-rocksdb-trace"
+    ]
+  },
+  {
+    "chain": "moderato",
+    "client": "reth",
+    "compose_file": "tempo/reth/tempo-moderato-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "tempo",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "tempo-moderato-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "moderato",
+    "client": "reth",
+    "compose_file": "tempo/reth/tempo-moderato-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "tempo",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "tempo-moderato-reth-pruned-trace"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "reth",
+    "compose_file": "tempo/reth/tempo-testnet-reth-archive-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "tempo",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "archive",
+    "volumes": [
+      "tempo-testnet-reth-archive-trace"
+    ]
+  },
+  {
+    "chain": "testnet",
+    "client": "reth",
+    "compose_file": "tempo/reth/tempo-testnet-reth-pruned-trace",
+    "features": [
+      "trace"
+    ],
+    "network": "tempo",
+    "node": null,
+    "relay": null,
+    "stack": null,
+    "type": "pruned",
+    "volumes": [
+      "tempo-testnet-reth-pruned-trace"
     ]
   },
   {
