@@ -7055,7 +7055,8 @@
     "stack": null,
     "type": "archive",
     "volumes": [
-      "tempo-moderato-reth-archive-trace"
+      "tempo-moderato-reth-archive-trace",
+      "tempo-moderato-reth-secrets"
     ]
   },
   {
@@ -7071,6 +7072,7 @@
     "stack": null,
     "type": "pruned",
     "volumes": [
+      "tempo-moderato-reth-pruned-secrets",
       "tempo-moderato-reth-pruned-trace"
     ]
   },
@@ -7087,7 +7089,8 @@
     "stack": null,
     "type": "archive",
     "volumes": [
-      "tempo-testnet-reth-archive-trace"
+      "tempo-testnet-reth-archive-trace",
+      "tempo-testnet-reth-secrets"
     ]
   },
   {
@@ -7103,6 +7106,7 @@
     "stack": null,
     "type": "pruned",
     "volumes": [
+      "tempo-testnet-reth-pruned-secrets",
       "tempo-testnet-reth-pruned-trace"
     ]
   },

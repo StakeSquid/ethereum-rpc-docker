@@ -53,8 +53,9 @@ services:
       - 6060
       - 8551
     environment:
+      - GETH_OP_NETWORK=hashkeychain-testnet
       - GETH_ROLLUP_DISABLETXPOOLGOSSIP=true
-      - GETH_ROLLUP_SEQUENCERHTTP=https://hashkeychain-testnet.alt.technology
+      - GETH_ROLLUP_SEQUENCERHTTP=https://testnet.hsk.xyz
     entrypoint: /bin/sh -c '[ ! -f /config/genesis.json ] && wget -qO /config/genesis.json "https://hashkeychain.s3.ap-southeast-1.amazonaws.com/testnet/genesis.json"; [ ! -d /data/geth ] && geth --gcmode=archive --db.engine=leveldb --datadir /data init --state.scheme=hash /config/genesis.json; exec geth "$@"' --
     command:
       - --datadir=/data
