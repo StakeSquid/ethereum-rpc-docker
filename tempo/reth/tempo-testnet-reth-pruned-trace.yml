@@ -4,6 +4,11 @@ x-logging-defaults: &logging-defaults
   options:
     max-size: "10m"
     max-file: "3"
+# Tempo node requires consensus parameters even for follower/RPC nodes.
+
+# Before starting, generate a signing key:
+#   docker run --rm -v tempo-secrets:/secrets ghcr.io/tempoxyz/tempo:sha-a1ac033 \
+#     consensus generate-private-key --output /secrets/validator_key.json
 
 # Usage:
 #
@@ -58,6 +63,8 @@ services:
     command:
       - --bootnodes=enode://386269ddd50fd95143ad8f33f60ff67c7bd17da1adb46aed19eba5c6ae5326316643595e3aa99784f41b7d861fedde78594b1f764e56a4659917b916c1c3e321@148.113.193.123:30004,enode://11103c936d2c21be1a2da3ca81f4daa3b5ad508e1a04e63198eaebf7b0783b2f805b2ea3997e4745e51881a0f6a49e0d8d2c3c85088c3a4a8a8f3ae0a086cc7d@148.113.225.199:30006,enode://b189a89051ac5c11010d21cac7fabe0c2a3723721f38625631bdd120e88d15a0a748760bc1e4d4a8cd808edf502d4ec6acf677e49592f9ab7d193d094049963b@148.113.193.121:30008,enode://022e06bfe3763851901baa2aae1cf94e276e4faa889d700422db3a88d075072d15868caa103d077ddd1d96f6fca266b1ded8dc9a41e2a612dcd77edc6dd5bae8@40.160.32.193:30010
       - --chain=testnet
+      - --consensus.fee-recipient=0x0000000000000000000000000000000000000000
+      - --consensus.signing-key=/secrets/validator_key.json
       - --datadir=/root/.local/share/reth
       - --discovery.port=10333
       - --engine.cross-block-cache-size=${TEMPO_TESTNET_RETH_STATE_CACHE:-4096}
@@ -92,6 +99,7 @@ services:
     volumes:
       - ${TEMPO_TESTNET_RETH_PRUNED_TRACE_DATA:-tempo-testnet-reth-pruned-trace}:/root/.local/share/reth
       - /slowdisk:/slowdisk
+      - tempo-testnet-reth-pruned-secrets:/secrets
     logging: *logging-defaults
     labels:
       - prometheus-scrape.enabled=true
@@ -108,6 +116,7 @@ services:
     shm_size: 2gb
 
 volumes:
+  tempo-testnet-reth-pruned-secrets:
   tempo-testnet-reth-pruned-trace:
 
 x-upstreams:
