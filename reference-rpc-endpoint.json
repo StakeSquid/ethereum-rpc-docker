@@ -257,7 +257,7 @@
   "hashkey-testnet": {
     "id": 133,
     "urls": [
-      "https://hashkeychain-testnet.alt.technology"
+      "https://testnet.hsk.xyz"
     ]
   },
   "polygon": {
@@ -1538,18 +1538,6 @@
     "id": 88153591557,
     "urls": [
       "https://rpc.arb-blueberry.gelato.digital"
-    ]
-  },
-  "aztec-devnet": {
-    "rollup_version": "1647720761",
-    "urls": [
-      "https://devnet-6.aztec-labs.com/"
-    ]
-  },
-  "aztec-testnet": {
-    "rollup_version": "2500495677",
-    "urls": [
-      "https://rpc.testnet.aztec-labs.com"
     ]
   },
   "core-pigeon": {
