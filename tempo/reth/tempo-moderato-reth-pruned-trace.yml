@@ -5,10 +5,7 @@ x-logging-defaults: &logging-defaults
     max-size: "10m"
     max-file: "3"
 # Tempo node requires consensus parameters even for follower/RPC nodes.
-
-# Before starting, generate a signing key:
-#   docker run --rm -v tempo-secrets:/secrets ghcr.io/tempoxyz/tempo:sha-a1ac033 \
-#     consensus generate-private-key --output /secrets/validator_key.json
+# A signing key is generated automatically on first run if /secrets/validator_key.json does not exist.
 
 # Usage:
 #
@@ -35,7 +32,7 @@ x-logging-defaults: &logging-defaults
 
 services:
   tempo-moderato-reth-pruned:
-    image: ${TEMPO_RETH_IMAGE:-ghcr.io/tempoxyz/tempo}:${TEMPO_MODERATO_RETH_VERSION:-sha-a1ac033}
+    image: ${TEMPO_RETH_IMAGE:-ghcr.io/tempoxyz/tempo}:${TEMPO_MODERATO_RETH_VERSION:-1.0.2}
     sysctls:
       # TCP Performance
       net.ipv4.tcp_slow_start_after_idle: 0       # Disable slow start after idle
@@ -59,7 +56,7 @@ services:
       - 9001
     environment:
       - BOOTNODES=enode://daff60c56f91f13f7a01304badbf65a4b0fe71004293a1fa26e31bf9b2083cb7c176b8318219ac2a651dc26c61e094eff70ece6f440b849b8a1881c7766373bb@148.113.217.72:30014,enode://1dc8f9d6f7406cd9ea546f7dd8abc84f69fce8a88dc7315372859010e3db9235d74a93347e91732283e7b4dd22f7d3a60c81dee31a8dc6665dc7ed9aff977c20@148.113.193.121:30016,enode://c2b3cd1404534510487b96b099541d88072260d5410bcc38195d7f606decf0c0043964f6f9252869534675a80ca9f12af81d5b9c078966e9dfae4487a773cb0b@148.113.225.199:30018,enode://53fc9564e37a20aa3f53dc5b3dce124f55df6b8eab45f5b40b13d19f4753255f4b1e240c4b5004bab8f5f8698a7f8c6607d28dc9afa0018fb69526b88411d8ab@148.113.193.123:30020
-    entrypoint: [tempo, node]
+    entrypoint: /bin/sh -c '[ ! -f /secrets/validator_key.json ] && tempo consensus generate-private-key --output /secrets/validator_key.json; exec tempo node "$@"' --
     command:
       - --bootnodes=enode://daff60c56f91f13f7a01304badbf65a4b0fe71004293a1fa26e31bf9b2083cb7c176b8318219ac2a651dc26c61e094eff70ece6f440b849b8a1881c7766373bb@148.113.217.72:30014,enode://1dc8f9d6f7406cd9ea546f7dd8abc84f69fce8a88dc7315372859010e3db9235d74a93347e91732283e7b4dd22f7d3a60c81dee31a8dc6665dc7ed9aff977c20@148.113.193.121:30016,enode://c2b3cd1404534510487b96b099541d88072260d5410bcc38195d7f606decf0c0043964f6f9252869534675a80ca9f12af81d5b9c078966e9dfae4487a773cb0b@148.113.225.199:30018,enode://53fc9564e37a20aa3f53dc5b3dce124f55df6b8eab45f5b40b13d19f4753255f4b1e240c4b5004bab8f5f8698a7f8c6607d28dc9afa0018fb69526b88411d8ab@148.113.193.123:30020
       - --chain=moderato

@@ -4502,7 +4502,7 @@
     "client": "geth",
     "compose_file": "op/geth/hashkeychain-testnet-op-geth-pruned-pebble-hash",
     "features": [
-      "path",
+      "hash",
       "pebble"
     ],
     "network": "hashkeychain",
@@ -4519,7 +4519,7 @@
     "client": "geth",
     "compose_file": "op/geth/hashkeychain-testnet-op-geth-pruned-pebble-path",
     "features": [
-      "path",
+      "hash",
       "pebble"
     ],
     "network": "hashkeychain",

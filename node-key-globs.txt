@@ -17,3 +17,6 @@ staking/*
 # cosmos
 priv_validator_key.json
 node_key.json
+
+# tempo
+validator_key.json
